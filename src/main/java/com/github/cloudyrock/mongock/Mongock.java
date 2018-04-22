@@ -127,6 +127,7 @@ public class Mongock implements InitializingBean, Closeable {
     return lockChecker.isLockHeld();
   }
 
+
   /**
    * @return true if Mongock runner is enabled and able to run, otherwise false
    */
