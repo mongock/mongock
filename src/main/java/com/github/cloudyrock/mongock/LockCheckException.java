@@ -5,10 +5,6 @@ class LockCheckException extends RuntimeException {
     super(s);
   }
 
-  LockCheckException(InterruptedException ex) {
-    super(ex);
-  }
-
   LockCheckException() {
     super();
   }

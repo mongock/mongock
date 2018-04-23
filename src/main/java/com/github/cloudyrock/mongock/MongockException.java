@@ -8,7 +8,7 @@ public class MongockException extends RuntimeException {
     super(message);
   }
 
-  public MongockException(String message, Exception e) {
+  MongockException(String message, Exception e) {
     super(message, e);
   }
 }
