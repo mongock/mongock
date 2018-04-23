@@ -58,10 +58,8 @@ public class MongockLockCheckerIntegrationTest {
     when(mongoClient.getDatabase(anyString())).thenReturn(mongoDatabase);
     when(mongoClient.getDB(anyString())).thenReturn(db);
 
-    builder = new MongockBuilder(mongoClient)
-        .setDatabaseName("mongocktest")
+    builder = new MongockBuilder(mongoClient,"mongocktest", ProxiesMongockTestResource.class.getPackage().getName())
         .setEnabled(true)
-        .setChangeLogsScanPackage(ProxiesMongockTestResource.class.getPackage().getName())
         .setThrowExceptionIfCannotObtainLock(true);
 
     timeUtils = spy(new TimeUtils());

@@ -37,11 +37,6 @@ public class Mongock implements InitializingBean, Closeable {
   private Jongo changelogJongo;
   private MongoTemplate changelogMongoTemplate;
 
-  /**
-   * <p>Constructor takes db.mongodb.MongoClient object as a parameter.
-   * </p>
-   * <p>For more details about <tt>MongoClient</tt> please see com.mongodb.MongoClient docs</p>
-   */
   Mongock(ChangeEntryRepository dao,
           MongoClient mongoClient,
           ChangeService changeService,
@@ -90,12 +85,7 @@ public class Mongock implements InitializingBean, Closeable {
     execute();
   }
 
-  /**
-   * Executing migration
-   *
-   * @throws MongockException exception
-   */
-  void execute() throws MongockException {
+  void execute() {
     if (!isEnabled()) {
       logger.info("Mongock is disabled. Exiting.");
       return;
@@ -142,7 +132,7 @@ public class Mongock implements InitializingBean, Closeable {
     mongoClient.close();
   }
 
-  private void executeMigration() throws MongockException {
+  private void executeMigration() {
     logger.info("Mongock starting the data migration sequence..");
 
     for (Class<?> changelogClass : service.fetchChangeLogs()) {
@@ -183,7 +173,7 @@ public class Mongock implements InitializingBean, Closeable {
   }
 
   private void executeChangeSetMethod(Method changeSetMethod, Object changeLogInstance)
-      throws IllegalAccessException, InvocationTargetException, MongockException {
+      throws IllegalAccessException, InvocationTargetException {
     if (changeSetMethod.getParameterTypes().length == 1
         && changeSetMethod.getParameterTypes()[0].equals(DB.class)) {
       logger.debug("method with DB argument");
