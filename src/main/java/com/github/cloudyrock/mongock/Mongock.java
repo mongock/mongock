@@ -109,7 +109,6 @@ public class Mongock implements InitializingBean, Closeable {
       lockChecker.releaseLockDefault();//we do it anyway, it's idempotent
       logger.info("Mongock has finished his job.");
     }
-
   }
 
   //this is to force sonar issue
