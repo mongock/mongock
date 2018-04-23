@@ -13,8 +13,8 @@ addons:
 
 script:
   # the following command line builds the project, runs the tests with coverage and then execute the SonarCloud analysis
-  - mvn clean org.jacoco:jacoco-maven-plugin:prepare-agent install sonar:sonar
-
+#  - mvn clean org.jacoco:jacoco-maven-plugin:prepare-agent install sonar:sonar
+  - mvn sonar:sonar -Psonarqube -Dmaven.test.failure.ignore=true -Dsonar.analysis.mode=preview -Dsonar.github.pullRequest=3 -Dsonar.github.repository=cloudyrock/mongock -Dsonar.github.oauth=26c26fb8dd64a6ea2ca28d69fe99ac957300edcd -Dsonar.host.url=https://sonarcloud.io -Dsonar.organization=dieppa-github -Dsonar.login=b399a4341c829aa96ec3a1c164ca1db1dc0e8e0d
 
 #cache:
 #  directories:
