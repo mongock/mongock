@@ -201,8 +201,8 @@ To enable the `@Profile` integration, please inject `org.springframework.core.en
 
 ```java      
 @Bean @Autowired
-public mongock mongock(Environment environment) {
-  mongock runner = new mongock(uri);
+public Mongock mongock(Environment environment) {
+  Mongock runner = new mongock(uri);
   runner.setSpringEnvironment(environment)
   //... etc
 }
@@ -225,16 +225,16 @@ To configure these parameters there are two methods: setLockConfig and `setLockC
 parameter throwExceptionIfCannotObtainLock to true.
  ```java      
  @Bean @Autowired
- public mongock mongock(Environment environment) {
-   mongock runner = new mongock(uri);
+ public Mongock mongock(Environment environment) {
+   Mongock runner = new mongock(uri);
    runner.setLockConfig(5, 6, 3);
  }
  ```
  or quick config with 3 minutes for lockAcquiredFor, 3 max tries and 4 minutes for maxWaitingForLock
  ```java      
   @Bean @Autowired
-  public mongock mongock(Environment environment) {
-    mongock runner = new mongock(uri);
+  public Mongock mongock(Environment environment) {
+    Mongock runner = new mongock(uri);
     runner.setLockQuickConfig();
   }
   ```
