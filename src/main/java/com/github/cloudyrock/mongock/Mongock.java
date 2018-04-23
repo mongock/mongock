@@ -91,6 +91,8 @@ public class Mongock implements InitializingBean, Closeable {
       return;
     }
 
+    Object o = getException();
+
     try {
       lockChecker.acquireLockDefault();
       executeMigration();
@@ -107,8 +109,21 @@ public class Mongock implements InitializingBean, Closeable {
       lockChecker.releaseLockDefault();//we do it anyway, it's idempotent
       logger.info("Mongock has finished his job.");
     }
-
   }
+
+  //this is to force sonar issue
+  Object ex;
+  private Object getException() {
+    if(ex == null) {
+      synchronized (this) {
+        if(ex == null) {
+          ex= new MongockException("");
+        }
+      }
+    }
+    return ex;
+  }
+
 
   /**
    * @return true if an execution is in progress, in any process.
