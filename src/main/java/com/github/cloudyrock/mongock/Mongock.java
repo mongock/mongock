@@ -37,11 +37,6 @@ public class Mongock implements InitializingBean, Closeable {
   private Jongo changelogJongo;
   private MongoTemplate changelogMongoTemplate;
 
-  /**
-   * <p>Constructor takes db.mongodb.MongoClient object as a parameter.
-   * </p>
-   * <p>For more details about <tt>MongoClient</tt> please see com.mongodb.MongoClient docs</p>
-   */
   Mongock(ChangeEntryRepository dao,
           MongoClient mongoClient,
           ChangeService changeService,
@@ -90,11 +85,6 @@ public class Mongock implements InitializingBean, Closeable {
     execute();
   }
 
-  /**
-   * Executing migration
-   *
-   * @throws MongockException exception
-   */
   void execute() throws MongockException {
     if (!isEnabled()) {
       logger.info("Mongock is disabled. Exiting.");

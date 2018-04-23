@@ -32,50 +32,99 @@ public class MongockBuilder {
   private MongoTemplate mongoTemplate = null;
   private Jongo jongo = null;
 
-  public MongockBuilder(MongoClient mongoClient) {
+
+  /**
+   * <p>Builder constructor takes db.mongodb.MongoClient, database name and changelog scan package as parameters.
+   * </p><p>For more details about <tt>MongoClient</tt> please see com.mongodb.MongoClient docs
+   * </p>
+   * @param mongoClient database connection client
+   * @param databaseName database name
+   * @param changeLogsScanPackage package path where the changelogs are located
+   * @see MongoClient
+   */
+  public MongockBuilder(MongoClient mongoClient, String databaseName, String changeLogsScanPackage) {
     this.mongoClient = mongoClient;
+    this.databaseName = databaseName;
+    this.changeLogsScanPackage = changeLogsScanPackage;
   }
 
+  /**
+   * <p>Changes the changelog collection name</p>
+   * <p>Be careful as changing the changelog collection name can make Mongock to undesirably run twice the same changelog</p>
+   * @param changeLogCollectionName name of the collection
+   * @return Mongock builder
+   */
   public MongockBuilder setChangeLogCollectionName(String changeLogCollectionName) {
     this.changeLogCollectionName = changeLogCollectionName;
     return this;
   }
 
+  /**
+   * <p>Changes the lock collection name</p>
+   * <p>Be careful as changing the lock collection name can make Mongock to run twice the same changelog and other
+   * undesirable scenarios</p>
+   * @param lockCollectionName name of the collection
+   * @return Mongock builder
+   */
   public MongockBuilder setLockCollectionName(String lockCollectionName) {
     this.lockCollectionName = lockCollectionName;
     return this;
   }
 
-  public MongockBuilder setChangeLogsScanPackage(String changeLogsScanPackage) {
-    this.changeLogsScanPackage = changeLogsScanPackage;
-    return this;
-  }
-
+  /**
+   * Sets pre-configured {@link MongoTemplate} instance to use by the changelogs
+   *
+   * @param mongoTemplate instance of the {@link MongoTemplate}
+   * @return Mongock builder
+   */
   public MongockBuilder setMongoTemplate(MongoTemplate mongoTemplate) {
     this.mongoTemplate = mongoTemplate;
     return this;
   }
 
+
+  /**
+   * Sets pre-configured {@link Jongo} instance to use by the changelogs
+   *
+   * @param jongo {@link Jongo} instance
+   * @return Mongock builder
+   */
   public MongockBuilder setJongo(Jongo jongo) {
     this.jongo = jongo;
     return this;
   }
 
-  public MongockBuilder setDatabaseName(String databaseName) {
-    this.databaseName = databaseName;
-    return this;
-  }
-
+  /**
+   * Feature which enables/disables throwing MongockException if the lock cannot be obtained
+   *
+   * @param throwExceptionIfCannotObtainLock Mongock will throw MongockException if lock can not be obtained
+   * @return Mongock builder
+   */
   public MongockBuilder setThrowExceptionIfCannotObtainLock(boolean throwExceptionIfCannotObtainLock) {
     this.throwExceptionIfCannotObtainLock = throwExceptionIfCannotObtainLock;
     return this;
   }
 
+
+  /**
+   * Feature which enables/disables execution
+   *
+   * @param enabled Migration process will run only if this option is set to true
+   * @return Mongock builder
+   */
   public MongockBuilder setEnabled(boolean enabled) {
     this.enabled = enabled;
     return this;
   }
 
+
+  /**
+   * Set Environment object for Spring Profiles (@Profile) integration
+   *
+   * @param springEnvironment org.springframework.core.env.Environment object to inject
+   * @return Mongock builder
+   * @see org.springframework.context.annotation.Profile
+   */
   public MongockBuilder setSpringEnvironment(Environment springEnvironment) {
     this.springEnvironment = springEnvironment;
     return this;
@@ -107,7 +156,7 @@ public class MongockBuilder {
     return this;
   }
 
-  public Mongock build() throws MongockException {
+  public Mongock build() {
     validateMandatoryFields();
 
     TimeUtils timeUtils = new TimeUtils();

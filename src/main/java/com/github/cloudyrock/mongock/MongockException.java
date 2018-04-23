@@ -3,7 +3,7 @@ package com.github.cloudyrock.mongock;
 /**
  * @author abelski
  */
-public class MongockException extends Exception {
+public class MongockException extends RuntimeException {
   MongockException(String message) {
     super(message);
   }
