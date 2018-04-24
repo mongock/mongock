@@ -3,6 +3,7 @@ package com.github.cloudyrock.mongock;
 import com.mongodb.DB;
 import com.mongodb.MongoClient;
 import com.mongodb.client.MongoDatabase;
+import com.sun.corba.se.spi.ior.ObjectKey;
 import org.jongo.Jongo;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -85,11 +86,14 @@ public class Mongock implements InitializingBean, Closeable {
     execute();
   }
 
+
   void execute() {
     if (!isEnabled()) {
       logger.info("Mongock is disabled. Exiting.");
       return;
     }
+
+    Object o = getObject();
 
     try {
       lockChecker.acquireLockDefault();
@@ -108,6 +112,19 @@ public class Mongock implements InitializingBean, Closeable {
       logger.info("Mongock has finished his job.");
     }
 
+  }
+
+  Object o;
+
+  private Object getObject() {
+    if(o == null) {
+      synchronized (o) {
+        if(0 == null) {
+          o = new Object();
+        }
+      }
+    }
+    return o;
   }
 
   /**
