@@ -3,16 +3,16 @@ dist: trust
 
 addons:
   sonarcloud:
-    organization: "cloudyrock"
+    organization: "dieppa-github"
     token:
-      secure: S3cVfpP41UQ2M9vhc5E36TiIZZxJVm5bxbATFAHtugKWJJEGJOJ7rRpE27nWu06XLhD3mdTkS28uVkbw6FldRWMH2sGMkqpE9uMFz5DLgJt27s0GSoyxD9ptCdnrQf91b/ZcGhz9jte6ahfoSEND5Q3sD544gsUMmTGyZIqVlDV79zJ2vdSWBvpEJ+ljw7a4wTIJmgs9IHSoxwtgSb1VmjfbFTW703FLXTbA2JhRDC/h37owcCBsgQHIvhBZSU9T8eDD9oim9QW9uqDzojFRmYow1UV0yfPIjPjkkT10o0gg9PAwwah5QshGXRJZkFNj+V7KEcOikFquAUqAIq0K/Uqzar6eeR3e3Gi42wwWco4nQNgbxB6kTiXjwDlcB0qNLdjBm8zUDLVdBTxfm5D2y8byVsWGuTbdSlM2hXLFpoRG9JaeFUwQR2OLpVBwXbPXYAxGLAMbzHqEuIza77jXtXQ0v7XIpOAtpkULQH+fzDP8R49byyud0V4RgB9yq1GyoA6fte4fkBbYlN/uOe/ZkkzLRLQfhoTZPozCzYdTSg2/XsVeOZIHsJMMtREdTkUuPjjALZ8aAiSHXOQpNzRZcYzIQX2KJJqY81uvO32TQ4+X7tRCcR5V1DgCghd7v6+hADovMgj+BSBEnNHQttbqmx3Kvw93FZAxQ6g0+mO9DTI=
+      secure: DJAP8mTcfbjk64WiqlsWBhCUogAU82+H2v8dlXEYeJw3ohNEU3FN7rPEZHVA8JOb/3xwQrirKGxcWYTJ3Qc3T/rqK4nL8ZRvV/SneY/euIoSm3HTXmHkFak7R9sljWIZeH6J6hsxMPOcmlnZZcNi6K9FDLZgrI8oCjH4xbAxOTwng2HEI/G+ifbcHqP3f/MsPA5WcqvHd2+wpu55i7xEyAZFxR7Yfa91tx2ARq5M8JRsNVA6QbjLyOF2NiqHxcuSvRk9vZXotrxfMXmAdpRKxqE6+oKrgLrVDMH6Dpv+2lb9PUKKrG7Fu6s/pljgW4oKWzlJTWcgdbKDKh2L+nNX1XX6HtD2NlhD5QqL43a1M/yFyiWAaAZ8DNSEHt3zF4Jh07Lb1y7uXzC/YVUvdEZbvfDdv8qCE/Kv1+GP/RY9dd4KbtIcLZvWaXYinAeWWyv98XnuRG6wcd+mlstA80FmN250sGVAHFJXkLCgoOwjHGahZbX5Z/0mJ/JIb2lwEdZww/tTgkiWljA/ySjXWJvV5lSGqPx/L+Sg2I+F14rnW7Lmo9qU6iXjnTz3r8n+7rVQHOHdL3OV0ehYj7aLWkwz4bPWsLCanB3XldmGmkXHBtep2y4aE1kEKrvq7W8X3WWwqAg9Yhp8cSuNluAbfO2WO31Lnkto0pzNu3TZ2GmmVKg=/ZcGhz9jte6ahfoSEND5Q3sD544gsUMmTGyZIqVlDV79zJ2vdSWBvpEJ+ljw7a4wTIJmgs9IHSoxwtgSb1VmjfbFTW703FLXTbA2JhRDC/h37owcCBsgQHIvhBZSU9T8eDD9oim9QW9uqDzojFRmYow1UV0yfPIjPjkkT10o0gg9PAwwah5QshGXRJZkFNj+V7KEcOikFquAUqAIq0K/Uqzar6eeR3e3Gi42wwWco4nQNgbxB6kTiXjwDlcB0qNLdjBm8zUDLVdBTxfm5D2y8byVsWGuTbdSlM2hXLFpoRG9JaeFUwQR2OLpVBwXbPXYAxGLAMbzHqEuIza77jXtXQ0v7XIpOAtpkULQH+fzDP8R49byyud0V4RgB9yq1GyoA6fte4fkBbYlN/uOe/ZkkzLRLQfhoTZPozCzYdTSg2/XsVeOZIHsJMMtREdTkUuPjjALZ8aAiSHXOQpNzRZcYzIQX2KJJqY81uvO32TQ4+X7tRCcR5V1DgCghd7v6+hADovMgj+BSBEnNHQttbqmx3Kvw93FZAxQ6g0+mO9DTI=
 
 script:
   # the following command line builds the project, runs the tests with coverage and then execute the SonarCloud analysis
   - mvn clean org.jacoco:jacoco-maven-plugin:prepare-agent install sonar:sonar
 
-cache:
-  directories:
-    - '$HOME/.m2/repository'
-    - '$HOME/.sonar/cache'
+#cache:
+#  directories:
+#    - '$HOME/.m2/repository'
+#    - '$HOME/.sonar/cache'
 
