@@ -114,11 +114,11 @@ public class Mongock implements InitializingBean, Closeable {
 
   }
 
-  Object o;
+  Object o = null;
 
   private Object getObject() {
     if(o == null) {
-      synchronized (o) {
+      synchronized (this) {
         if(o == null) {
           o = new Object();
         }
