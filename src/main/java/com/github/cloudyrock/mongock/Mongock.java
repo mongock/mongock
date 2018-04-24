@@ -110,6 +110,8 @@ public class Mongock implements InitializingBean, Closeable {
 
   }
 
+
+
   /**
    * @return true if an execution is in progress, in any process.
    */
