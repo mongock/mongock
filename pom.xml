@@ -112,33 +112,6 @@
   <build>
     <plugins>
       <plugin>
-        <groupId>org.jacoco</groupId>
-        <artifactId>jacoco-maven-plugin</artifactId>
-        <!-- newer version do not work with Sonar -->
-        <version>0.7.4.201502262128</version>
-      </plugin>
-      <plugin>
-        <groupId>org.pitest</groupId>
-        <artifactId>pitest-maven</artifactId>
-        <version>1.1.6</version>
-        <configuration>
-          <targetClasses>
-            <targetClass>com.github.cloudyrock.mongock*</targetClass>
-          </targetClasses>
-          <targetTests>
-            <targetTest>com.github.cloudyrock.mongock**Test</targetTest>
-          </targetTests>
-          <outputFormats>
-            <!-- for Sonar -->
-            <outputFormat>XML</outputFormat>
-            <outputFormat>HTML</outputFormat>
-          </outputFormats>
-          <!-- for Sonar -->
-          <timestampedReports>false</timestampedReports>
-        </configuration>
-      </plugin>
-
-      <plugin>
         <artifactId>maven-deploy-plugin</artifactId>
         <version>2.8.2</version>
         <executions>
@@ -234,42 +207,6 @@
         </plugins>
       </build>
     </profile>
-
-
-    <!--<profile>-->
-      <!--<id>sonarqube</id>-->
-      <!--<build>-->
-        <!--<plugins>-->
-          <!--&lt;!&ndash; generate test coverage report &ndash;&gt;-->
-          <!--<plugin>-->
-            <!--<groupId>org.jacoco</groupId>-->
-            <!--<artifactId>jacoco-maven-plugin</artifactId>-->
-            <!--<executions>-->
-              <!--<execution>-->
-                <!--<goals>-->
-                  <!--<goal>prepare-agent</goal>-->
-                  <!--<goal>prepare-agent-integration</goal>-->
-                <!--</goals>-->
-              <!--</execution>-->
-            <!--</executions>-->
-          <!--</plugin>-->
-          <!--&lt;!&ndash; generate mutation coverage report &ndash;&gt;-->
-          <!--<plugin>-->
-            <!--<groupId>org.pitest</groupId>-->
-            <!--<artifactId>pitest-maven</artifactId>-->
-            <!--<executions>-->
-              <!--<execution>-->
-                <!--<phase>verify</phase>-->
-                <!--<goals>-->
-                  <!--<goal>mutationCoverage</goal>-->
-                <!--</goals>-->
-              <!--</execution>-->
-            <!--</executions>-->
-          <!--</plugin>-->
-        <!--</plugins>-->
-      <!--</build>-->
-    <!--</profile>-->
-
   </profiles>
 
 </project>
