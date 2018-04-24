@@ -157,6 +157,7 @@ public class Mongock implements InitializingBean, Closeable {
 
   private void executeIfNewOrRunAlways(Object changelogInstance, Method changesetMethod, ChangeEntry changeEntry) throws IllegalAccessException, InvocationTargetException {
     try {
+
       if (dao.isNewChange(changeEntry)) {
         executeChangeSetMethod(changesetMethod, changelogInstance);
         dao.save(changeEntry);
@@ -209,6 +210,9 @@ public class Mongock implements InitializingBean, Closeable {
           " has wrong arguments list. Please see docs for more info!");
     }
   }
+
+
+
 
 
 }
