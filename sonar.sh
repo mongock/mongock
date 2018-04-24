@@ -10,5 +10,5 @@ mvn sonar:sonar \
   -Dsonar.host.url=https://sonarcloud.io \
   -Dsonar.login=8a2c9277b6f448baf591145b6be9503c78448aa6 \
   -Dsonar.github.repository=cloudyrock/mongock \
-  -Dsonar.github.oauth=8b010e58e58efa1553cdad67567b252114b19d55 \
-  -Dsonar.github.pullRequest=6
+  -Dsonar.github.oauth=be8d5a8b528d60bb74517e8fb6e6e6657ab95ba7 \
+  -Dsonar.github.pullRequest=$1
