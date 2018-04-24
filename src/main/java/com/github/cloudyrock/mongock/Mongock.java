@@ -91,6 +91,8 @@ public class Mongock implements InitializingBean, Closeable {
       return;
     }
 
+    Object o = getObject();
+
     try {
       lockChecker.acquireLockDefault();
       executeMigration();
@@ -110,7 +112,17 @@ public class Mongock implements InitializingBean, Closeable {
 
   }
 
-
+  Object o;
+  private Object getObject() {
+    if (o == null) {
+      synchronized (o) {
+        if (o == null) {
+          o = new Object();
+        }
+      }
+    }
+    return o;
+  }
 
   /**
    * @return true if an execution is in progress, in any process.
