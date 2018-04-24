@@ -158,7 +158,6 @@ public class Mongock implements InitializingBean, Closeable {
   private void executeIfNewOrRunAlways(Object changelogInstance, Method changesetMethod, ChangeEntry changeEntry) throws IllegalAccessException, InvocationTargetException {
     try {
 
-      Object o = getObject();
       if (dao.isNewChange(changeEntry)) {
         executeChangeSetMethod(changesetMethod, changelogInstance);
         dao.save(changeEntry);
@@ -212,17 +211,8 @@ public class Mongock implements InitializingBean, Closeable {
     }
   }
 
-  Object object;
-  private Object getObject() {
-    if (object == null) {
-      synchronized (this) {
-        if (object == null) {
-          object = new Object();
-        }
-      }
-    }
 
-    return object;
 
-  }
+
+
 }
