@@ -2,7 +2,7 @@
 #$1 -> PR number
 
 # It uses token from Github that only has access to comment and update the PR's status
-mvn sonar:sonar \
+mvn clean org.jacoco:jacoco-maven-plugin:prepare-agent sonar:sonar \
         -Psonarqube \
         -Dmaven.test.failure.ignore=true \
         -Dsonar.analysis.mode=preview \
