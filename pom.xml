@@ -9,7 +9,7 @@
 
   <groupId>com.github.cloudyrock</groupId>
   <artifactId>mongock</artifactId>
-  <version>1.10-SNAPSHOT</version>
+  <version>1.11</version>
 
   <licenses>
     <license>
@@ -23,7 +23,7 @@
     <connection>scm:git:git@github.com:cloudyrock/mongock.git</connection>
     <developerConnection>scm:git:git@github.com:cloudyrock/mongock.git</developerConnection>
     <url>https://github.com/cloudyrock/mongock</url>
-    <tag>mongock-1.5</tag>
+    <tag>mongock-1.11</tag>
   </scm>
   <developers>
     <developer>
