@@ -33,7 +33,6 @@ class LockRepository extends MongoRepository {
    *                                  another owner or cannot insert/update the lock for any other reason
    */
   void insertUpdate(LockEntry newLock)  {
-    verifyDbConnectionAndEnsureIndex();
     insertUpdate(newLock, false);
   }
 
@@ -45,7 +44,6 @@ class LockRepository extends MongoRepository {
    *                                  the lock for any other reason
    */
   void updateIfSameOwner(LockEntry newLock)  {
-    verifyDbConnectionAndEnsureIndex();
     insertUpdate(newLock, true);
   }
 
@@ -56,7 +54,6 @@ class LockRepository extends MongoRepository {
    * @return LockEntry
    */
   LockEntry findByKey(String lockKey) {
-    verifyDbConnectionAndEnsureIndex();
     Document result = collection.find(new Document().append(LockEntry.KEY_FIELD, lockKey)).first();
     if (result != null) {
       return new LockEntry(
@@ -76,7 +73,6 @@ class LockRepository extends MongoRepository {
    * @param owner   lock owner
    */
   void removeByKeyAndOwner(String lockKey, String owner) {
-    verifyDbConnectionAndEnsureIndex();
     collection
         .deleteMany(Filters.and(Filters.eq(LockEntry.KEY_FIELD, lockKey), Filters.eq(LockEntry.OWNER_FIELD, owner)));
   }
@@ -117,15 +113,6 @@ class LockRepository extends MongoRepository {
     return Filters
         .and(Filters.eq(LockEntry.KEY_FIELD, lockKey), Filters.eq(LockEntry.STATUS_FIELD, LockStatus.LOCK_HELD.name()),
             orCond);
-  }
-
-  @Override
-  void verifyDbConnectionAndEnsureIndex() {
-    try {
-      super.verifyDbConnectionAndEnsureIndex();
-    } catch (MongockException ex) {
-      throw new LockPersistenceException(ex);
-    }
   }
 
 }

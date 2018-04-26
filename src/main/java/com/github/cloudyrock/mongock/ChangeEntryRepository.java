@@ -17,14 +17,12 @@ class ChangeEntryRepository extends MongoRepository {
   }
 
   boolean isNewChange(ChangeEntry changeEntry) throws MongockException {
-    verifyDbConnectionAndEnsureIndex();
     Document entry = collection.find(buildSearchQueryDBObject(changeEntry)).first();
 
     return entry == null;
   }
 
   void save(ChangeEntry changeEntry) throws MongockException {
-    verifyDbConnectionAndEnsureIndex();
     collection.insertOne(changeEntry.buildFullDBObject());
   }
 

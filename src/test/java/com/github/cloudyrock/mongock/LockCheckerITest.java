@@ -31,9 +31,10 @@ public class LockCheckerITest {
   @Before
   public void setUp() {
     db = new Fongo(TEST_SERVER).getDatabase(DB_NAME);
-    LockRepository dao = new LockRepository(LOCK_COLLECTION_NAME, db);
+    LockRepository repository = new LockRepository(LOCK_COLLECTION_NAME, db);
+    repository.ensureIndex();
     TimeUtils timeUtils = new TimeUtils();
-    checker = new LockChecker(dao, timeUtils)
+    checker = new LockChecker(repository, timeUtils)
         .setLockAcquiredForMillis(lockActiveMillis)
         .setLockMaxTries(lockMaxTries)
         .setLockMaxWaitMillis(maxWaitMillis);

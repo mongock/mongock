@@ -27,27 +27,20 @@ abstract class MongoRepository {
     this.uniqueFields = uniqueFields;
   }
 
-  void verifyDbConnectionAndEnsureIndex() throws MongockException {
-    ensureChangeLogCollectionIndex();
-  }
-
-  private void ensureChangeLogCollectionIndex() {
+  synchronized void ensureIndex() {
     if (!this.ensuredCollectionIndex) {
-      synchronized (this) {
-        if (!this.ensuredCollectionIndex) {
-          final Document index = findRequiredUniqueIndex();
-          if (index == null) {
-            createRequiredUniqueIndex();
-            logger.debug("Index in collection {} was created", getCollectionName());
-          } else if (!isUniqueIndex(index)) {
-            dropIndex(index);
-            createRequiredUniqueIndex();
-            logger.debug("Index in collection {} was recreated", getCollectionName());
-          }
-          this.ensuredCollectionIndex = true;
-        }
+      final Document index = findRequiredUniqueIndex();
+      if (index == null) {
+        createRequiredUniqueIndex();
+        logger.debug("Index in collection {} was created", getCollectionName());
+      } else if (!isUniqueIndex(index)) {
+        dropIndex(index);
+        createRequiredUniqueIndex();
+        logger.debug("Index in collection {} was recreated", getCollectionName());
       }
+      this.ensuredCollectionIndex = true;
     }
+
   }
 
   void createRequiredUniqueIndex() {

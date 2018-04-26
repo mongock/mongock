@@ -36,6 +36,7 @@ public class ChangeEntryRepositoryTest {
 
     // when
     ChangeEntryRepository dao = spy(new ChangeEntryRepository(CHANGELOG_COLLECTION_NAME, db));
+    dao.ensureIndex();
     doReturn(null).when(dao).findRequiredUniqueIndex();
 
     dao.isNewChange(new ChangeEntry("changeId", "author", new Date(), "class", "method"));
@@ -65,24 +66,6 @@ public class ChangeEntryRepositoryTest {
     verify(mongoRepositoryMock, times(0)).createRequiredUniqueIndex();
     // and not
     verify(mongoRepositoryMock, times(0)).dropIndex(new Document());
-  }
-
-  @Test
-  public void shouldRecreateChangeIdAuthorIndexIfFoundNotUnique() throws MongockException {
-    // given
-    MongoDatabase db = new Fongo(TEST_SERVER).getDatabase(DB_NAME);
-    ChangeEntryRepository dao = spy(new ChangeEntryRepository(CHANGELOG_COLLECTION_NAME, db));
-    doReturn(new Document()).when(dao).findRequiredUniqueIndex();
-    doReturn(false).when(dao).isUniqueIndex(any(Document.class));
-    doNothing().when(dao).dropIndex(any(Document.class));
-
-    // when
-    dao.isNewChange(new ChangeEntry("changeId", "author", new Date(), "class", "method"));
-
-    //then
-    verify(dao, times(1)).dropIndex(any(Document.class));
-    // and
-    verify(dao, times(1)).createRequiredUniqueIndex();
   }
 
 }

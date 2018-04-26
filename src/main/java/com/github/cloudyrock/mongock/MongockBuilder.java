@@ -165,6 +165,7 @@ public class MongockBuilder {
 
     //LockChecker
     LockRepository lockRepository = new LockRepository(lockCollectionName, database);
+    lockRepository.ensureIndex();
 
     final LockChecker lockChecker = new LockChecker(lockRepository, timeUtils)
         .setLockAcquiredForMillis(timeUtils.minutesToMillis(lockAcquiredForMinutes))
@@ -187,6 +188,7 @@ public class MongockBuilder {
 
     //ChangeService
     ChangeEntryRepository changeEntryRepository = new ChangeEntryRepository(changeLogCollectionName, database);
+    changeEntryRepository.ensureIndex();
 
     ChangeService changeService = new ChangeService();
     changeService.setChangeLogsBasePackage(changeLogsScanPackage);
@@ -204,14 +206,14 @@ public class MongockBuilder {
         );
   }
 
-  Mongock build(ChangeEntryRepository dao,
+  Mongock build(ChangeEntryRepository changeEntryRepository,
                 ChangeService changeService,
                 LockChecker lockChecker,
                 MongoDatabase mongoDatabaseProxy,
                 DB dbProxy,
                 MongoTemplate mongoTemplateProxy,
                 Jongo jongoProxy) {
-    Mongock mongock = new Mongock(dao, mongoClient,  changeService, lockChecker);
+    Mongock mongock = new Mongock(changeEntryRepository, mongoClient,  changeService, lockChecker);
     mongock.setChangelogMongoDatabase(mongoDatabaseProxy);
     mongock.setChangelogDb(dbProxy);
     mongock.setChangelogMongoTemplate(mongoTemplateProxy);

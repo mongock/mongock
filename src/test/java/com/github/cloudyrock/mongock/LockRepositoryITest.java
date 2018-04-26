@@ -34,6 +34,7 @@ public class LockRepositoryITest {
   public void setUp() {
     db = new Fongo(TEST_SERVER).getDatabase(DB_NAME);
     repository = new LockRepository(LOCK_COLLECTION_NAME, db);
+    repository.ensureIndex();
   }
 
   @Test

@@ -71,7 +71,6 @@ public class MongockTestBase {
     TestUtils.setField(changeEntryRepository, "indexDao", indexDao);
     TestUtils.setField(changeEntryRepository, "changelogCollectionName", CHANGELOG_COLLECTION_NAME);
     TestUtils.setField(changeEntryRepository, "collection", fakeMongoDatabase.getCollection(CHANGELOG_COLLECTION_NAME));
-    doNothing().when(changeEntryRepository).verifyDbConnectionAndEnsureIndex();
 
     changeService.setChangeLogsBasePackage(MongockTestResource.class.getPackage().getName());
     mongoClient = MongockTestBase.getFakeMongoClient(fakeMongoDatabase, fakeDb);
