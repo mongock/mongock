@@ -36,7 +36,7 @@ public class ChangeEntryRepositoryTest {
 
     // when
     ChangeEntryRepository dao = spy(new ChangeEntryRepository(CHANGELOG_COLLECTION_NAME, db));
-    doReturn(null).when(dao).findRequiredChangeAndAuthorIndex();
+    doReturn(null).when(dao).findRequiredUniqueIndex();
 
     dao.isNewChange(new ChangeEntry("changeId", "author", new Date(), "class", "method"));
 
@@ -55,8 +55,8 @@ public class ChangeEntryRepositoryTest {
     when(mongoClient.getDatabase(anyString())).thenReturn(db);
 
     MongoRepository mongoRepositoryMock = mock(MongoRepository.class);
-    when(mongoRepositoryMock.findRequiredChangeAndAuthorIndex()).thenReturn(new Document());
-    when(mongoRepositoryMock.isUnique(any(Document.class))).thenReturn(true);
+    when(mongoRepositoryMock.findRequiredUniqueIndex()).thenReturn(new Document());
+    when(mongoRepositoryMock.isUniqueIndex(any(Document.class))).thenReturn(true);
 
     // when
     new ChangeEntryRepository(CHANGELOG_COLLECTION_NAME, mongoClient.getDatabase(DB_NAME));
@@ -72,8 +72,8 @@ public class ChangeEntryRepositoryTest {
     // given
     MongoDatabase db = new Fongo(TEST_SERVER).getDatabase(DB_NAME);
     ChangeEntryRepository dao = spy(new ChangeEntryRepository(CHANGELOG_COLLECTION_NAME, db));
-    doReturn(new Document()).when(dao).findRequiredChangeAndAuthorIndex();
-    doReturn(false).when(dao).isUnique(any(Document.class));
+    doReturn(new Document()).when(dao).findRequiredUniqueIndex();
+    doReturn(false).when(dao).isUniqueIndex(any(Document.class));
     doNothing().when(dao).dropIndex(any(Document.class));
 
     // when

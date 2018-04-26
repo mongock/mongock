@@ -1,5 +1,6 @@
 package com.github.cloudyrock.mongock;
 
+import com.mongodb.client.ListIndexesIterable;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
 import com.mongodb.client.model.IndexOptions;
@@ -16,20 +17,17 @@ abstract class MongoRepository {
   private static final Logger logger = LoggerFactory.getLogger("MongoRepository");
   final MongoCollection<Document> collection;
   private final String[] uniqueFields;
-  private MongoDatabase mongoDatabase;
+  private final String fullCollectionName;
   private boolean ensuredCollectionIndex = false;
 
   MongoRepository(MongoDatabase mongoDatabase, String collectionName, String[] uniqueFields) {
-    this.mongoDatabase = mongoDatabase;
     this.collection = mongoDatabase.getCollection(collectionName);
+    this.fullCollectionName =
+        collection.getNamespace().getDatabaseName() + "." + collection.getNamespace().getCollectionName();
     this.uniqueFields = uniqueFields;
   }
 
   void verifyDbConnectionAndEnsureIndex() throws MongockException {
-    if (mongoDatabase == null) {
-      throw new MongockException("Database is not connected. Mongock has thrown an unexpected error",
-          new NullPointerException());
-    }
     ensureChangeLogCollectionIndex();
   }
 
@@ -37,14 +35,14 @@ abstract class MongoRepository {
     if (!this.ensuredCollectionIndex) {
       synchronized (this) {
         if (!this.ensuredCollectionIndex) {
-          Document index = findRequiredChangeAndAuthorIndex();
+          final Document index = findRequiredUniqueIndex();
           if (index == null) {
             createRequiredUniqueIndex();
-            logger.debug("Index in collection {} was created", getColletionName() );
-          } else if (!isUnique(index)) {
+            logger.debug("Index in collection {} was created", getCollectionName());
+          } else if (!isUniqueIndex(index)) {
             dropIndex(index);
             createRequiredUniqueIndex();
-            logger.debug("Index in collection {} was recreated", getColletionName());
+            logger.debug("Index in collection {} was recreated", getCollectionName());
           }
           this.ensuredCollectionIndex = true;
         }
@@ -56,34 +54,36 @@ abstract class MongoRepository {
     collection.createIndex(getIndexDocument(uniqueFields), new IndexOptions().unique(true));
   }
 
-  Document findRequiredChangeAndAuthorIndex() {
-    MongoCollection<Document> indexes = mongoDatabase.getCollection("system.indexes");
-
-    return indexes.find(new Document()
-        .append("ns", mongoDatabase.getName() + "." + getColletionName())
-        .append("key", getIndexDocument(uniqueFields))
-    ).first();
+  Document findRequiredUniqueIndex() {
+    final ListIndexesIterable<Document> indexes = collection.listIndexes();
+    for (Document index : indexes) {
+      if (isUniqueIndex(index)) {
+        return index;
+      }
+    }
+    return null;
   }
 
-  private String getColletionName() {
+  private String getCollectionName() {
     return collection.getNamespace().getCollectionName();
   }
 
   private Document getIndexDocument(String[] uniqueFields) {
-    Document indexDocument = new Document();
+    final Document indexDocument = new Document();
     for (String field : uniqueFields) {
       indexDocument.append(field, 1);
     }
     return indexDocument;
   }
 
-  boolean isUnique(Document index) {
-    Object unique = index.get("unique");
-    if (unique != null && unique instanceof Boolean) {
-      return (Boolean) unique;
-    } else {
-      return false;
+  boolean isUniqueIndex(Document index) {
+    final Document key = (Document) index.get("key");
+    for (String uniqueField : uniqueFields) {
+      if (key.getInteger(uniqueField, 0) != 1) {
+        return false;
+      }
     }
+    return fullCollectionName.equals(index.getString("ns")) && index.getBoolean("unique", false);
   }
 
   void dropIndex(Document index) {
