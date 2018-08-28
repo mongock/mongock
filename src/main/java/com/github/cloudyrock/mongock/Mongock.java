@@ -85,7 +85,7 @@ public class Mongock implements InitializingBean, Closeable {
     execute();
   }
 
-  void execute() {
+  public void execute() {
     if (!isEnabled()) {
       logger.info("Mongock is disabled. Exiting.");
       return;
