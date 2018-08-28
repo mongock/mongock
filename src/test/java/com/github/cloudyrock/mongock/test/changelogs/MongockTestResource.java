@@ -7,7 +7,7 @@ import com.mongodb.client.MongoDatabase;
 import org.jongo.Jongo;
 
 /**
- * @author lstolowski
+ *
  * @since 27/07/2014
  */
 @ChangeLog(order = "1")

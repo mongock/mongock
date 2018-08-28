@@ -7,7 +7,7 @@ import static com.github.cloudyrock.mongock.ChangeEntry.KEY_AUTHOR;
 import static com.github.cloudyrock.mongock.ChangeEntry.KEY_CHANGEID;
 
 /**
- * @author lstolowski
+ *
  * @since 27/07/2014
  */
 class ChangeEntryRepository extends MongoRepository {

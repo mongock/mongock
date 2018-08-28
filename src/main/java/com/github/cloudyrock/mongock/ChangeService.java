@@ -23,7 +23,7 @@ import static org.springframework.util.StringUtils.hasText;
 /**
  * Utilities to deal with reflections and annotations
  *
- * @author lstolowski
+ *
  * @since 27/07/2014
  */
 class ChangeService {

@@ -5,7 +5,7 @@ import com.github.cloudyrock.mongock.ChangeSet;
 import org.springframework.context.annotation.Profile;
 
 /**
- * @author lstolowski
+ *
  * @since 2014-09-17
  */
 @ChangeLog

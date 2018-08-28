@@ -12,7 +12,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 /**
- * @author dieppa
+ *
  * @since 04/04/2018
  */
 public class ProxyMethodInterceptorTest {

@@ -5,7 +5,7 @@ import org.springframework.core.env.Environment;
 /**
  * Mock for Spring environment
  *
- * @author lstolowski
+ *
  * @since 2014-09-19
  */
 public class EnvironmentMock implements Environment {

@@ -16,7 +16,7 @@ import static org.mockito.Mockito.when;
 /**
  * Tests for Spring profiles integration
  *
- * @author lstolowski
+ *
  * @since 2014-09-17
  */
 @RunWith(MockitoJUnitRunner.class)

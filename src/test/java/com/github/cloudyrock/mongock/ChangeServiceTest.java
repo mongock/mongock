@@ -13,7 +13,7 @@ import static junit.framework.Assert.assertFalse;
 import static junit.framework.Assert.assertTrue;
 
 /**
- * @author lstolowski
+ *
  * @since 27/07/2014
  */
 public class ChangeServiceTest {

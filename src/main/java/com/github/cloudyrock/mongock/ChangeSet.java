@@ -8,7 +8,7 @@ import java.lang.annotation.Target;
 /**
  * Set of changes to be added to the DB. Many changesets are included in one changelog.
  *
- * @author lstolowski
+ *
  * @see ChangeLog
  * @since 27/07/2014
  */

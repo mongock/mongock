@@ -5,7 +5,7 @@ import com.github.cloudyrock.mongock.ChangeSet;
 import org.springframework.data.mongodb.core.MongoTemplate;
 
 /**
- * @author abelski
+ *
  */
 @ChangeLog
 public class SpringDataChangelog {

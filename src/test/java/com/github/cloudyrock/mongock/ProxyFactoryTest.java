@@ -10,7 +10,7 @@ import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.mock;
 
 /**
- * @author dieppa
+ *
  * @since 04/04/2018
  */
 public class ProxyFactoryTest {

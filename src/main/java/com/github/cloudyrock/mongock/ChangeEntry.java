@@ -8,7 +8,7 @@ import java.util.Date;
  * Entry in the changes collection log
  * Type: entity class.
  *
- * @author lstolowski
+ *
  * @since 27/07/2014
  */
 class ChangeEntry {

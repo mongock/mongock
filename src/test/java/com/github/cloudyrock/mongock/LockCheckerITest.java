@@ -14,7 +14,7 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 
 /**
- * @author dieppa
+ *
  * @since 04/04/2018
  */
 public class LockCheckerITest {

@@ -18,14 +18,14 @@ import java.util.List;
 /**
  * Mongock runner
  *
- * @author lstolowski
+ *
  * @since 26/07/2014
  */
 public class Mongock implements InitializingBean, Closeable {
   private static final Logger logger = LoggerFactory.getLogger(Mongock.class);
 
-  private final ChangeEntryRepository dao;
-  private final ChangeService service;
+  private final ChangeEntryRepository changeEntryRepository;
+  private final ChangeService changeService;
   private final LockChecker lockChecker;
   private final MongoClient mongoClient;
 
@@ -37,13 +37,13 @@ public class Mongock implements InitializingBean, Closeable {
   private Jongo changelogJongo;
   private MongoTemplate changelogMongoTemplate;
 
-  Mongock(ChangeEntryRepository dao,
+  Mongock(ChangeEntryRepository changeEntryRepository,
           MongoClient mongoClient,
           ChangeService changeService,
           LockChecker lockChecker) {
-    this.dao = dao;
+    this.changeEntryRepository = changeEntryRepository;
     this.mongoClient = mongoClient;
-    this.service = changeService;
+    this.changeService = changeService;
     this.lockChecker = lockChecker;
   }
 
@@ -135,14 +135,14 @@ public class Mongock implements InitializingBean, Closeable {
   private void executeMigration() {
     logger.info("Mongock starting the data migration sequence..");
 
-    for (Class<?> changelogClass : service.fetchChangeLogs()) {
+    for (Class<?> changelogClass : changeService.fetchChangeLogs()) {
 
       Object changelogInstance;
       try {
-        changelogInstance = service.createInstance(changelogClass);
-        List<Method> changesetMethods = service.fetchChangeSets(changelogInstance.getClass());
+        changelogInstance = changeService.createInstance(changelogClass);
+        List<Method> changesetMethods = changeService.fetchChangeSets(changelogInstance.getClass());
         for (Method changesetMethod : changesetMethods) {
-          executeIfNewOrRunAlways(changelogInstance, changesetMethod, service.createChangeEntry(changesetMethod));
+          executeIfNewOrRunAlways(changelogInstance, changesetMethod, changeService.createChangeEntry(changesetMethod));
         }
 
       } catch (NoSuchMethodException | IllegalAccessException | InstantiationException e) {
@@ -157,11 +157,11 @@ public class Mongock implements InitializingBean, Closeable {
 
   private void executeIfNewOrRunAlways(Object changelogInstance, Method changesetMethod, ChangeEntry changeEntry) throws IllegalAccessException, InvocationTargetException {
     try {
-      if (dao.isNewChange(changeEntry)) {
+      if (changeEntryRepository.isNewChange(changeEntry)) {
         executeChangeSetMethod(changesetMethod, changelogInstance);
-        dao.save(changeEntry);
+        changeEntryRepository.save(changeEntry);
         logger.info("{} applied", changeEntry );
-      } else if (service.isRunAlwaysChangeSet(changesetMethod)) {
+      } else if (changeService.isRunAlwaysChangeSet(changesetMethod)) {
         executeChangeSetMethod(changesetMethod, changelogInstance);
         logger.info("{} re-applied", changeEntry );
       } else {

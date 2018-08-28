@@ -6,7 +6,7 @@ import org.springframework.cglib.proxy.NoOp;
 import java.io.Serializable;
 
 /**
- * @author dieppa
+ *
  * @since 04/04/2018
  */
 class SerializableNoOp implements NoOp, Serializable {
