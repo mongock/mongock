@@ -5,7 +5,7 @@ import java.util.Date;
 /**
  * Class to manage time operation
  *
- * @author dieppa
+ *
  * @since 04/04/2018
  */
 class TimeUtils {

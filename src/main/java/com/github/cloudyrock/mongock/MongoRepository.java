@@ -9,7 +9,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * @author Dieppa
+ *
  * @since 20.04.2018
  */
 abstract class MongoRepository {

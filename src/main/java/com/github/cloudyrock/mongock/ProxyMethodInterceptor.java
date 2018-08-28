@@ -9,7 +9,7 @@ import java.util.Collections;
 import java.util.Set;
 
 /**
- * @author dieppa
+ *
  * @since 04/04/2018
  */
 class ProxyMethodInterceptor implements MethodInterceptor {

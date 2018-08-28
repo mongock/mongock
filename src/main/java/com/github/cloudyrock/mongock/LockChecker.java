@@ -14,7 +14,7 @@ import java.util.UUID;
  * <p>Implementation note: This class is not thread safe. If in future development thread safety is needed, please consider
  * using volatile for expiresAt field and synchronized mechanism.</p>
  *
- * @author dieppa
+ *
  * @since 04/04/2018
  */
 @NotThreadSafe

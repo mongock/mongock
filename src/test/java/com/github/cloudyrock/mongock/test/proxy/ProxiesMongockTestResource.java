@@ -9,7 +9,7 @@ import com.mongodb.client.MongoDatabase;
 import org.jongo.Jongo;
 
 /**
- * @author dieppa
+ *
  * @since 04/04/2018
  */
 @ChangeLog(order = "5")

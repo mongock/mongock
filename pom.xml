@@ -9,7 +9,7 @@
 
   <groupId>com.github.cloudyrock</groupId>
   <artifactId>mongock</artifactId>
-  <version>1.12-SNAPSHOT</version>
+  <version>1.13-SNAPSHOT</version>
 
   <licenses>
     <license>

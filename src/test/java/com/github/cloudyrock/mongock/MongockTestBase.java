@@ -23,7 +23,7 @@ import static org.mockito.Mockito.when;
 /**
  * Class to provide common configuration for Mongock**Test
  *
- * @author dieppa
+ *
  * @since 04/04/2018
  */
 public class MongockTestBase {

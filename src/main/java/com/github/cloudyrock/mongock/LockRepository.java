@@ -15,7 +15,7 @@ import java.util.Date;
 /**
  * <p>Repository class to manage lock in database</p>
  *
- * @author dieppa
+ *
  * @since 04/04/2018
  */
 class LockRepository extends MongoRepository {

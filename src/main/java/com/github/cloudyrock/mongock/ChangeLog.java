@@ -8,7 +8,7 @@ import java.lang.annotation.Target;
 /**
  * Class containing particular changesets (@{@link ChangeSet})
  *
- * @author lstolowski
+ *
  * @see ChangeSet
  * @since 27/07/2014
  */

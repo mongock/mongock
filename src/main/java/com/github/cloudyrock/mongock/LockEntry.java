@@ -7,7 +7,7 @@ import java.util.Date;
 /**
  * Type: entity class.
  *
- * @author lstolowski
+ *
  * @since 27/07/2014
  */
 class LockEntry {
