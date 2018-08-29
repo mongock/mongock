@@ -1,7 +1,7 @@
 
 # Mongock
 
-[![CircleCI](https://img.shields.io/circleci/project/github/RedSparr0w/node-csgo-parser.svg)](https://circleci.com/gh/dieppa/mongock/tree/master.svg?style=svg&circle-token=6fbf4192bdae44715f54365502aa2f7bfcc47d33) [![Maven Central](https://maven-badges.herokuapp.com/maven-central/com.github.cloudyrock/mongock/badge.svg)](https://maven-badges.herokuapp.com/maven-central/com.github.cloudyrock/mongock) [![Hex.pm](https://img.shields.io/hexpm/l/plug.svg)](https://github.com/dieppa/mongock/blob/master/LICENSE)
+[![CircleCI](https://img.shields.io/circleci/project/github/RedSparr0w/node-csgo-parser.svg)](https://circleci.com/gh/dieppa/mongock/tree/master.svg?style=svg&circle-token=6fbf4192bdae44715f54365502aa2f7bfcc47d33) [![Hex.pm](https://img.shields.io/hexpm/l/plug.svg)](https://github.com/dieppa/mongock/blob/master/LICENSE)
 
 
 ---
@@ -25,13 +25,13 @@ With Maven
 <dependency>
   <groupId>com.github.cloudyrock</groupId>
   <artifactId>mongock</artifactId>
-  <version>1.8</version>
+  <version>1.14</version>
 </dependency>
 ```
 With Gradle
 ```groovy
 compile 'org.javassist:javassist:3.18.2-GA' // workaround for ${javassist.version} placeholder issue*
-compile 'com.github.cloudyrock:mongock:1.8'
+compile 'com.github.cloudyrock:mongock:1.14'
 ```
 
 ### Usage with Spring
@@ -60,7 +60,7 @@ Using mongock without a spring context has similar configuration but you have to
   Mongock runner=  new MongockBuilder(mongoclient, "yourDbName", "com.package.to.be.scanned.for.changesets")
                   .setLockQuickConfig()
                   .build();
-runner.execute();         //  ------> starts migration changesets
+  runner.execute();         //  ------> starts migration changesets
 ```
 
 Above examples provide minimal configuration. `mongock` object provides some other possibilities (setters) to make the tool more flexible:
@@ -267,7 +267,7 @@ You can exclude mongo-java-driver from **mongock**  and use your dependency only
 <dependency>
   <groupId>com.github.cloudyrock</groupId>
   <artifactId>mongock</artifactId>
-  <version>1.8</version>
+  <version>1.14</version>
   <exclusions>
     <exclusion>
       <groupId>org.mongodb</groupId>
