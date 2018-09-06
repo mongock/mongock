@@ -15,7 +15,7 @@
     <dependency>
       <groupId>com.github.cloudyrock</groupId>
       <artifactId>mongock-core</artifactId>
-      <version>${mongock.version}</version>
+      <version>${project.version}</version>
     </dependency>
     <dependency>
       <groupId>org.jongo</groupId>

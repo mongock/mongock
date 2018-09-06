@@ -8,13 +8,17 @@
     <version>1.16-SNAPSHOT</version>
   </parent>
 
+  <properties>
+    <jacoco.version>0.7.7.201606060606</jacoco.version>
+  </properties>
+
   <artifactId>mongock-spring</artifactId>
 
   <dependencies>
     <dependency>
       <groupId>com.github.cloudyrock</groupId>
       <artifactId>mongock-core</artifactId>
-      <version>${mongock.version}</version>
+      <version>${project.version}</version>
     </dependency>
 
     <dependency>
