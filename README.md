@@ -343,7 +343,7 @@ You can exclude mongo-java-driver from **mongock**  and use your dependency only
 
 Due to Mongo limitations, there is no way to provide atomicity at ChangelogSet level. So a Changelog could need 
 more than one execution to be finished, as any interruption could happen, leaving the changelog in a inconsistent state.
-If that happen, the next time mongock is executed will try to finish the changelog execution, but it could already be 
+If that happens, the next time mongock is executed it will try to finish the changelog execution, but it could already be 
 half executed.
 
 For this reason, the developer in charge of the changelog's design, should make sure that:
