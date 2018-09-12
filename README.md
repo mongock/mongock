@@ -352,14 +352,14 @@ For this reason, the developer in charge of the changelog's design, should make 
 - **Changelog is Backward compatible (If high availability is required)**: While the migration process is taking place, 
 the old version of the software is still running. During this time could happen(and probably will) that the old version 
 of the software is dealing with the new version of the data. Could even happen that the data is a mix between old and 
-new version. So the software must still work regardless the status of the database. In case the developer is aware of 
+new version. This means the software must still work regardless of the status of the database. In case the developer is aware of 
 this and still decides to provide a non-backward-compatible changeSet, he should know it's a detriment to high 
 availability.
-- **Changelog reduces its execution time in every iteration**: This is more hard to explain. As said a changelog can be 
-interrupted at any time. That means that an specific changelog need to be re-run. In the undesired scenario where the 
-changelog's execution time is grater than the interruption time(culd be Kubernetes initial delay), that changelog won't 
-be ever finished. So the changelog needs to be developed in such a way that every iteration reduces the execution time, 
-so eventually that changelog will finish. 
-- **Changeog's execution time is shorter than interruption time**: In case the previous condition cannot be ensured, 
+- **Changelog reduces its execution time in every iteration**: This is harder to explain. As said, a changelog can be 
+interrupted at any time. This means an specific changelog needs to be re-run. In the undesired scenario where the 
+changelog's execution time is grater than the interruption time(could be Kubernetes initial delay), that changelog won't 
+be ever finished. So the changelog needs to be developed in such a way that every iteration reduces its execution time, 
+so eventually, after some iterations, the changelog finished. 
+- **Changelog's execution time is shorter than interruption time**: In case the previous condition cannot be ensured, 
 could be enough if the changelog's execution time is shorter than the interruption time. This is not ideal as the 
 execution time depends on the machine, but in most case could be enough.
