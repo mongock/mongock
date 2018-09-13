@@ -6,7 +6,7 @@
     <img src="https://raw.githubusercontent.com/cloudyrock/mongock/master/misc/logo.png" width="200" />
 </p>
 
-# Mongock
+# Mongock: MongoDB version control tool for Java
 
 **mongock** is a java MongoDB tool for tracking, managing and applying database schema changes, initially forked from Mongobee project. 
 
