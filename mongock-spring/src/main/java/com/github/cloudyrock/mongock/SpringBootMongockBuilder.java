@@ -101,7 +101,7 @@ public class SpringBootMongockBuilder extends MongockBuilder {
   void validateMandatoryFields() throws MongockException {
     super.validateMandatoryFields();
     if (context == null) {
-      throw new MongockException("ApplicationContext must be set to use HDFMongockBuilder");
+      throw new MongockException("ApplicationContext must be set to use SpringBootMongockBuilder");
     }
   }
 
