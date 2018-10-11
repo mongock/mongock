@@ -36,6 +36,11 @@
       <artifactId>spring-data-mongodb</artifactId>
       <version>1.6.1.RELEASE</version>
     </dependency>
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot</artifactId>
+      <version>${spring.boot.version}</version>
+    </dependency>
 
     <!-- TEST -->
     <dependency>
