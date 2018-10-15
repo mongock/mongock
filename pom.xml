@@ -12,9 +12,9 @@
     <module>mongock-jongo</module>
   </modules>
 
-  <groupId>com.github.cloudyrock</groupId>
+  <groupId>com.github.cloudyrock.mongock</groupId>
   <artifactId>mongock</artifactId>
-  <version>1.17-SNAPSHOT</version>
+  <version>1.16.1-SNAPSHOT</version>
   <packaging>pom</packaging>
 
   <licenses>

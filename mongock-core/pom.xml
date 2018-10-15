@@ -4,8 +4,8 @@
   <modelVersion>4.0.0</modelVersion>
   <parent>
     <artifactId>mongock</artifactId>
-    <groupId>com.github.cloudyrock</groupId>
-    <version>1.17-SNAPSHOT</version>
+    <groupId>com.github.cloudyrock.mongock</groupId>
+    <version>1.16.1-SNAPSHOT</version>
   </parent>
 
   <artifactId>mongock-core</artifactId>

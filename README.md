@@ -6,6 +6,9 @@
     <img src="https://raw.githubusercontent.com/cloudyrock/mongock/master/misc/logo.png" width="200" />
 </p>
 
+
+
+
 # Mongock: MongoDB version control tool for Java
 
 **mongock** is a java MongoDB tool for tracking, managing and applying database schema changes, initially forked from Mongobee project. 
@@ -16,6 +19,10 @@ The concept is very similar to other db migration tools such as [Liquibase](http
 
 
 **mongock** provides new approach for adding changes (change sets) based on Java classes and methods with appropriate annotations.
+
+
+## <font size="6" color="red">Update</font>
+Maven artifact's groupId has been modified. Please use **com.github.cloudyrock.mongock**
 
 ## Getting started
 
@@ -29,33 +36,33 @@ is not currently supported.
 ```xml
 <!-- To use standalone (i.e., w/o Spring or Jongo) -->
 <dependency>
-  <groupId>com.github.cloudyrock</groupId>
+  <groupId>com.github.cloudyrock.mongock</groupId>
   <artifactId>mongock-core</artifactId>
-  <version>1.15</version>
+  <version>1.16.1</version>
 </dependency>
 
 <!-- Add to use with Spring-->
 <dependency>
-  <groupId>com.github.cloudyrock</groupId>
+  <groupId>com.github.cloudyrock.mongock</groupId>
   <artifactId>mongock-spring</artifactId>
-  <version>1.15</version>
+  <version>1.16.1</version>
 </dependency>
 
 
 <!-- Add to use with Jongo -->
 <dependency>
-  <groupId>com.github.cloudyrock</groupId>
+  <groupId>com.github.cloudyrock.mongock</groupId>
   <artifactId>mongock-jongo</artifactId>
-  <version>1.15</version>
+  <version>1.16.1</version>
 </dependency>
 
 ```
 ##### With Gradle
 ```groovy
 compile 'org.javassist:javassist:3.18.2-GA'          // workround for ${javassist.version} placeholder issue*
-compile 'com.github.cloudyrock:mongock-core:1.15'    // standalone
-compile 'com.github.cloudyrock:mongock-spring:1.15'  // with Spring (in addition to mongock-core)
-compile 'com.github.cloudyrock:mongock-jongo:1.15'   // with Jongo (in addition to mongock-core
+compile 'com.github.cloudyrock.mongock:mongock-core:1.16.1'    // standalone
+compile 'com.github.cloudyrock.mongock:mongock-spring:1.16.1'  // with Spring (in addition to mongock-core)
+compile 'com.github.cloudyrock.mongock:mongock-jongo:1.16.1'   // with Jongo (in addition to mongock-core
 ```
 
 ### Usage with Spring
@@ -338,9 +345,9 @@ You can exclude mongo-java-driver from **mongock**  and use your dependency only
 </dependency>
 
 <dependency>
-  <groupId>com.github.cloudyrock</groupId>
+  <groupId>com.github.cloudyrock.mongock</groupId>
   <artifactId>mongock-core</artifactId>
-  <version>1.15</version>
+  <version>1.16.1</version>
   <exclusions>
     <exclusion>
       <groupId>org.mongodb</groupId>
@@ -353,7 +360,7 @@ You can exclude mongo-java-driver from **mongock**  and use your dependency only
 ```gradle
     // build.gradle
     compile "org.mongodb:mongo-java-driver:3.4.0"
-    compile("com.github.cloudyrock:mongock:1.15") {
+    compile("com.github.cloudyrock.mongock:mongock:1.16.1") {
         exclude group: 'org.mongodb', module: 'mongo-java-driver'
     }
 
