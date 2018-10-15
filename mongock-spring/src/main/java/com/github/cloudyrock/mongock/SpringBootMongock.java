@@ -12,7 +12,7 @@ import org.springframework.context.ApplicationContext;
 
 public class SpringBootMongock extends Mongock implements ApplicationRunner {
 
-    ApplicationContext springContext;
+    private ApplicationContext springContext;
 
     protected SpringBootMongock(ChangeEntryRepository changeEntryRepository,
         MongoClient mongoClient,
@@ -37,7 +37,7 @@ public class SpringBootMongock extends Mongock implements ApplicationRunner {
      */
     @Override
     protected void executeChangeSetMethod(Method changeSetMethod, Object changeLogInstance) throws BeansException, IllegalAccessException, InvocationTargetException {
-      List<Object> foundBeanParameters = new ArrayList<>(changeSetMethod.getParameterCount());
+      List<Object> foundBeanParameters = new ArrayList<>(changeSetMethod.getParameterTypes().length);
       for (Class<?> parameter : changeSetMethod.getParameterTypes()) {
         foundBeanParameters.add(springContext.getBean(parameter));
       }
@@ -49,7 +49,7 @@ public class SpringBootMongock extends Mongock implements ApplicationRunner {
      *
      * @return This {@link SpringBootMongock} instance for further configuration
      */
-    public SpringBootMongock springContext(ApplicationContext springContext) {
+    SpringBootMongock springContext(ApplicationContext springContext) {
       this.springContext = springContext;
       return this;
     }
