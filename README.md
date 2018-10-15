@@ -74,6 +74,27 @@ public SpringMongock mongock() {
 }
 ```
 
+### Usage with SpringBoot
+
+You need to instantiate the spring boot mongock class and provide configuration for it. 
+Spring boot will pick up the instance as an [ApplictionRunner](https://docs.spring.io/spring-boot/docs/current/api/org/springframework/boot/ApplicationRunner.html)
+as such it will be run similarly to the Spring implementation. The key difference is that
+ApplicationRunner beans will run *after* (as opposed to during) the context is fully initialized. 
+This allows any objects to be passed to classes annotated the ```@ChangeLog``` including custom
+objects. When using this implementation you must ensure that any object you wish to pass
+as a parameter in a ```@ChangeSet``` is declared as a bean and has been picked up by the
+ApplicationContext. Spring profiles will still be honored in this implementation.
+
+```java
+@Bean
+public SpringBootMongock mongock(ApplicationContext springContext, MongoClient mongoClient) {
+  return new SpringMongockBuilder(mongoClient, "yourDbName", "com.package.to.be.scanned.for.changesets")
+      .setApplicationContext(springContext)
+      .setLockQuickConfig()
+      .build();
+}
+```
+
 ### Usage with Jongo
 
 Using mongock with Jongo is similar, but you have to remember to run `execute` to start the migration process.
