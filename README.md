@@ -1,5 +1,5 @@
 
-
+[![Maven Central](https://maven-badges.herokuapp.com/maven-central/com.github.cloudyrock.mongock/mongock/badge.png)](https://search.maven.org/artifact/com.github.cloudyrock.mongock/mongock)
 [![CircleCI](https://img.shields.io/circleci/project/github/RedSparr0w/node-csgo-parser.svg)](https://circleci.com/gh/dieppa/mongock/tree/master.svg?style=svg&circle-token=6fbf4192bdae44715f54365502aa2f7bfcc47d33) [![Hex.pm](https://img.shields.io/hexpm/l/plug.svg)](https://github.com/dieppa/mongock/blob/master/LICENSE)
 
 <p align="center">
@@ -21,8 +21,8 @@ The concept is very similar to other db migration tools such as [Liquibase](http
 **mongock** provides new approach for adding changes (change sets) based on Java classes and methods with appropriate annotations.
 
 
-## <font size="6" color="red">Update</font>
-Maven artifact's groupId has been modified. Please use **com.github.cloudyrock.mongock**
+## Update :bangbang::bangbang::collision::collision:
+> Maven artifact's groupId has been modified. Please use **com.github.cloudyrock.mongock**
 
 ## Getting started
 
