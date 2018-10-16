@@ -22,7 +22,7 @@ The concept is very similar to other db migration tools such as [Liquibase](http
 
 
 ## Update :bangbang::bangbang::collision::collision:
-> Maven artifact's groupId has been modified. Please use **com.github.cloudyrock.mongock**
+> **Maven artifact's groupId has been modified. Please use _com.github.cloudyrock.mongock_**
 
 ## Getting started
 
@@ -86,13 +86,13 @@ public SpringMongock mongock() {
 The main benefit of using SpringBoot integration is that it provides a totally flexible way to inject dependencies,
 so you can inject any object to your change logs by using SpringBoot ApplicationContext.
 
-In order to use this feature you need to instantiate the spring boot mongock class and provide configuration for it. 
-Spring boot will pick up the instance as an [ApplictionRunner](https://docs.spring.io/spring-boot/docs/current/api/org/springframework/boot/ApplicationRunner.html)
-as such it will be run similarly to the Spring implementation. The key difference is that
-ApplicationRunner beans will run *after* (as opposed to during) the context is fully initialized. 
+In order to use this feature you need to instantiate the SpringBoot mongock class and provide the required configuration. 
+Mongock will run as an [ApplictionRunner](https://docs.spring.io/spring-boot/docs/current/api/org/springframework/boot/ApplicationRunner.html) within SpringBoot.
+In terms of execution, it will be be very similar to the standard Spring implementation. 
+The key difference is that ApplicationRunner beans run *after* (as opposed to during) the context is fully initialized. 
 
-Using this implementation means you need all the dependencies in your change logs(parameters in methods annotated with
-```@ChangeSet```) declared as Spring beans.
+>**Note:** Using this implementation means you need all the dependencies in your change logs(parameters in methods annotated with ```@ChangeSet```) declared as Spring beans.
+
 ```java
 @Bean
 public SpringBootMongock mongock(ApplicationContext springContext, MongoClient mongoClient) {
