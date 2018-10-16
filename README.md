@@ -83,20 +83,21 @@ public SpringMongock mongock() {
 
 ### Usage with SpringBoot
 
-You need to instantiate the spring boot mongock class and provide configuration for it. 
+The main benefit of using SpringBoot integration is that it provides a totally flexible way to inject dependencies,
+so you can inject any object to your change logs by using SpringBoot ApplicationContext.
+
+In order to use this feature you need to instantiate the spring boot mongock class and provide configuration for it. 
 Spring boot will pick up the instance as an [ApplictionRunner](https://docs.spring.io/spring-boot/docs/current/api/org/springframework/boot/ApplicationRunner.html)
 as such it will be run similarly to the Spring implementation. The key difference is that
 ApplicationRunner beans will run *after* (as opposed to during) the context is fully initialized. 
-This allows any objects to be passed to classes annotated the ```@ChangeLog``` including custom
-objects. When using this implementation you must ensure that any object you wish to pass
-as a parameter in a ```@ChangeSet``` is declared as a bean and has been picked up by the
-ApplicationContext. Spring profiles will still be honored in this implementation.
 
+Using this implementation means you need all the dependencies in your change logs(parameters in methods annotated with
+```@ChangeSet```) declared as Spring beans.
 ```java
 @Bean
 public SpringBootMongock mongock(ApplicationContext springContext, MongoClient mongoClient) {
   return new SpringMongockBuilder(mongoClient, "yourDbName", "com.package.to.be.scanned.for.changesets")
-      .setApplicationContext(springContext)
+      .setApplicationContext(springContext) 
       .setLockQuickConfig()
       .build();
 }
@@ -110,8 +111,8 @@ Using mongock with Jongo is similar, but you have to remember to run `execute` t
 
   MongoClient mongoclient = new MongoClient(new MongoClientURI("yourDbName", yourMongoClientBuilder));
   JongoMongock runner=  new JongoMongockBuilder(mongoclient, "yourDbName", "com.package.to.be.scanned.for.changesets")
+      .setJongo(myJongo) 
       .setLockQuickConfig()
-      .setJongo(myJongo)
       .build();
   runner.execute();         //  ------> starts migration changesets
 ```
@@ -242,6 +243,11 @@ public void someChange6(MongoTemplate mongoTemplate, Environment environment) {
   // Spring Data integration allows using MongoTemplate and Environment in the ChangeSet
 }
 ```
+
+### Injecting custom dependencies to change logs
+Right now this is possible by using SpringBoot Application Context. 
+See [SpringBoot set up](#usage-with-springBoot) for more information. However, this feature will be available for standalone and Jongo implementations.
+
 
 ### Using Spring profiles
      
