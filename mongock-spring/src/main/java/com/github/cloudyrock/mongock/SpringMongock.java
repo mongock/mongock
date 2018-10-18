@@ -54,7 +54,7 @@ public class SpringMongock extends Mongock implements InitializingBean {
    * @param environment org.springframework.core.env.Environment object to inject
    * @return SpringMongock object for fluent interface
    */
-  public SpringMongock setSpringEnvironment(Environment environment) {
+  SpringMongock setSpringEnvironment(Environment environment) {
     this.springEnvironment = environment;
     return this;
   }
@@ -65,7 +65,7 @@ public class SpringMongock extends Mongock implements InitializingBean {
    * @param mongoTemplate instance of the {@link MongoTemplate}
    * @return SpringMongock object for fluent interface
    */
-  public SpringMongock setMongoTemplate(MongoTemplate mongoTemplate) {
+  SpringMongock setMongoTemplate(MongoTemplate mongoTemplate) {
     this.mongoTemplate = mongoTemplate;
     return this;
   }

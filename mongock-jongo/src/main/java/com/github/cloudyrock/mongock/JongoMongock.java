@@ -35,7 +35,7 @@ public class JongoMongock extends Mongock {
    * @param jongo {@link Jongo} instance
    * @return JongoMongock object for fluent interface
    */
-  public JongoMongock setJongo(Jongo jongo) {
+  JongoMongock setJongo(Jongo jongo) {
     this.jongo = jongo;
     return this;
   }
