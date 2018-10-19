@@ -40,19 +40,19 @@ public class Mongock implements Closeable {
     this.lockChecker = lockChecker;
   }
 
-  public void setThrowExceptionIfCannotObtainLock(boolean throwExceptionIfCannotObtainLock) {
+  void setThrowExceptionIfCannotObtainLock(boolean throwExceptionIfCannotObtainLock) {
     this.throwExceptionIfCannotObtainLock = throwExceptionIfCannotObtainLock;
   }
 
-  public void setEnabled(boolean enabled) {
+  void setEnabled(boolean enabled) {
     this.enabled = enabled;
   }
 
-  public void setChangelogMongoDatabase(MongoDatabase changelogMongoDatabase) {
+  void setChangelogMongoDatabase(MongoDatabase changelogMongoDatabase) {
     this.changelogMongoDatabase = changelogMongoDatabase;
   }
 
-  public void setChangelogDb(DB changelogDb) {
+  void setChangelogDb(DB changelogDb) {
     this.changelogDb = changelogDb;
   }
 
