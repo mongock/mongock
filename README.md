@@ -11,7 +11,7 @@
 
 # Mongock: MongoDB version control tool for Java
 
-**mongock** is a java MongoDB tool for tracking, managing and applying database schema changes, initially forked from Mongobee project. 
+**mongock** is a java MongoDB tool for tracking, managing and applying database schema changes. 
 
 The motivation of this project is to add some important and useful features, provide a different code design, which we believe is easier to maintain, extend and debug, 
 applying what we believe are best practices, and specially providing a more fluent maintenance to apply collaborator's contributions.
