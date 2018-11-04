@@ -25,7 +25,30 @@ The concept is very similar to other db migration tools such as [Liquibase](http
 
 **mongock** provides new approach for adding changes (change sets) based on Java classes and methods with appropriate annotations.
 
-## Getting started
+## Table of contents
+
+  * [Add a dependency](#add-a-dependency)
+        * [With Maven](#with-maven)
+        * [With Gradle](#with-gradle)
+  * [Usage with Spring](#usage-with-spring)
+  * [Usage with SpringBoot](#usage-with-springboot)
+  * [Usage with Jongo](#usage-with-jongo)
+  * [Standalone usage](#standalone-usage)
+  * [Creating change logs](#creating-change-logs)
+     * [@ChangeLog](#changelog)
+     * [@ChangeSet](#changeset)
+        * [Annotation parameters:](#annotation-parameters)
+        * [Defining ChangeSet methods](#defining-changeset-methods)
+  * [Injecting custom dependencies to change logs](#injecting-custom-dependencies-to-change-logs)
+  * [Using Spring profiles](#using-spring-profiles)
+     * [Enabling @Profile annotation (option)](#enabling-profile-annotation-option)
+     * [Configuring Lock](#configuring-lock)
+  * [Known issues](#known-issues)
+     * [Mongo java driver conflicts](#mongo-java-driver-conflicts)
+  * [Mongo transaction limitations](#mongo-transaction-limitations)
+  * [Contributing](#contributing)
+  * [Code of conduct](#code-of-conduct)
+  * [LICENSE](#license)
 
 ## Add a dependency
 
