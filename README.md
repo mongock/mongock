@@ -397,3 +397,15 @@ so eventually, after some iterations, the changelog finished.
 - **Changelog's execution time is shorter than interruption time**: In case the previous condition cannot be ensured, 
 could be enough if the changelog's execution time is shorter than the interruption time. This is not ideal as the 
 execution time depends on the machine, but in most case could be enough.
+
+
+
+## Contributing
+If you would like to contribute to Mongock project, please read [how to contribute](././community/CONTRIBUTING.md) for details on our collaboration process and standards.
+
+
+## Code of conduct
+Please read the [code of conduct](././community/CODE_OF_CONDUCT.md) for details on our code of conduct.
+
+## LICENSE
+Mongock propject is licensed under the [Apache License Version 2.0](http://www.apache.org/licenses/LICENSE-2.0.html). See the [LICENSE](./LICENSE.md) file for details
