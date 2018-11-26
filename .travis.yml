@@ -6,15 +6,12 @@ sudo: false
 
 install: true
 
-addons:
-  sonarcloud:
-    organization: "cloudyrock"
-    token:
-      secure: $SONAR_TOKEN
+script: .infra/mvn_sonar.sh
+
+branches:
+  only:
+    - master
 
 cache:
   directories:
   - "$HOME/.m2/repository"
-
-after_success:
-  - mvn sonar:sonar
