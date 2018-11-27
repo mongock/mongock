@@ -27,7 +27,8 @@ The concept is very similar to other db migration tools such as [Liquibase](http
 
 ## Table of contents
 
-  * [Why Mongock](#why-mogock)
+  * [Why Mongock](#why-mongock)
+  * [Contributing](#contributing)
   * [Add a dependency](#add-a-dependency)
         * [With Maven](#with-maven)
         * [With Gradle](#with-gradle)
@@ -47,21 +48,24 @@ The concept is very similar to other db migration tools such as [Liquibase](http
   * [Known issues](#known-issues)
      * [Mongo java driver conflicts](#mongo-java-driver-conflicts)
   * [Mongo transaction limitations](#mongo-transaction-limitations)
-  * [Contributing](#contributing)
   * [Code of conduct](#code-of-conduct)
   * [LICENSE](#license)
-
-##Why Mongock
+  
+## Why Mongock
 There are several good reasons to use Mongock ni your project. Here we offer some of them:
 
 * Solid solution which really works.
-* **Works well with sharded collections**: Unlike other similar projects using javascript, which use `db.eval()`. [Documentation](https://docs.mongodb.com/manual/reference/method/db.eval/#sharded-data).
+* **Works well with sharded collections**: Unlike other similar projects using javascript, which requires `db.eval()`. [Documentation](https://docs.mongodb.com/manual/reference/method/db.eval/#sharded-data).
 * Distributed solution with a solid locking mechanism.
 * We are very responsive, aiming to respond in the 24 hours for new issues and do reviews in 48 hours(Notice this is not a commitment, but so far so good).
 * Well maintained and regularly updated.
 * Used by several tech companies in different industries.
 * Can be used in most, if not all, frameworks.
 * Provides great integration Spring allowing you to inject any dependency you want to your changelog method.
+
+
+## Contributing
+If you would like to contribute to Mongock project, please read [how to contribute](././community/CONTRIBUTING.md) for details on our collaboration process and standards.
 
 ## Add a dependency
 
@@ -433,12 +437,6 @@ so eventually, after some iterations, the changelog finished.
 - **Changelog's execution time is shorter than interruption time**: In case the previous condition cannot be ensured, 
 could be enough if the changelog's execution time is shorter than the interruption time. This is not ideal as the 
 execution time depends on the machine, but in most case could be enough.
-
-
-
-## Contributing
-If you would like to contribute to Mongock project, please read [how to contribute](././community/CONTRIBUTING.md) for details on our collaboration process and standards.
-
 
 ## Code of conduct
 Please read the [code of conduct](././community/CODE_OF_CONDUCT.md) for details on our code of conduct.
