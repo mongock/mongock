@@ -11,7 +11,7 @@
 
 
 ## LAST NEWS :bangbang::bangbang::collision::collision:
-> **New BETA version with Spring 5/Spring boot 2 support. 2.0.0-BETA**
+> **New BETA version with Spring 5/Spring boot 2 support: 2.0.0-BETA**
 
 
 # Mongock: MongoDB version control tool for Java
