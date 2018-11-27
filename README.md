@@ -5,11 +5,13 @@
 
 [![Maven Central](https://maven-badges.herokuapp.com/maven-central/com.github.cloudyrock.mongock/mongock/badge.png)](https://search.maven.org/artifact/com.github.cloudyrock.mongock/mongock)
 [![Build Status](https://travis-ci.org/cloudyrock/mongock.svg?branch=master)](https://travis-ci.org/cloudyrock/mongock)
-[![Quality gate status](https://sonarcloud.io/api/project_badges/measure?project=com.github.cloudyrock.mongock&metric=alert_status)](https://sonarcloud.io/component_measures?id=com.github.cloudyrock.mongock&metric=alert_status)
-[![Coverage](https://sonarcloud.io/api/project_badges/measure?project=com.github.cloudyrock.mongock&metric=coverage)](https://sonarcloud.io/component_measures?id=com.github.cloudyrock.mongock&metric=coverage)
 [![Bugs](https://sonarcloud.io/api/project_badges/measure?project=com.github.cloudyrock.mongock&metric=bugs)](https://sonarcloud.io/component_measures?id=com.github.cloudyrock.mongock&metric=bugs)
 [![Vulnerabilities](https://sonarcloud.io/api/project_badges/measure?project=com.github.cloudyrock.mongock&metric=vulnerabilities)](https://sonarcloud.io/component_measures?id=com.github.cloudyrock.mongock&metric=vulnerabilities)
 [![Hex.pm](https://img.shields.io/hexpm/l/plug.svg)](https://github.com/dieppa/mongock/blob/master/LICENSE)
+
+
+## LAST NEWS :bangbang::bangbang::collision::collision:
+> **New BETA version with Spring 5/Spring boot 2 support. 2.0.0-BETA**
 
 
 # Mongock: MongoDB version control tool for Java
@@ -22,10 +24,6 @@ The concept is very similar to other db migration tools such as [Liquibase](http
 
 
 **mongock** provides new approach for adding changes (change sets) based on Java classes and methods with appropriate annotations.
-
-
-## Update :bangbang::bangbang::collision::collision:
-> **Maven artifact's groupId has been modified. Please use _com.github.cloudyrock.mongock_**
 
 ## Getting started
 
