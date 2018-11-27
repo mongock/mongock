@@ -53,7 +53,7 @@ This section guides you through submitting a bug report for Mongock project.
 ### Before Submitting A Bug Report
 
 * **Check the [FAQ page](FAQ.md)** for a list of common questions and problems. You might find out your issue/question is clarified in this page.
-* **Perform a [cursory search](https://github.com/issues?utf8=%E2%9C%93&q=is%3Aissue+archived%3Afalse+repo%3Acloudyrock%2Fmongock-project+)** 
+* **Perform a [cursory search](https://github.com/issues?utf8=%E2%9C%93&q=is%3Aissue+archived%3Afalse+repo%3Acloudyrock%2Fmongock)** 
 to see if the problem has already been reported. If it has **and the issue is still open**, add a comment to the existing issue instead of opening a new one.
 
 ### How Do I Submit A (Good) Bug Report?
@@ -74,7 +74,7 @@ This section guides you through submitting an enhancement suggestion for Mongock
 
 * **Check the [FAQ page](FAQ.md)**. You might find out that enhancement is already covered.
 * **Determine [which module the enhancement should be reported in](#mongock-project-packages)**.
-* **Perform a [cursory search](https://github.com/issues?utf8=%E2%9C%93&q=is%3Aissue+archived%3Afalse+repo%3Acloudyrock%2Fmongock-project+)** to see if the problem has already been reported. If it has **and the issue is still open**, add a comment to the existing issue instead of opening a new one.
+* **Perform a [cursory search](https://github.com/issues?utf8=%E2%9C%93&q=is%3Aissue+archived%3Afalse+repo%3Acloudyrock%2Fmongock)** to see if the problem has already been reported. If it has **and the issue is still open**, add a comment to the existing issue instead of opening a new one.
 
 
 ### How Do I Submit A (Good) Enhancement Suggestion?
@@ -99,8 +99,8 @@ Obviously, If the issue you are about to work on already contains such a comment
 
 Unsure where to begin contributing to Mongock project? You can start by looking through these `beginner` and `intermediate` issues:
 
-* [Beginner issues](https://github.com/cloudyrock/mongock-project/issues?q=is%3Aopen+is%3Aissue+label%3Abeginner) - issues which should only require a few lines of code, and a test or two.
-* [Intermediate issues](https://github.com/cloudyrock/mongock-project/issues?q=is%3Aopen+is%3Aissue+label%3Aintermediate) - issues which should be a bit more involved than `beginner` issues.
+* [Beginner issues](https://github.com/cloudyrock/mongock/issues?q=is%3Aopen+is%3Aissue+label%3Abeginner) - issues which should only require a few lines of code, and a test or two.
+* [Intermediate issues](https://github.com/cloudyrock/mongock/issues?q=is%3Aopen+is%3Aissue+label%3Aintermediate) - issues which should be a bit more involved than `beginner` issues.
 
 ### Code contribution steps
 1. __Issue created__: Before starting a code contribution, please make sure there is an issue for it.
@@ -174,21 +174,21 @@ Please click on the `search` list the issues for the given label.
 [sonar-quality-profily-url]:https://sonarcloud.io/organizations/cloudyrock/rules?activation=true&qprofile=AWXxxqaLFozSdSzRWmfS
 [sonar-quality-gate-url]:https://sonarcloud.io/organizations/cloudyrock/quality_gates/show/1437
 
-[search-repo-label-bug]:https://github.com/cloudyrock/mongock-project/labels/bug
-[search-repo-label-feature]:https://github.com/cloudyrock/mongock-project/labels/feature
-[search-repo-label-docs-ops]:https://github.com/cloudyrock/mongock-project/labels/docs%2Fops
+[search-repo-label-bug]:https://github.com/cloudyrock/mongock/labels/bug
+[search-repo-label-feature]:https://github.com/cloudyrock/mongock/labels/feature
+[search-repo-label-docs-ops]:https://github.com/cloudyrock/mongock/labels/docs%2Fops
 
-[search-repo-label-core-module]:https://github.com/cloudyrock/mongock-project/labels/core-module
-[search-repo-label-jongo-module]:https://github.com/cloudyrock/mongock-project/labels/jongo-module
-[search-repo-label-spring-module]:https://github.com/cloudyrock/mongock-project/labels/spring-module
+[search-repo-label-core-module]:https://github.com/cloudyrock/mongock/labels/core-module
+[search-repo-label-jongo-module]:https://github.com/cloudyrock/mongock/labels/jongo-module
+[search-repo-label-spring-module]:https://github.com/cloudyrock/mongock/labels/spring-module
 
-[search-repo-label-critical]:https://github.com/cloudyrock/mongock-project/labels/critical
-[search-repo-label-hig]:https://github.com/cloudyrock/mongock-project/labels/high
-[search-repo-label-normal]:https://github.com/cloudyrock/mongock-project/labels/normal
-[search-repo-label-minor]:https://github.com/cloudyrock/mongock-project/labels/minor
+[search-repo-label-critical]:https://github.com/cloudyrock/mongock/labels/critical
+[search-repo-label-hig]:https://github.com/cloudyrock/mongock/labels/high
+[search-repo-label-normal]:https://github.com/cloudyrock/mongock/labels/normal
+[search-repo-label-minor]:https://github.com/cloudyrock/mongock/labels/minor
 
-[search-repo-label-beginner]:https://github.com/cloudyrock/mongock-project/labels/beginner
-[search-repo-label-intermediate]:https://github.com/cloudyrock/mongock-project/labels/intermediate
-[search-repo-label-advanced]:https://github.com/cloudyrock/mongock-project/labels/advance
+[search-repo-label-beginner]:https://github.com/cloudyrock/mongock/labels/beginner
+[search-repo-label-intermediate]:https://github.com/cloudyrock/mongock/labels/intermediate
+[search-repo-label-advanced]:https://github.com/cloudyrock/mongock/labels/advance
 
-[search-repo-label-wont-fix]:https://github.com/cloudyrock/mongock-project/labels/invalid%2Fwon%27t%20fix
+[search-repo-label-wont-fix]:https://github.com/cloudyrock/mongock/labels/invalid%2Fwon%27t%20fix
