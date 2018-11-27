@@ -52,16 +52,16 @@ The concept is very similar to other db migration tools such as [Liquibase](http
   * [LICENSE](#license)
   
 ## Why Mongock
-There are several good reasons to use Mongock ni your project. Here we offer some of them:
+There are several good reasons to use Mongock in your project. Here we give you some of them:
 
 * Solid solution which really works.
 * **Works well with sharded collections**: Unlike other similar projects using javascript, which requires `db.eval()`. [Documentation](https://docs.mongodb.com/manual/reference/method/db.eval/#sharded-data).
-* Distributed solution with a solid locking mechanism.
-* We are very responsive, aiming to respond in the 24 hours for new issues and do reviews in 48 hours(Notice this is not a commitment, but so far so good).
+* Distributed solution with solid locking mechanism.
+* We are very responsive, aiming for 24-hours-response for new issues and 48 hours for reviews(Notice this is not a commitment, but so far so good).
 * Well maintained and regularly updated.
 * Used by several tech companies in different industries.
-* Can be used in most, if not all, frameworks.
-* Provides great integration Spring allowing you to inject any dependency you want to your changelog method.
+* Can be used together with most, if not all, frameworks.
+* Provides great integration for Spring, allowing you to inject any dependency you want to your changelog method.
 
 
 ## Contributing
