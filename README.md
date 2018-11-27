@@ -137,7 +137,7 @@ The key difference is that ApplicationRunner beans run *after* (as opposed to du
 ```java
 @Bean
 public SpringBootMongock mongock(ApplicationContext springContext, MongoClient mongoClient) {
-  return new SpringMongockBuilder(mongoClient, "yourDbName", "com.package.to.be.scanned.for.changesets")
+  return new SpringBootMongockBuilder(mongoClient, "yourDbName", "com.package.to.be.scanned.for.changesets")
       .setApplicationContext(springContext) 
       .setLockQuickConfig()
       .build();
