@@ -13,7 +13,7 @@
 ## LAST NEWS :bangbang::bangbang::collision::collision:
 > **New BETA version with Spring 5/Spring boot 2 support: 2.0.0-BETA**
 
-> **We have a new [Contributing section](#contributing),please follow this for reporting bugs, enhancements and code contribution**
+> **We have a new [Contributing section](./community/CONTRIBUTING.md), please follow this for reporting bugs, enhancements and code contribution**
 
 
 # Mongock: MongoDB version control tool for Java
