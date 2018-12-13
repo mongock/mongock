@@ -156,8 +156,8 @@ public class MongockBuilder {
         changeEntryRepository,
         changeService,
         lockChecker,
-        proxyFactory.createProxyFromOriginal(mongoClient.getDatabase(databaseName)),
-        proxyFactory.createProxyFromOriginal(db)
+        proxyFactory.createProxyFromOriginal(mongoClient.getDatabase(databaseName), MongoDatabase.class),
+        proxyFactory.createProxyFromOriginal(db, DB.class)
         );
   }
 

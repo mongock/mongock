@@ -11,6 +11,7 @@ import org.objenesis.ObjenesisStd;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
 import java.util.List;
 import java.util.Set;
 
@@ -94,13 +95,18 @@ class ProxyFactory {
    */
   @SuppressWarnings("unchecked")
   <T> T createProxyFromOriginal(final T original) {
+    return createProxyFromOriginal(original, original.getClass());
+  }
+
+
+  <T> T createProxyFromOriginal(final T original, Class clazz) {
     try {
-      setAllConstructorsAccessible(original.getClass(), true);
-      final Class<?> proxyClass = createProxyClass(original.getClass());
+      setAllConstructorsAccessible(clazz, true);
+      final Class<?> proxyClass = createProxyClass(clazz);
       final Object proxy = createProxy(proxyClass, createMethodInterceptor(original, preInterceptor));
-      return (T) original.getClass().cast(proxy);
+      return (T) clazz.cast(proxy);
     } finally {
-      setAllConstructorsAccessible(original.getClass(), false);
+      setAllConstructorsAccessible(clazz, false);
     }
   }
 
