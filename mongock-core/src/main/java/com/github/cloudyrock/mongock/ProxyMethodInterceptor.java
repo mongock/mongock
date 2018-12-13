@@ -46,10 +46,11 @@ class ProxyMethodInterceptor implements MethodInterceptor {
   }
 
   private Object invokeMethod(Method method, Object[] objects) throws IllegalAccessException, InvocationTargetException {
+    final Object invocation = method.invoke(original, objects);
     if (proxyCreatorMethods.contains(method.getName())) {
-      return proxyFactory.createProxyFromOriginal(method.invoke(original, objects));
+      return proxyFactory.createProxyFromOriginal(invocation, method.getReturnType());
     } else {
-      return method.invoke(original, objects);
+      return invocation;
     }
   }
 }
