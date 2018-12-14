@@ -11,9 +11,7 @@
 
 
 ## LAST NEWS :bangbang::bangbang::collision::collision:
-> **New BETA version with Spring 5/Spring boot 2 support: 2.0.0-BETA**
-
-> **We have a new [Contributing section](./community/CONTRIBUTING.md), please follow this for bugs and enhancements reporting as well as code contribution**
+> **New version 2.0.0 released with Spring 5.x/Spring boot 2.x support: 2.0.0 and bug fixes**
 
 
 # Mongock: MongoDB version control tool for Java
@@ -81,14 +79,14 @@ is not currently supported.
 <dependency>
   <groupId>com.github.cloudyrock.mongock</groupId>
   <artifactId>mongock-core</artifactId>
-  <version>1.16.1</version>
+  <version>2.0.0</version>
 </dependency>
 
 <!-- Add to use with Spring-->
 <dependency>
   <groupId>com.github.cloudyrock.mongock</groupId>
   <artifactId>mongock-spring</artifactId>
-  <version>1.16.1</version>
+  <version>2.0.0</version>
 </dependency>
 
 
@@ -96,16 +94,16 @@ is not currently supported.
 <dependency>
   <groupId>com.github.cloudyrock.mongock</groupId>
   <artifactId>mongock-jongo</artifactId>
-  <version>1.16.1</version>
+  <version>2.0.0</version>
 </dependency>
 
 ```
 #### With Gradle
 ```groovy
 compile 'org.javassist:javassist:3.18.2-GA'          // workround for ${javassist.version} placeholder issue*
-compile 'com.github.cloudyrock.mongock:mongock-core:1.16.1'    // standalone
-compile 'com.github.cloudyrock.mongock:mongock-spring:1.16.1'  // with Spring (in addition to mongock-core)
-compile 'com.github.cloudyrock.mongock:mongock-jongo:1.16.1'   // with Jongo (in addition to mongock-core
+compile 'com.github.cloudyrock.mongock:mongock-core:2.0.0'    // standalone
+compile 'com.github.cloudyrock.mongock:mongock-spring:2.0.0'  // with Spring (in addition to mongock-core)
+compile 'com.github.cloudyrock.mongock:mongock-jongo:2.0.0'   // with Jongo (in addition to mongock-core
 ```
 
 ## Usage with Spring
@@ -396,7 +394,7 @@ You can exclude mongo-java-driver from **mongock**  and use your dependency only
 <dependency>
   <groupId>com.github.cloudyrock.mongock</groupId>
   <artifactId>mongock-core</artifactId>
-  <version>1.16.1</version>
+  <version>2.0.0</version>
   <exclusions>
     <exclusion>
       <groupId>org.mongodb</groupId>
@@ -409,7 +407,7 @@ You can exclude mongo-java-driver from **mongock**  and use your dependency only
 ```gradle
     // build.gradle
     compile "org.mongodb:mongo-java-driver:3.4.0"
-    compile("com.github.cloudyrock.mongock:mongock:1.16.1") {
+    compile("com.github.cloudyrock.mongock:mongock:2.0.0") {
         exclude group: 'org.mongodb', module: 'mongo-java-driver'
     }
 
