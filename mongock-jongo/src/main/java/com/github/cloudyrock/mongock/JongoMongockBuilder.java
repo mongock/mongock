@@ -83,9 +83,9 @@ public class JongoMongockBuilder extends MongockBuilder {
         changeEntryRepository,
         changeService,
         lockChecker,
-        proxyFactory.createProxyFromOriginal(mongoClient.getDatabase(databaseName)),
-        proxyFactory.createProxyFromOriginal(db),
-        proxyFactory.createProxyFromOriginal(jongo != null ? jongo : new Jongo(db))
+        proxyFactory.createProxyFromOriginal(mongoClient.getDatabase(databaseName), MongoDatabase.class),
+        proxyFactory.createProxyFromOriginal(db, DB.class),
+        proxyFactory.createProxyFromOriginal(jongo != null ? jongo : new Jongo(db), Jongo.class)
     );
   }
 

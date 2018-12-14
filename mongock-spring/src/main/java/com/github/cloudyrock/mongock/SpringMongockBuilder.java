@@ -95,9 +95,9 @@ public class SpringMongockBuilder extends MongockBuilder {
         changeEntryRepository,
         changeService,
         lockChecker,
-        proxyFactory.createProxyFromOriginal(mongoClient.getDatabase(databaseName)),
-        proxyFactory.createProxyFromOriginal(db),
-        proxyFactory.createProxyFromOriginal(mongoTemplate != null ? mongoTemplate : new MongoTemplate(mongoClient, databaseName))
+        proxyFactory.createProxyFromOriginal(mongoClient.getDatabase(databaseName), MongoDatabase.class),
+        proxyFactory.createProxyFromOriginal(db, DB.class),
+        proxyFactory.createProxyFromOriginal(mongoTemplate != null ? mongoTemplate : new MongoTemplate(mongoClient, databaseName), MongoTemplate.class)
     );
   }
 

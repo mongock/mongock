@@ -69,7 +69,7 @@ public class ProxyMethodInterceptorTest {
     final DummyClass dummyInstance = new DummyClass("value1");
 
     ProxyFactory proxyFactory = mock(ProxyFactory.class);
-    when(proxyFactory.createProxyFromOriginal(dummyInstance.getValue())).thenReturn("ProxiedObject");
+    when(proxyFactory.createProxyFromOriginal(dummyInstance.getValue(), String.class)).thenReturn("ProxiedObject");
     ProxyMethodInterceptor interceptor = new ProxyMethodInterceptor(
         dummyInstance,
         proxyFactory,
@@ -85,7 +85,7 @@ public class ProxyMethodInterceptorTest {
 
     );
     verify(lockCheckerInterceptorMock, new Times(0)).before();
-    verify(proxyFactory, new Times(1)).createProxyFromOriginal(dummyInstance.getValue());
+    verify(proxyFactory, new Times(1)).createProxyFromOriginal(dummyInstance.getValue(), String.class);
     assertEquals("ProxiedObject", result);
   }
 

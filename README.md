@@ -5,11 +5,15 @@
 
 [![Maven Central](https://maven-badges.herokuapp.com/maven-central/com.github.cloudyrock.mongock/mongock/badge.png)](https://search.maven.org/artifact/com.github.cloudyrock.mongock/mongock)
 [![Build Status](https://travis-ci.org/cloudyrock/mongock.svg?branch=master)](https://travis-ci.org/cloudyrock/mongock)
-[![Quality gate status](https://sonarcloud.io/api/project_badges/measure?project=com.github.cloudyrock.mongock&metric=alert_status)](https://sonarcloud.io/component_measures?id=com.github.cloudyrock.mongock&metric=alert_status)
-[![Coverage](https://sonarcloud.io/api/project_badges/measure?project=com.github.cloudyrock.mongock&metric=coverage)](https://sonarcloud.io/component_measures?id=com.github.cloudyrock.mongock&metric=coverage)
 [![Bugs](https://sonarcloud.io/api/project_badges/measure?project=com.github.cloudyrock.mongock&metric=bugs)](https://sonarcloud.io/component_measures?id=com.github.cloudyrock.mongock&metric=bugs)
 [![Vulnerabilities](https://sonarcloud.io/api/project_badges/measure?project=com.github.cloudyrock.mongock&metric=vulnerabilities)](https://sonarcloud.io/component_measures?id=com.github.cloudyrock.mongock&metric=vulnerabilities)
 [![Hex.pm](https://img.shields.io/hexpm/l/plug.svg)](https://github.com/dieppa/mongock/blob/master/LICENSE)
+
+
+## LAST NEWS :bangbang::bangbang::collision::collision:
+> **New BETA version with Spring 5/Spring boot 2 support: 2.0.0-BETA**
+
+> **We have a new [Contributing section](./community/CONTRIBUTING.md), please follow this for bugs and enhancements reporting as well as code contribution**
 
 
 # Mongock: MongoDB version control tool for Java
@@ -23,19 +27,55 @@ The concept is very similar to other db migration tools such as [Liquibase](http
 
 **mongock** provides new approach for adding changes (change sets) based on Java classes and methods with appropriate annotations.
 
+## Table of contents
 
-## Update :bangbang::bangbang::collision::collision:
-> **Maven artifact's groupId has been modified. Please use _com.github.cloudyrock.mongock_**
+  * [Why Mongock](#why-mongock)
+  * [Contributing](#contributing)
+  * [Add a dependency](#add-a-dependency)
+        * [With Maven](#with-maven)
+        * [With Gradle](#with-gradle)
+  * [Usage with Spring](#usage-with-spring)
+  * [Usage with SpringBoot](#usage-with-springboot)
+  * [Usage with Jongo](#usage-with-jongo)
+  * [Standalone usage](#standalone-usage)
+  * [Creating change logs](#creating-change-logs)
+     * [@ChangeLog](#changelog)
+     * [@ChangeSet](#changeset)
+        * [Annotation parameters:](#annotation-parameters)
+        * [Defining ChangeSet methods](#defining-changeset-methods)
+  * [Injecting custom dependencies to change logs](#injecting-custom-dependencies-to-change-logs)
+  * [Using Spring profiles](#using-spring-profiles)
+     * [Enabling @Profile annotation (option)](#enabling-profile-annotation-option)
+     * [Configuring Lock](#configuring-lock)
+  * [Known issues](#known-issues)
+     * [Mongo java driver conflicts](#mongo-java-driver-conflicts)
+  * [Mongo transaction limitations](#mongo-transaction-limitations)
+  * [Code of conduct](#code-of-conduct)
+  * [LICENSE](#license)
+  
+## Why Mongock
+There are several good reasons to use Mongock in your project. Here we give you some of them:
 
-## Getting started
+* Solid solution which really works.
+* **Works well with sharded collections**: Unlike other similar projects using javascript, which requires `db.eval()`. [Documentation](https://docs.mongodb.com/manual/reference/method/db.eval/#sharded-data).
+* Distributed solution with solid locking mechanism.
+* We are very responsive, aiming for 24-hours-response for new issues and 48 hours for reviews(Notice this is not a commitment, but so far so good).
+* Well maintained and regularly updated.
+* Used by several tech companies in different industries.
+* Can be used together with most, if not all, frameworks.
+* Provides great integration for Spring, allowing you to inject any dependency you want to your changelog method.
 
-### Add a dependency
+
+## Contributing
+If you would like to contribute to Mongock project, please read [how to contribute](././community/CONTRIBUTING.md) for details on our collaboration process and standards.
+
+## Add a dependency
 
 Mongock can be used standalone, with Spring, or with Jongo.  The `mongock-core` dependency is always required,
 and _either_ `mongock-spring` or `mongock-jongo` can also be added.  Using `mongock-spring` with `mongock-jongo`
 is not currently supported.
 
-##### With Maven
+#### With Maven
 ```xml
 <!-- To use standalone (i.e., w/o Spring or Jongo) -->
 <dependency>
@@ -60,7 +100,7 @@ is not currently supported.
 </dependency>
 
 ```
-##### With Gradle
+#### With Gradle
 ```groovy
 compile 'org.javassist:javassist:3.18.2-GA'          // workround for ${javassist.version} placeholder issue*
 compile 'com.github.cloudyrock.mongock:mongock-core:1.16.1'    // standalone
@@ -68,7 +108,7 @@ compile 'com.github.cloudyrock.mongock:mongock-spring:1.16.1'  // with Spring (i
 compile 'com.github.cloudyrock.mongock:mongock-jongo:1.16.1'   // with Jongo (in addition to mongock-core
 ```
 
-### Usage with Spring
+## Usage with Spring
 
 You need to instantiate mongock object and provide some configuration.
 If you use Spring, mongock can be instantiated as a singleton bean in the Spring context. 
@@ -84,7 +124,7 @@ public SpringMongock mongock() {
 }
 ```
 
-### Usage with SpringBoot
+## Usage with SpringBoot
 
 The main benefit of using SpringBoot integration is that it provides a totally flexible way to inject dependencies,
 so you can inject any object to your change logs by using SpringBoot ApplicationContext.
@@ -99,14 +139,14 @@ The key difference is that ApplicationRunner beans run *after* (as opposed to du
 ```java
 @Bean
 public SpringBootMongock mongock(ApplicationContext springContext, MongoClient mongoClient) {
-  return new SpringMongockBuilder(mongoClient, "yourDbName", "com.package.to.be.scanned.for.changesets")
+  return new SpringBootMongockBuilder(mongoClient, "yourDbName", "com.package.to.be.scanned.for.changesets")
       .setApplicationContext(springContext) 
       .setLockQuickConfig()
       .build();
 }
 ```
 
-### Usage with Jongo
+## Usage with Jongo
 
 Using mongock with Jongo is similar, but you have to remember to run `execute` to start the migration process.
 
@@ -122,7 +162,7 @@ Using mongock with Jongo is similar, but you have to remember to run `execute` t
 
 
 
-### Standalone usage
+## Standalone usage
 Using mongock standalone is similar to with Jongo.
 
 ```java
@@ -146,7 +186,7 @@ builder.setEnabled(shouldBeEnabled);              // default is true, migration 
 [More about URI](http://mongodb.github.io/mongo-java-driver/3.5/javadoc/)
 
 
-### Creating change logs
+## Creating change logs
 
 `ChangeLog` contains bunch of `ChangeSet`s. `ChangeSet` is a single task (set of instructions made on a database). In 
 other words `ChangeLog` is a class annotated with `@ChangeLog` and containing methods annotated with `@ChangeSet`.
@@ -165,7 +205,7 @@ public class DatabaseChangelog {
 
 }
 ```
-#### @ChangeLog
+### @ChangeLog
 
 Class with change sets must be annotated by `@ChangeLog`. There can be more than one change log class but in that 
 case `order` argument should be provided:
@@ -178,12 +218,12 @@ public class DatabaseChangelog {
 ```
 ChangeLogs are sorted alphabetically by `order` argument and changesets are applied due to this order.
 
-#### @ChangeSet
+### @ChangeSet
 
 Method annotated by @ChangeSet is taken and applied to the database. History of applied change sets is stored in a 
 collection called `dbchangelog` (by default) in your MongoDB
 
-##### Annotation parameters:
+#### Annotation parameters:
 
 `order` - string for sorting change sets in one changelog. Sorting in alphabetical order, ascending. It can be a number, 
 a date etc.
@@ -195,7 +235,7 @@ a date etc.
 `runAlways` - _[optional, default: false]_ changeset will always be executed but only first execution event will be 
 stored in dbchangelog collection
 
-##### Defining ChangeSet methods
+#### Defining ChangeSet methods
 Method annotated by `@ChangeSet` can have one of the following definition:
 
 ```java
@@ -247,12 +287,12 @@ public void someChange6(MongoTemplate mongoTemplate, Environment environment) {
 }
 ```
 
-### Injecting custom dependencies to change logs
+## Injecting custom dependencies to change logs
 Right now this is possible by using SpringBoot Application Context. 
 See [SpringBoot set up](#usage-with-springBoot) for more information. However, this feature will be available for standalone and Jongo implementations.
 
 
-### Using Spring profiles
+## Using Spring profiles
      
 **mongock** accepts Spring's `org.springframework.context.annotation.Profile` annotation. If a change log or change set 
 class is annotated  with `@Profile`, then it is activated for current application profiles.
@@ -277,7 +317,7 @@ public class ChangelogForTestEnv{
 }
 ```
 
-#### Enabling @Profile annotation (option)
+### Enabling @Profile annotation (option)
       
 To enable the `@Profile` integration, please inject `org.springframework.core.env.Environment` to your runner.
 
@@ -294,7 +334,7 @@ public SpringMongock mongock(Environment environment) {
 }
 ```
 
-#### Configuring Lock 
+### Configuring Lock 
 In order to execute the changelogs, mongock needs to manage the lock to ensure only one instance executes a changelog at a time.
 By default the lock is reserved 24 hours and, in case the lock is held by another mongock instance, will ignore the execution
 and no exception will be sent, unless the parameter throwExceptionIfCannotObtainLock is set to true.
@@ -330,7 +370,7 @@ To configure these parameters there are two methods: setLockConfig and `setLockC
 
 ## Known issues
 
-#### Mongo java driver conflicts
+### Mongo java driver conflicts
 
 **mongock** depends on `mongo-java-driver`. If your application has mongo-java-driver dependency too, there could be 
 library conflicts in some cases.
@@ -375,7 +415,7 @@ You can exclude mongo-java-driver from **mongock**  and use your dependency only
 
 ```
 
-#### Mongo transaction limitations
+## Mongo transaction limitations
 
 Due to Mongo limitations, there is no way to provide atomicity at ChangelogSet level. So a Changelog could need 
 more than one execution to be finished, as any interruption could happen, leaving the changelog in a inconsistent state.
@@ -399,3 +439,9 @@ so eventually, after some iterations, the changelog finished.
 - **Changelog's execution time is shorter than interruption time**: In case the previous condition cannot be ensured, 
 could be enough if the changelog's execution time is shorter than the interruption time. This is not ideal as the 
 execution time depends on the machine, but in most case could be enough.
+
+## Code of conduct
+Please read the [code of conduct](././community/CODE_OF_CONDUCT.md) for details on our code of conduct.
+
+## LICENSE
+Mongock propject is licensed under the [Apache License Version 2.0](http://www.apache.org/licenses/LICENSE-2.0.html). See the [LICENSE](./LICENSE.md) file for details
