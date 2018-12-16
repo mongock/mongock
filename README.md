@@ -28,6 +28,7 @@ The concept is very similar to other db migration tools such as [Liquibase](http
 ## Table of contents
 
   * [Why Mongock](#why-mongock)
+  * [Sample projects](#sample-projects)
   * [Contributing](#contributing)
   * [Add a dependency](#add-a-dependency)
         * [With Maven](#with-maven)
@@ -63,9 +64,13 @@ There are several good reasons to use Mongock in your project. Here we give you 
 * Can be used together with most, if not all, frameworks.
 * Provides great integration for Spring, allowing you to inject any dependency you want to your changelog method.
 
+## Sample projects
+In [here](https://github.com/cloudyrock/mongock-samples) you can find some sample projects that show you how to use Mongock.
 
 ## Contributing
 If you would like to contribute to Mongock project, please read [how to contribute](././community/CONTRIBUTING.md) for details on our collaboration process and standards.
+
+
 
 ## Add a dependency
 
