@@ -10,7 +10,7 @@ import org.springframework.data.mongodb.core.MongoTemplate;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
-public class SpringMongock extends Mongock implements InitializingBean {
+public class SpringMongock extends Mongock implements InitializingBean, IMongock {
   private static final Logger logger = LoggerFactory.getLogger(SpringMongock.class);
 
   private Environment springEnvironment;

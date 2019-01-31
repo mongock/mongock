@@ -38,7 +38,7 @@ public class MongockLockCheckerIntegrationTest {
       new HashSet<>(Arrays.asList("getCollection", "getCollectionFromString", "getDatabase", "toString"));
   private static final Set<String> proxyCreatordMethods =
       new HashSet<>(Arrays.asList("getCollection", "getCollectionFromString", "getDatabase"));
-  private Mongock runner;
+  private IMongock runner;
   private MongoDatabase mongoDatabase;
   private ChangeService changeService;
   private LockRepository lockRepository;
@@ -46,7 +46,7 @@ public class MongockLockCheckerIntegrationTest {
   private LockChecker lockChecker;
   private ProxyFactory proxyFactory;
   private ChangeEntryRepository dao;
-  private MongockBuilder builder;
+  private IMongockBuilder builder;
   private FongoDB db;
 
   @Before
@@ -91,8 +91,7 @@ public class MongockLockCheckerIntegrationTest {
   public void shouldCallEnsureLock() throws Exception {
     when(dao.isNewChange(any(ChangeEntry.class))).thenReturn(true);
     MongoDatabase mongoDatabaseProxy = proxyFactory.createProxyFromOriginal(mongoDatabase);
-    DB dbProxy = proxyFactory.createProxyFromOriginal(db);
-    runner = builder.build(dao, changeService, lockChecker, mongoDatabaseProxy, dbProxy);
+    runner = builder.constructMongock(dao, changeService, lockChecker, mongoDatabaseProxy, db, proxyFactory);
     // when
     runner.execute();
 
@@ -110,8 +109,7 @@ public class MongockLockCheckerIntegrationTest {
         .when(timeUtils).currentTime();
     when(dao.isNewChange(any(ChangeEntry.class))).thenReturn(true);
     MongoDatabase mongoDatabaseProxy = proxyFactory.createProxyFromOriginal(mongoDatabase);
-    DB dbProxy = proxyFactory.createProxyFromOriginal(db);
-    runner = builder.build(dao, changeService, lockChecker, mongoDatabaseProxy, dbProxy);
+    runner = builder.constructMongock(dao, changeService, lockChecker, mongoDatabaseProxy, db, proxyFactory);
 
     // when
     runner.execute();
@@ -144,8 +142,7 @@ public class MongockLockCheckerIntegrationTest {
     proxyFactory = new ProxyFactory(preInterceptor, proxyCreatordMethods, unInterceptedMethods);
     when(dao.isNewChange(any(ChangeEntry.class))).thenReturn(true);
     MongoDatabase mongoDatabaseProxy = proxyFactory.createProxyFromOriginal(mongoDatabase);
-    DB dbProxy = proxyFactory.createProxyFromOriginal(db);
-    runner = builder.build(dao, changeService, lockChecker, mongoDatabaseProxy, dbProxy);
+    runner = builder.constructMongock(dao, changeService, lockChecker, mongoDatabaseProxy, db, proxyFactory);
 
     // when
     runner.execute();

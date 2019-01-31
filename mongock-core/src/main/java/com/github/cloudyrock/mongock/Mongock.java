@@ -17,7 +17,7 @@ import java.util.List;
  *
  * @since 26/07/2014
  */
-public class Mongock implements Closeable {
+public class Mongock implements Closeable, IMongock {
   private static final Logger logger = LoggerFactory.getLogger(Mongock.class);
 
   protected final ChangeEntryRepository changeEntryRepository;

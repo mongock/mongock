@@ -6,11 +6,7 @@ import com.mongodb.client.MongoDatabase;
 import org.springframework.core.env.Environment;
 import org.springframework.data.mongodb.core.MongoTemplate;
 
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.Set;
-
-public class SpringMongockBuilder extends MongockBuilder {
+public class SpringMongockBuilder extends AMongockBuilder implements IMongockBuilder {
 
   private Environment springEnvironment = null;
   private MongoTemplate mongoTemplate = null;
@@ -27,6 +23,12 @@ public class SpringMongockBuilder extends MongockBuilder {
    */
   public SpringMongockBuilder(MongoClient mongoClient, String databaseName, String changeLogsScanPackage) {
     super(mongoClient, databaseName, changeLogsScanPackage);
+  }
+
+  @Override
+  public IMongock build() {
+    this.validateMandatoryFields();
+    return super.build();
   }
 
   /**
@@ -52,67 +54,26 @@ public class SpringMongockBuilder extends MongockBuilder {
     return this;
   }
 
-  public SpringMongock build() {
-    validateMandatoryFields();
+  public SpringMongock constructMongock(ChangeEntryRepository changeEntryRepository, ChangeService changeService, LockChecker lockChecker,
+      MongoDatabase mongoDatabaseProxy, DB db, ProxyFactory proxyFactory) {
 
-    TimeUtils timeUtils = new TimeUtils();
-
-    MongoDatabase database = mongoClient.getDatabase(databaseName);
-
-    //LockChecker
-    LockRepository lockRepository = new LockRepository(lockCollectionName, database);
-    lockRepository.ensureIndex();
-
-    final LockChecker lockChecker = new LockChecker(lockRepository, timeUtils)
-        .setLockAcquiredForMillis(timeUtils.minutesToMillis(lockAcquiredForMinutes))
-        .setLockMaxTries(maxTries)
-        .setLockMaxWaitMillis(timeUtils.minutesToMillis(maxWaitingForLockMinutes));
-
-    //Proxy
-    PreInterceptor preInterceptor = new PreInterceptor() {
-      @Override
-      public void before() {
-        lockChecker.ensureLockDefault();
-      }
-    };
-
-    final Set<String> proxyCreatorAndUnchackedmethods = new HashSet<>(
-        Arrays.asList("getCollection", "getCollectionFromString", "getDatabase", "toString"));
-
-    ProxyFactory proxyFactory =
-        new ProxyFactory(preInterceptor, proxyCreatorAndUnchackedmethods, proxyCreatorAndUnchackedmethods);
-
-    //ChangeService
-    ChangeEntryRepository changeEntryRepository = new ChangeEntryRepository(changeLogCollectionName, database);
-    changeEntryRepository.ensureIndex();
-
-    SpringChangeService changeService = new SpringChangeService();
-    changeService.setEnvironment(springEnvironment);
-    changeService.setChangeLogsBasePackage(changeLogsScanPackage);
-
-    final DB db = mongoClient.getDB(databaseName);
-    return this.build(
-        changeEntryRepository,
-        changeService,
-        lockChecker,
-        proxyFactory.createProxyFromOriginal(mongoClient.getDatabase(databaseName), MongoDatabase.class),
-        proxyFactory.createProxyFromOriginal(db, DB.class),
-        proxyFactory.createProxyFromOriginal(mongoTemplate != null ? mongoTemplate : new MongoTemplate(mongoClient, databaseName), MongoTemplate.class)
-    );
-  }
-
-  SpringMongock build(ChangeEntryRepository changeEntryRepository,
-                ChangeService changeService,
-                LockChecker lockChecker,
-                MongoDatabase mongoDatabaseProxy,
-                DB dbProxy,
-                MongoTemplate mongoTemplateProxy) {
+    SpringChangeService springChangeService = new SpringChangeService(changeService);
+    springChangeService.setEnvironment(springEnvironment);
+    DB dbProxy = proxyFactory.createProxyFromOriginal(db, DB.class);
     SpringMongock mongock = new SpringMongock(changeEntryRepository, mongoClient,  changeService, lockChecker);
     mongock.setChangelogMongoDatabase(mongoDatabaseProxy);
     mongock.setChangelogDb(dbProxy);
+    MongoTemplate mongoTemplateProxy = proxyFactory.createProxyFromOriginal(mongoTemplate != null ? mongoTemplate : new MongoTemplate(mongoClient, databaseName), MongoTemplate.class);
     mongock.setMongoTemplate(mongoTemplateProxy);
     mongock.setEnabled(enabled);
     mongock.setThrowExceptionIfCannotObtainLock(throwExceptionIfCannotObtainLock);
     return mongock;
+  }
+
+  @Override
+  void validateMandatoryFields() throws MongockException {
+    if (springEnvironment == null) {
+      throw new MongockException("springEnvironment must be set to use SpringMongockBuilder");
+    }
   }
 }

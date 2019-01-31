@@ -49,6 +49,10 @@ class ChangeService {
     this.changeLogsBasePackage = changeLogsBasePackage;
   }
 
+  String getChangeLogsBasePackage() {
+    return this.changeLogsBasePackage;
+  }
+
 
   @SuppressWarnings("unchecked")
   List<Class<?>> fetchChangeLogs() {

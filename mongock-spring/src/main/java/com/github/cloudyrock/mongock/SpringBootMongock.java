@@ -1,16 +1,17 @@
 package com.github.cloudyrock.mongock;
 
 import com.mongodb.MongoClient;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
-import java.util.ArrayList;
-import java.util.List;
 import org.springframework.beans.BeansException;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
 import org.springframework.context.ApplicationContext;
 
-public class SpringBootMongock extends Mongock implements ApplicationRunner {
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+import java.util.ArrayList;
+import java.util.List;
+
+public class SpringBootMongock extends Mongock implements ApplicationRunner, IMongock {
 
     private ApplicationContext springContext;
 

@@ -21,6 +21,12 @@ public class SpringChangeService extends ChangeService {
 
   private List<String> activeProfiles = Collections.singletonList(DEFAULT_PROFILE);
 
+  public SpringChangeService() {}
+
+  public SpringChangeService(ChangeService changeService) {
+    this.setChangeLogsBasePackage(changeService.getChangeLogsBasePackage());
+  }
+
   /**
    * <p>Spring environment environment</p>
    *

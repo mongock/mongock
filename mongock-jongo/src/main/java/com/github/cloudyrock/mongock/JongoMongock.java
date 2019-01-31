@@ -8,7 +8,7 @@ import org.slf4j.LoggerFactory;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
-public class JongoMongock extends Mongock {
+public class JongoMongock extends Mongock implements IMongock {
   private static final Logger logger = LoggerFactory.getLogger(JongoMongock.class);
   private Jongo jongo;
 
