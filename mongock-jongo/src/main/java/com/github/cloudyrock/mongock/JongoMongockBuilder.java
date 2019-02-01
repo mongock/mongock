@@ -1,18 +1,12 @@
 package com.github.cloudyrock.mongock;
 
-import com.mongodb.DB;
 import com.mongodb.MongoClient;
-import com.mongodb.client.MongoDatabase;
 import org.jongo.Jongo;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.Set;
-
 public class JongoMongockBuilder extends MongockBuilderBase<JongoMongockBuilder, JongoMongock> {
-    private static final Logger log = LoggerFactory.getLogger(JongoMongockBuilder.class);
+  private static final Logger log = LoggerFactory.getLogger(JongoMongockBuilder.class);
 
   protected Jongo jongo = null;
 
@@ -48,12 +42,9 @@ public class JongoMongockBuilder extends MongockBuilderBase<JongoMongockBuilder,
 
   @Override
   JongoMongock createBuild() {
-
-    ChangeService changeService = new ChangeService();
-    changeService.setChangeLogsBasePackage(changeLogsScanPackage);
-    JongoMongock mongock = new JongoMongock(changeEntryRepository, mongoClient,  changeService, lockChecker);
-    mongock.setChangelogMongoDatabase(proxyFactory.createProxyFromOriginal(mongoClient.getDatabase(databaseName), MongoDatabase.class));
-    mongock.setChangelogDb(proxyFactory.createProxyFromOriginal(db, DB.class));
+    JongoMongock mongock = new JongoMongock(changeEntryRepository, mongoClient, createChangeService(), lockChecker);
+    mongock.setChangelogMongoDatabase(createMongoDataBaseProxy());
+    mongock.setChangelogDb(createDbProxy());
     mongock.setJongo(proxyFactory.createProxyFromOriginal(jongo != null ? jongo : new Jongo(db), Jongo.class));
     mongock.setEnabled(enabled);
     mongock.setThrowExceptionIfCannotObtainLock(throwExceptionIfCannotObtainLock);

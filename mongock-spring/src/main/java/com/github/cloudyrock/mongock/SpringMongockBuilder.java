@@ -1,14 +1,8 @@
 package com.github.cloudyrock.mongock;
 
-import com.mongodb.DB;
 import com.mongodb.MongoClient;
-import com.mongodb.client.MongoDatabase;
 import org.springframework.core.env.Environment;
 import org.springframework.data.mongodb.core.MongoTemplate;
-
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.Set;
 
 public class SpringMongockBuilder extends MongockBuilderBase<SpringMongockBuilder, SpringMongock> {
 
@@ -60,16 +54,26 @@ public class SpringMongockBuilder extends MongockBuilderBase<SpringMongockBuilde
 
   @Override
   SpringMongock createBuild() {
-    SpringChangeService changeService = new SpringChangeService();
-    changeService.setEnvironment(springEnvironment);
-    changeService.setChangeLogsBasePackage(changeLogsScanPackage);
-
-    SpringMongock mongock = new SpringMongock(changeEntryRepository, mongoClient, changeService, lockChecker);
-    mongock.setChangelogMongoDatabase(proxyFactory.createProxyFromOriginal(mongoClient.getDatabase(databaseName), MongoDatabase.class));
-    mongock.setChangelogDb(proxyFactory.createProxyFromOriginal(db, DB.class));
-    mongock.setMongoTemplate(proxyFactory.createProxyFromOriginal(mongoTemplate != null ? mongoTemplate : new MongoTemplate(mongoClient, databaseName), MongoTemplate.class));
+    SpringMongock mongock = new SpringMongock(changeEntryRepository, mongoClient, createChangeService(), lockChecker);
+    mongock.setChangelogMongoDatabase(createMongoDataBaseProxy());
+    mongock.setChangelogDb(createDbProxy());
+    mongock.setMongoTemplate(createMongoTemplateProxy());
     mongock.setEnabled(enabled);
     mongock.setThrowExceptionIfCannotObtainLock(throwExceptionIfCannotObtainLock);
     return mongock;
+  }
+
+  private MongoTemplate createMongoTemplateProxy() {
+    MongoTemplate template = mongoTemplate != null ? mongoTemplate : new MongoTemplate(mongoClient, databaseName);
+    return proxyFactory.createProxyFromOriginal(template, MongoTemplate.class);
+  }
+
+
+  @Override
+  ChangeService createChangeService() {
+    SpringChangeService changeService = new SpringChangeService();
+    changeService.setEnvironment(springEnvironment);
+    changeService.setChangeLogsBasePackage(changeLogsScanPackage);
+    return changeService;
   }
 }

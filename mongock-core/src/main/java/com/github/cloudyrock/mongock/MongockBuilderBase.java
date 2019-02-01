@@ -175,11 +175,24 @@ public abstract class MongockBuilderBase<BUILDER_TYPE extends MongockBuilderBase
   }
 
 
-
   private ChangeEntryRepository createChangeRepository() {
     ChangeEntryRepository changeEntryRepository = new ChangeEntryRepository(changeLogCollectionName, database);
     changeEntryRepository.ensureIndex();
     return changeEntryRepository;
+  }
+
+  ChangeService createChangeService() {
+    ChangeService changeService = new ChangeService();
+    changeService.setChangeLogsBasePackage(changeLogsScanPackage);
+    return changeService;
+  }
+
+  DB createDbProxy() {
+    return proxyFactory.createProxyFromOriginal(db, DB.class);
+  }
+
+  MongoDatabase createMongoDataBaseProxy() {
+    return proxyFactory.createProxyFromOriginal(mongoClient.getDatabase(databaseName), MongoDatabase.class);
   }
 
   abstract RETURN_TYPE createBuild();

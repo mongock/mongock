@@ -1,13 +1,6 @@
 package com.github.cloudyrock.mongock;
 
-import com.mongodb.DB;
 import com.mongodb.MongoClient;
-import com.mongodb.client.MongoDatabase;
-
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.Set;
-
 import org.springframework.context.ApplicationContext;
 import org.springframework.core.env.Environment;
 
@@ -43,18 +36,21 @@ public class SpringBootMongockBuilder extends MongockBuilderBase<SpringBootMongo
 
   @Override
   SpringBootMongock createBuild() {
-
-
-    SpringChangeService changeService = new SpringChangeService();
-    changeService.setEnvironment(context.getBean(Environment.class));
-    changeService.setChangeLogsBasePackage(changeLogsScanPackage);
-    SpringBootMongock mongock = new SpringBootMongock(changeEntryRepository, mongoClient, changeService, lockChecker);
-    mongock.setChangelogMongoDatabase(proxyFactory.createProxyFromOriginal(mongoClient.getDatabase(databaseName), MongoDatabase.class));
-    mongock.setChangelogDb(proxyFactory.createProxyFromOriginal(db, DB.class));
+    SpringBootMongock mongock = new SpringBootMongock(changeEntryRepository, mongoClient, createChangeService(), lockChecker);
+    mongock.setChangelogMongoDatabase(createMongoDataBaseProxy());
+    mongock.setChangelogDb(createDbProxy());
     mongock.setEnabled(enabled);
     mongock.springContext(context);
     mongock.setThrowExceptionIfCannotObtainLock(throwExceptionIfCannotObtainLock);
     return mongock;
+  }
+
+  @Override
+  ChangeService createChangeService() {
+    SpringChangeService changeService = new SpringChangeService();
+    changeService.setEnvironment(context.getBean(Environment.class));
+    changeService.setChangeLogsBasePackage(changeLogsScanPackage);
+    return changeService;
   }
 
   @Override

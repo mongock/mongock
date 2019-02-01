@@ -1,8 +1,6 @@
 package com.github.cloudyrock.mongock;
 
-import com.mongodb.DB;
 import com.mongodb.MongoClient;
-import com.mongodb.client.MongoDatabase;
 
 public class MongockBuilder extends MongockBuilderBase<MongockBuilder, Mongock> {
 
@@ -18,11 +16,10 @@ public class MongockBuilder extends MongockBuilderBase<MongockBuilder, Mongock> 
 
   @Override
   Mongock createBuild() {
-    ChangeService changeService = new ChangeService();
-    changeService.setChangeLogsBasePackage(changeLogsScanPackage);
-    Mongock mongock = new Mongock(changeEntryRepository, mongoClient, changeService, lockChecker);
-    mongock.setChangelogMongoDatabase(proxyFactory.createProxyFromOriginal(mongoClient.getDatabase(databaseName), MongoDatabase.class));
-    mongock.setChangelogDb(proxyFactory.createProxyFromOriginal(db, DB.class));
+
+    Mongock mongock = new Mongock(changeEntryRepository, mongoClient, createChangeService(), lockChecker);
+    mongock.setChangelogMongoDatabase(createMongoDataBaseProxy());
+    mongock.setChangelogDb(createDbProxy());
     mongock.setEnabled(enabled);
     mongock.setThrowExceptionIfCannotObtainLock(throwExceptionIfCannotObtainLock);
     return mongock;

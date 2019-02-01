@@ -48,6 +48,7 @@ public class SpringMongock extends Mongock implements InitializingBean {
       super.executeChangeSetMethod(changeSetMethod, changeLogInstance);
     }
   }
+
   /**
    * Set Environment object for Spring Profiles (@Profile) integration
    *

@@ -166,34 +166,6 @@ public class MongockLockCheckerIntegrationTest {
         new Document().append("$set", document),
         new UpdateOptions().upsert(false));
   }
-//
-//  //Private helper method to inject dependencies with reflection to avoid modifying production code for testing purpose
-//  private void injectDependencies() throws NoSuchFieldException, IllegalAccessException {
-//
-//    Field changeServiceField = null;
-//    Field proxyFactoryField = null;
-//    Field lockCheckerField = null;
-//
-//    try {
-//      changeServiceField = runner.getClass().getDeclaredField("service");
-//      changeServiceField.setAccessible(true);
-//      changeServiceField.set(runner, changeService);
-//
-//      proxyFactoryField = runner.getClass().getDeclaredField("proxyFactory");
-//      proxyFactoryField.setAccessible(true);
-//      proxyFactoryField.set(runner, proxyFactory);
-//
-//      lockCheckerField = runner.getClass().getDeclaredField("lockChecker");
-//      lockCheckerField.setAccessible(true);
-//      lockCheckerField.set(runner, lockChecker);
-//
-//    } finally {
-//      if (changeServiceField != null) changeServiceField.setAccessible(false);
-//      if (proxyFactoryField != null) proxyFactoryField.setAccessible(false);
-//      if (lockCheckerField != null) lockCheckerField.setAccessible(false);
-//    }
-//
-//  }
 
 }
 
