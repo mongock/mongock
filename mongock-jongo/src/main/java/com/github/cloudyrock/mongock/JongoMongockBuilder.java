@@ -11,7 +11,7 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 
-public class JongoMongockBuilder extends MongockBuilderBase<JongoMongockBuilder> {
+public class JongoMongockBuilder extends MongockBuilderBase<JongoMongockBuilder, JongoMongock> {
     private static final Logger log = LoggerFactory.getLogger(JongoMongockBuilder.class);
 
   protected Jongo jongo = null;
@@ -46,64 +46,15 @@ public class JongoMongockBuilder extends MongockBuilderBase<JongoMongockBuilder>
     return this;
   }
 
-  public JongoMongock build() {
-    validateMandatoryFields();
-
-    TimeUtils timeUtils = new TimeUtils();
-
-    MongoDatabase database = mongoClient.getDatabase(databaseName);
-
-    //LockChecker
-    LockRepository lockRepository = new LockRepository(lockCollectionName, database);
-    lockRepository.ensureIndex();
-
-    final LockChecker lockChecker = new LockChecker(lockRepository, timeUtils)
-        .setLockAcquiredForMillis(timeUtils.minutesToMillis(lockAcquiredForMinutes))
-        .setLockMaxTries(maxTries)
-        .setLockMaxWaitMillis(timeUtils.minutesToMillis(maxWaitingForLockMinutes));
-
-    //Proxy
-    PreInterceptor preInterceptor = new PreInterceptor() {
-      @Override
-      public void before() {
-        lockChecker.ensureLockDefault();
-      }
-    };
-
-    final Set<String> proxyCreatorAndUnchackedmethods = new HashSet<>(
-        Arrays.asList("getCollection", "getCollectionFromString", "getDatabase", "toString"));
-
-    ProxyFactory proxyFactory =
-        new ProxyFactory(preInterceptor, proxyCreatorAndUnchackedmethods, proxyCreatorAndUnchackedmethods);
-
-    //ChangeService
-    ChangeEntryRepository changeEntryRepository = new ChangeEntryRepository(changeLogCollectionName, database);
-    changeEntryRepository.ensureIndex();
+  @Override
+  JongoMongock createBuild() {
 
     ChangeService changeService = new ChangeService();
     changeService.setChangeLogsBasePackage(changeLogsScanPackage);
-
-    final DB db = mongoClient.getDB(databaseName);
-    return this.build(
-        changeEntryRepository,
-        changeService,
-        lockChecker,
-        proxyFactory.createProxyFromOriginal(mongoClient.getDatabase(databaseName), MongoDatabase.class),
-        proxyFactory.createProxyFromOriginal(db, DB.class),
-        proxyFactory.createProxyFromOriginal(jongo != null ? jongo : new Jongo(db), Jongo.class)
-    );
-  }
-
-  JongoMongock build(ChangeEntryRepository changeEntryRepository,
-                ChangeService changeService,
-                LockChecker lockChecker,
-                MongoDatabase mongoDatabaseProxy,
-                DB dbProxy,
-                Jongo jongoProxy) {
     JongoMongock mongock = new JongoMongock(changeEntryRepository, mongoClient,  changeService, lockChecker);
-    mongock.setChangelogMongoDatabase(mongoDatabaseProxy);
-    mongock.setChangelogDb(dbProxy);
-    mongock.setJongo(jongoProxy);
+    mongock.setChangelogMongoDatabase(proxyFactory.createProxyFromOriginal(mongoClient.getDatabase(databaseName), MongoDatabase.class));
+    mongock.setChangelogDb(proxyFactory.createProxyFromOriginal(db, DB.class));
+    mongock.setJongo(proxyFactory.createProxyFromOriginal(jongo != null ? jongo : new Jongo(db), Jongo.class));
     mongock.setEnabled(enabled);
     mongock.setThrowExceptionIfCannotObtainLock(throwExceptionIfCannotObtainLock);
     return mongock;

@@ -3,16 +3,18 @@ package com.github.cloudyrock.mongock;
 import com.mongodb.DB;
 import com.mongodb.MongoClient;
 import com.mongodb.client.MongoDatabase;
+
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
+
 import org.springframework.context.ApplicationContext;
 import org.springframework.core.env.Environment;
 
 /**
  * Factory for {@link SpringBootMongock}
  */
-public class SpringBootMongockBuilder extends MongockBuilderBase<SpringBootMongockBuilder> {
+public class SpringBootMongockBuilder extends MongockBuilderBase<SpringBootMongockBuilder, SpringBootMongock> {
   private ApplicationContext context;
 
   /**
@@ -20,8 +22,8 @@ public class SpringBootMongockBuilder extends MongockBuilderBase<SpringBootMongo
    * </p><p>For more details about <tt>MongoClient</tt> please see com.mongodb.MongoClient docs
    * </p>
    *
-   * @param mongoClient database connection client
-   * @param databaseName database name
+   * @param mongoClient           database connection client
+   * @param databaseName          database name
    * @param changeLogsScanPackage package path where the changelogs are located
    * @see MongoClient
    */
@@ -39,63 +41,16 @@ public class SpringBootMongockBuilder extends MongockBuilderBase<SpringBootMongo
     return this;
   }
 
-  public SpringBootMongock build() {
-    validateMandatoryFields();
+  @Override
+  SpringBootMongock createBuild() {
 
-    TimeUtils timeUtils = new TimeUtils();
-
-    MongoDatabase database = mongoClient.getDatabase(databaseName);
-
-    //LockChecker
-    LockRepository lockRepository = new LockRepository(lockCollectionName, database);
-    lockRepository.ensureIndex();
-
-    final LockChecker lockChecker = new LockChecker(lockRepository, timeUtils)
-        .setLockAcquiredForMillis(timeUtils.minutesToMillis(lockAcquiredForMinutes))
-        .setLockMaxTries(maxTries)
-        .setLockMaxWaitMillis(timeUtils.minutesToMillis(maxWaitingForLockMinutes));
-
-    //Proxy
-    PreInterceptor preInterceptor = new PreInterceptor() {
-      @Override
-      public void before() {
-        lockChecker.ensureLockDefault();
-      }
-    };
-
-    final Set<String> proxyCreatorAndUncheckedmethods = new HashSet<>(
-        Arrays.asList("getCollection", "getCollectionFromString", "getDatabase", "toString"));
-
-    ProxyFactory proxyFactory =
-        new ProxyFactory(preInterceptor, proxyCreatorAndUncheckedmethods, proxyCreatorAndUncheckedmethods);
-
-    //ChangeService
-    ChangeEntryRepository changeEntryRepository = new ChangeEntryRepository(changeLogCollectionName, database);
-    changeEntryRepository.ensureIndex();
 
     SpringChangeService changeService = new SpringChangeService();
     changeService.setEnvironment(context.getBean(Environment.class));
     changeService.setChangeLogsBasePackage(changeLogsScanPackage);
-
-    final DB db = mongoClient.getDB(databaseName);
-    return this.build(
-        changeEntryRepository,
-        changeService,
-        lockChecker,
-        proxyFactory.createProxyFromOriginal(mongoClient.getDatabase(databaseName), MongoDatabase.class),
-        proxyFactory.createProxyFromOriginal(db, DB.class),
-        context);
-  }
-
-  private SpringBootMongock build(ChangeEntryRepository changeEntryRepository,
-      ChangeService changeService,
-      LockChecker lockChecker,
-      MongoDatabase mongoDatabaseProxy,
-      DB dbProxy,
-      ApplicationContext context) {
     SpringBootMongock mongock = new SpringBootMongock(changeEntryRepository, mongoClient, changeService, lockChecker);
-    mongock.setChangelogMongoDatabase(mongoDatabaseProxy);
-    mongock.setChangelogDb(dbProxy);
+    mongock.setChangelogMongoDatabase(proxyFactory.createProxyFromOriginal(mongoClient.getDatabase(databaseName), MongoDatabase.class));
+    mongock.setChangelogDb(proxyFactory.createProxyFromOriginal(db, DB.class));
     mongock.setEnabled(enabled);
     mongock.springContext(context);
     mongock.setThrowExceptionIfCannotObtainLock(throwExceptionIfCannotObtainLock);

@@ -10,7 +10,7 @@ import java.util.Set;
 
 import static com.github.cloudyrock.mongock.StringUtils.hasText;
 
-public abstract class MongockBuilderBase<RETURN_TYPE extends MongockBuilderBase> {
+public abstract class MongockBuilderBase<BUILDER_TYPE extends MongockBuilderBase, RETURN_TYPE extends Mongock> {
 
   //Mandatory
   final MongoClient mongoClient;
@@ -26,6 +26,12 @@ public abstract class MongockBuilderBase<RETURN_TYPE extends MongockBuilderBase>
   String changeLogCollectionName = "mongockChangeLog";
   String lockCollectionName = "mongockLock";
 
+  //for build
+  ProxyFactory proxyFactory;
+  ChangeEntryRepository changeEntryRepository;
+  DB db;
+  LockChecker lockChecker;
+  MongoDatabase database;
 
   /**
    * <p>Builder constructor takes db.mongodb.MongoClient, database name and changelog scan package as parameters.
@@ -42,7 +48,7 @@ public abstract class MongockBuilderBase<RETURN_TYPE extends MongockBuilderBase>
     this.changeLogsScanPackage = changeLogsScanPackage;
   }
 
-  protected abstract RETURN_TYPE returnInstance();
+  protected abstract BUILDER_TYPE returnInstance();
 
   /**
    * <p>Changes the changelog collection name</p>
@@ -50,7 +56,7 @@ public abstract class MongockBuilderBase<RETURN_TYPE extends MongockBuilderBase>
    * @param changeLogCollectionName name of the collection
    * @return Mongock builder
    */
-  public RETURN_TYPE setChangeLogCollectionName(String changeLogCollectionName) {
+  public BUILDER_TYPE setChangeLogCollectionName(String changeLogCollectionName) {
     this.changeLogCollectionName = changeLogCollectionName;
     return returnInstance();
   }
@@ -62,7 +68,7 @@ public abstract class MongockBuilderBase<RETURN_TYPE extends MongockBuilderBase>
    * @param lockCollectionName name of the collection
    * @return Mongock builder
    */
-  public RETURN_TYPE setLockCollectionName(String lockCollectionName) {
+  public BUILDER_TYPE setLockCollectionName(String lockCollectionName) {
     this.lockCollectionName = lockCollectionName;
     return returnInstance();
   }
@@ -73,7 +79,7 @@ public abstract class MongockBuilderBase<RETURN_TYPE extends MongockBuilderBase>
    * @param throwExceptionIfCannotObtainLock Mongock will throw MongockException if lock can not be obtained
    * @return Mongock builder
    */
-  public RETURN_TYPE setThrowExceptionIfCannotObtainLock(boolean throwExceptionIfCannotObtainLock) {
+  public BUILDER_TYPE setThrowExceptionIfCannotObtainLock(boolean throwExceptionIfCannotObtainLock) {
     this.throwExceptionIfCannotObtainLock = throwExceptionIfCannotObtainLock;
     return returnInstance();
   }
@@ -85,7 +91,7 @@ public abstract class MongockBuilderBase<RETURN_TYPE extends MongockBuilderBase>
    * @param enabled Migration process will run only if this option is set to true
    * @return Mongock builder
    */
-  public RETURN_TYPE setEnabled(boolean enabled) {
+  public BUILDER_TYPE setEnabled(boolean enabled) {
     this.enabled = enabled;
     return returnInstance();
   }
@@ -98,7 +104,7 @@ public abstract class MongockBuilderBase<RETURN_TYPE extends MongockBuilderBase>
    * @param maxTries                 number of tries
    * @return Mongock object for fluent interface
    */
-  public RETURN_TYPE setLockConfig(long lockAcquiredForMinutes, long maxWaitingForLockMinutes, int maxTries) {
+  public BUILDER_TYPE setLockConfig(long lockAcquiredForMinutes, long maxWaitingForLockMinutes, int maxTries) {
     this.lockAcquiredForMinutes = lockAcquiredForMinutes;
     this.maxWaitingForLockMinutes = maxWaitingForLockMinutes;
     this.maxTries = maxTries;
@@ -111,7 +117,7 @@ public abstract class MongockBuilderBase<RETURN_TYPE extends MongockBuilderBase>
    *
    * @return Mongock object for fluent interface
    */
-  public RETURN_TYPE setLockQuickConfig() {
+  public BUILDER_TYPE setLockQuickConfig() {
     setLockConfig(3, 4, 3);
     return returnInstance();
   }
@@ -128,4 +134,55 @@ public abstract class MongockBuilderBase<RETURN_TYPE extends MongockBuilderBase>
       throw new MongockException("Scan package for changelogs is not set: use appropriate setter");
     }
   }
+
+
+
+  public RETURN_TYPE build() {
+    validateMandatoryFields();
+    database = mongoClient.getDatabase(databaseName);
+    db = mongoClient.getDB(databaseName);
+
+    lockChecker = createLockChecker();
+    proxyFactory = createProxyFactory(lockChecker);
+    changeEntryRepository = createChangeRepository();
+    return this.createBuild();
+  }
+
+  private LockChecker createLockChecker() {
+    LockRepository lockRepository = new LockRepository(lockCollectionName, database);
+    lockRepository.ensureIndex();
+
+    TimeUtils timeUtils = new TimeUtils();
+    return new LockChecker(lockRepository, timeUtils)
+        .setLockAcquiredForMillis(timeUtils.minutesToMillis(lockAcquiredForMinutes))
+        .setLockMaxTries(maxTries)
+        .setLockMaxWaitMillis(timeUtils.minutesToMillis(maxWaitingForLockMinutes));
+  }
+
+
+  private ProxyFactory createProxyFactory(LockChecker lockChecker) {
+    PreInterceptor preInterceptor = new PreInterceptor() {
+      @Override
+      public void before() {
+        lockChecker.ensureLockDefault();
+      }
+    };
+
+    final Set<String> proxyCreatorAndUnchackedmethods = new HashSet<>(
+        Arrays.asList("getCollection", "getCollectionFromString", "getDatabase", "toString"));
+
+    return new ProxyFactory(preInterceptor, proxyCreatorAndUnchackedmethods, proxyCreatorAndUnchackedmethods);
+  }
+
+
+
+  private ChangeEntryRepository createChangeRepository() {
+    ChangeEntryRepository changeEntryRepository = new ChangeEntryRepository(changeLogCollectionName, database);
+    changeEntryRepository.ensureIndex();
+    return changeEntryRepository;
+  }
+
+  abstract RETURN_TYPE createBuild();
+
+
 }
