@@ -1,5 +1,8 @@
 
-# 2.0.1 (unreleased)
+# 2.0.1
+
+### Bugs fixed
+* Fixed [issue 59: Builder's children classes return parent class in methods where it should return the actual class](https://github.com/cloudyrock/mongock/issues/59) in [PR](https://github.com/cloudyrock/mongock/pull/60)
 
 # 2.0.0 (14/12/2018)
 
