@@ -11,7 +11,7 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 
-public class JongoMongockBuilder extends MongockBuilder {
+public class JongoMongockBuilder extends MongockBuilderBase<JongoMongockBuilder> {
     private static final Logger log = LoggerFactory.getLogger(JongoMongockBuilder.class);
 
   protected Jongo jongo = null;
@@ -28,6 +28,11 @@ public class JongoMongockBuilder extends MongockBuilder {
    */
   public JongoMongockBuilder(MongoClient mongoClient, String databaseName, String changeLogsScanPackage) {
     super(mongoClient, databaseName, changeLogsScanPackage);
+  }
+
+  @Override
+  protected JongoMongockBuilder returnInstance() {
+    return this;
   }
 
   /**

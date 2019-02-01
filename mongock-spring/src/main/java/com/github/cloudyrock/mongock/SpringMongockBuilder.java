@@ -10,7 +10,7 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 
-public class SpringMongockBuilder extends MongockBuilder {
+public class SpringMongockBuilder extends MongockBuilderBase<SpringMongockBuilder> {
 
   private Environment springEnvironment = null;
   private MongoTemplate mongoTemplate = null;
@@ -27,6 +27,11 @@ public class SpringMongockBuilder extends MongockBuilder {
    */
   public SpringMongockBuilder(MongoClient mongoClient, String databaseName, String changeLogsScanPackage) {
     super(mongoClient, databaseName, changeLogsScanPackage);
+  }
+
+  @Override
+  protected SpringMongockBuilder returnInstance() {
+    return this;
   }
 
   /**

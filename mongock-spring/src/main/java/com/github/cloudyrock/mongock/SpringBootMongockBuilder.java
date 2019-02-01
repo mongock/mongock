@@ -12,7 +12,7 @@ import org.springframework.core.env.Environment;
 /**
  * Factory for {@link SpringBootMongock}
  */
-public class SpringBootMongockBuilder extends MongockBuilder {
+public class SpringBootMongockBuilder extends MongockBuilderBase<SpringBootMongockBuilder> {
   private ApplicationContext context;
 
   /**
@@ -27,6 +27,11 @@ public class SpringBootMongockBuilder extends MongockBuilder {
    */
   public SpringBootMongockBuilder(MongoClient mongoClient, String databaseName, String changeLogsScanPackage) {
     super(mongoClient, databaseName, changeLogsScanPackage);
+  }
+
+  @Override
+  protected SpringBootMongockBuilder returnInstance() {
+    return this;
   }
 
   public SpringBootMongockBuilder setApplicationContext(ApplicationContext context) {
