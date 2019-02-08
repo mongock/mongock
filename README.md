@@ -33,8 +33,8 @@ The concept is very similar to other db migration tools such as [Liquibase](http
   * [Add a dependency](#add-a-dependency)
      * [With Maven](#with-maven)
      * [With Gradle](#with-gradle)
-  * [Usage with Spring](#usage-with-spring)
-  * [Usage with SpringBoot](#usage-with-springboot)
+  * [Usage with Spring...Mongock as a Bean](#usage-with-spring-mongock-as-a-bean)
+  * [Usage with SpringBoot...When you need to inject your own dependencies](#usage-with-springboot-when-you-need-to-inject your-own-dependencies)
   * [Usage with Jongo](#usage-with-jongo)
   * [Standalone usage](#standalone-usage)
   * [Creating change logs](#creating-change-logs)
@@ -111,7 +111,7 @@ compile 'com.github.cloudyrock.mongock:mongock-spring:2.0.0'  // with Spring (in
 compile 'com.github.cloudyrock.mongock:mongock-jongo:2.0.0'   // with Jongo (in addition to mongock-core
 ```
 
-## Usage with Spring...Mongock as a @Bean
+## Usage with Spring...Mongock as a Bean
 
 You need to instantiate mongock object and provide some configuration.
 If you use Spring, mongock can be instantiated as a singleton bean in the Spring context. 
@@ -127,7 +127,7 @@ public SpringMongock mongock() {
 }
 ```
 
-## Usage with SpringBoot...When you need to inject your own dependencies to your changesets
+## Usage with SpringBoot...When you need to inject your own dependencies
 
 The main benefit of using SpringBoot integration is that it provides a totally flexible way to inject dependencies,
 so you can inject any object to your change logs by using SpringBoot ApplicationContext.
