@@ -111,7 +111,7 @@ compile 'com.github.cloudyrock.mongock:mongock-spring:2.0.0'  // with Spring (in
 compile 'com.github.cloudyrock.mongock:mongock-jongo:2.0.0'   // with Jongo (in addition to mongock-core
 ```
 
-## Usage with Spring
+## Usage with Spring...Mongock as a @Bean
 
 You need to instantiate mongock object and provide some configuration.
 If you use Spring, mongock can be instantiated as a singleton bean in the Spring context. 
@@ -127,7 +127,7 @@ public SpringMongock mongock() {
 }
 ```
 
-## Usage with SpringBoot
+## Usage with SpringBoot...When you need to inject your own dependencies to your changesets
 
 The main benefit of using SpringBoot integration is that it provides a totally flexible way to inject dependencies,
 so you can inject any object to your change logs by using SpringBoot ApplicationContext.
@@ -137,7 +137,7 @@ Mongock will run as an [ApplictionRunner](https://docs.spring.io/spring-boot/doc
 In terms of execution, it will be be very similar to the standard Spring implementation. 
 The key difference is that ApplicationRunner beans run *after* (as opposed to during) the context is fully initialized. 
 
->**Note:** Using this implementation means you need all the dependencies in your change logs(parameters in methods annotated with ```@ChangeSet```) declared as Spring beans.
+>**Note:** Using this implementation means you need all the dependencies in your changelogs(parameters in methods annotated with ```@ChangeSet```) declared as Spring beans.
 
 ```java
 @Bean
