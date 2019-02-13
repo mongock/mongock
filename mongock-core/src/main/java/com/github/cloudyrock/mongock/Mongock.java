@@ -1,5 +1,6 @@
 package com.github.cloudyrock.mongock;
 
+import com.google.common.collect.Sets;
 import com.mongodb.DB;
 import com.mongodb.MongoClient;
 import com.mongodb.client.MongoDatabase;
@@ -31,7 +32,7 @@ public class Mongock implements Closeable {
   private MongoDatabase changelogMongoDatabase;
   private DB changelogDb;
 
-  private Set<Object> concreteChangeLogs;
+  private Set<Object> concreteChangeLogs = Sets.newHashSet();
 
   protected Mongock(ChangeEntryRepository changeEntryRepository,
           MongoClient mongoClient,
