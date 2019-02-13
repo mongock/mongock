@@ -20,6 +20,7 @@ public class MongockBuilder extends MongockBuilderBase<MongockBuilder, Mongock> 
     Mongock mongock = new Mongock(changeEntryRepository, mongoClient, createChangeService(), lockChecker);
     mongock.setChangelogMongoDatabase(createMongoDataBaseProxy());
     mongock.setChangelogDb(createDbProxy());
+    mongock.setConcreteChangeLogs(concreteChangeLogs);
     mongock.setEnabled(enabled);
     mongock.setThrowExceptionIfCannotObtainLock(throwExceptionIfCannotObtainLock);
     return mongock;

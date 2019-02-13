@@ -2,6 +2,7 @@ package com.github.cloudyrock.mongock;
 
 import com.github.cloudyrock.mongock.test.changelogs.MongockTestResource;
 import com.github.fakemongo.Fongo;
+import com.google.common.collect.Sets;
 import com.mongodb.DB;
 import com.mongodb.MongoClient;
 import com.mongodb.client.MongoDatabase;
@@ -49,6 +50,8 @@ public class MongockTestBase {
   @Mock
   private MongoRepository indexDao;
 
+  protected Mongock temp;
+
   public static MongoClient getFakeMongoClient(MongoDatabase fakeMongoDatabase, DB fakeDb) {
     MongoClient mongoClient = mock(MongoClient.class);
     when(mongoClient.getDatabase(anyString())).thenReturn(fakeMongoDatabase);
@@ -70,16 +73,7 @@ public class MongockTestBase {
     changeService.setChangeLogsBasePackage(MongockTestResource.class.getPackage().getName());
     mongoClient = MongockTestBase.getFakeMongoClient(fakeMongoDatabase, fakeDb);
 
-    Mongock temp = new Mongock(
-        changeEntryRepository,
-        mongoClient,
-        changeService,
-        lockChecker);
-
-    temp.setChangelogDb(fakeDb);
-    temp.setChangelogMongoDatabase(fakeMongoDatabase);
-    temp.setEnabled(true);
-    temp.setThrowExceptionIfCannotObtainLock(true);
+    createMongock();
     runner = spy(temp);
 
   }
@@ -89,6 +83,20 @@ public class MongockTestBase {
     TestUtils.setField(runner, "mongoTemplate", null);
     TestUtils.setField(runner, "jongo", null);
     fakeDb.dropDatabase();
+  }
+
+  private void createMongock() {
+    temp = new Mongock(
+        changeEntryRepository,
+        mongoClient,
+        changeService,
+        lockChecker);
+
+    temp.setChangelogDb(fakeDb);
+    temp.setChangelogMongoDatabase(fakeMongoDatabase);
+    temp.setEnabled(true);
+    temp.setThrowExceptionIfCannotObtainLock(true);
+    temp.setConcreteChangeLogs(Sets.newHashSet());
   }
 
 }

@@ -1,7 +1,10 @@
 package com.github.cloudyrock.mongock;
 
+import com.github.cloudyrock.mongock.test.changelogs.AnotherMongockTestResource;
+import com.github.cloudyrock.mongock.test.changelogs.MongockTestResource;
 import com.github.cloudyrock.mongock.test.proxy.ProxiesMongockTestResource;
 import com.github.fakemongo.Fongo;
+import com.google.common.collect.Sets;
 import com.mongodb.DB;
 import com.mongodb.FongoDB;
 import com.mongodb.MongoClient;
@@ -9,7 +12,9 @@ import com.mongodb.client.MongoDatabase;
 import com.mongodb.client.model.UpdateOptions;
 import org.bson.Document;
 import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.ExpectedException;
 import org.mockito.internal.verification.Times;
 
 import java.util.Arrays;
@@ -33,6 +38,9 @@ import static org.mockito.Mockito.when;
  */
 public class MongockLockCheckerIntegrationTest {
 
+  @Rule
+  public ExpectedException expectedException = ExpectedException.none();
+
   private static final String LOCK_COLLECTION_NAME = "mongocklock";
   private static final Set<String> unInterceptedMethods =
       new HashSet<>(Arrays.asList("getCollection", "getCollectionFromString", "getDatabase", "toString"));
@@ -48,13 +56,14 @@ public class MongockLockCheckerIntegrationTest {
   private ChangeEntryRepository changeEntryRepository;
   private TestMongockBuilder builder;
   private FongoDB db;
+  private MongoClient mongoClient;
 
   @Before
   public void setUp() throws NoSuchMethodException, MongockException {
     db = new Fongo("testServer").getDB("mongocktest");
     mongoDatabase = spy(new Fongo("testServer").getDatabase("mongocktest"));
 
-    MongoClient mongoClient = mock(MongoClient.class);
+    mongoClient = mock(MongoClient.class);
     when(mongoClient.getDatabase(anyString())).thenReturn(mongoDatabase);
     when(mongoClient.getDB(anyString())).thenReturn(db);
 
@@ -177,6 +186,7 @@ class TestMongockBuilder extends MongockBuilderBase<TestMongockBuilder, Mongock>
   private DB db;
   private ChangeEntryRepository changeEntryRepository;
   private LockChecker lockChecker;
+  private Set<Object> changeLogs = Sets.newHashSet();
 
   public TestMongockBuilder(MongoClient mongoClient, String databaseName, String changeLogsScanPackage) {
     super(mongoClient, databaseName, changeLogsScanPackage);
@@ -208,6 +218,7 @@ class TestMongockBuilder extends MongockBuilderBase<TestMongockBuilder, Mongock>
     mongock.setChangelogDb(db);
     mongock.setEnabled(enabled);
     mongock.setThrowExceptionIfCannotObtainLock(throwExceptionIfCannotObtainLock);
+    mongock.setConcreteChangeLogs(changeLogs);
     return mongock;
   }
 }

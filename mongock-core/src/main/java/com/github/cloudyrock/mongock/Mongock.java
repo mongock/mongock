@@ -10,6 +10,7 @@ import java.io.Closeable;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.List;
+import java.util.Set;
 
 /**
  * Mongock runner
@@ -29,6 +30,8 @@ public class Mongock implements Closeable {
   private boolean enabled;
   private MongoDatabase changelogMongoDatabase;
   private DB changelogDb;
+
+  private Set<Object> concreteChangeLogs;
 
   protected Mongock(ChangeEntryRepository changeEntryRepository,
           MongoClient mongoClient,
@@ -50,6 +53,10 @@ public class Mongock implements Closeable {
 
   void setChangelogMongoDatabase(MongoDatabase changelogMongoDatabase) {
     this.changelogMongoDatabase = changelogMongoDatabase;
+  }
+
+  void setConcreteChangeLogs(Set<Object> concreteChangeLogs) {
+    this.concreteChangeLogs = concreteChangeLogs;
   }
 
   void setChangelogDb(DB changelogDb) {
@@ -108,9 +115,9 @@ public class Mongock implements Closeable {
 
     for (Class<?> changelogClass : changeService.fetchChangeLogs()) {
 
-      Object changelogInstance;
+      Object changelogInstance = findConcreteChangeLog(changelogClass);
       try {
-        changelogInstance = changeService.createInstance(changelogClass);
+        changelogInstance = changelogInstance == null ? changeService.createInstance(changelogClass) : changelogInstance;
         List<Method> changesetMethods = changeService.fetchChangeSets(changelogInstance.getClass());
         for (Method changesetMethod : changesetMethods) {
           executeIfNewOrRunAlways(changelogInstance, changesetMethod, changeService.createChangeEntry(changesetMethod));
@@ -124,6 +131,14 @@ public class Mongock implements Closeable {
       }
 
     }
+  }
+
+  private Object findConcreteChangeLog(Class<?> changelogClass) {
+    return concreteChangeLogs.stream()
+          .filter(concrete -> concrete.getClass().isAnnotationPresent(ChangeLog.class))
+          .filter(concrete -> concrete.getClass().equals(changelogClass))
+          .findFirst()
+          .orElse(null);
   }
 
   private void executeIfNewOrRunAlways(Object changelogInstance, Method changesetMethod, ChangeEntry changeEntry) throws IllegalAccessException, InvocationTargetException {

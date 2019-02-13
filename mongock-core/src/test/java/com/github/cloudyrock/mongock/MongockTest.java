@@ -1,11 +1,23 @@
 package com.github.cloudyrock.mongock;
 
+import com.github.cloudyrock.mongock.test.changelogs.MongockTestResource;
+import com.github.cloudyrock.mongock.test.changelogs.MongockTestResourceWithField;
 import com.github.cloudyrock.mongock.test.proxy.ProxiesMongockTestResource;
+import com.google.common.collect.Sets;
 import com.mongodb.DB;
 import com.mongodb.client.MongoDatabase;
+import junit.framework.Assert;
 import org.bson.Document;
+import org.hamcrest.BaseMatcher;
+import org.hamcrest.CoreMatchers;
+import org.hamcrest.core.IsEqual;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.ExpectedException;
 import org.junit.runner.RunWith;
+import org.mockito.Matchers;
+import org.mockito.Mockito;
+import org.mockito.internal.matchers.Equals;
 import org.mockito.internal.verification.Times;
 import org.mockito.runners.MockitoJUnitRunner;
 
@@ -15,17 +27,13 @@ import java.util.Collections;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.any;
-import static org.mockito.Mockito.atLeastOnce;
-import static org.mockito.Mockito.doReturn;
-import static org.mockito.Mockito.doThrow;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.never;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 @RunWith(MockitoJUnitRunner.class)
 public class MongockTest extends MongockTestBase {
+
+  @Rule
+  public ExpectedException thrown = ExpectedException.none();
 
   @Test
   public void shouldExecuteAllChangeSets() throws Exception {
@@ -36,7 +44,7 @@ public class MongockTest extends MongockTestBase {
     runner.execute();
 
     // then
-    verify(changeEntryRepository, times(11)).save(any(ChangeEntry.class)); // 11 changesets saved to dbchangelog
+    verify(changeEntryRepository, times(12)).save(any(ChangeEntry.class)); // 11 changesets saved to dbchangelog
 
     // dbchangelog collection checking
     long change1 = fakeMongoDatabase.getCollection(CHANGELOG_COLLECTION_NAME).count(new Document()
@@ -62,7 +70,7 @@ public class MongockTest extends MongockTestBase {
 
     long changeAll = fakeMongoDatabase.getCollection(CHANGELOG_COLLECTION_NAME).count(new Document()
         .append(ChangeEntry.KEY_AUTHOR, "testuser"));
-    assertEquals(11, changeAll);
+    assertEquals(12, changeAll);
   }
 
   @Test
@@ -202,9 +210,85 @@ public class MongockTest extends MongockTestBase {
     verify(changeLog, new Times(1)).testMongoDatabase(proxyMongoDatabase);
   }
 
+  @Test
+  public void shouldUseConcreteChangeLogIfFound() {
+    // given
+    ObjectToVerify spy = spy(new ObjectToVerify());
+    MongockTestResourceWithField changeLog = new MongockTestResourceWithField(spy);
+    temp.setConcreteChangeLogs(Sets.newHashSet(changeLog));
+    runner = spy(temp);
+
+    // when
+    runner.execute();
+
+    // then
+    verify(spy, Mockito.times(1)).methodToVerify();
+
+  }
+
+  @Test
+  public void shouldNotUseConcreteChangeLogIfNoChangeLogAnnotation() {
+    // given
+    ObjectToVerify spy = spy(new ObjectToVerify());
+    MongockTestResourceWithFieldNoAnnotation changeLog = new MongockTestResourceWithFieldNoAnnotation(spy);
+    temp.setConcreteChangeLogs(Sets.newHashSet(changeLog));
+    runner = spy(temp);
+
+    // when
+    runner.execute();
+
+    // then
+    verify(spy, never()).methodToVerify();
+
+  }
+
+  private static class MongockTestResourceWithFieldNoAnnotation {
+
+    private ObjectToVerify object;
+
+    MongockTestResourceWithFieldNoAnnotation(ObjectToVerify object) {
+      this.object = object;
+    }
+
+    @ChangeSet(author = "testuser", id = "Ctest1", order = "01", runAlways = true)
+    public void testChangeSet() {
+
+      object.methodToVerify();
+
+    }
+  }
+
+  public static class ObjectToVerify {
+
+    public void methodToVerify() {
+
+    }
+
+  }
+
 }
 
 //TODO move to builder test
+
+//  @Test
+//  public void shouldFailValidationWhenConcreteChangeLogIsNotInPackage() throws Exception {
+//
+//    // given
+//    MongockBuilder builder = new MongockBuilder(mongoClient,"mongocktest", ProxiesMongockTestResource.class.getPackage().getName())
+//        .setEnabled(true)
+//        .setThrowExceptionIfCannotObtainLock(true)
+//        .addChangeLog(new MongockTestResource());
+//
+//
+//    // expect exception with message
+//    thrown.expect(MongockException.class);
+//    thrown.expectMessage(CoreMatchers.equalTo("All change logs must be part of the change log scanned package"));
+//
+//    // when
+//    builder.build();
+//
+//  }
+
 //  @Test(expected = MongockException.class)
 //  public void shouldThrowAnExceptionIfNoDbNameSet() throws Exception {
 //    Mongock runner = new Mongock(new MongoClientURI("mongodb://localhost:27017/"));

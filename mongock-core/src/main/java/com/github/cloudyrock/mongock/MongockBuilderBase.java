@@ -1,5 +1,6 @@
 package com.github.cloudyrock.mongock;
 
+import com.google.common.collect.Sets;
 import com.mongodb.DB;
 import com.mongodb.MongoClient;
 import com.mongodb.client.MongoDatabase;
@@ -25,6 +26,7 @@ public abstract class MongockBuilderBase<BUILDER_TYPE extends MongockBuilderBase
   boolean enabled = true;
   String changeLogCollectionName = "mongockChangeLog";
   String lockCollectionName = "mongockLock";
+  Set<Object> concreteChangeLogs = Sets.newHashSet();
 
   //for build
   ProxyFactory proxyFactory;
@@ -97,6 +99,28 @@ public abstract class MongockBuilderBase<BUILDER_TYPE extends MongockBuilderBase
   }
 
   /**
+   * Feature which allows using already instantiated changeLogs.
+   *
+   * @param changeLogs The change logs to add
+   * @return Mongock builder
+   */
+  public BUILDER_TYPE addChangeLogs(Set<Object> changeLogs) {
+    this.concreteChangeLogs.addAll(changeLogs);
+    return returnInstance();
+  }
+
+  /**
+   * Feature which allows using an already instantiated changeLog.
+   *
+   * @param changeLog The change log to add
+   * @return Mongock builder
+   */
+  public BUILDER_TYPE addChangeLog(Object changeLog) {
+    this.concreteChangeLogs.add(changeLog);
+    return returnInstance();
+  }
+
+  /**
    * Set up the lock with minimal configuration. This implies Mongock will throw an exception if cannot obtains the lock.
    *
    * @param lockAcquiredForMinutes   Acquired time in minutes
@@ -135,10 +159,17 @@ public abstract class MongockBuilderBase<BUILDER_TYPE extends MongockBuilderBase
     }
   }
 
+  private void validateOptionalFields() {
+    if (concreteChangeLogs.stream().anyMatch(
+        changeLog -> !changeLog.getClass().getPackage().getName().equals(changeLogsScanPackage))) {
+        throw new MongockException("All change logs must be part of the change log scanned package");
+    }
+  }
 
 
   public RETURN_TYPE build() {
     validateMandatoryFields();
+    validateOptionalFields();
     database = mongoClient.getDatabase(databaseName);
     db = mongoClient.getDB(databaseName);
 
