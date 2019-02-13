@@ -11,7 +11,7 @@
 
 
 ## LAST NEWS :bangbang::bangbang::collision::collision:
-> **New version 2.0.0 released with Spring 5.x/Spring boot 2.x support and bug fixes**
+> **Bug found in Spring module in all versions up to 2.0.1. Use not recommended until fix**
 
 
 # Mongock: MongoDB version control tool for Java
