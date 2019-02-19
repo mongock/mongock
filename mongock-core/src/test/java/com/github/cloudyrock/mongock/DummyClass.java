@@ -11,4 +11,11 @@ public class DummyClass {
     return value;
   }
 
+  public void throwException() throws DummyException {
+    throw new DummyException();
+  }
+
+  public static class DummyException extends Exception {
+  }
+
 }
