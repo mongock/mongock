@@ -89,4 +89,25 @@ public class ProxyMethodInterceptorTest {
     assertEquals("ProxiedObject", result);
   }
 
+  @Test(expected = DummyClass.DummyException.class)
+  public void shouldPropagateExceptionAsIs() throws Throwable {
+    final DummyClass dummyInstance = new DummyClass("value1");
+
+    ProxyFactory proxyFactory = mock(ProxyFactory.class);
+    ProxyMethodInterceptor interceptor = new ProxyMethodInterceptor(
+        dummyInstance,
+        proxyFactory,
+        lockCheckerInterceptorMock,
+        Collections.singleton("throwException"),
+        Collections.singleton("throwException")
+    );
+
+    interceptor.intercept(
+        dummyInstance,
+        DummyClass.class.getMethod("throwException"),
+        new Object[0],
+        null
+    );
+  }
+
 }
