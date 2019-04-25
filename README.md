@@ -2,7 +2,6 @@
     <img src="https://raw.githubusercontent.com/cloudyrock/mongock/master/misc/logo.png" width="200" />
 </p>
 
-
 [![Maven Central](https://maven-badges.herokuapp.com/maven-central/com.github.cloudyrock.mongock/mongock/badge.png)](https://search.maven.org/artifact/com.github.cloudyrock.mongock/mongock)
 [![Build Status](https://travis-ci.org/cloudyrock/mongock.svg?branch=master)](https://travis-ci.org/cloudyrock/mongock)
 [![Bugs](https://sonarcloud.io/api/project_badges/measure?project=com.github.cloudyrock.mongock&metric=bugs)](https://sonarcloud.io/component_measures?id=com.github.cloudyrock.mongock&metric=bugs)
