@@ -1,8 +1,10 @@
 package com.github.cloudyrock.mongock;
 
 import com.mongodb.MongoClient;
+import org.springframework.beans.BeansException;
 import org.springframework.context.ApplicationContext;
 import org.springframework.core.env.Environment;
+import org.springframework.data.mongodb.core.MongoTemplate;
 
 /**
  * Factory for {@link SpringBootMongock}
@@ -41,8 +43,19 @@ public class SpringBootMongockBuilder extends MongockBuilderBase<SpringBootMongo
     mongock.setChangelogDb(createDbProxy());
     mongock.setEnabled(enabled);
     mongock.springContext(context);
+    mongock.setMongoTemplate(createMongoTemplateFromContext());
     mongock.setThrowExceptionIfCannotObtainLock(throwExceptionIfCannotObtainLock);
     return mongock;
+  }
+
+
+  private MongoTemplate createMongoTemplateFromContext() {
+    try {
+      return proxyFactory.createProxyFromOriginal(context.getBean(MongoTemplate.class), MongoTemplate.class);
+    } catch(BeansException ex) {
+      throw new MongockException("MongoTemplate must be provided in SpringContext", ex);
+    }
+
   }
 
   @Override

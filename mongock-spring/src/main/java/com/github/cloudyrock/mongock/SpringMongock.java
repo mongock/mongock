@@ -14,7 +14,7 @@ public class SpringMongock extends Mongock implements InitializingBean {
   private static final Logger logger = LoggerFactory.getLogger(SpringMongock.class);
 
   private Environment springEnvironment;
-  private MongoTemplate mongoTemplate;
+  MongoTemplate mongoTemplate;
 
   protected SpringMongock(ChangeEntryRepository changeEntryRepository, MongoClient mongoClient, ChangeService changeService, LockChecker lockChecker) {
     super(changeEntryRepository, mongoClient, changeService, lockChecker);

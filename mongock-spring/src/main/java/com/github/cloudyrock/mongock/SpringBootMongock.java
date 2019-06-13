@@ -5,13 +5,14 @@ import org.springframework.beans.BeansException;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
 import org.springframework.context.ApplicationContext;
+import org.springframework.data.mongodb.core.MongoTemplate;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
 
-public class SpringBootMongock extends Mongock implements ApplicationRunner {
+public class SpringBootMongock extends SpringMongock implements ApplicationRunner {
 
   private ApplicationContext springContext;
 
@@ -40,7 +41,7 @@ public class SpringBootMongock extends Mongock implements ApplicationRunner {
   protected void executeChangeSetMethod(Method changeSetMethod, Object changeLogInstance) throws BeansException, IllegalAccessException, InvocationTargetException {
     List<Object> foundBeanParameters = new ArrayList<>(changeSetMethod.getParameterTypes().length);
     for (Class<?> parameter : changeSetMethod.getParameterTypes()) {
-      foundBeanParameters.add(springContext.getBean(parameter));
+      foundBeanParameters.add(MongoTemplate.class.isAssignableFrom(parameter) ? mongoTemplate : springContext.getBean(parameter));
     }
     changeSetMethod.invoke(changeLogInstance, foundBeanParameters.toArray());
   }
