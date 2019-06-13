@@ -9,10 +9,6 @@
 [![Hex.pm](https://img.shields.io/hexpm/l/plug.svg)](https://github.com/dieppa/mongock/blob/master/LICENSE)
 
 
-## LAST NEWS :bangbang::bangbang::collision::collision:
-> **Bug found in SpringBoot module in all versions up to 2.0.1. Use of SpringBoot module not recommended until fix**
-
-
 # Mongock: MongoDB version control tool for Java
 
 **mongock** is a java MongoDB tool for tracking, managing and applying database schema changes. 
