@@ -1,6 +1,8 @@
 package com.github.cloudyrock.mongock;
 
 import com.mongodb.MongoClient;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeansException;
 import org.springframework.context.ApplicationContext;
 import org.springframework.core.env.Environment;
@@ -12,6 +14,7 @@ import org.springframework.data.mongodb.core.MongoTemplate;
 public class SpringBootMongockBuilder extends MongockBuilderBase<SpringBootMongockBuilder, SpringBootMongock> {
   private ApplicationContext context;
 
+  private static final Logger logger = LoggerFactory.getLogger(SpringMongockBuilder.class);
   /**
    * <p>Builder constructor takes db.mongodb.MongoClient, database name and changelog scan package as parameters.
    * </p><p>For more details about <tt>MongoClient</tt> please see com.mongodb.MongoClient docs
@@ -48,14 +51,12 @@ public class SpringBootMongockBuilder extends MongockBuilderBase<SpringBootMongo
     return mongock;
   }
 
-
   private MongoTemplate createMongoTemplateFromContext() {
     try {
       return proxyFactory.createProxyFromOriginal(context.getBean(MongoTemplate.class), MongoTemplate.class);
     } catch(BeansException ex) {
-      throw new MongockException("MongoTemplate must be provided in SpringContext", ex);
+      return new MongoTemplate(mongoClient, databaseName);
     }
-
   }
 
   @Override

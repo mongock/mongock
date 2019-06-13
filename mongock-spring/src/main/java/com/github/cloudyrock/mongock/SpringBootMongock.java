@@ -1,6 +1,8 @@
 package com.github.cloudyrock.mongock;
 
+import com.mongodb.DB;
 import com.mongodb.MongoClient;
+import com.mongodb.client.MongoDatabase;
 import org.springframework.beans.BeansException;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
@@ -12,9 +14,10 @@ import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
 
-public class SpringBootMongock extends SpringMongock implements ApplicationRunner {
+public class SpringBootMongock extends Mongock implements ApplicationRunner {
 
   private ApplicationContext springContext;
+  private MongoTemplate mongoTemplate;
 
   protected SpringBootMongock(ChangeEntryRepository changeEntryRepository,
                               MongoClient mongoClient,
@@ -39,11 +42,19 @@ public class SpringBootMongock extends SpringMongock implements ApplicationRunne
    */
   @Override
   protected void executeChangeSetMethod(Method changeSetMethod, Object changeLogInstance) throws BeansException, IllegalAccessException, InvocationTargetException {
-    List<Object> foundBeanParameters = new ArrayList<>(changeSetMethod.getParameterTypes().length);
+    List<Object> changelogInvocationParameters = new ArrayList<>(changeSetMethod.getParameterTypes().length);
     for (Class<?> parameter : changeSetMethod.getParameterTypes()) {
-      foundBeanParameters.add(MongoTemplate.class.isAssignableFrom(parameter) ? mongoTemplate : springContext.getBean(parameter));
+      if (MongoTemplate.class.isAssignableFrom(parameter)) {
+        changelogInvocationParameters.add(mongoTemplate);
+      } else if (DB.class.isAssignableFrom(parameter)) {
+        changelogInvocationParameters.add(this.changelogDb);
+      } else if (MongoDatabase.class.isAssignableFrom(parameter)) {
+        changelogInvocationParameters.add(this.changelogMongoDatabase);
+      } else {
+        changelogInvocationParameters.add(springContext.getBean(parameter));
+      }
     }
-    changeSetMethod.invoke(changeLogInstance, foundBeanParameters.toArray());
+    changeSetMethod.invoke(changeLogInstance, changelogInvocationParameters.toArray());
   }
 
   /**
@@ -53,6 +64,17 @@ public class SpringBootMongock extends SpringMongock implements ApplicationRunne
    */
   SpringBootMongock springContext(ApplicationContext springContext) {
     this.springContext = springContext;
+    return this;
+  }
+
+  /**
+   * Sets pre-configured {@link MongoTemplate} instance to use by the Mongock
+   *
+   * @param mongoTemplate instance of the {@link MongoTemplate}
+   * @return SpringMongock object for fluent interface
+   */
+  SpringBootMongock setMongoTemplate(MongoTemplate mongoTemplate) {
+    this.mongoTemplate = mongoTemplate;
     return this;
   }
 
