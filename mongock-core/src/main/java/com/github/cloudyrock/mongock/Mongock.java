@@ -27,8 +27,8 @@ public class Mongock implements Closeable {
 
   private boolean throwExceptionIfCannotObtainLock;
   private boolean enabled;
-  private MongoDatabase changelogMongoDatabase;
-  private DB changelogDb;
+  protected MongoDatabase changelogMongoDatabase;
+  protected DB changelogDb;
 
   protected Mongock(ChangeEntryRepository changeEntryRepository,
           MongoClient mongoClient,
