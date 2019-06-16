@@ -79,14 +79,14 @@ is not currently supported.
 <dependency>
   <groupId>com.github.cloudyrock.mongock</groupId>
   <artifactId>mongock-core</artifactId>
-  <version>2.0.0</version>
+  <version>2.0.2</version>
 </dependency>
 
 <!-- Add to use with Spring-->
 <dependency>
   <groupId>com.github.cloudyrock.mongock</groupId>
   <artifactId>mongock-spring</artifactId>
-  <version>2.0.0</version>
+  <version>2.0.2</version>
 </dependency>
 
 
@@ -94,16 +94,16 @@ is not currently supported.
 <dependency>
   <groupId>com.github.cloudyrock.mongock</groupId>
   <artifactId>mongock-jongo</artifactId>
-  <version>2.0.0</version>
+  <version>2.0.2</version>
 </dependency>
 
 ```
 #### With Gradle
 ```groovy
 compile 'org.javassist:javassist:3.18.2-GA'          // workround for ${javassist.version} placeholder issue*
-compile 'com.github.cloudyrock.mongock:mongock-core:2.0.0'    // standalone
-compile 'com.github.cloudyrock.mongock:mongock-spring:2.0.0'  // with Spring (in addition to mongock-core)
-compile 'com.github.cloudyrock.mongock:mongock-jongo:2.0.0'   // with Jongo (in addition to mongock-core
+compile 'com.github.cloudyrock.mongock:mongock-core:2.0.2'    // standalone
+compile 'com.github.cloudyrock.mongock:mongock-spring:2.0.2'  // with Spring (in addition to mongock-core)
+compile 'com.github.cloudyrock.mongock:mongock-jongo:2.0.2'   // with Jongo (in addition to mongock-core
 ```
 
 ## Usage with Spring...Mongock as a Bean
@@ -394,7 +394,7 @@ You can exclude mongo-java-driver from **mongock**  and use your dependency only
 <dependency>
   <groupId>com.github.cloudyrock.mongock</groupId>
   <artifactId>mongock-core</artifactId>
-  <version>2.0.0</version>
+  <version>2.0.2</version>
   <exclusions>
     <exclusion>
       <groupId>org.mongodb</groupId>
@@ -407,7 +407,7 @@ You can exclude mongo-java-driver from **mongock**  and use your dependency only
 ```gradle
     // build.gradle
     compile "org.mongodb:mongo-java-driver:3.4.0"
-    compile("com.github.cloudyrock.mongock:mongock:2.0.0") {
+    compile("com.github.cloudyrock.mongock:mongock:2.0.2") {
         exclude group: 'org.mongodb', module: 'mongo-java-driver'
     }
 
