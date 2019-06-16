@@ -451,5 +451,5 @@ Mongock propject is licensed under the [Apache License Version 2.0](http://www.a
 
 [ApplicationRunner]: https://docs.spring.io/spring-boot/docs/current/api/org/springframework/boot/ApplicationRunner.html
 [MongoTemplate]: https://docs.spring.io/spring-data/mongodb/docs/current/api/org/springframework/data/mongodb/core/MongoTemplate.html
-[MongoDatabase]: https://mongodb.github.io/mongo-java-driver/3.6/javadoc/
-[DB]: https://mongodb.github.io/mongo-java-driver/3.6/javadoc/
+[MongoDatabase]: http://mongodb.github.io/mongo-java-driver/3.6/javadoc/?com/mongodb/client/MongoDatabase.html
+[DB]: http://mongodb.github.io/mongo-java-driver/3.6/javadoc/?com/mongodb/DB.html
