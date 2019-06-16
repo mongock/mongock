@@ -135,8 +135,7 @@ The key difference is that ApplicationRunner beans run *after* (as opposed to du
 >**Note:** Using this implementation means you need all the dependencies in your changelogs(parameters in methods annotated with ```@ChangeSet```) declared as Spring beans.
 
 >**Note:** The dependencies injected by the ApplicationContext (other than [MongoTemplate][MongoTemplate], [MongoDatabase][MongoDatabase] and [DB][DB]) won't be covered by the lock. This means
-that if, when accessing to Mongo, you are using a different mechanism to the ones mentioned, the lock synchronization is not guaranteed as Mongock only ensures 
-synchronization when Mongo is accessed through either [MongoTemplate][MongoTemplate], [MongoDatabase][MongoDatabase] or [DB][DB]. 
+that if you are accessing to Mongo through a different mechanism to the ones mentioned, the lock synchronization is not guaranteed as Mongock only ensures synchronization when Mongo is accessed via either [MongoTemplate][MongoTemplate], [MongoDatabase][MongoDatabase] or [DB][DB]. 
 For mor information, please consult the [lock section](#configuring-lock)
 
 ```java
