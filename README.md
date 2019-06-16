@@ -40,7 +40,7 @@ The concept is very similar to other db migration tools such as [Liquibase](http
   * [Injecting custom dependencies to change logs](#injecting-custom-dependencies-to-change-logs)
   * [Using Spring profiles](#using-spring-profiles)
      * [Enabling @Profile annotation (option)](#enabling-profile-annotation-option)
-     * [Configuring Lock](#configuring-lock)
+  * [Configuring Lock](#configuring-lock)
   * [Known issues](#known-issues)
      * [Mongo java driver conflicts](#mongo-java-driver-conflicts)
   * [Mongo transaction limitations](#mongo-transaction-limitations)
@@ -128,11 +128,16 @@ The main benefit of using SpringBoot integration is that it provides a totally f
 so you can inject any object to your change logs by using SpringBoot ApplicationContext.
 
 In order to use this feature you need to instantiate the SpringBoot mongock class and provide the required configuration. 
-Mongock will run as an [ApplictionRunner](https://docs.spring.io/spring-boot/docs/current/api/org/springframework/boot/ApplicationRunner.html) within SpringBoot.
+Mongock will run as an [ApplicationRunner][ApplicationRunner] within SpringBoot.
 In terms of execution, it will be be very similar to the standard Spring implementation. 
 The key difference is that ApplicationRunner beans run *after* (as opposed to during) the context is fully initialized. 
 
 >**Note:** Using this implementation means you need all the dependencies in your changelogs(parameters in methods annotated with ```@ChangeSet```) declared as Spring beans.
+
+>**Note:** The dependencies injected by the ApplicationContext (other than [MongoTemplate][MongoTemplate], [MongoDatabase][MongoDatabase] and [DB][DB]) won't be covered by the lock. This means
+that if, when accessing to Mongo, you are using a different mechanism to the ones mentioned, the lock synchronization is not guaranteed as Mongock only ensures 
+synchronization when Mongo is accessed through either [MongoTemplate][MongoTemplate], [MongoDatabase][MongoDatabase] or [DB][DB]. 
+For mor information, please consult the [lock section](#configuring-lock)
 
 ```java
 @Bean
@@ -332,7 +337,7 @@ public SpringMongock mongock(Environment environment) {
 }
 ```
 
-### Configuring Lock 
+## Configuring Lock 
 In order to execute the changelogs, mongock needs to manage the lock to ensure only one instance executes a changelog at a time.
 By default the lock is reserved 24 hours and, in case the lock is held by another mongock instance, will ignore the execution
 and no exception will be sent, unless the parameter throwExceptionIfCannotObtainLock is set to true.
@@ -443,3 +448,9 @@ Please read the [code of conduct](././community/CODE_OF_CONDUCT.md) for details 
 
 ## LICENSE
 Mongock propject is licensed under the [Apache License Version 2.0](http://www.apache.org/licenses/LICENSE-2.0.html). See the [LICENSE](./LICENSE.md) file for details
+
+
+[ApplicationRunner]: https://docs.spring.io/spring-boot/docs/current/api/org/springframework/boot/ApplicationRunner.html
+[MongoTemplate]: https://docs.spring.io/spring-data/mongodb/docs/current/api/org/springframework/data/mongodb/core/MongoTemplate.html
+[MongoDatabase]: https://mongodb.github.io/mongo-java-driver/3.6/javadoc/
+[DB]: https://mongodb.github.io/mongo-java-driver/3.6/javadoc/
