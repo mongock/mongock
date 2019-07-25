@@ -1,5 +1,6 @@
 package com.github.cloudyrock.mongock.decorator;
 
+import com.github.cloudyrock.mongock.decorator.util.LockCheckInvoker;
 import com.mongodb.Block;
 import com.mongodb.Function;
 import com.mongodb.client.MongoCursor;
@@ -9,8 +10,8 @@ import java.util.Collection;
 
 public interface MongoIterableDecorator<T> extends MongoIterable<T> {
 
-  MongoIterable<T> getInstance();
-  LockCheckInvoker getCheckInvoker();
+  MongoIterable<T> getImpl();
+  LockCheckInvoker getInvoker();
 
 
   @Override

@@ -1,37 +1,41 @@
 package com.github.cloudyrock.mongock.decorator;
 
+import com.github.cloudyrock.mongock.decorator.util.LockCheckInvoker;
 import com.mongodb.ServerAddress;
 import com.mongodb.ServerCursor;
 import com.mongodb.client.MongoCursor;
+public interface MongoCursorDecorator<T> extends MongoCursor<T> {
 
-public class MongoCursorDecorator<T> implements MongoCursor<T> {
+  MongoCursor getImpl();
+  LockCheckInvoker getInvoker();
+
   @Override
-  public void close() {
+  default void close() {
 
   }
 
   @Override
-  public boolean hasNext() {
+  default boolean hasNext() {
     return false;
   }
 
   @Override
-  public T next() {
+  default T next() {
     return null;
   }
 
   @Override
-  public T tryNext() {
+  default T tryNext() {
     return null;
   }
 
   @Override
-  public ServerCursor getServerCursor() {
+  default ServerCursor getServerCursor() {
     return null;
   }
 
   @Override
-  public ServerAddress getServerAddress() {
+  default ServerAddress getServerAddress() {
     return null;
   }
 }

@@ -1,5 +1,7 @@
-package com.github.cloudyrock.mongock.decorator;
+package com.github.cloudyrock.mongock.decorator.impl;
 
+import com.github.cloudyrock.mongock.decorator.util.LockCheckInvoker;
+import com.github.cloudyrock.mongock.decorator.MongoIterableDecorator;
 import com.mongodb.client.MongoIterable;
 
 public class MongoIterableDecoratorImpl<T> implements MongoIterableDecorator<T> {
@@ -13,12 +15,12 @@ public class MongoIterableDecoratorImpl<T> implements MongoIterableDecorator<T> 
   }
 
   @Override
-  public MongoIterable<T> getInstance() {
+  public MongoIterable<T> getImpl() {
     return impl;
   }
 
   @Override
-  public LockCheckInvoker getCheckInvoker() {
+  public LockCheckInvoker getInvoker() {
     return checker;
   }
 }

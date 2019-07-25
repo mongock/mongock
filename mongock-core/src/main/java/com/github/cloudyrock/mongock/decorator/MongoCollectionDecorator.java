@@ -1,5 +1,7 @@
 package com.github.cloudyrock.mongock.decorator;
 
+import com.github.cloudyrock.mongock.decorator.impl.*;
+import com.github.cloudyrock.mongock.decorator.util.LockCheckInvoker;
 import com.mongodb.MongoNamespace;
 import com.mongodb.ReadConcern;
 import com.mongodb.ReadPreference;
@@ -15,299 +17,294 @@ import org.bson.conversions.Bson;
 
 import java.util.List;
 
-public class MongoCollectionDecorator<T> implements MongoCollection<T> {
+public interface MongoCollectionDecorator<T> extends MongoCollection<T> {
 
-  private final MongoCollection<T> impl;
-  private final LockCheckInvoker checker;
+  MongoCollection<T> getImpl();
 
+  LockCheckInvoker getInvoker();
 
-  public MongoCollectionDecorator(MongoCollection<T> implementation, LockCheckInvoker lockerCheckInvoker) {
-    this.impl = implementation;
-    this.checker = lockerCheckInvoker;
-  }
-  
   @Override
-  public MongoNamespace getNamespace() {
-    return null;
+  default MongoNamespace getNamespace() {
+    return getImpl().getNamespace();
   }
 
   @Override
-  public Class<T> getDocumentClass() {
-    return null;
+  default Class<T> getDocumentClass() {
+    return getImpl().getDocumentClass();
   }
 
   @Override
-  public CodecRegistry getCodecRegistry() {
-    return null;
+  default CodecRegistry getCodecRegistry() {
+    return getImpl().getCodecRegistry();
   }
 
   @Override
-  public ReadPreference getReadPreference() {
-    return null;
+  default ReadPreference getReadPreference() {
+    return getImpl().getReadPreference();
   }
 
   @Override
-  public WriteConcern getWriteConcern() {
-    return null;
+  default WriteConcern getWriteConcern() {
+    return getImpl().getWriteConcern();
   }
 
   @Override
-  public ReadConcern getReadConcern() {
-    return null;
+  default ReadConcern getReadConcern() {
+    return getImpl().getReadConcern();
   }
 
   @Override
-  public <NewTDocument> MongoCollection<NewTDocument> withDocumentClass(Class<NewTDocument> aClass) {
-    return null;
+  default <NewTDocument> MongoCollection<NewTDocument> withDocumentClass(Class<NewTDocument> aClass) {
+    return new MongoCollectionDecoratorImpl<>(getImpl().withDocumentClass(aClass), getInvoker());
   }
 
   @Override
-  public MongoCollection<T> withCodecRegistry(CodecRegistry codecRegistry) {
-    return null;
+  default MongoCollection<T> withCodecRegistry(CodecRegistry codecRegistry) {
+    return new MongoCollectionDecoratorImpl<>(getImpl().withCodecRegistry(codecRegistry), getInvoker());
   }
 
   @Override
-  public MongoCollection<T> withReadPreference(ReadPreference readPreference) {
-    return null;
+  default MongoCollection<T> withReadPreference(ReadPreference readPreference) {
+    return new MongoCollectionDecoratorImpl<>(getImpl().withReadPreference(readPreference), getInvoker());
   }
 
   @Override
-  public MongoCollection<T> withWriteConcern(WriteConcern writeConcern) {
-    return null;
+  default MongoCollection<T> withWriteConcern(WriteConcern writeConcern) {
+    return new MongoCollectionDecoratorImpl<>(getImpl().withWriteConcern(writeConcern), getInvoker());
   }
 
   @Override
-  public MongoCollection<T> withReadConcern(ReadConcern readConcern) {
-    return null;
+  default MongoCollection<T> withReadConcern(ReadConcern readConcern) {
+    return new MongoCollectionDecoratorImpl<>(getImpl().withReadConcern(readConcern), getInvoker());
   }
 
   @Override
-  public long count() {
-    return 0;
+  default long count() {
+    return getInvoker().invoke(()-> getImpl().count());
   }
 
   @Override
-  public long count(Bson bson) {
-    return 0;
+  default long count(Bson bson) {
+    return getInvoker().invoke(()-> getImpl().count(bson));
   }
 
   @Override
-  public long count(Bson bson, CountOptions countOptions) {
-    return 0;
+  default long count(Bson bson, CountOptions countOptions) {
+    return getInvoker().invoke(()-> getImpl().count(bson, countOptions));
   }
 
   @Override
-  public <TResult> DistinctIterable<TResult> distinct(String s, Class<TResult> aClass) {
-    return null;
+  default <TResult> DistinctIterable<TResult> distinct(String s, Class<TResult> aClass) {
+    return getInvoker().invoke(()-> new DistinctIterableDecoratorImpl<>(getImpl().distinct(s, aClass), getInvoker()));
   }
 
   @Override
-  public <TResult> DistinctIterable<TResult> distinct(String s, Bson bson, Class<TResult> aClass) {
-    return null;
+  default <TResult> DistinctIterable<TResult> distinct(String s, Bson bson, Class<TResult> aClass) {
+    return getInvoker().invoke(()-> new DistinctIterableDecoratorImpl<>(getImpl().distinct(s, bson, aClass), getInvoker()));
   }
 
   @Override
-  public FindIterable<T> find() {
-    return null;
+  default FindIterable<T> find() {
+    return getInvoker().invoke(()-> new FindIterableDecoratorImpl<>(getImpl().find(), getInvoker()));
   }
 
   @Override
-  public <TResult> FindIterable<TResult> find(Class<TResult> aClass) {
-    return null;
+  default <TResult> FindIterable<TResult> find(Class<TResult> aClass) {
+    return getInvoker().invoke(()-> new FindIterableDecoratorImpl<>(getImpl().find(aClass), getInvoker()));
   }
 
   @Override
-  public FindIterable<T> find(Bson bson) {
-    return null;
+  default FindIterable<T> find(Bson bson) {
+    return getInvoker().invoke(()-> new FindIterableDecoratorImpl<>(getImpl().find(bson), getInvoker()));
   }
 
   @Override
-  public <TResult> FindIterable<TResult> find(Bson bson, Class<TResult> aClass) {
-    return null;
+  default <TResult> FindIterable<TResult> find(Bson bson, Class<TResult> aClass) {
+    return getInvoker().invoke(()-> new FindIterableDecoratorImpl<>(getImpl().find(bson, aClass), getInvoker()));
   }
 
   @Override
-  public AggregateIterable<T> aggregate(List<? extends Bson> list) {
-    return null;
+  default AggregateIterable<T> aggregate(List<? extends Bson> list) {
+    return getInvoker().invoke(()-> new AggregateIterableDecoratorImpl<>(getImpl().aggregate(list), getInvoker()));
   }
 
   @Override
-  public <TResult> AggregateIterable<TResult> aggregate(List<? extends Bson> list, Class<TResult> aClass) {
-    return null;
+  default <TResult> AggregateIterable<TResult> aggregate(List<? extends Bson> list, Class<TResult> aClass) {
+    return getInvoker().invoke(()-> new AggregateIterableDecoratorImpl<>(getImpl().aggregate(list, aClass), getInvoker()));
   }
 
   @Override
-  public MapReduceIterable<T> mapReduce(String s, String s1) {
-    return null;
+  default MapReduceIterable<T> mapReduce(String s, String s1) {
+    return getInvoker().invoke(()-> new MapReduceIterableDecoratorImpl<>(getImpl().mapReduce(s, s1), getInvoker()));
   }
 
   @Override
-  public <TResult> MapReduceIterable<TResult> mapReduce(String s, String s1, Class<TResult> aClass) {
-    return null;
+  default <TResult> MapReduceIterable<TResult> mapReduce(String s, String s1, Class<TResult> aClass) {
+    return getInvoker().invoke(()-> new MapReduceIterableDecoratorImpl<>(getImpl().mapReduce(s, s1, aClass), getInvoker()));
   }
 
   @Override
-  public BulkWriteResult bulkWrite(List<? extends WriteModel<? extends T>> list) {
-    return null;
+  default BulkWriteResult bulkWrite(List<? extends WriteModel<? extends T>> list) {
+    return getInvoker().invoke(() -> getImpl().bulkWrite(list));
   }
 
   @Override
-  public BulkWriteResult bulkWrite(List<? extends WriteModel<? extends T>> list, BulkWriteOptions bulkWriteOptions) {
-    return null;
+  default BulkWriteResult bulkWrite(List<? extends WriteModel<? extends T>> list, BulkWriteOptions bulkWriteOptions) {
+    return getInvoker().invoke(() -> getImpl().bulkWrite(list, bulkWriteOptions));
   }
 
   @Override
-  public void insertOne(T t) {
-
+  default void insertOne(T t) {
+    getInvoker().invoke(() -> getImpl().insertOne(t));
   }
 
   @Override
-  public void insertOne(T t, InsertOneOptions insertOneOptions) {
-
+  default void insertOne(T t, InsertOneOptions insertOneOptions) {
+    getInvoker().invoke(() -> getImpl().insertOne(t, insertOneOptions));
   }
 
   @Override
-  public void insertMany(List<? extends T> list) {
-
+  default void insertMany(List<? extends T> list) {
+    getInvoker().invoke(() -> getImpl().insertMany(list));
   }
 
   @Override
-  public void insertMany(List<? extends T> list, InsertManyOptions insertManyOptions) {
-
+  default void insertMany(List<? extends T> list, InsertManyOptions insertManyOptions) {
+    getInvoker().invoke(() -> getImpl().insertMany(list, insertManyOptions));
   }
 
   @Override
-  public DeleteResult deleteOne(Bson bson) {
-    return null;
+  default DeleteResult deleteOne(Bson bson) {
+    return getInvoker().invoke(() -> getImpl().deleteOne(bson));
   }
 
   @Override
-  public DeleteResult deleteOne(Bson bson, DeleteOptions deleteOptions) {
-    return null;
+  default DeleteResult deleteOne(Bson bson, DeleteOptions deleteOptions) {
+    return getInvoker().invoke(() -> getImpl().deleteOne(bson, deleteOptions));
   }
 
   @Override
-  public DeleteResult deleteMany(Bson bson) {
-    return null;
+  default DeleteResult deleteMany(Bson bson) {
+    return getInvoker().invoke(() -> getImpl().deleteMany(bson));
   }
 
   @Override
-  public DeleteResult deleteMany(Bson bson, DeleteOptions deleteOptions) {
-    return null;
+  default DeleteResult deleteMany(Bson bson, DeleteOptions deleteOptions) {
+    return getInvoker().invoke(() -> getImpl().deleteOne(bson, deleteOptions));
   }
 
   @Override
-  public UpdateResult replaceOne(Bson bson, T t) {
-    return null;
+  default UpdateResult replaceOne(Bson bson, T t) {
+    return getInvoker().invoke(() -> getImpl().replaceOne(bson, t));
   }
 
   @Override
-  public UpdateResult replaceOne(Bson bson, T t, UpdateOptions updateOptions) {
-    return null;
+  default UpdateResult replaceOne(Bson bson, T t, UpdateOptions updateOptions) {
+    return getInvoker().invoke(() -> getImpl().replaceOne(bson, t, updateOptions));
   }
 
   @Override
-  public UpdateResult updateOne(Bson bson, Bson bson1) {
-    return null;
+  default UpdateResult updateOne(Bson bson, Bson bson1) {
+    return getInvoker().invoke(() -> getImpl().updateOne(bson, bson1));
   }
 
   @Override
-  public UpdateResult updateOne(Bson bson, Bson bson1, UpdateOptions updateOptions) {
-    return null;
+  default UpdateResult updateOne(Bson bson, Bson bson1, UpdateOptions updateOptions) {
+    return getInvoker().invoke(() -> getImpl().updateOne(bson, bson1, updateOptions));
   }
 
   @Override
-  public UpdateResult updateMany(Bson bson, Bson bson1) {
-    return null;
+  default UpdateResult updateMany(Bson bson, Bson bson1) {
+    return getInvoker().invoke(() -> getImpl().updateMany(bson, bson1));
   }
 
   @Override
-  public UpdateResult updateMany(Bson bson, Bson bson1, UpdateOptions updateOptions) {
-    return null;
+  default UpdateResult updateMany(Bson bson, Bson bson1, UpdateOptions updateOptions) {
+    return getInvoker().invoke(() -> getImpl().updateMany(bson, bson1, updateOptions));
   }
 
   @Override
-  public T findOneAndDelete(Bson bson) {
-    return null;
+  default T findOneAndDelete(Bson bson) {
+    return getInvoker().invoke(() -> getImpl().findOneAndDelete(bson));
   }
 
   @Override
-  public T findOneAndDelete(Bson bson, FindOneAndDeleteOptions findOneAndDeleteOptions) {
-    return null;
+  default T findOneAndDelete(Bson bson, FindOneAndDeleteOptions findOneAndDeleteOptions) {
+    return getInvoker().invoke(() -> getImpl().findOneAndDelete(bson, findOneAndDeleteOptions));
   }
 
   @Override
-  public T findOneAndReplace(Bson bson, T t) {
-    return null;
+  default T findOneAndReplace(Bson bson, T t) {
+    return getInvoker().invoke(() -> getImpl().findOneAndReplace(bson, t));
   }
 
   @Override
-  public T findOneAndReplace(Bson bson, T t, FindOneAndReplaceOptions findOneAndReplaceOptions) {
-    return null;
+  default T findOneAndReplace(Bson bson, T t, FindOneAndReplaceOptions findOneAndReplaceOptions) {
+    return getInvoker().invoke(() -> getImpl().findOneAndReplace(bson, t, findOneAndReplaceOptions));
   }
 
   @Override
-  public T findOneAndUpdate(Bson bson, Bson bson1) {
-    return null;
+  default T findOneAndUpdate(Bson bson, Bson bson1) {
+    return getInvoker().invoke(() -> getImpl().findOneAndUpdate(bson, bson1));
   }
 
   @Override
-  public T findOneAndUpdate(Bson bson, Bson bson1, FindOneAndUpdateOptions findOneAndUpdateOptions) {
-    return null;
+  default T findOneAndUpdate(Bson bson, Bson bson1, FindOneAndUpdateOptions findOneAndUpdateOptions) {
+    return getInvoker().invoke(() -> getImpl().findOneAndUpdate(bson, bson1, findOneAndUpdateOptions));
   }
 
   @Override
-  public void drop() {
-
+  default void drop() {
+    getInvoker().invoke(() -> getImpl().drop());
   }
 
   @Override
-  public String createIndex(Bson bson) {
-    return null;
+  default String createIndex(Bson bson) {
+    return getInvoker().invoke(() -> getImpl().createIndex(bson));
   }
 
   @Override
-  public String createIndex(Bson bson, IndexOptions indexOptions) {
-    return null;
+  default String createIndex(Bson bson, IndexOptions indexOptions) {
+    return getInvoker().invoke(() -> getImpl().createIndex(bson, indexOptions));
   }
 
   @Override
-  public List<String> createIndexes(List<IndexModel> list) {
-    return null;
+  default List<String> createIndexes(List<IndexModel> list) {
+    return getInvoker().invoke(() -> getImpl().createIndexes(list));
   }
 
   @Override
-  public ListIndexesIterable<Document> listIndexes() {
-    return null;
+  default ListIndexesIterable<Document> listIndexes() {
+    return new ListIndexesIterableDecoratorImpl<>(getInvoker().invoke(() -> getImpl().listIndexes()), getInvoker());
   }
 
   @Override
-  public <TResult> ListIndexesIterable<TResult> listIndexes(Class<TResult> aClass) {
-    return null;
+  default <TResult> ListIndexesIterable<TResult> listIndexes(Class<TResult> aClass) {
+    return new ListIndexesIterableDecoratorImpl<>(getInvoker().invoke(() -> getImpl().listIndexes(aClass)), getInvoker());
   }
 
   @Override
-  public void dropIndex(String s) {
-
+  default void dropIndex(String s) {
+    getInvoker().invoke(() -> getImpl().dropIndex(s));
   }
 
   @Override
-  public void dropIndex(Bson bson) {
-
+  default void dropIndex(Bson bson) {
+    getInvoker().invoke(() -> getImpl().dropIndex(bson));
   }
 
   @Override
-  public void dropIndexes() {
-
+  default void dropIndexes() {
+    getInvoker().invoke(() -> getImpl().dropIndexes());
   }
 
   @Override
-  public void renameCollection(MongoNamespace mongoNamespace) {
-
+  default void renameCollection(MongoNamespace mongoNamespace) {
+    getInvoker().invoke(() -> getImpl().renameCollection(mongoNamespace));
   }
 
   @Override
-  public void renameCollection(MongoNamespace mongoNamespace, RenameCollectionOptions renameCollectionOptions) {
-
+  default void renameCollection(MongoNamespace mongoNamespace, RenameCollectionOptions renameCollectionOptions) {
+    getInvoker().invoke(() -> getImpl().renameCollection(mongoNamespace, renameCollectionOptions));
   }
 }
