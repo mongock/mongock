@@ -18,7 +18,7 @@ import java.util.UUID;
  * @since 04/04/2018
  */
 @NotThreadSafe
-class LockChecker {
+public class LockChecker {
 
   //static constants
   private static final Logger logger = LoggerFactory.getLogger(LockChecker.class);
