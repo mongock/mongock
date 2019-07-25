@@ -112,7 +112,7 @@ public class MongoDatabaseDecorator implements MongoDatabase {
 
   @Override
   public MongoIterable<String> listCollectionNames() {
-    return new MongoIterableDecorator<>(impl.listCollectionNames(), getInvoker());
+    return new MongoIterableDecoratorImpl<>(impl.listCollectionNames(), getInvoker());
   }
 
   @Override

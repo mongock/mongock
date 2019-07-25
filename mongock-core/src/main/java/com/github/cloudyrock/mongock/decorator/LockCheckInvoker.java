@@ -1,7 +1,6 @@
 package com.github.cloudyrock.mongock.decorator;
 
 import com.github.cloudyrock.mongock.LockChecker;
-import com.github.cloudyrock.mongock.VoidSupplier;
 
 import java.util.function.Supplier;
 

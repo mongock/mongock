@@ -7,44 +7,39 @@ import com.mongodb.client.MongoIterable;
 
 import java.util.Collection;
 
-public class MongoIterableDecorator<T> implements MongoIterable<T> {
+public interface MongoIterableDecorator<T> extends MongoIterable<T> {
 
-  private final MongoIterable<T> impl;
-  private final LockCheckInvoker checker;
-
-  public MongoIterableDecorator(MongoIterable<T> implementation, LockCheckInvoker lockerCheckInvoker) {
-    this.impl = implementation;
-    this.checker = lockerCheckInvoker;
-  }
+  MongoIterable<T> getInstance();
+  LockCheckInvoker getCheckInvoker();
 
 
   @Override
-  public MongoCursor<T> iterator() {
+  default MongoCursor<T> iterator() {
     return null;
   }
 
   @Override
-  public T first() {
+  default T first() {
     return null;
   }
 
   @Override
-  public <U> MongoIterable<U> map(Function<T, U> mapper) {
+  default <U> MongoIterable<U> map(Function<T, U> mapper) {
     return null;
   }
 
   @Override
-  public void forEach(Block<? super T> block) {
+  default void forEach(Block<? super T> block) {
 
   }
 
   @Override
-  public <A extends Collection<? super T>> A into(A target) {
+  default <A extends Collection<? super T>> A into(A target) {
     return null;
   }
 
   @Override
-  public MongoIterable<T> batchSize(int batchSize) {
+  default MongoIterable<T> batchSize(int batchSize) {
     return null;
   }
 }

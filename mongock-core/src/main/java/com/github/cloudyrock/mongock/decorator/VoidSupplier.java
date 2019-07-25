@@ -1,4 +1,4 @@
-package com.github.cloudyrock.mongock;
+package com.github.cloudyrock.mongock.decorator;
 
 @FunctionalInterface
 public interface VoidSupplier {
