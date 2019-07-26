@@ -14,7 +14,7 @@ public interface MapReduceIterableDecorator<T> extends MongoIterableDecorator<T>
 
   @Override
   default void toCollection() {
-
+    getImpl().toCollection();
   }
 
   @Override
