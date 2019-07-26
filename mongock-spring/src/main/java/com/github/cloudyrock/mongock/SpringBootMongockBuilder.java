@@ -46,7 +46,6 @@ public class SpringBootMongockBuilder extends MongockBuilderBase<SpringBootMongo
   SpringBootMongock createBuild() {
     SpringBootMongock mongock = new SpringBootMongock(changeEntryRepository, mongoClient, createChangeService(), lockChecker);
     mongock.setChangelogMongoDatabase(createMongoDataBaseProxy());
-    mongock.setChangelogDb(createDbProxy());
     mongock.setEnabled(enabled);
     mongock.springContext(context);
     mongock.setMongoTemplate(createMongoTemplateFromContext());
@@ -73,14 +72,6 @@ public class SpringBootMongockBuilder extends MongockBuilderBase<SpringBootMongo
     }
   }
 
-  @Override
-  DB createDbProxy() {
-    try {
-      return proxyFactory.createProxyFromOriginal(context.getBean(DB.class), DB.class);
-    } catch (BeansException ex) {
-      return proxyFactory.createProxyFromOriginal(db, DB.class);
-    }
-  }
 
   @Override
   ChangeService createChangeService() {

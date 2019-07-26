@@ -76,7 +76,6 @@ public class MongockTestBase {
         changeService,
         lockChecker);
 
-    temp.setChangelogDb(fakeDb);
     temp.setChangelogMongoDatabase(fakeMongoDatabase);
     temp.setEnabled(true);
     temp.setThrowExceptionIfCannotObtainLock(true);

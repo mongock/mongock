@@ -178,9 +178,7 @@ public class MongockTest extends MongockTestBase {
     doReturn(Collections.singletonList(ProxiesMongockTestResource.class))
         .when(changeService).fetchChangeLogs();
     doReturn(changeLog).when(changeService).createInstance(any(Class.class));
-    doReturn(Arrays.asList(
-        ProxiesMongockTestResource.class.getDeclaredMethod("testInsertWithDB", DB.class),
-        ProxiesMongockTestResource.class.getDeclaredMethod("testMongoDatabase", MongoDatabase.class)))
+    doReturn(Collections.singletonList(ProxiesMongockTestResource.class.getDeclaredMethod("testMongoDatabase", MongoDatabase.class)))
         .when(changeService).fetchChangeSets(any(Class.class));
 
     when(changeEntryRepository.isNewChange(any(ChangeEntry.class))).thenReturn(true);
@@ -188,8 +186,6 @@ public class MongockTest extends MongockTestBase {
     when(changeEntryRepository.isNewChange(any(ChangeEntry.class))).thenReturn(true);
     runner.setChangelogMongoDatabase(fakeMongoDatabase);
 
-    DB proxyDb = mock(DB.class);
-    runner.setChangelogDb(proxyDb);
 
     MongoDatabase proxyMongoDatabase = mock(MongoDatabase.class);
     runner.setChangelogMongoDatabase(proxyMongoDatabase);
@@ -198,7 +194,6 @@ public class MongockTest extends MongockTestBase {
     runner.execute();
 
     //then
-    verify(changeLog, new Times(1)).testInsertWithDB(proxyDb);
     verify(changeLog, new Times(1)).testMongoDatabase(proxyMongoDatabase);
   }
 

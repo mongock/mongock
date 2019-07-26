@@ -56,7 +56,6 @@ public class SpringMongockBuilder extends MongockBuilderBase<SpringMongockBuilde
   SpringMongock createBuild() {
     SpringMongock mongock = new SpringMongock(changeEntryRepository, mongoClient, createChangeService(), lockChecker);
     mongock.setChangelogMongoDatabase(createMongoDataBaseProxy());
-    mongock.setChangelogDb(createDbProxy());
     mongock.setMongoTemplate(createMongoTemplateProxy());
     mongock.setEnabled(enabled);
     mongock.setThrowExceptionIfCannotObtainLock(throwExceptionIfCannotObtainLock);

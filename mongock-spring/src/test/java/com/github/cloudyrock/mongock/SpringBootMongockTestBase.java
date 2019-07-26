@@ -75,7 +75,6 @@ public class SpringBootMongockTestBase {
         changeService,
         lockChecker);
 
-    temp.setChangelogDb(fakeDb);
     temp.springContext(mock(ApplicationContext.class));
     temp.setChangelogMongoDatabase(fakeMongoDatabase);
     temp.setMongoTemplate(new MongoTemplate(mongoClient, "mongocktest"));
