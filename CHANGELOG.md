@@ -20,7 +20,7 @@ __________________________________________________
 # 2.0.0 (14/12/2018)
 ### Features and breaking changes
 * Feature [Upgrade to Spring 5, Springboot 2.x and Spring data 2.x](https://github.com/cloudyrock/mongock/issues/20) in [PR](https://github.com/cloudyrock/mongock/pull/45)
-
+* Moved to [JDK 1.8](https://www.oracle.com/technetwork/java/javase/downloads/jdk8-downloads-2133151.html)
 ### Bugs fixed
 * Fixed [issue 53: Use mongock with springboot 2.0.7 but do not work](https://github.com/cloudyrock/mongock/issues/53) in [PR](https://github.com/cloudyrock/mongock/pull/45)
 __________________________________________________
