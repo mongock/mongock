@@ -9,7 +9,6 @@
   <modules>
     <module>mongock-core</module>
     <module>mongock-spring</module>
-    <module>mongock-jongo</module>
   </modules>
 
   <groupId>com.github.cloudyrock.mongock</groupId>

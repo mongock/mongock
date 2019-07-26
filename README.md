@@ -30,7 +30,6 @@ The concept is very similar to other db migration tools such as [Liquibase](http
      * [With Gradle](#with-gradle)
   * [Usage with Spring...Mongock as a Bean](#usage-with-springmongock-as-a-bean)
   * [Usage with SpringBoot...When you need to inject your own dependencies](#usage-with-springbootwhen-you-need-to-inject-your-own-dependencies)
-  * [Usage with Jongo](#usage-with-jongo)
   * [Standalone usage](#standalone-usage)
   * [Creating change logs](#creating-change-logs)
      * [@ChangeLog](#changelog)
@@ -70,7 +69,7 @@ If you would like to contribute to Mongock project, please read [how to contribu
 ## Add a dependency
 
 Mongock can be used standalone, with Spring, or with Jongo.  The `mongock-core` dependency is always required,
-and _either_ `mongock-spring` or `mongock-jongo` can also be added.  Using `mongock-spring` with `mongock-jongo`
+and `mongock-spring` can also be added.  Using `mongock-spring`
 is not currently supported.
 
 #### With Maven
@@ -90,20 +89,12 @@ is not currently supported.
 </dependency>
 
 
-<!-- Add to use with Jongo -->
-<dependency>
-  <groupId>com.github.cloudyrock.mongock</groupId>
-  <artifactId>mongock-jongo</artifactId>
-  <version>2.0.2</version>
-</dependency>
-
 ```
 #### With Gradle
 ```groovy
 compile 'org.javassist:javassist:3.18.2-GA'          // workround for ${javassist.version} placeholder issue*
 compile 'com.github.cloudyrock.mongock:mongock-core:2.0.2'    // standalone
 compile 'com.github.cloudyrock.mongock:mongock-spring:2.0.2'  // with Spring (in addition to mongock-core)
-compile 'com.github.cloudyrock.mongock:mongock-jongo:2.0.2'   // with Jongo (in addition to mongock-core
 ```
 
 ## Usage with Spring...Mongock as a Bean
@@ -259,14 +250,6 @@ public void someChange3(DB db) {
   DBCollection mycollection = db.getCollection("mycollection");
   BasicDBObject doc = new BasicDBObject().append("test", "1");
   mycollection .insert(doc);
-}
-
-@ChangeSet(order = "004", id = "someChangeWithJongo", author = "testAuthor")
-public void someChange4(Jongo jongo) {
-  // type: org.jongo.Jongo : Jongo driver can be used, used for simpler notation
-  // example:
-  MongoCollection mycollection = jongo.getCollection("mycollection");
-  mycollection.insert("{test : 1}");
 }
 
 @ChangeSet(order = "005", id = "someChangeWithSpringDataTemplate", author = "testAuthor")
