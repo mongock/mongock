@@ -1,5 +1,7 @@
 package com.github.cloudyrock.mongock.decorator;
 
+import com.github.cloudyrock.mongock.decorator.impl.MongoCursorDecoratorImpl;
+import com.github.cloudyrock.mongock.decorator.impl.MongoIterableDecoratorImpl;
 import com.github.cloudyrock.mongock.decorator.util.LockCheckInvoker;
 import com.mongodb.Block;
 import com.mongodb.Function;
@@ -11,36 +13,37 @@ import java.util.Collection;
 public interface MongoIterableDecorator<T> extends MongoIterable<T> {
 
   MongoIterable<T> getImpl();
+
   LockCheckInvoker getInvoker();
 
 
   @Override
   default MongoCursor<T> iterator() {
-    return null;
+    return new MongoCursorDecoratorImpl<>(getInvoker().invoke(() -> getImpl().iterator()), getInvoker());
   }
 
   @Override
   default T first() {
-    return null;
+    return getInvoker().invoke(() -> getImpl().first());
   }
 
   @Override
   default <U> MongoIterable<U> map(Function<T, U> mapper) {
-    return null;
+    return new MongoIterableDecoratorImpl<>(getInvoker().invoke(() -> getImpl().map(mapper)), getInvoker());
   }
 
   @Override
   default void forEach(Block<? super T> block) {
-
+    getInvoker().invoke(() -> getImpl().forEach(block));
   }
 
   @Override
   default <A extends Collection<? super T>> A into(A target) {
-    return null;
+    return getInvoker().invoke(() -> getImpl().into(target));
   }
 
   @Override
   default MongoIterable<T> batchSize(int batchSize) {
-    return null;
+    return new MongoIterableDecoratorImpl<>(getInvoker().invoke(() -> getImpl().batchSize(batchSize)), getInvoker());
   }
 }
