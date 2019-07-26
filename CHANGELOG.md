@@ -1,6 +1,7 @@
 # 3.0.0
 ### Breaking changes
 * Removed com.mongodb.DB support due to deprecation in mongoDB driver in [PR](https://github.com/cloudyrock/mongock/pull/72)
+* Removed Jongo support as it's based on com.mongodb.DB in [PR](https://github.com/cloudyrock/mongock/pull/72)
 
 ### Bugs fixed
 * Fixed [issue 72: Spring Boot 2.1.5](https://github.com/cloudyrock/mongock/issues/72) in [PR](https://github.com/cloudyrock/mongock/pull/73)
