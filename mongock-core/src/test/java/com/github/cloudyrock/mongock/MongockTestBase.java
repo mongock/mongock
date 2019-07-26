@@ -87,7 +87,6 @@ public class MongockTestBase {
   @After
   public void cleanUp() throws NoSuchFieldException, IllegalAccessException {
     TestUtils.setField(runner, "mongoTemplate", null);
-    TestUtils.setField(runner, "jongo", null);
     fakeDb.dropDatabase();
   }
 

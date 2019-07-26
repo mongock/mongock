@@ -39,9 +39,8 @@ We have an official [FAQ page](FAQ.md) where your question may be already answer
 tour question resolved. 
  
 ## Mongock project packages
-Mongock project contains 4 main areas. 
+Mongock project contains 2 main areas. 
 - **mongock-core:** Basic Mongock tool for standalone projects, although can be used perfectly with frameworks like Spring. Issue label is `core-module`
-- **mongock-jongo:** Mongock module to be used with Jongo framework. Issue label is `jongo-module`
 - **mongock-spring:** Mongock module which takes advantage of Spring features. Issue label is `spring-module`
 
 ## Reporting Bugs
@@ -142,7 +141,6 @@ Please click on the `search` list the issues for the given label.
 | Label name | `Search in github` :mag_right: | Description |
 | --- | --- | --- |
 | `core-module` | [search][search-repo-label-core-module] | Issues to be fixed in the core |
-| `jongo-module` | [search][search-repo-label-jongo-module] | Issues to be fixed in the local module |
 | `spring-module` | [search][search-repo-label-spring-module] | Issues to be fixed in the server module |
 
 ### Severity
@@ -179,7 +177,6 @@ Please click on the `search` list the issues for the given label.
 [search-repo-label-docs-ops]:https://github.com/cloudyrock/mongock/labels/docs%2Fops
 
 [search-repo-label-core-module]:https://github.com/cloudyrock/mongock/labels/core-module
-[search-repo-label-jongo-module]:https://github.com/cloudyrock/mongock/labels/jongo-module
 [search-repo-label-spring-module]:https://github.com/cloudyrock/mongock/labels/spring-module
 
 [search-repo-label-critical]:https://github.com/cloudyrock/mongock/labels/critical
