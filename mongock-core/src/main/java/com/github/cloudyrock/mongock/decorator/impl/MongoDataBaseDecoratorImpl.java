@@ -1,14 +1,14 @@
 package com.github.cloudyrock.mongock.decorator.impl;
 
-import com.github.cloudyrock.mongock.decorator.util.LockCheckInvoker;
+import com.github.cloudyrock.mongock.decorator.util.MethodInvoker;
 import com.github.cloudyrock.mongock.decorator.MongoDatabaseDecorator;
 import com.mongodb.client.MongoDatabase;
 
 public class MongoDataBaseDecoratorImpl implements MongoDatabaseDecorator {
   private final MongoDatabase impl;
-  private final LockCheckInvoker invoker;
+  private final MethodInvoker invoker;
 
-  public MongoDataBaseDecoratorImpl(MongoDatabase implementation, LockCheckInvoker lockerCheckInvoker) {
+  public MongoDataBaseDecoratorImpl(MongoDatabase implementation, MethodInvoker lockerCheckInvoker) {
     this.impl = implementation;
     this.invoker = lockerCheckInvoker;
   }
@@ -17,7 +17,7 @@ public class MongoDataBaseDecoratorImpl implements MongoDatabaseDecorator {
     return impl;
   }
 
-  public LockCheckInvoker getInvoker() {
+  public MethodInvoker getInvoker() {
     return invoker;
   }
 }

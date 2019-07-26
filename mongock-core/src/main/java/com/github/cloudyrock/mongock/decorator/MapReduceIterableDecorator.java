@@ -8,92 +8,92 @@ import org.bson.conversions.Bson;
 import java.util.concurrent.TimeUnit;
 
 public interface MapReduceIterableDecorator<T> extends MongoIterableDecorator<T>, MapReduceIterable<T> {
+
   @Override
   MapReduceIterable<T> getImpl();
-  
 
   @Override
   default void toCollection() {
-    getImpl().toCollection();
+    getInvoker().invoke(() -> getImpl().toCollection());
   }
 
   @Override
   default MapReduceIterable<T> collectionName(String collectionName) {
-    return null;
+    return getImpl().collectionName(collectionName);
   }
 
   @Override
   default MapReduceIterable<T> finalizeFunction(String finalizeFunction) {
-    return null;
+    return getImpl().finalizeFunction(finalizeFunction);
   }
 
   @Override
   default MapReduceIterable<T> scope(Bson scope) {
-    return null;
+    return getImpl().scope(scope);
   }
 
   @Override
   default MapReduceIterable<T> sort(Bson sort) {
-    return null;
+    return getImpl().sort(sort);
   }
 
   @Override
   default MapReduceIterable<T> filter(Bson filter) {
-    return null;
+    return getImpl().filter(filter);
   }
 
   @Override
   default MapReduceIterable<T> limit(int limit) {
-    return null;
+    return getImpl().limit(limit);
   }
 
   @Override
   default MapReduceIterable<T> jsMode(boolean jsMode) {
-    return null;
+    return getImpl().jsMode(jsMode);
   }
 
   @Override
   default MapReduceIterable<T> verbose(boolean verbose) {
-    return null;
+    return getImpl().verbose(verbose);
   }
 
   @Override
   default MapReduceIterable<T> maxTime(long maxTime, TimeUnit timeUnit) {
-    return null;
+    return getImpl().maxTime(maxTime, timeUnit);
   }
 
   @Override
   default MapReduceIterable<T> action(MapReduceAction action) {
-    return null;
+    return getImpl().action(action);
   }
 
   @Override
   default MapReduceIterable<T> databaseName(String databaseName) {
-    return null;
+    return getImpl().databaseName(databaseName);
   }
 
   @Override
   default MapReduceIterable<T> sharded(boolean sharded) {
-    return null;
+    return getImpl().sharded(sharded);
   }
 
   @Override
   default MapReduceIterable<T> nonAtomic(boolean nonAtomic) {
-    return null;
+    return getImpl().nonAtomic(nonAtomic);
   }
 
   @Override
   default MapReduceIterable<T> batchSize(int batchSize) {
-    return null;
+    return getImpl().batchSize(batchSize);
   }
 
   @Override
   default MapReduceIterable<T> bypassDocumentValidation(Boolean bypassDocumentValidation) {
-    return null;
+    return getImpl().bypassDocumentValidation(bypassDocumentValidation);
   }
 
   @Override
   default MapReduceIterable<T> collation(Collation collation) {
-    return null;
+    return getImpl().collation(collation);
   }
 }

@@ -1,16 +1,15 @@
 package com.github.cloudyrock.mongock.decorator.impl;
 
 import com.github.cloudyrock.mongock.decorator.FindIterableDecorator;
-import com.github.cloudyrock.mongock.decorator.util.LockCheckInvoker;
+import com.github.cloudyrock.mongock.decorator.util.MethodInvoker;
 import com.mongodb.client.FindIterable;
 
 public class FindIterableDecoratorImpl<T> implements FindIterableDecorator<T> {
 
   private final FindIterable<T> impl;
-  private final LockCheckInvoker checker;
+  private final MethodInvoker checker;
 
-
-  public FindIterableDecoratorImpl(FindIterable<T> implementation, LockCheckInvoker lockerCheckInvoker) {
+  public FindIterableDecoratorImpl(FindIterable<T> implementation, MethodInvoker lockerCheckInvoker) {
     this.impl = implementation;
     this.checker = lockerCheckInvoker;
   }
@@ -21,7 +20,7 @@ public class FindIterableDecoratorImpl<T> implements FindIterableDecorator<T> {
   }
 
   @Override
-  public LockCheckInvoker getInvoker() {
+  public MethodInvoker getInvoker() {
     return checker;
   }
 }

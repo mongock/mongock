@@ -4,7 +4,7 @@ import com.github.cloudyrock.mongock.decorator.impl.ListCollectionsIterableDecor
 import com.github.cloudyrock.mongock.decorator.impl.MongoCollectionDecoratorImpl;
 import com.github.cloudyrock.mongock.decorator.impl.MongoDataBaseDecoratorImpl;
 import com.github.cloudyrock.mongock.decorator.impl.MongoIterableDecoratorImpl;
-import com.github.cloudyrock.mongock.decorator.util.LockCheckInvoker;
+import com.github.cloudyrock.mongock.decorator.util.MethodInvoker;
 import com.mongodb.ReadConcern;
 import com.mongodb.ReadPreference;
 import com.mongodb.WriteConcern;
@@ -21,124 +21,125 @@ import org.bson.conversions.Bson;
 import java.util.List;
 
 
-public  interface MongoDatabaseDecorator extends MongoDatabase {
+public interface MongoDatabaseDecorator extends MongoDatabase {
 
   MongoDatabase getImpl();
-  LockCheckInvoker getInvoker();
+
+  MethodInvoker getInvoker();
 
   @Override
-  default  String getName() {
+  default String getName() {
     return getImpl().getName();
   }
 
   @Override
-  default  CodecRegistry getCodecRegistry() {
+  default CodecRegistry getCodecRegistry() {
     return getImpl().getCodecRegistry();
   }
 
   @Override
-  default  ReadPreference getReadPreference() {
+  default ReadPreference getReadPreference() {
     return getImpl().getReadPreference();
   }
 
   @Override
-  default  WriteConcern getWriteConcern() {
+  default WriteConcern getWriteConcern() {
     return getImpl().getWriteConcern();
   }
 
   @Override
-  default  ReadConcern getReadConcern() {
+  default ReadConcern getReadConcern() {
     return getImpl().getReadConcern();
   }
 
   @Override
-  default  MongoDatabase withCodecRegistry(CodecRegistry codecRegistry) {
+  default MongoDatabase withCodecRegistry(CodecRegistry codecRegistry) {
     return new MongoDataBaseDecoratorImpl(getImpl().withCodecRegistry(codecRegistry), getInvoker());
   }
 
   @Override
-  default  MongoDatabase withReadPreference(ReadPreference readPreference) {
+  default MongoDatabase withReadPreference(ReadPreference readPreference) {
     return new MongoDataBaseDecoratorImpl(getImpl().withReadPreference(readPreference), getInvoker());
   }
 
   @Override
-  default  MongoDatabase withWriteConcern(WriteConcern writeConcern) {
+  default MongoDatabase withWriteConcern(WriteConcern writeConcern) {
     return new MongoDataBaseDecoratorImpl(getImpl().withWriteConcern(writeConcern), getInvoker());
   }
 
   @Override
-  default  MongoDatabase withReadConcern(ReadConcern readConcern) {
+  default MongoDatabase withReadConcern(ReadConcern readConcern) {
     return new MongoDataBaseDecoratorImpl(getImpl().withReadConcern(readConcern), getInvoker());
   }
 
   @Override
 //  @SuppressWarnings("unchecked")
-  default  MongoCollection<Document> getCollection(String s) {
+  default MongoCollection<Document> getCollection(String s) {
     return new MongoCollectionDecoratorImpl<>(getImpl().getCollection(s), getInvoker());
   }
 
   @Override
-  default  <TDocument> MongoCollection<TDocument> getCollection(String s, Class<TDocument> aClass) {
+  default <TDocument> MongoCollection<TDocument> getCollection(String s, Class<TDocument> aClass) {
     return new MongoCollectionDecoratorImpl<>(getImpl().getCollection(s, aClass), getInvoker());
   }
 
   @Override
-  default  Document runCommand(Bson bson) {
+  default Document runCommand(Bson bson) {
     return getInvoker().invoke(() -> getImpl().runCommand(bson));
   }
 
   @Override
-  default  Document runCommand(Bson bson, ReadPreference readPreference) {
+  default Document runCommand(Bson bson, ReadPreference readPreference) {
     return getInvoker().invoke(() -> getImpl().runCommand(bson, readPreference));
   }
 
   @Override
-  default  <TResult> TResult runCommand(Bson bson, Class<TResult> aClass) {
+  default <TResult> TResult runCommand(Bson bson, Class<TResult> aClass) {
     return getInvoker().invoke(() -> getImpl().runCommand(bson, aClass));
   }
 
   @Override
-  default  <TResult> TResult runCommand(Bson bson, ReadPreference readPreference, Class<TResult> aClass) {
+  default <TResult> TResult runCommand(Bson bson, ReadPreference readPreference, Class<TResult> aClass) {
     return getInvoker().invoke(() -> getImpl().runCommand(bson, readPreference, aClass));
   }
 
   @Override
-  default  void drop() {
+  default void drop() {
     getInvoker().invoke(getImpl()::drop);
   }
 
   @Override
-  default  MongoIterable<String> listCollectionNames() {
+  default MongoIterable<String> listCollectionNames() {
     return new MongoIterableDecoratorImpl<>(getImpl().listCollectionNames(), getInvoker());
   }
 
   @Override
-  default  ListCollectionsIterable<Document> listCollections() {
+  default ListCollectionsIterable<Document> listCollections() {
     return new ListCollectionsIterableDecoratorImpl<>(getImpl().listCollections(), getInvoker());
   }
 
   @Override
-  default  <TResult> ListCollectionsIterable<TResult> listCollections(Class<TResult> aClass) {
+  default <TResult> ListCollectionsIterable<TResult> listCollections(Class<TResult> aClass) {
     return new ListCollectionsIterableDecoratorImpl<>(getImpl().listCollections(aClass), getInvoker());
   }
 
   @Override
-  default  void createCollection(String s) {
+  default void createCollection(String s) {
     getInvoker().invoke(() -> getImpl().createCollection(s));
   }
 
   @Override
-  default  void createCollection(String s, CreateCollectionOptions createCollectionOptions) {
+  default void createCollection(String s, CreateCollectionOptions createCollectionOptions) {
     getInvoker().invoke(() -> getImpl().createCollection(s, createCollectionOptions));
   }
 
   @Override
-  default  void createView(String s, String s1, List<? extends Bson> list) {
+  default void createView(String s, String s1, List<? extends Bson> list) {
     getInvoker().invoke(() -> getImpl().createView(s, s1, list));
   }
 
   @Override
-  default  void createView(String s, String s1, List<? extends Bson> list, CreateViewOptions createViewOptions) {
+  default void createView(String s, String s1, List<? extends Bson> list, CreateViewOptions createViewOptions) {
     getInvoker().invoke(() -> getImpl().createView(s, s1, list, createViewOptions));
   }
 }

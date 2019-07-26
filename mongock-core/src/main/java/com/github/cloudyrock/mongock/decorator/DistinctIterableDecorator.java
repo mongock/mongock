@@ -6,28 +6,28 @@ import org.bson.conversions.Bson;
 
 import java.util.concurrent.TimeUnit;
 
-public interface DistinctIterableDecorator<T> extends DistinctIterable<T>, MongoIterableDecorator<T> {
+public interface DistinctIterableDecorator<T> extends MongoIterableDecorator<T>, DistinctIterable<T> {
 
   @Override
   DistinctIterable<T> getImpl();
 
   @Override
   default DistinctIterable<T> filter(Bson filter) {
-    return null;
+    return getImpl().filter(filter);
   }
 
   @Override
   default DistinctIterable<T> maxTime(long maxTime, TimeUnit timeUnit) {
-    return null;
+    return getImpl().maxTime(maxTime, timeUnit);
   }
 
   @Override
   default DistinctIterable<T> batchSize(int batchSize) {
-    return null;
+    return getImpl().batchSize(batchSize).batchSize(batchSize);
   }
 
   @Override
   default DistinctIterable<T> collation(Collation collation) {
-    return null;
+    return getImpl().collation(collation);
   }
 }

@@ -1,7 +1,7 @@
 package com.github.cloudyrock.mongock.decorator;
 
 import com.github.cloudyrock.mongock.decorator.impl.*;
-import com.github.cloudyrock.mongock.decorator.util.LockCheckInvoker;
+import com.github.cloudyrock.mongock.decorator.util.MethodInvoker;
 import com.mongodb.MongoNamespace;
 import com.mongodb.ReadConcern;
 import com.mongodb.ReadPreference;
@@ -21,7 +21,7 @@ public interface MongoCollectionDecorator<T> extends MongoCollection<T> {
 
   MongoCollection<T> getImpl();
 
-  LockCheckInvoker getInvoker();
+  MethodInvoker getInvoker();
 
   @Override
   default MongoNamespace getNamespace() {
@@ -80,67 +80,67 @@ public interface MongoCollectionDecorator<T> extends MongoCollection<T> {
 
   @Override
   default long count() {
-    return getInvoker().invoke(()-> getImpl().count());
+    return getInvoker().invoke(() -> getImpl().count());
   }
 
   @Override
   default long count(Bson bson) {
-    return getInvoker().invoke(()-> getImpl().count(bson));
+    return getInvoker().invoke(() -> getImpl().count(bson));
   }
 
   @Override
   default long count(Bson bson, CountOptions countOptions) {
-    return getInvoker().invoke(()-> getImpl().count(bson, countOptions));
+    return getInvoker().invoke(() -> getImpl().count(bson, countOptions));
   }
 
   @Override
   default <TResult> DistinctIterable<TResult> distinct(String s, Class<TResult> aClass) {
-    return getInvoker().invoke(()-> new DistinctIterableDecoratorImpl<>(getImpl().distinct(s, aClass), getInvoker()));
+    return getInvoker().invoke(() -> new DistinctIterableDecoratorImpl<>(getImpl().distinct(s, aClass), getInvoker()));
   }
 
   @Override
   default <TResult> DistinctIterable<TResult> distinct(String s, Bson bson, Class<TResult> aClass) {
-    return new DistinctIterableDecoratorImpl<>(getInvoker().invoke(()->getImpl().distinct(s, bson, aClass)), getInvoker());
+    return new DistinctIterableDecoratorImpl<>(getInvoker().invoke(() -> getImpl().distinct(s, bson, aClass)), getInvoker());
   }
 
   @Override
   default FindIterable<T> find() {
-    return new FindIterableDecoratorImpl<>(getInvoker().invoke(()->getImpl().find()), getInvoker());
+    return new FindIterableDecoratorImpl<>(getInvoker().invoke(() -> getImpl().find()), getInvoker());
   }
 
   @Override
   default <TResult> FindIterable<TResult> find(Class<TResult> aClass) {
-    return new FindIterableDecoratorImpl<>(getInvoker().invoke(()->getImpl().find(aClass)), getInvoker());
+    return new FindIterableDecoratorImpl<>(getInvoker().invoke(() -> getImpl().find(aClass)), getInvoker());
   }
 
   @Override
   default FindIterable<T> find(Bson bson) {
-    return new FindIterableDecoratorImpl<>(getInvoker().invoke(()->getImpl().find(bson)), getInvoker());
+    return new FindIterableDecoratorImpl<>(getInvoker().invoke(() -> getImpl().find(bson)), getInvoker());
   }
 
   @Override
   default <TResult> FindIterable<TResult> find(Bson bson, Class<TResult> aClass) {
-    return new FindIterableDecoratorImpl<>(getInvoker().invoke(()->getImpl().find(bson, aClass)), getInvoker());
+    return new FindIterableDecoratorImpl<>(getInvoker().invoke(() -> getImpl().find(bson, aClass)), getInvoker());
   }
 
   @Override
   default AggregateIterable<T> aggregate(List<? extends Bson> list) {
-    return new AggregateIterableDecoratorImpl<>(getInvoker().invoke(()->getImpl().aggregate(list)), getInvoker());
+    return new AggregateIterableDecoratorImpl<>(getInvoker().invoke(() -> getImpl().aggregate(list)), getInvoker());
   }
 
   @Override
   default <TResult> AggregateIterable<TResult> aggregate(List<? extends Bson> list, Class<TResult> aClass) {
-    return new AggregateIterableDecoratorImpl<>(getInvoker().invoke(()->getImpl().aggregate(list, aClass)), getInvoker());
+    return new AggregateIterableDecoratorImpl<>(getInvoker().invoke(() -> getImpl().aggregate(list, aClass)), getInvoker());
   }
 
   @Override
   default MapReduceIterable<T> mapReduce(String s, String s1) {
-    return new MapReduceIterableDecoratorImpl<>(getInvoker().invoke(()->getImpl().mapReduce(s, s1)), getInvoker());
+    return new MapReduceIterableDecoratorImpl<>(getInvoker().invoke(() -> getImpl().mapReduce(s, s1)), getInvoker());
   }
 
   @Override
   default <TResult> MapReduceIterable<TResult> mapReduce(String s, String s1, Class<TResult> aClass) {
-    return new MapReduceIterableDecoratorImpl<>(getInvoker().invoke(()->getImpl().mapReduce(s, s1, aClass)), getInvoker());
+    return new MapReduceIterableDecoratorImpl<>(getInvoker().invoke(() -> getImpl().mapReduce(s, s1, aClass)), getInvoker());
   }
 
   @Override

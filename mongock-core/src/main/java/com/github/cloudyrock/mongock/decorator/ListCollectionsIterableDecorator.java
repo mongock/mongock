@@ -12,16 +12,16 @@ public interface ListCollectionsIterableDecorator<T> extends MongoIterableDecora
 
   @Override
   default ListCollectionsIterable<T> filter(Bson filter) {
-    return null;
+    return getImpl().filter(filter);
   }
 
   @Override
   default ListCollectionsIterable<T> maxTime(long maxTime, TimeUnit timeUnit) {
-    return null;
+    return getImpl().maxTime(maxTime, timeUnit);
   }
 
   @Override
   default ListCollectionsIterable<T> batchSize(int batchSize) {
-    return null;
+    return getImpl().batchSize(batchSize);
   }
 }

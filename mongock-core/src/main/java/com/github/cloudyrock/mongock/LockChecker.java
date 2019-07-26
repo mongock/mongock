@@ -78,7 +78,7 @@ public class LockChecker {
     this.owner = UUID.randomUUID().toString();
   }
 
-  static String getDefaultKey() {
+  public static String getDefaultKey() {
     return DEFAULT_KEY;
   }
 
@@ -90,7 +90,7 @@ public class LockChecker {
    *
    * @throws LockCheckException if the lock cannot be acquired
    */
-  void acquireLockDefault() {
+  public void acquireLockDefault() {
     acquireLock(getDefaultKey());
   }
 
@@ -118,7 +118,7 @@ public class LockChecker {
    *
    * @throws LockCheckException if, in case of needed, the lock cannot be refreshed
    */
-  void ensureLockDefault() {
+  public void ensureLockDefault() {
     ensureLock(getDefaultKey());
   }
 
@@ -149,7 +149,7 @@ public class LockChecker {
    * Does not throw any exception neither.</p>
    * <p>Idempotent operation.</p>
    */
-  void releaseLockDefault() {
+  public void releaseLockDefault() {
     releaseLock(getDefaultKey());
   }
 

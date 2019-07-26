@@ -2,7 +2,7 @@ package com.github.cloudyrock.mongock.decorator;
 
 import com.github.cloudyrock.mongock.decorator.impl.MongoCursorDecoratorImpl;
 import com.github.cloudyrock.mongock.decorator.impl.MongoIterableDecoratorImpl;
-import com.github.cloudyrock.mongock.decorator.util.LockCheckInvoker;
+import com.github.cloudyrock.mongock.decorator.util.MethodInvoker;
 import com.mongodb.Block;
 import com.mongodb.Function;
 import com.mongodb.client.MongoCursor;
@@ -14,8 +14,7 @@ public interface MongoIterableDecorator<T> extends MongoIterable<T> {
 
   MongoIterable<T> getImpl();
 
-  LockCheckInvoker getInvoker();
-
+  MethodInvoker getInvoker();
 
   @Override
   default MongoCursor<T> iterator() {

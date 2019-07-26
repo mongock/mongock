@@ -12,36 +12,37 @@ public interface AggregateIterableDecorator<T> extends MongoIterableDecorator<T>
 
   @Override
   default void toCollection() {
-
+    getInvoker().invoke(() -> getImpl().toCollection());
   }
 
   @Override
   default AggregateIterable<T> allowDiskUse(Boolean allowDiskUse) {
-    return null;
+    return getImpl().allowDiskUse(allowDiskUse);
   }
 
   @Override
   default AggregateIterable<T> batchSize(int batchSize) {
-    return null;
+    return getImpl().batchSize(batchSize);
   }
 
   @Override
   default AggregateIterable<T> maxTime(long maxTime, TimeUnit timeUnit) {
-    return null;
+    return getImpl().maxTime(maxTime, timeUnit);
   }
 
   @Override
+  @Deprecated
   default AggregateIterable<T> useCursor(Boolean useCursor) {
-    return null;
+    return getImpl().useCursor(useCursor);
   }
 
   @Override
   default AggregateIterable<T> bypassDocumentValidation(Boolean bypassDocumentValidation) {
-    return null;
+    return getImpl().bypassDocumentValidation(bypassDocumentValidation);
   }
 
   @Override
   default AggregateIterable<T> collation(Collation collation) {
-    return null;
+    return getImpl().collation(collation);
   }
 }

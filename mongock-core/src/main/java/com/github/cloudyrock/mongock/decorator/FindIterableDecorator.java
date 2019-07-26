@@ -6,6 +6,7 @@ import com.mongodb.client.model.Collation;
 import org.bson.conversions.Bson;
 
 import java.util.concurrent.TimeUnit;
+
 /*
 None of the methods in this class need to be re-wrapped in a decorator because it's returning the instance
 itself.
