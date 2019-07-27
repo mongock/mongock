@@ -220,7 +220,7 @@ import static org.springframework.data.mongodb.core.query.SerializationUtils.ser
 
   @Override
   public ScriptOperations scriptOps() {
-    return new ScriptOperationsDecoratorImpl(getInvoker().invoke(()-> super.scriptOps()), methodInvoker);
+    return new ScriptOperationsDecoratorImpl(getInvoker().invoke(super::scriptOps), methodInvoker);
   }
 
   // Find methods that take a Query to express the query and that return a single object.
