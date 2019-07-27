@@ -14,7 +14,6 @@ import java.util.List;
 /**
  * Mongock runner
  *
- *
  * @since 26/07/2014
  */
 public class Mongock implements Closeable {
@@ -28,12 +27,12 @@ public class Mongock implements Closeable {
   private boolean throwExceptionIfCannotObtainLock;
   private boolean enabled;
   protected MongoDatabase changelogMongoDatabase;
-  protected DB changelogDb;
 
-  protected Mongock(ChangeEntryRepository changeEntryRepository,
-          MongoClient mongoClient,
-          ChangeService changeService,
-          LockChecker lockChecker) {
+  protected Mongock(
+      ChangeEntryRepository changeEntryRepository,
+      MongoClient mongoClient,
+      ChangeService changeService,
+      LockChecker lockChecker) {
     this.changeEntryRepository = changeEntryRepository;
     this.mongoClient = mongoClient;
     this.changeService = changeService;
@@ -50,10 +49,6 @@ public class Mongock implements Closeable {
 
   void setChangelogMongoDatabase(MongoDatabase changelogMongoDatabase) {
     this.changelogMongoDatabase = changelogMongoDatabase;
-  }
-
-  void setChangelogDb(DB changelogDb) {
-    this.changelogDb = changelogDb;
   }
 
   public void execute() {
@@ -131,12 +126,12 @@ public class Mongock implements Closeable {
       if (changeEntryRepository.isNewChange(changeEntry)) {
         executeChangeSetMethod(changesetMethod, changelogInstance);
         changeEntryRepository.save(changeEntry);
-        logger.info("{} applied", changeEntry );
+        logger.info("{} applied", changeEntry);
       } else if (changeService.isRunAlwaysChangeSet(changesetMethod)) {
         executeChangeSetMethod(changesetMethod, changelogInstance);
-        logger.info("{} re-applied", changeEntry );
+        logger.info("{} re-applied", changeEntry);
       } else {
-        logger.info("{} pass over", changeEntry );
+        logger.info("{} pass over", changeEntry);
       }
     } catch (MongockException e) {
       logger.error(e.getMessage());
@@ -145,20 +140,17 @@ public class Mongock implements Closeable {
 
   protected void executeChangeSetMethod(Method changeSetMethod, Object changeLogInstance)
       throws IllegalAccessException, InvocationTargetException {
-    if (changeSetMethod.getParameterTypes().length == 1
-        && changeSetMethod.getParameterTypes()[0].equals(DB.class)) {
-      logger.debug("method with DB argument");
+    if (changeSetMethod.getParameterTypes().length == 1 && changeSetMethod.getParameterTypes()[0].equals(DB.class)) {
+      throw new UnsupportedOperationException("DB not supported by Mongock. Please use MongoDatabase");
 
-      changeSetMethod.invoke(changeLogInstance, this.changelogDb);
-    } else if (changeSetMethod.getParameterTypes().length == 1
-        && changeSetMethod.getParameterTypes()[0].equals(MongoDatabase.class)) {
+    } else if (changeSetMethod.getParameterTypes().length == 1 && changeSetMethod.getParameterTypes()[0].equals(MongoDatabase.class)) {
       logger.debug("method with MongoDatabase argument");
-
       changeSetMethod.invoke(changeLogInstance, this.changelogMongoDatabase);
+
     } else if (changeSetMethod.getParameterTypes().length == 0) {
       logger.debug("method with no params");
-
       changeSetMethod.invoke(changeLogInstance);
+
     } else {
       throw new MongockException("ChangeSet method " + changeSetMethod.getName() +
           " has wrong arguments list. Please see docs for more info!");

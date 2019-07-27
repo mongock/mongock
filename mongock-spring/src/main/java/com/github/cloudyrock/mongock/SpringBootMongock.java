@@ -46,10 +46,13 @@ public class SpringBootMongock extends Mongock implements ApplicationRunner {
     for (Class<?> parameter : changeSetMethod.getParameterTypes()) {
       if (MongoTemplate.class.isAssignableFrom(parameter)) {
         changelogInvocationParameters.add(mongoTemplate);
+
       } else if (DB.class.isAssignableFrom(parameter)) {
-        changelogInvocationParameters.add(this.changelogDb);
+        throw new UnsupportedOperationException("DB not supported by Mongock. Please use MongoDatabase");
+
       } else if (MongoDatabase.class.isAssignableFrom(parameter)) {
         changelogInvocationParameters.add(this.changelogMongoDatabase);
+
       } else {
         changelogInvocationParameters.add(springContext.getBean(parameter));
       }
