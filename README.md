@@ -68,13 +68,13 @@ If you would like to contribute to Mongock project, please read [how to contribu
 
 ## Add a dependency
 
-Mongock can be used standalone, with Spring, or with Jongo.  The `mongock-core` dependency is always required,
+Mongock can be used standalone or with Spring.  The `mongock-core` dependency is always required,
 and `mongock-spring` can also be added.  Using `mongock-spring`
 is not currently supported.
 
 #### With Maven
 ```xml
-<!-- To use standalone (i.e., w/o Spring or Jongo) -->
+<!-- To use standalone (i.e., w/o Spring ) -->
 <dependency>
   <groupId>com.github.cloudyrock.mongock</groupId>
   <artifactId>mongock-core</artifactId>
@@ -139,24 +139,8 @@ public SpringBootMongock mongock(ApplicationContext springContext, MongoClient m
 }
 ```
 
-## Usage with Jongo
-
-Using mongock with Jongo is similar, but you have to remember to run `execute` to start the migration process.
-
-```java
-
-  MongoClient mongoclient = new MongoClient(new MongoClientURI("yourDbName", yourMongoClientBuilder));
-  JongoMongock runner=  new JongoMongockBuilder(mongoclient, "yourDbName", "com.package.to.be.scanned.for.changesets")
-      .setJongo(myJongo) 
-      .setLockQuickConfig()
-      .build();
-  runner.execute();         //  ------> starts migration changesets
-```
-
-
-
 ## Standalone usage
-Using mongock standalone is similar to with Jongo.
+Using mongock standalone.
 
 ```java
 
@@ -274,7 +258,7 @@ public void someChange6(MongoTemplate mongoTemplate, Environment environment) {
 
 ## Injecting custom dependencies to change logs
 Right now this is possible by using SpringBoot Application Context. 
-See [SpringBoot set up](#usage-with-springBoot) for more information. However, this feature will be available for standalone and Jongo implementations.
+See [SpringBoot set up](#usage-with-springBoot) for more information.
 
 
 ## Using Spring profiles
