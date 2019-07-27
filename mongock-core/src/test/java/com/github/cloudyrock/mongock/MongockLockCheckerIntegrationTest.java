@@ -47,16 +47,14 @@ public class MongockLockCheckerIntegrationTest {
   private ProxyFactory proxyFactory;
   private ChangeEntryRepository changeEntryRepository;
   private TestMongockBuilder builder;
-  private FongoDB db;
 
   @Before
   public void setUp() throws NoSuchMethodException, MongockException {
-    db = new Fongo("testServer").getDB("mongocktest");
-    mongoDatabase = spy(new Fongo("testServer").getDatabase("mongocktest"));
-
+//    mongoDatabase = spy(new Fongo("testServer").getDatabase("mongocktest"));
+    mongoDatabase = new Fongo("testServer").getDatabase("mongocktest");
+    String name = mongoDatabase.getName();
     MongoClient mongoClient = mock(MongoClient.class);
     when(mongoClient.getDatabase(anyString())).thenReturn(mongoDatabase);
-    when(mongoClient.getDB(anyString())).thenReturn(db);
 
     builder = new TestMongockBuilder(mongoClient,"mongocktest", ProxiesMongockTestResource.class.getPackage().getName())
         .setEnabled(true)
@@ -81,7 +79,7 @@ public class MongockLockCheckerIntegrationTest {
     proxyFactory = new ProxyFactory(preInterceptor, proxyCreatordMethods, unInterceptedMethods);
     doReturn(singletonList(ProxiesMongockTestResource.class))
         .when(changeService).fetchChangeLogs();
-    doReturn(singletonList(ProxiesMongockTestResource.class.getDeclaredMethod("testInsertWithDB", DB.class)))
+    doReturn(singletonList(ProxiesMongockTestResource.class.getDeclaredMethod("testMongoDatabase", MongoDatabase.class)))
         .when(changeService).fetchChangeSets(ProxiesMongockTestResource.class);
 
     this.changeEntryRepository = mock(ChangeEntryRepository.class);
@@ -91,8 +89,10 @@ public class MongockLockCheckerIntegrationTest {
   public void shouldCallEnsureLock() throws Exception {
     when(changeEntryRepository.isNewChange(any(ChangeEntry.class))).thenReturn(true);
     MongoDatabase mongoDatabaseProxy = proxyFactory.createProxyFromOriginal(mongoDatabase);
-    DB dbProxy = proxyFactory.createProxyFromOriginal(db);
-    runner = builder.build(changeEntryRepository, changeService, lockChecker, mongoDatabaseProxy, dbProxy);
+
+    String name = mongoDatabaseProxy.getName();
+
+    runner = builder.build(changeEntryRepository, changeService, lockChecker, mongoDatabaseProxy);
     // when
     runner.execute();
 
@@ -110,9 +110,7 @@ public class MongockLockCheckerIntegrationTest {
         .when(timeUtils).currentTime();
     when(changeEntryRepository.isNewChange(any(ChangeEntry.class))).thenReturn(true);
     MongoDatabase mongoDatabaseProxy = proxyFactory.createProxyFromOriginal(mongoDatabase);
-    DB dbProxy = proxyFactory.createProxyFromOriginal(db);
-
-    runner = builder.build(changeEntryRepository, changeService, lockChecker, mongoDatabaseProxy, dbProxy);
+    runner = builder.build(changeEntryRepository, changeService, lockChecker, mongoDatabaseProxy);
 
     // when
     runner.execute();
@@ -145,8 +143,7 @@ public class MongockLockCheckerIntegrationTest {
     proxyFactory = new ProxyFactory(preInterceptor, proxyCreatordMethods, unInterceptedMethods);
     when(changeEntryRepository.isNewChange(any(ChangeEntry.class))).thenReturn(true);
     MongoDatabase mongoDatabaseProxy = proxyFactory.createProxyFromOriginal(mongoDatabase);
-    DB dbProxy = proxyFactory.createProxyFromOriginal(db);
-    runner = builder.build(changeEntryRepository, changeService, lockChecker, mongoDatabaseProxy, dbProxy);
+    runner = builder.build(changeEntryRepository, changeService, lockChecker, mongoDatabaseProxy);
 
     // when
     runner.execute();
@@ -174,7 +171,6 @@ class TestMongockBuilder extends MongockBuilderBase<TestMongockBuilder, Mongock>
 
   private ChangeService changeService;
   private MongoDatabase mongoDataBase;
-  private DB db;
   private ChangeEntryRepository changeEntryRepository;
   private LockChecker lockChecker;
 
@@ -190,13 +186,11 @@ class TestMongockBuilder extends MongockBuilderBase<TestMongockBuilder, Mongock>
   Mongock build(ChangeEntryRepository changeEntryRepository,
                 ChangeService changeService,
                 LockChecker lockChecker,
-                MongoDatabase mongoDatabase,
-                DB db) {
+                MongoDatabase mongoDatabase) {
     this.changeEntryRepository = changeEntryRepository;
     this.changeService = changeService;
     this.lockChecker = lockChecker;
     this.mongoDataBase = mongoDatabase;
-    this.db = db;
     return createBuild();
   }
 
@@ -205,7 +199,6 @@ class TestMongockBuilder extends MongockBuilderBase<TestMongockBuilder, Mongock>
 //    changeService.setChangeLogsBasePackage(changeLogsScanPackage);
     Mongock mongock = new Mongock(changeEntryRepository, mongoClient, changeService, lockChecker);
     mongock.setChangelogMongoDatabase(mongoDataBase);
-    mongock.setChangelogDb(db);
     mongock.setEnabled(enabled);
     mongock.setThrowExceptionIfCannotObtainLock(throwExceptionIfCannotObtainLock);
     return mongock;

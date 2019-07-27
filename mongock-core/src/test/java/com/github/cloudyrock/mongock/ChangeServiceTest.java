@@ -43,7 +43,7 @@ public class ChangeServiceTest {
 
     // then
     assertTrue(foundMethods != null);
-    assertEquals(5, foundMethods.size());
+    assertEquals(4, foundMethods.size());
   }
 
   @Test
@@ -58,7 +58,7 @@ public class ChangeServiceTest {
 
     // then
     assertTrue(foundMethods != null);
-    assertEquals(6, foundMethods.size());
+    assertEquals(5, foundMethods.size());
   }
 
   @Test

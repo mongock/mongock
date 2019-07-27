@@ -29,7 +29,6 @@ public abstract class MongockBuilderBase<BUILDER_TYPE extends MongockBuilderBase
   //for build
   ProxyFactory proxyFactory;
   ChangeEntryRepository changeEntryRepository;
-  DB db;
   LockChecker lockChecker;
   MongoDatabase database;
 
@@ -140,7 +139,6 @@ public abstract class MongockBuilderBase<BUILDER_TYPE extends MongockBuilderBase
   public RETURN_TYPE build() {
     validateMandatoryFields();
     database = mongoClient.getDatabase(databaseName);
-    db = mongoClient.getDB(databaseName);
 
     lockChecker = createLockChecker();
     proxyFactory = createProxyFactory(lockChecker);
@@ -185,10 +183,6 @@ public abstract class MongockBuilderBase<BUILDER_TYPE extends MongockBuilderBase
     ChangeService changeService = new ChangeService();
     changeService.setChangeLogsBasePackage(changeLogsScanPackage);
     return changeService;
-  }
-
-  DB createDbProxy() {
-    return proxyFactory.createProxyFromOriginal(db, DB.class);
   }
 
   MongoDatabase createMongoDataBaseProxy() {

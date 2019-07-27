@@ -28,7 +28,6 @@ public class SpringBootMongockTestBase {
 
   protected SpringBootMongock runner;
 
-  protected DB fakeDb;
   protected MongoDatabase fakeMongoDatabase;
 
   @Mock
@@ -48,16 +47,14 @@ public class SpringBootMongockTestBase {
   @Mock
   private MongoRepository indexDao;
 
-  public static MongoClient getFakeMongoClient(MongoDatabase fakeMongoDatabase, DB fakeDb) {
+  public static MongoClient getFakeMongoClient(MongoDatabase fakeMongoDatabase) {
     MongoClient mongoClient = mock(MongoClient.class);
     when(mongoClient.getDatabase(anyString())).thenReturn(fakeMongoDatabase);
-    when(mongoClient.getDB(anyString())).thenReturn(fakeDb);
     return mongoClient;
   }
 
   @Before
   public void init() throws Exception {
-    fakeDb = new Fongo("testServer").getDB("mongocktest");
     fakeMongoDatabase = new Fongo("testServer").getDatabase("mongocktest");
     TestUtils.setField(changeEntryRepository, "mongoDatabase", fakeMongoDatabase);
 
@@ -67,7 +64,7 @@ public class SpringBootMongockTestBase {
     TestUtils.setField(changeEntryRepository, "collection", fakeMongoDatabase.getCollection(CHANGELOG_COLLECTION_NAME));
 
     changeService.setChangeLogsBasePackage(MongockTestResource.class.getPackage().getName());
-    mongoClient = getFakeMongoClient(fakeMongoDatabase, fakeDb);
+    mongoClient = getFakeMongoClient(fakeMongoDatabase);
 
     SpringBootMongock temp = new SpringBootMongock(
         changeEntryRepository,
@@ -75,7 +72,6 @@ public class SpringBootMongockTestBase {
         changeService,
         lockChecker);
 
-    temp.setChangelogDb(fakeDb);
     temp.springContext(mock(ApplicationContext.class));
     temp.setChangelogMongoDatabase(fakeMongoDatabase);
     temp.setMongoTemplate(new MongoTemplate(mongoClient, "mongocktest"));
@@ -88,7 +84,6 @@ public class SpringBootMongockTestBase {
   @After
   public void cleanUp() throws NoSuchFieldException, IllegalAccessException {
     TestUtils.setField(runner, "mongoTemplate", null);
-    fakeDb.dropDatabase();
   }
 
 }
