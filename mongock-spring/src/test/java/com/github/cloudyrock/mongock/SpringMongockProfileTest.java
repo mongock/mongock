@@ -21,7 +21,7 @@ import static org.mockito.Mockito.when;
  */
 @RunWith(MockitoJUnitRunner.class)
 public class SpringMongockProfileTest extends SpringMongockTestBase {
-  private static final int CHANGELOG_COUNT = 13;
+  private static final int CHANGELOG_COUNT = 11;
 
   @Test
   public void shouldRunDevProfileAndNonAnnotated() throws Exception {

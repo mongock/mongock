@@ -36,7 +36,7 @@ public class MongockTest extends MongockTestBase {
     runner.execute();
 
     // then
-    verify(changeEntryRepository, times(11)).save(any(ChangeEntry.class)); // 11 changesets saved to dbchangelog
+    verify(changeEntryRepository, times(9)).save(any(ChangeEntry.class)); // 11 changesets saved to dbchangelog
 
     // dbchangelog collection checking
     long change1 = fakeMongoDatabase.getCollection(CHANGELOG_COLLECTION_NAME).count(new Document()
@@ -47,10 +47,8 @@ public class MongockTest extends MongockTestBase {
         .append(ChangeEntry.KEY_CHANGEID, "test2")
         .append(ChangeEntry.KEY_AUTHOR, "testuser"));
     assertEquals(1, change2);
-    long change3 = fakeMongoDatabase.getCollection(CHANGELOG_COLLECTION_NAME).count(new Document()
-        .append(ChangeEntry.KEY_CHANGEID, "test3")
-        .append(ChangeEntry.KEY_AUTHOR, "testuser"));
-    assertEquals(1, change3);
+
+
     long change4 = fakeMongoDatabase.getCollection(CHANGELOG_COLLECTION_NAME).count(new Document()
         .append(ChangeEntry.KEY_CHANGEID, "test4")
         .append(ChangeEntry.KEY_AUTHOR, "testuser"));
@@ -62,7 +60,7 @@ public class MongockTest extends MongockTestBase {
 
     long changeAll = fakeMongoDatabase.getCollection(CHANGELOG_COLLECTION_NAME).count(new Document()
         .append(ChangeEntry.KEY_AUTHOR, "testuser"));
-    assertEquals(11, changeAll);
+    assertEquals(9, changeAll);
   }
 
   @Test

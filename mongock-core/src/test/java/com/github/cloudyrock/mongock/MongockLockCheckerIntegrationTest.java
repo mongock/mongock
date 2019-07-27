@@ -50,9 +50,9 @@ public class MongockLockCheckerIntegrationTest {
 
   @Before
   public void setUp() throws NoSuchMethodException, MongockException {
-    mongoDatabase = spy(new Fongo("testServer").getDatabase("mongocktest"));
-    doReturn("mongocktest").when(mongoDatabase.getName());
-
+//    mongoDatabase = spy(new Fongo("testServer").getDatabase("mongocktest"));
+    mongoDatabase = new Fongo("testServer").getDatabase("mongocktest");
+    String name = mongoDatabase.getName();
     MongoClient mongoClient = mock(MongoClient.class);
     when(mongoClient.getDatabase(anyString())).thenReturn(mongoDatabase);
 
