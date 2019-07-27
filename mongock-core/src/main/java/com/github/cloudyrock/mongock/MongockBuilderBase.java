@@ -1,5 +1,7 @@
 package com.github.cloudyrock.mongock;
 
+import com.github.cloudyrock.mongock.decorator.impl.MongoDataBaseDecoratorImpl;
+import com.github.cloudyrock.mongock.decorator.util.MethodInvoker;
 import com.mongodb.DB;
 import com.mongodb.MongoClient;
 import com.mongodb.client.MongoDatabase;
@@ -30,6 +32,7 @@ public abstract class MongockBuilderBase<BUILDER_TYPE extends MongockBuilderBase
   ProxyFactory proxyFactory;
   ChangeEntryRepository changeEntryRepository;
   LockChecker lockChecker;
+  MethodInvoker methodInvoker;
   MongoDatabase database;
 
   /**
@@ -141,6 +144,7 @@ public abstract class MongockBuilderBase<BUILDER_TYPE extends MongockBuilderBase
     database = mongoClient.getDatabase(databaseName);
 
     lockChecker = createLockChecker();
+    methodInvoker = new MethodInvoker(lockChecker);
     proxyFactory = createProxyFactory(lockChecker);
     changeEntryRepository = createChangeRepository();
     return this.createBuild();
@@ -186,7 +190,7 @@ public abstract class MongockBuilderBase<BUILDER_TYPE extends MongockBuilderBase
   }
 
   MongoDatabase createMongoDataBaseProxy() {
-    return proxyFactory.createProxyFromOriginal(mongoClient.getDatabase(databaseName), MongoDatabase.class);
+    return new MongoDataBaseDecoratorImpl(mongoClient.getDatabase(databaseName), methodInvoker);
   }
 
   abstract RETURN_TYPE createBuild();

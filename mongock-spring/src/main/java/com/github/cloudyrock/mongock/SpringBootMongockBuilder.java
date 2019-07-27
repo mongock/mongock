@@ -1,5 +1,6 @@
 package com.github.cloudyrock.mongock;
 
+import com.github.cloudyrock.mongock.decorator.impl.MongoDataBaseDecoratorImpl;
 import com.mongodb.DB;
 import com.mongodb.MongoClient;
 import com.mongodb.client.MongoDatabase;
@@ -66,9 +67,9 @@ public class SpringBootMongockBuilder extends MongockBuilderBase<SpringBootMongo
   @Override
   MongoDatabase createMongoDataBaseProxy() {
     try {
-      return proxyFactory.createProxyFromOriginal(context.getBean(MongoDatabase.class), MongoDatabase.class);
+      return new MongoDataBaseDecoratorImpl(context.getBean(MongoDatabase.class), methodInvoker);
     } catch (BeansException ex) {
-      return proxyFactory.createProxyFromOriginal(database, MongoDatabase.class);
+      return new MongoDataBaseDecoratorImpl(database, methodInvoker);
     }
   }
 
