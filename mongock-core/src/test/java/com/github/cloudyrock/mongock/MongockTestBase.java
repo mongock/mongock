@@ -29,7 +29,6 @@ public class MongockTestBase {
 
   protected Mongock runner;
 
-  protected DB fakeDb;
   protected MongoDatabase fakeMongoDatabase;
 
   @Mock
@@ -49,16 +48,14 @@ public class MongockTestBase {
   @Mock
   private MongoRepository indexDao;
 
-  public static MongoClient getFakeMongoClient(MongoDatabase fakeMongoDatabase, DB fakeDb) {
+  public static MongoClient getFakeMongoClient(MongoDatabase fakeMongoDatabase) {
     MongoClient mongoClient = mock(MongoClient.class);
     when(mongoClient.getDatabase(anyString())).thenReturn(fakeMongoDatabase);
-    when(mongoClient.getDB(anyString())).thenReturn(fakeDb);
     return mongoClient;
   }
 
   @Before
   public void init() throws Exception {
-    fakeDb = new Fongo("testServer").getDB("mongocktest");
     fakeMongoDatabase = new Fongo("testServer").getDatabase("mongocktest");
     TestUtils.setField(changeEntryRepository, "mongoDatabase", fakeMongoDatabase);
 
@@ -68,7 +65,7 @@ public class MongockTestBase {
     TestUtils.setField(changeEntryRepository, "collection", fakeMongoDatabase.getCollection(CHANGELOG_COLLECTION_NAME));
 
     changeService.setChangeLogsBasePackage(MongockTestResource.class.getPackage().getName());
-    mongoClient = MongockTestBase.getFakeMongoClient(fakeMongoDatabase, fakeDb);
+    mongoClient = MongockTestBase.getFakeMongoClient(fakeMongoDatabase);
 
     Mongock temp = new Mongock(
         changeEntryRepository,
@@ -86,7 +83,6 @@ public class MongockTestBase {
   @After
   public void cleanUp() throws NoSuchFieldException, IllegalAccessException {
     TestUtils.setField(runner, "mongoTemplate", null);
-    fakeDb.dropDatabase();
   }
 
 }
