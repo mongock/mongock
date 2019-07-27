@@ -1,5 +1,7 @@
 package com.github.cloudyrock.mongock;
 
+import com.github.cloudyrock.mongock.decorator.impl.MongoDataBaseDecoratorImpl;
+import com.github.cloudyrock.mongock.decorator.util.MethodInvoker;
 import com.github.cloudyrock.mongock.test.proxy.ProxiesMongockTestResource;
 import com.github.fakemongo.Fongo;
 import com.mongodb.DB;
@@ -44,6 +46,7 @@ public class MongockLockCheckerIntegrationTest {
   private LockRepository lockRepository;
   private TimeUtils timeUtils;
   private LockChecker lockChecker;
+  MethodInvoker methodInvoker;
   private ProxyFactory proxyFactory;
   private ChangeEntryRepository changeEntryRepository;
   private TestMongockBuilder builder;
@@ -65,7 +68,7 @@ public class MongockLockCheckerIntegrationTest {
     lockRepository = spy(new LockRepository(LOCK_COLLECTION_NAME, mongoDatabase));
 
     lockChecker = spy(new LockChecker(lockRepository, timeUtils));
-
+    methodInvoker = new MethodInvoker(lockChecker);
     PreInterceptor preInterceptor = new PreInterceptor() {
       @Override
       public void before() {
@@ -88,9 +91,7 @@ public class MongockLockCheckerIntegrationTest {
   @Test
   public void shouldCallEnsureLock() throws Exception {
     when(changeEntryRepository.isNewChange(any(ChangeEntry.class))).thenReturn(true);
-    MongoDatabase mongoDatabaseProxy = proxyFactory.createProxyFromOriginal(mongoDatabase);
-
-    String name = mongoDatabaseProxy.getName();
+    MongoDatabase mongoDatabaseProxy = new MongoDataBaseDecoratorImpl(mongoDatabase, methodInvoker);
 
     runner = builder.build(changeEntryRepository, changeService, lockChecker, mongoDatabaseProxy);
     // when
