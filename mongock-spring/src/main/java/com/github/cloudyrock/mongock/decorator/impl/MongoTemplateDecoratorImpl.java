@@ -1,5 +1,6 @@
 package com.github.cloudyrock.mongock.decorator.impl;
 
+import com.github.cloudyrock.mongock.decorator.util.MethodInvoker;
 import com.mongodb.MongoClient;
 import com.mongodb.ReadPreference;
 import com.mongodb.WriteConcern;
@@ -13,14 +14,12 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.dao.support.PersistenceExceptionTranslator;
 import org.springframework.data.geo.GeoResults;
 import org.springframework.data.mongodb.MongoDbFactory;
-import org.springframework.data.mongodb.core.BulkOperations;
 import org.springframework.data.mongodb.core.CollectionCallback;
 import org.springframework.data.mongodb.core.CollectionOptions;
 import org.springframework.data.mongodb.core.DbCallback;
 import org.springframework.data.mongodb.core.DocumentCallbackHandler;
 import org.springframework.data.mongodb.core.FindAndModifyOptions;
 import org.springframework.data.mongodb.core.MongoTemplate;
-import org.springframework.data.mongodb.core.ScriptOperations;
 import org.springframework.data.mongodb.core.SimpleMongoDbFactory;
 import org.springframework.data.mongodb.core.WriteConcernResolver;
 import org.springframework.data.mongodb.core.WriteResultChecking;
@@ -28,7 +27,6 @@ import org.springframework.data.mongodb.core.aggregation.Aggregation;
 import org.springframework.data.mongodb.core.aggregation.AggregationResults;
 import org.springframework.data.mongodb.core.aggregation.TypedAggregation;
 import org.springframework.data.mongodb.core.convert.MongoConverter;
-import org.springframework.data.mongodb.core.index.IndexOperations;
 import org.springframework.data.mongodb.core.mapreduce.GroupBy;
 import org.springframework.data.mongodb.core.mapreduce.GroupByResults;
 import org.springframework.data.mongodb.core.mapreduce.MapReduceOptions;
@@ -44,22 +42,22 @@ import java.util.List;
 import java.util.Set;
 
 public class MongoTemplateDecoratorImpl extends MongoTemplate {
-  private final com.github.cloudyrock.mongock.decorator.util.MethodInvoker methodInvoker;
+  private final MethodInvoker methodInvoker;
 
-  public MongoTemplateDecoratorImpl(MongoClient mongoClient, String databaseName, com.github.cloudyrock.mongock.decorator.util.MethodInvoker methodInvoker) {
+  public MongoTemplateDecoratorImpl(MongoClient mongoClient, String databaseName, MethodInvoker methodInvoker) {
     this(new MongoDbFactoryDecoratorImpl(new SimpleMongoDbFactory(mongoClient, databaseName), methodInvoker), methodInvoker);
   }
 
-  public MongoTemplateDecoratorImpl(MongoDbFactory mongoDbFactory, com.github.cloudyrock.mongock.decorator.util.MethodInvoker methodInvoker) {
+  public MongoTemplateDecoratorImpl(MongoDbFactory mongoDbFactory, MethodInvoker methodInvoker) {
     this(new MongoDbFactoryDecoratorImpl(mongoDbFactory, methodInvoker), null, methodInvoker);
   }
 
-  public MongoTemplateDecoratorImpl(MongoDbFactory mongoDbFactory, MongoConverter mongoConverter, com.github.cloudyrock.mongock.decorator.util.MethodInvoker methodInvoker) {
+  public MongoTemplateDecoratorImpl(MongoDbFactory mongoDbFactory, MongoConverter mongoConverter, MethodInvoker methodInvoker) {
     super(new MongoDbFactoryDecoratorImpl(mongoDbFactory, methodInvoker), mongoConverter);
     this.methodInvoker = methodInvoker;
   }
 
-  private com.github.cloudyrock.mongock.decorator.util.MethodInvoker getInvoker() {
+  private MethodInvoker getInvoker() {
     return methodInvoker;
   }
 

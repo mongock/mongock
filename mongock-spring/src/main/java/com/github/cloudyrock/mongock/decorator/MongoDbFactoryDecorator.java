@@ -1,7 +1,6 @@
 package com.github.cloudyrock.mongock.decorator;
 
 import com.github.cloudyrock.mongock.decorator.impl.MongoDataBaseDecoratorImpl;
-import com.github.cloudyrock.mongock.decorator.util.MethodInvoker;
 import com.github.cloudyrock.mongock.decorator.util.MongockDecoratorBase;
 import com.mongodb.DB;
 import com.mongodb.client.MongoDatabase;

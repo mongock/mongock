@@ -1,5 +1,6 @@
 package com.github.cloudyrock.mongock;
 
+import com.github.cloudyrock.mongock.decorator.impl.MongoTemplateDecoratorImpl;
 import com.mongodb.MongoClient;
 import org.springframework.core.env.Environment;
 import org.springframework.data.mongodb.core.MongoTemplate;
@@ -29,17 +30,6 @@ public class SpringMongockBuilder extends MongockBuilderBase<SpringMongockBuilde
   }
 
   /**
-   * Sets pre-configured {@link MongoTemplate} instance to use by the changelogs
-   *
-   * @param mongoTemplate instance of the {@link MongoTemplate}
-   * @return Mongock builder
-   */
-  public SpringMongockBuilder setMongoTemplate(MongoTemplate mongoTemplate) {
-    this.mongoTemplate = mongoTemplate;
-    return this;
-  }
-
-  /**
    * Set Environment object for Spring Profiles (@Profile) integration
    *
    * @param springEnvironment org.springframework.core.env.Environment object to inject
@@ -63,8 +53,7 @@ public class SpringMongockBuilder extends MongockBuilderBase<SpringMongockBuilde
   }
 
   private MongoTemplate createMongoTemplateProxy() {
-    MongoTemplate template = mongoTemplate != null ? mongoTemplate : new MongoTemplate(mongoClient, databaseName);
-    return proxyFactory.createProxyFromOriginal(template, MongoTemplate.class);
+    return  new MongoTemplateDecoratorImpl(mongoClient, databaseName, methodInvoker);
   }
 
 

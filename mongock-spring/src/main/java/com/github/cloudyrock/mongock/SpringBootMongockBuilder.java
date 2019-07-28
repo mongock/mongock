@@ -1,6 +1,7 @@
 package com.github.cloudyrock.mongock;
 
 import com.github.cloudyrock.mongock.decorator.impl.MongoDataBaseDecoratorImpl;
+import com.github.cloudyrock.mongock.decorator.impl.MongoTemplateDecoratorImpl;
 import com.mongodb.DB;
 import com.mongodb.MongoClient;
 import com.mongodb.client.MongoDatabase;
@@ -49,28 +50,13 @@ public class SpringBootMongockBuilder extends MongockBuilderBase<SpringBootMongo
     mongock.setChangelogMongoDatabase(createMongoDataBaseProxy());
     mongock.setEnabled(enabled);
     mongock.springContext(context);
-    mongock.setMongoTemplate(createMongoTemplateFromContext());
+    mongock.setMongoTemplate(createMongoTemplateProxy());
     mongock.setThrowExceptionIfCannotObtainLock(throwExceptionIfCannotObtainLock);
     return mongock;
   }
 
-  private MongoTemplate createMongoTemplateFromContext() {
-    MongoTemplate mongoTemplate;
-    try {
-      mongoTemplate = context.getBean(MongoTemplate.class);
-    } catch (BeansException ex) {
-      mongoTemplate = new MongoTemplate(mongoClient, databaseName);
-    }
-    return proxyFactory.createProxyFromOriginal(mongoTemplate, MongoTemplate.class);
-  }
-
-  @Override
-  MongoDatabase createMongoDataBaseProxy() {
-    try {
-      return new MongoDataBaseDecoratorImpl(context.getBean(MongoDatabase.class), methodInvoker);
-    } catch (BeansException ex) {
-      return new MongoDataBaseDecoratorImpl(database, methodInvoker);
-    }
+  private MongoTemplate createMongoTemplateProxy() {
+    return  new MongoTemplateDecoratorImpl(mongoClient, databaseName, methodInvoker);
   }
 
 

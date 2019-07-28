@@ -1,30 +1,9 @@
 package com.github.cloudyrock.mongock.decorator.util;
 
-import com.github.cloudyrock.mongock.LockChecker;
-
 import java.util.function.Supplier;
 
-public class MethodInvoker {
+public interface MethodInvoker {
+  <T> T invoke(Supplier<T> supplier);
 
-  private final LockChecker lockChecker;
-
-  public MethodInvoker(LockChecker lockChecker) {
-    this.lockChecker = lockChecker;
-  }
-
-  public <T> T invoke(Supplier<T> supplier) {
-    lockChecker.ensureLockDefault();
-    return supplier.get();
-  }
-
-  public void invoke(VoidSupplier supplier) {
-    try {
-
-      lockChecker.ensureLockDefault();
-      supplier.execute();
-    } catch (Exception ex) {
-      ex.printStackTrace();
-    }
-  }
-
+  void invoke(VoidSupplier supplier);
 }

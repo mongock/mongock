@@ -2,13 +2,9 @@ package com.github.cloudyrock.mongock;
 
 import com.github.cloudyrock.mongock.decorator.impl.MongoDataBaseDecoratorImpl;
 import com.github.cloudyrock.mongock.decorator.util.MethodInvoker;
-import com.mongodb.DB;
+import com.github.cloudyrock.mongock.decorator.util.MethodInvokerImpl;
 import com.mongodb.MongoClient;
 import com.mongodb.client.MongoDatabase;
-
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.Set;
 
 import static com.github.cloudyrock.mongock.StringUtils.hasText;
 
@@ -29,7 +25,6 @@ public abstract class MongockBuilderBase<BUILDER_TYPE extends MongockBuilderBase
   String lockCollectionName = "mongockLock";
 
   //for build
-  ProxyFactory proxyFactory;
   ChangeEntryRepository changeEntryRepository;
   LockChecker lockChecker;
   MethodInvoker methodInvoker;
@@ -39,8 +34,9 @@ public abstract class MongockBuilderBase<BUILDER_TYPE extends MongockBuilderBase
    * <p>Builder constructor takes db.mongodb.MongoClient, database name and changelog scan package as parameters.
    * </p><p>For more details about <tt>MongoClient</tt> please see com.mongodb.MongoClient docs
    * </p>
-   * @param mongoClient database connection client
-   * @param databaseName database name
+   *
+   * @param mongoClient           database connection client
+   * @param databaseName          database name
    * @param changeLogsScanPackage package path where the changelogs are located
    * @see MongoClient
    */
@@ -55,6 +51,7 @@ public abstract class MongockBuilderBase<BUILDER_TYPE extends MongockBuilderBase
   /**
    * <p>Changes the changelog collection name</p>
    * <p>Be careful as changing the changelog collection name can make Mongock to undesirably run twice the same changelog</p>
+   *
    * @param changeLogCollectionName name of the collection
    * @return Mongock builder
    */
@@ -67,6 +64,7 @@ public abstract class MongockBuilderBase<BUILDER_TYPE extends MongockBuilderBase
    * <p>Changes the lock collection name</p>
    * <p>Be careful as changing the lock collection name can make Mongock to run twice the same changelog and other
    * undesirable scenarios</p>
+   *
    * @param lockCollectionName name of the collection
    * @return Mongock builder
    */
@@ -138,14 +136,12 @@ public abstract class MongockBuilderBase<BUILDER_TYPE extends MongockBuilderBase
   }
 
 
-
   public RETURN_TYPE build() {
     validateMandatoryFields();
     database = mongoClient.getDatabase(databaseName);
 
     lockChecker = createLockChecker();
-    methodInvoker = new MethodInvoker(lockChecker);
-    proxyFactory = createProxyFactory(lockChecker);
+    methodInvoker = new MethodInvokerImpl(lockChecker);
     changeEntryRepository = createChangeRepository();
     return this.createBuild();
   }
@@ -159,21 +155,6 @@ public abstract class MongockBuilderBase<BUILDER_TYPE extends MongockBuilderBase
         .setLockAcquiredForMillis(timeUtils.minutesToMillis(lockAcquiredForMinutes))
         .setLockMaxTries(maxTries)
         .setLockMaxWaitMillis(timeUtils.minutesToMillis(maxWaitingForLockMinutes));
-  }
-
-
-  private ProxyFactory createProxyFactory(LockChecker lockChecker) {
-    PreInterceptor preInterceptor = new PreInterceptor() {
-      @Override
-      public void before() {
-        lockChecker.ensureLockDefault();
-      }
-    };
-
-    final Set<String> proxyCreatorAndUnchackedmethods = new HashSet<>(
-        Arrays.asList("getCollection", "getCollectionFromString", "getDatabase", "toString"));
-
-    return new ProxyFactory(preInterceptor, proxyCreatorAndUnchackedmethods, proxyCreatorAndUnchackedmethods);
   }
 
 
