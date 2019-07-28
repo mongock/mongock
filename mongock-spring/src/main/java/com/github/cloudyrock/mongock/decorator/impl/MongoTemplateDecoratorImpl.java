@@ -206,17 +206,17 @@ public class MongoTemplateDecoratorImpl extends MongoTemplate {
 
   @Override
   public BulkOperations bulkOps(BulkOperations.BulkMode bulkMode, String collectionName) {
-    return new BulkOperationsDecoratorImpl(getInvoker().invoke(() -> super.bulkOps(bulkMode, collectionName)), methodInvoker);
+    return getInvoker().invoke(() -> super.bulkOps(bulkMode, collectionName));
   }
 
   @Override
   public BulkOperations bulkOps(BulkOperations.BulkMode bulkMode, Class<?> entityClass) {
-    return new BulkOperationsDecoratorImpl(getInvoker().invoke(() -> super.bulkOps(bulkMode, entityClass)), methodInvoker);
+    return getInvoker().invoke(() -> super.bulkOps(bulkMode, entityClass));
   }
 
   @Override
   public BulkOperations bulkOps(BulkOperations.BulkMode mode, Class<?> entityType, String collectionName) {
-    return new BulkOperationsDecoratorImpl(getInvoker().invoke(() -> super.bulkOps(mode, entityType, collectionName)), methodInvoker);
+    return getInvoker().invoke(() -> super.bulkOps(mode, entityType, collectionName));
   }
 
   @Override
