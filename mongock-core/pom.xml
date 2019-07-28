@@ -11,10 +11,13 @@
   <artifactId>mongock-core</artifactId>
 
   <dependencies>
+    <!--
+    Careful updating this library. Make sure the decorators are not affected
+    -->
     <dependency>
       <groupId>org.mongodb</groupId>
       <artifactId>mongo-java-driver</artifactId>
-      <version>3.5.0</version>
+      <version>3.5.0</version><!-- Make sure that decorators are adapted to new version(see file dependency_upgrade_considerations -->
     </dependency>
     <dependency>
       <groupId>org.reflections</groupId>

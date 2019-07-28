@@ -9,8 +9,7 @@ import java.util.List;
 
 public interface IndexOperationsDecorator extends IndexOperations, MongockDecoratorBase<IndexOperations> {
 
-  
-  
+
   @Override
   default String ensureIndex(IndexDefinition indexDefinition) {
     return null;
@@ -18,16 +17,16 @@ public interface IndexOperationsDecorator extends IndexOperations, MongockDecora
 
   @Override
   default void dropIndex(String name) {
-
+    getInvoker().invoke(() -> getImpl().dropIndex(name));
   }
 
   @Override
   default void dropAllIndexes() {
-
+    getInvoker().invoke(() -> getImpl().dropAllIndexes());
   }
 
   @Override
   default List<IndexInfo> getIndexInfo() {
-    return null;
+    return getInvoker().invoke(() -> getImpl().getIndexInfo());
   }
 }

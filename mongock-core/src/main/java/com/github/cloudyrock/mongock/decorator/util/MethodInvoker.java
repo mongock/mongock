@@ -18,8 +18,13 @@ public class MethodInvoker {
   }
 
   public void invoke(VoidSupplier supplier) {
-    lockChecker.ensureLockDefault();
-    supplier.execute();
+    try {
+
+      lockChecker.ensureLockDefault();
+      supplier.execute();
+    } catch (Exception ex) {
+      ex.printStackTrace();
+    }
   }
 
 }
