@@ -21,6 +21,7 @@ import org.springframework.data.mongodb.core.DocumentCallbackHandler;
 import org.springframework.data.mongodb.core.FindAndModifyOptions;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.ScriptOperations;
+import org.springframework.data.mongodb.core.SimpleMongoDbFactory;
 import org.springframework.data.mongodb.core.WriteConcernResolver;
 import org.springframework.data.mongodb.core.WriteResultChecking;
 import org.springframework.data.mongodb.core.aggregation.Aggregation;
@@ -46,17 +47,15 @@ public class MongoTemplateDecoratorImpl extends MongoTemplate {
   private final com.github.cloudyrock.mongock.decorator.util.MethodInvoker methodInvoker;
 
   public MongoTemplateDecoratorImpl(MongoClient mongoClient, String databaseName, com.github.cloudyrock.mongock.decorator.util.MethodInvoker methodInvoker) {
-    super(mongoClient, databaseName);
-    this.methodInvoker = methodInvoker;
+    this(new MongoDbFactoryDecoratorImpl(new SimpleMongoDbFactory(mongoClient, databaseName), methodInvoker), methodInvoker);
   }
 
   public MongoTemplateDecoratorImpl(MongoDbFactory mongoDbFactory, com.github.cloudyrock.mongock.decorator.util.MethodInvoker methodInvoker) {
-    super(mongoDbFactory);
-    this.methodInvoker = methodInvoker;
+    this(new MongoDbFactoryDecoratorImpl(mongoDbFactory, methodInvoker), null, methodInvoker);
   }
 
   public MongoTemplateDecoratorImpl(MongoDbFactory mongoDbFactory, MongoConverter mongoConverter, com.github.cloudyrock.mongock.decorator.util.MethodInvoker methodInvoker) {
-    super(mongoDbFactory, mongoConverter);
+    super(new MongoDbFactoryDecoratorImpl(mongoDbFactory, methodInvoker), mongoConverter);
     this.methodInvoker = methodInvoker;
   }
 
@@ -192,37 +191,6 @@ public class MongoTemplateDecoratorImpl extends MongoTemplate {
   @Override
   public void dropCollection(String collectionName) {
     getInvoker().invoke(() -> super.dropCollection(collectionName));
-  }
-
-  @Override
-  public IndexOperations indexOps(String collectionName) {
-    return new IndexOperationsDecoratorImpl(getInvoker().invoke(() -> super.indexOps(collectionName)), methodInvoker);
-  }
-
-  @Override
-  public IndexOperations indexOps(Class<?> entityClass) {
-    return new IndexOperationsDecoratorImpl(getInvoker().invoke(() -> super.indexOps(entityClass)), methodInvoker);
-  }
-
-  @Override
-  public BulkOperations bulkOps(BulkOperations.BulkMode bulkMode, String collectionName) {
-    return getInvoker().invoke(() -> super.bulkOps(bulkMode, collectionName));
-  }
-
-  @Override
-  public BulkOperations bulkOps(BulkOperations.BulkMode bulkMode, Class<?> entityClass) {
-    return getInvoker().invoke(() -> super.bulkOps(bulkMode, entityClass));
-  }
-
-  @Override
-  public BulkOperations bulkOps(BulkOperations.BulkMode mode, Class<?> entityType, String collectionName) {
-    return getInvoker().invoke(() -> super.bulkOps(mode, entityType, collectionName));
-  }
-
-  @Override
-  //Relies on passing 'this' as database accessor
-  public ScriptOperations scriptOps() {
-    return super.scriptOps();
   }
 
   @Override

@@ -6,6 +6,12 @@ Dependency upgrade considerations for mongock-core module
 
 ### mongock-spring 
 
+Relies on passing MongoTemplate itself as database accessor:
 ScriptOperations
-
-Special attention to ExecutableFind, ExecutableUpdate, ExecutableRemove, ExecutableAggregation, ExecutableInsert
+IndexOperations
+BulkOperations
+ExecutableFind
+ExecutableUpdate
+ExecutableRemove
+ExecutableAggregation
+ExecutableInsert
