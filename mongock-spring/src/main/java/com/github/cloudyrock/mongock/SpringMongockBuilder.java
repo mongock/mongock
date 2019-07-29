@@ -24,6 +24,11 @@ public class SpringMongockBuilder extends MongockBuilderBase<SpringMongockBuilde
     super(mongoClient, databaseName, changeLogsScanPackage);
   }
 
+
+  public SpringMongockBuilder setMongoTemplate(MongoTemplate mongoTemplate) {
+    throw new UnsupportedOperationException("Please remove this from the builder. You don't need to replace it with anything. MongoTemplate will be generated from MongoClient and databaseName");
+  }
+
   @Override
   protected SpringMongockBuilder returnInstance() {
     return this;
