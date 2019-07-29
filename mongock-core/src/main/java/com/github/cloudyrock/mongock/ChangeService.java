@@ -1,24 +1,19 @@
 package com.github.cloudyrock.mongock;
 
-import org.reflections.Reflections;
+import com.google.common.reflect.ClassPath;
 
+import java.io.IOException;
 import java.io.Serializable;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.Date;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
+import java.util.stream.Collectors;
 
 import static com.github.cloudyrock.mongock.StringUtils.hasText;
 import static java.util.Arrays.asList;
 
 /**
  * Utilities to deal with reflections and annotations
- *
  *
  * @since 27/07/2014
  */
@@ -52,12 +47,16 @@ class ChangeService {
 
   @SuppressWarnings("unchecked")
   List<Class<?>> fetchChangeLogs() {
-    Reflections reflections = new Reflections(changeLogsBasePackage);
-    List<Class<?>> changeLogs = new ArrayList<>(reflections.getTypesAnnotatedWith(ChangeLog.class)); // TODO remove dependency, do own method
-
-    Collections.sort(changeLogs, new ChangeLogComparator());
-
-    return changeLogs;
+    try {
+      ClassPath classPath = ClassPath.from(Thread.currentThread().getContextClassLoader());
+      return classPath.getTopLevelClassesRecursive(changeLogsBasePackage).stream()
+          .filter(classInfo -> classInfo.load().isAnnotationPresent(ChangeLog.class))
+          .map(ClassPath.ClassInfo::load)
+          .sorted(new ChangeLogComparator())
+          .collect(Collectors.toList());
+    } catch (IOException e) {
+      throw new MongockException("Could not read ChangeLog classes from package " + changeLogsBasePackage, e);
+    }
   }
 
   @SuppressWarnings("unchecked")
