@@ -16,11 +16,11 @@ public class MongoDbFactoryDecoratorImpl implements MongoDbFactoryDecorator {
 
   @Override
   public MongoDbFactory getImpl() {
-    return null;
+    return impl;
   }
 
   @Override
   public MethodInvoker getInvoker() {
-    return null;
+    return invoker;
   }
 }

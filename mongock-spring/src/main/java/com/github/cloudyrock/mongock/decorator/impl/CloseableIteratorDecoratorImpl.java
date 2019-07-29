@@ -16,11 +16,11 @@ public class CloseableIteratorDecoratorImpl<T> implements CloseableIteratorDecor
 
   @Override
   public CloseableIterator<T> getImpl() {
-    return null;
+    return impl;
   }
 
   @Override
   public MethodInvoker getInvoker() {
-    return null;
+    return invoker;
   }
 }
