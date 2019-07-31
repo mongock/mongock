@@ -32,7 +32,7 @@ public abstract class MongockBuilderBase<BUILDER_TYPE extends MongockBuilderBase
 
   /**
    * <p>Builder constructor takes db.mongodb.MongoClient, database name and changelog scan package as parameters.
-   * </p><p>For more details about <tt>MongoClient</tt> please see com.mongodb.MongoClient docs
+   * </p><p>For more details about MongoClient please see com.mongodb.MongoClient docs
    * </p>
    *
    * @param mongoClient           database connection client

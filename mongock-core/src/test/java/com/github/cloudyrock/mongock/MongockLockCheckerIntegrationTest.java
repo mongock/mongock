@@ -47,7 +47,7 @@ public class MongockLockCheckerIntegrationTest {
   private TimeUtils timeUtils;
   private LockChecker lockChecker;
   MethodInvoker methodInvoker;
-  //  private ProxyFactory proxyFactory;
+
   private ChangeEntryRepository changeEntryRepository;
   private TestMongockBuilder builder;
 
