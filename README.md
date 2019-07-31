@@ -8,6 +8,8 @@
 [![Vulnerabilities](https://sonarcloud.io/api/project_badges/measure?project=com.github.cloudyrock.mongock&metric=vulnerabilities)](https://sonarcloud.io/component_measures?id=com.github.cloudyrock.mongock&metric=vulnerabilities)
 [![Hex.pm](https://img.shields.io/hexpm/l/plug.svg)](https://github.com/dieppa/mongock/blob/master/LICENSE)
 
+## LAST NEWS :bangbang::bangbang::collision::collision:
+> **3.0.0.BETA is released**
 
 # Mongock: MongoDB version control tool for Java
 
