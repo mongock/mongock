@@ -1,5 +1,7 @@
 package com.github.cloudyrock.mongock;
 
+import com.github.cloudyrock.mongock.decorator.impl.MongoDataBaseDecoratorImpl;
+import com.github.cloudyrock.mongock.decorator.impl.MongoTemplateDecoratorImpl;
 import com.mongodb.DB;
 import com.mongodb.MongoClient;
 import com.mongodb.client.MongoDatabase;
@@ -20,7 +22,7 @@ public class SpringBootMongockBuilder extends MongockBuilderBase<SpringBootMongo
 
   /**
    * <p>Builder constructor takes db.mongodb.MongoClient, database name and changelog scan package as parameters.
-   * </p><p>For more details about <tt>MongoClient</tt> please see com.mongodb.MongoClient docs
+   * </p><p>For more details about MongoClient please see com.mongodb.MongoClient docs
    * </p>
    *
    * @param mongoClient           database connection client
@@ -30,6 +32,10 @@ public class SpringBootMongockBuilder extends MongockBuilderBase<SpringBootMongo
    */
   public SpringBootMongockBuilder(MongoClient mongoClient, String databaseName, String changeLogsScanPackage) {
     super(mongoClient, databaseName, changeLogsScanPackage);
+  }
+
+  public SpringMongockBuilder setMongoTemplate(MongoTemplate mongoTemplate) {
+    throw new UnsupportedOperationException("Please remove this from the builder. You don't need to replace it with anything. MongoTemplate will be generated from MongoClient and databaseName");
   }
 
   @Override
@@ -48,28 +54,13 @@ public class SpringBootMongockBuilder extends MongockBuilderBase<SpringBootMongo
     mongock.setChangelogMongoDatabase(createMongoDataBaseProxy());
     mongock.setEnabled(enabled);
     mongock.springContext(context);
-    mongock.setMongoTemplate(createMongoTemplateFromContext());
+    mongock.setMongoTemplate(createMongoTemplateProxy());
     mongock.setThrowExceptionIfCannotObtainLock(throwExceptionIfCannotObtainLock);
     return mongock;
   }
 
-  private MongoTemplate createMongoTemplateFromContext() {
-    MongoTemplate mongoTemplate;
-    try {
-      mongoTemplate = context.getBean(MongoTemplate.class);
-    } catch (BeansException ex) {
-      mongoTemplate = new MongoTemplate(mongoClient, databaseName);
-    }
-    return proxyFactory.createProxyFromOriginal(mongoTemplate, MongoTemplate.class);
-  }
-
-  @Override
-  MongoDatabase createMongoDataBaseProxy() {
-    try {
-      return proxyFactory.createProxyFromOriginal(context.getBean(MongoDatabase.class), MongoDatabase.class);
-    } catch (BeansException ex) {
-      return proxyFactory.createProxyFromOriginal(database, MongoDatabase.class);
-    }
+  private MongoTemplate createMongoTemplateProxy() {
+    return  new MongoTemplateDecoratorImpl(mongoClient, databaseName, methodInvoker);
   }
 
 

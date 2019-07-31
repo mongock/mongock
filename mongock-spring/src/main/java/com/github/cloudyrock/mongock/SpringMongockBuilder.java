@@ -1,5 +1,6 @@
 package com.github.cloudyrock.mongock;
 
+import com.github.cloudyrock.mongock.decorator.impl.MongoTemplateDecoratorImpl;
 import com.mongodb.MongoClient;
 import org.springframework.core.env.Environment;
 import org.springframework.data.mongodb.core.MongoTemplate;
@@ -11,7 +12,7 @@ public class SpringMongockBuilder extends MongockBuilderBase<SpringMongockBuilde
 
   /**
    * <p>Builder constructor takes db.mongodb.MongoClient, database name and changelog scan package as parameters.
-   * </p><p>For more details about <tt>MongoClient</tt> please see com.mongodb.MongoClient docs
+   * </p><p>For more details about MongoClient please see com.mongodb.MongoClient docs
    * </p>
    *
    * @param mongoClient           database connection client
@@ -23,19 +24,13 @@ public class SpringMongockBuilder extends MongockBuilderBase<SpringMongockBuilde
     super(mongoClient, databaseName, changeLogsScanPackage);
   }
 
-  @Override
-  protected SpringMongockBuilder returnInstance() {
-    return this;
+
+  public SpringMongockBuilder setMongoTemplate(MongoTemplate mongoTemplate) {
+    throw new UnsupportedOperationException("Please remove this from the builder. You don't need to replace it with anything. MongoTemplate will be generated from MongoClient and databaseName");
   }
 
-  /**
-   * Sets pre-configured {@link MongoTemplate} instance to use by the changelogs
-   *
-   * @param mongoTemplate instance of the {@link MongoTemplate}
-   * @return Mongock builder
-   */
-  public SpringMongockBuilder setMongoTemplate(MongoTemplate mongoTemplate) {
-    this.mongoTemplate = mongoTemplate;
+  @Override
+  protected SpringMongockBuilder returnInstance() {
     return this;
   }
 
@@ -63,8 +58,7 @@ public class SpringMongockBuilder extends MongockBuilderBase<SpringMongockBuilde
   }
 
   private MongoTemplate createMongoTemplateProxy() {
-    MongoTemplate template = mongoTemplate != null ? mongoTemplate : new MongoTemplate(mongoClient, databaseName);
-    return proxyFactory.createProxyFromOriginal(template, MongoTemplate.class);
+    return  new MongoTemplateDecoratorImpl(mongoClient, databaseName, methodInvoker);
   }
 
 

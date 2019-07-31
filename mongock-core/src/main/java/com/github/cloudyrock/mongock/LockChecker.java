@@ -18,7 +18,7 @@ import java.util.UUID;
  * @since 04/04/2018
  */
 @NotThreadSafe
-class LockChecker {
+public class LockChecker {
 
   //static constants
   private static final Logger logger = LoggerFactory.getLogger(LockChecker.class);
@@ -78,7 +78,7 @@ class LockChecker {
     this.owner = UUID.randomUUID().toString();
   }
 
-  static String getDefaultKey() {
+  public static String getDefaultKey() {
     return DEFAULT_KEY;
   }
 
@@ -90,7 +90,7 @@ class LockChecker {
    *
    * @throws LockCheckException if the lock cannot be acquired
    */
-  void acquireLockDefault() {
+  public void acquireLockDefault() {
     acquireLock(getDefaultKey());
   }
 
@@ -118,7 +118,7 @@ class LockChecker {
    *
    * @throws LockCheckException if, in case of needed, the lock cannot be refreshed
    */
-  void ensureLockDefault() {
+  public void ensureLockDefault() {
     ensureLock(getDefaultKey());
   }
 
@@ -149,7 +149,7 @@ class LockChecker {
    * Does not throw any exception neither.</p>
    * <p>Idempotent operation.</p>
    */
-  void releaseLockDefault() {
+  public void releaseLockDefault() {
     releaseLock(getDefaultKey());
   }
 

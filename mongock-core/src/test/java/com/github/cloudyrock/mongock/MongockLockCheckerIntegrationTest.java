@@ -1,9 +1,11 @@
 package com.github.cloudyrock.mongock;
 
+import com.github.cloudyrock.mongock.decorator.impl.MongoDataBaseDecoratorImpl;
+import com.github.cloudyrock.mongock.decorator.util.MethodInvoker;
+import com.github.cloudyrock.mongock.decorator.util.MethodInvokerImpl;
+import com.github.cloudyrock.mongock.decorator.util.VoidSupplier;
 import com.github.cloudyrock.mongock.test.proxy.ProxiesMongockTestResource;
 import com.github.fakemongo.Fongo;
-import com.mongodb.DB;
-import com.mongodb.FongoDB;
 import com.mongodb.MongoClient;
 import com.mongodb.client.MongoDatabase;
 import com.mongodb.client.model.UpdateOptions;
@@ -16,6 +18,7 @@ import java.util.Arrays;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.function.Supplier;
 
 import static java.util.Collections.singletonList;
 import static org.mockito.Matchers.any;
@@ -28,7 +31,6 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 /**
- *
  * @since 04/04/2018
  */
 public class MongockLockCheckerIntegrationTest {
@@ -44,7 +46,8 @@ public class MongockLockCheckerIntegrationTest {
   private LockRepository lockRepository;
   private TimeUtils timeUtils;
   private LockChecker lockChecker;
-  private ProxyFactory proxyFactory;
+  MethodInvoker methodInvoker;
+
   private ChangeEntryRepository changeEntryRepository;
   private TestMongockBuilder builder;
 
@@ -56,7 +59,7 @@ public class MongockLockCheckerIntegrationTest {
     MongoClient mongoClient = mock(MongoClient.class);
     when(mongoClient.getDatabase(anyString())).thenReturn(mongoDatabase);
 
-    builder = new TestMongockBuilder(mongoClient,"mongocktest", ProxiesMongockTestResource.class.getPackage().getName())
+    builder = new TestMongockBuilder(mongoClient, "mongocktest", ProxiesMongockTestResource.class.getPackage().getName())
         .setEnabled(true)
         .setThrowExceptionIfCannotObtainLock(true);
 
@@ -65,18 +68,27 @@ public class MongockLockCheckerIntegrationTest {
     lockRepository = spy(new LockRepository(LOCK_COLLECTION_NAME, mongoDatabase));
 
     lockChecker = spy(new LockChecker(lockRepository, timeUtils));
-
-    PreInterceptor preInterceptor = new PreInterceptor() {
+    methodInvoker = new MethodInvoker() {
       @Override
-      public void before() {
+      public <T> T invoke(Supplier<T> supplier) {
         try {
           lockChecker.ensureLockDefault();
+          return supplier.get();
+        } catch (LockCheckException e) {
+          throw new RuntimeException(e);
+        }
+      }
+
+      @Override
+      public void invoke(VoidSupplier supplier) {
+        try {
+          lockChecker.ensureLockDefault();
+          supplier.execute();
         } catch (LockCheckException e) {
           throw new RuntimeException(e);
         }
       }
     };
-    proxyFactory = new ProxyFactory(preInterceptor, proxyCreatordMethods, unInterceptedMethods);
     doReturn(singletonList(ProxiesMongockTestResource.class))
         .when(changeService).fetchChangeLogs();
     doReturn(singletonList(ProxiesMongockTestResource.class.getDeclaredMethod("testMongoDatabase", MongoDatabase.class)))
@@ -88,9 +100,7 @@ public class MongockLockCheckerIntegrationTest {
   @Test
   public void shouldCallEnsureLock() throws Exception {
     when(changeEntryRepository.isNewChange(any(ChangeEntry.class))).thenReturn(true);
-    MongoDatabase mongoDatabaseProxy = proxyFactory.createProxyFromOriginal(mongoDatabase);
-
-    String name = mongoDatabaseProxy.getName();
+    MongoDatabase mongoDatabaseProxy = new MongoDataBaseDecoratorImpl(mongoDatabase, methodInvoker);
 
     runner = builder.build(changeEntryRepository, changeService, lockChecker, mongoDatabaseProxy);
     // when
@@ -109,7 +119,7 @@ public class MongockLockCheckerIntegrationTest {
         .doReturn(new Date(System.currentTimeMillis() + tenMinutes))
         .when(timeUtils).currentTime();
     when(changeEntryRepository.isNewChange(any(ChangeEntry.class))).thenReturn(true);
-    MongoDatabase mongoDatabaseProxy = proxyFactory.createProxyFromOriginal(mongoDatabase);
+    MongoDatabase mongoDatabaseProxy = new MongoDataBaseDecoratorImpl(mongoDatabase, methodInvoker);//proxyFactory.createProxyFromOriginal(mongoDatabase);
     runner = builder.build(changeEntryRepository, changeService, lockChecker, mongoDatabaseProxy);
 
     // when
@@ -128,21 +138,31 @@ public class MongockLockCheckerIntegrationTest {
     //given
     doReturn(new Date(System.currentTimeMillis() + 5000))
         .when(timeUtils).currentTimePlusMillis(anyLong());
-
-    PreInterceptor preInterceptor = new PreInterceptor() {
+    methodInvoker = new MethodInvoker() {
       @Override
-      public void before() {
+      public <T> T invoke(Supplier<T> supplier) {
         try {
           lockChecker.ensureLockDefault();
           replaceCurrentLockWithOtherOwner("anotherOwner");
+          return supplier.get();
+        } catch (LockCheckException e) {
+          throw new RuntimeException(e);
+        }
+      }
+
+      @Override
+      public void invoke(VoidSupplier supplier) {
+        try {
+          lockChecker.ensureLockDefault();
+          replaceCurrentLockWithOtherOwner("anotherOwner");
+          supplier.execute();
         } catch (LockCheckException e) {
           throw new RuntimeException(e);
         }
       }
     };
-    proxyFactory = new ProxyFactory(preInterceptor, proxyCreatordMethods, unInterceptedMethods);
     when(changeEntryRepository.isNewChange(any(ChangeEntry.class))).thenReturn(true);
-    MongoDatabase mongoDatabaseProxy = proxyFactory.createProxyFromOriginal(mongoDatabase);
+    MongoDatabase mongoDatabaseProxy = new MongoDataBaseDecoratorImpl(mongoDatabase, methodInvoker);//proxyFactory.createProxyFromOriginal(mongoDatabase);
     runner = builder.build(changeEntryRepository, changeService, lockChecker, mongoDatabaseProxy);
 
     // when
