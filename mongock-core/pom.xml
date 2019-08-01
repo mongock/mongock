@@ -20,9 +20,9 @@
       <version>3.5.0</version><!-- Make sure that decorators are adapted to new version(see file dependency_upgrade_considerations -->
     </dependency>
     <dependency>
-      <groupId>org.reflections</groupId>
-      <artifactId>reflections</artifactId>
-      <version>0.9.9</version>
+      <groupId>com.google.guava</groupId>
+      <artifactId>guava</artifactId>
+      <version>28.0-jre</version>
     </dependency>
 
     <dependency>
