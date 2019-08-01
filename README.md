@@ -129,7 +129,7 @@ The key difference is that ApplicationRunner beans run *after* (as opposed to du
 
 >**Note:** The dependencies injected by the ApplicationContext (other than [MongoTemplate][MongoTemplate], [MongoDatabase][MongoDatabase] and [DB][DB]) won't be covered by the lock. This means
 that if you are accessing to Mongo through a different mechanism to the ones mentioned, the lock synchronization is not guaranteed as Mongock only ensures synchronization when Mongo is accessed via either [MongoTemplate][MongoTemplate], [MongoDatabase][MongoDatabase] or [DB][DB]. 
-For mor information, please consult the [lock section](#configuring-lock)
+For more information, please consult the [lock section](#configuring-lock)
 
 ```java
 @Bean
