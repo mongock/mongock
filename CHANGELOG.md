@@ -1,3 +1,7 @@
+# 3.0.1
+### Improvements 
+* Replaced `org.reflections` by `com.google.guave` in [PR](https://github.com/cloudyrock/mongock/pull/76)
+__________________________________________________
 # 3.0.0
 ### Breaking changes
 * Removed com.mongodb.DB support due to deprecation in mongoDB driver in [PR](https://github.com/cloudyrock/mongock/pull/74)
