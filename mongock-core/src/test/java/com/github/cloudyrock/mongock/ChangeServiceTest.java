@@ -2,6 +2,7 @@ package com.github.cloudyrock.mongock;
 
 import com.github.cloudyrock.mongock.test.changelogs.AnotherMongockTestResource;
 import com.github.cloudyrock.mongock.test.changelogs.MongockTestResource;
+import com.github.cloudyrock.mongock.test.changelogs.versioned.MongockVersioningTestResource;
 import com.github.cloudyrock.mongock.utils.ChangeLogWithDuplicate;
 import junit.framework.Assert;
 import org.junit.Test;
@@ -44,6 +45,25 @@ public class ChangeServiceTest {
     // then
     assertTrue(foundMethods != null);
     assertEquals(4, foundMethods.size());
+  }
+
+  @Test
+  public void shouldFindVersionedChangeSetMethods() throws MongockException {
+    String scanPackage = MongockVersioningTestResource.class.getPackage().getName();
+    ChangeService service = new ChangeService();
+    service.setChangeLogsBasePackage(scanPackage);
+
+    assertEquals(10, service.fetchChangeSets(MongockVersioningTestResource.class).size());
+
+    service.setStartVersion("2018");
+    assertEquals(3, service.fetchChangeSets(MongockVersioningTestResource.class).size());
+
+    service.setStartVersion("1.0");
+    assertEquals(6, service.fetchChangeSets(MongockVersioningTestResource.class).size());
+
+    service.setStartVersion("1.0");
+    service.setEndVersion("2018");
+    assertEquals(3, service.fetchChangeSets(MongockVersioningTestResource.class).size());
   }
 
   @Test

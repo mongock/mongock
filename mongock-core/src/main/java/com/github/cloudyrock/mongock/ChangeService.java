@@ -11,6 +11,8 @@ import java.util.stream.Collectors;
 
 import static com.github.cloudyrock.mongock.StringUtils.hasText;
 import static java.util.Arrays.asList;
+import org.apache.maven.artifact.versioning.ArtifactVersion;
+import org.apache.maven.artifact.versioning.DefaultArtifactVersion;
 
 /**
  * Utilities to deal with reflections and annotations
@@ -21,6 +23,10 @@ class ChangeService {
   private static final String DEFAULT_PROFILE = "default";
 
   private String changeLogsBasePackage;
+
+  private ArtifactVersion startVersion = new DefaultArtifactVersion("0");
+
+  private ArtifactVersion endVersion = new DefaultArtifactVersion(String.valueOf(Integer.MAX_VALUE));
 
   ChangeService() {
   }
@@ -44,6 +50,33 @@ class ChangeService {
     this.changeLogsBasePackage = changeLogsBasePackage;
   }
 
+  /**
+   * <p>
+   * Indicates the changeLogs end version
+   * </p>
+   *
+   * @param endVersion
+   *          version to upgrading upgrading with (lower than this version)
+   */
+  // Implementation note: This has been added, replacing constructor, to be
+  // able to inject this service as dependency
+  void setEndVersion(String endVersion) {
+    this.endVersion = new DefaultArtifactVersion(endVersion);
+  }
+
+  /**
+   * <p>
+   * Indicates the changeLogs start version
+   * </p>
+   *
+   * @param startVersion
+   *          version to start upgrading from (greater equals this version)
+   */
+  // Implementation note: This has been added, replacing constructor, to be
+  // able to inject this service as dependency
+  void setStartVersion(String startVersion) {
+    this.startVersion = new DefaultArtifactVersion(startVersion);
+  }
 
   @SuppressWarnings("unchecked")
   List<Class<?>> fetchChangeLogs() {
@@ -117,8 +150,13 @@ class ChangeService {
         if (changeSetIds.contains(id)) {
           throw new MongockException(String.format("Duplicated changeset id found: '%s'", id));
         }
+
         changeSetIds.add(id);
-        changesetMethods.add(method);
+        String versionString = method.getAnnotation(ChangeSet.class).version();
+        ArtifactVersion version = new DefaultArtifactVersion(versionString);
+        if (version.compareTo(startVersion) >= 0 && version.compareTo(endVersion) < 0) {
+          changesetMethods.add(method);
+        }
       }
     }
     return changesetMethods;

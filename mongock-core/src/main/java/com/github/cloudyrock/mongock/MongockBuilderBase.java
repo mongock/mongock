@@ -23,6 +23,8 @@ public abstract class MongockBuilderBase<BUILDER_TYPE extends MongockBuilderBase
   boolean enabled = true;
   String changeLogCollectionName = "mongockChangeLog";
   String lockCollectionName = "mongockLock";
+  String startVersion = "0";
+  String endVersion = String.valueOf(Integer.MAX_VALUE);
 
   //for build
   ChangeEntryRepository changeEntryRepository;
@@ -165,8 +167,10 @@ public abstract class MongockBuilderBase<BUILDER_TYPE extends MongockBuilderBase
   }
 
   ChangeService createChangeService() {
-    ChangeService changeService = new ChangeService();
+        ChangeService changeService = new ChangeService();
     changeService.setChangeLogsBasePackage(changeLogsScanPackage);
+        changeService.setStartVersion(startVersion);
+        changeService.setEndVersion(endVersion);
     return changeService;
   }
 

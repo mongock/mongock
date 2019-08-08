@@ -214,6 +214,8 @@ a date etc.
 `runAlways` - _[optional, default: false]_ changeset will always be executed but only first execution event will be 
 stored in dbchangelog collection
 
+`version` - _[optional, default: "0"]_ defines a version on which this changeset is relate to. E.g. "0.1" means, this changeset should be applied to schema version 0.1 of your MongoDB.
+
 #### Defining ChangeSet methods
 Method annotated by `@ChangeSet` can have one of the following definition:
 

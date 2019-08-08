@@ -47,4 +47,13 @@ public @interface ChangeSet {
    * @return should run always?
    */
   boolean runAlways() default false;
+
+  /**
+   * Specifies the software version on which the ChangeSet is to be applied.
+   * Optional (default is 0 and means all)
+   *
+   * @return version
+   */
+  String version() default "0";
+
 }
