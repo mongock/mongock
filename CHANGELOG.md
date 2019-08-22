@@ -1,6 +1,9 @@
 # 3.0.1
 ### Improvements 
 * Replaced `org.reflections` by `com.google.guave` in [PR](https://github.com/cloudyrock/mongock/pull/76)
+
+### Features and breaking changes
+* Feature [Version based schema changes](https://github.com/cloudyrock/mongock/issues/82) in [PR](https://github.com/cloudyrock/mongock/pull/83)
 __________________________________________________
 # 3.0.0
 ### Breaking changes
