@@ -38,6 +38,7 @@ The concept is very similar to other db migration tools such as [Liquibase](http
      * [@ChangeSet](#changeset)
         * [Annotation parameters:](#annotation-parameters)
         * [Defining ChangeSet methods](#defining-changeset-methods)
+        * [Defining ChangeSet methods with versions](#defining-changeset-methods-with-versions)
   * [Injecting custom dependencies to change logs](#injecting-custom-dependencies-to-change-logs)
   * [Using Spring profiles](#using-spring-profiles)
      * [Enabling @Profile annotation (option)](#enabling-profile-annotation-option)
@@ -214,7 +215,7 @@ a date etc.
 `runAlways` - _[optional, default: false]_ changeset will always be executed but only first execution event will be 
 stored in dbchangelog collection
 
-`version` - _[optional, default: "0"]_ defines a version on which this changeset is relate to. E.g. "0.1" means, this changeset should be applied to schema version 0.1 of your MongoDB.
+`version` - _[optional, default: "0"]_ defines a version on which this changeset is relate to. E.g. "0.1" means, this changeset should be applied to schema version 0.1 of your MongoDB. See [Defining ChangeSet methods with versions](#defining-changeset-methods-with-versions) for more information.
 
 #### Defining ChangeSet methods
 Method annotated by `@ChangeSet` can have one of the following definition:
@@ -259,6 +260,48 @@ public void someChange6(MongoTemplate mongoTemplate, Environment environment) {
   // Spring Data integration allows using MongoTemplate and Environment in the ChangeSet
 }
 ```
+
+#### Defining ChangeSet methods with versions
+Method annotated by `@ChangeSet` have also the possibility to contain a version:
+
+```java
+@ChangeSet(order = "001", id = "someChangeToVersionOne", author = "testAuthor", version = "1")
+public void someChange1(MongoDatabase db) {
+}
+
+@ChangeSet(order = "002", id = "someChangeToVersionOneDotOne", author = "testAuthor", version = "1.1")
+public void someChange2(MongoDatabase db) {
+}
+
+@ChangeSet(order = "003", id = "someChangeToVersionTwoDotFiveDotOne", author = "testAuthor", version = "2.5.1")
+public void someChange3(MongoDatabase db) {
+}
+
+@ChangeSet(order = "004", id = "someChangeToVersionTwoDotFiveDotFive", author = "testAuthor", version = "2.5.5")
+public void someChange5(MongoDatabase db) {
+}
+
+@ChangeSet(order = "005", id = "someChangeToVersionTwoDotSix", author = "testAuthor", version = "2.6")
+public void someChange6(MongoDatabase db) {
+}
+```
+
+With specifying versions you are able to upgrade to specific versions:
+
+```java
+
+  MongoClient mongoclient = new MongoClient(new MongoClientURI("yourDbName", yourMongoClientBuilder));
+  Mongock runner=  new MongockBuilder(mongoclient, "yourDbName", "com.package.to.be.scanned.for.changesets")
+      .setLockQuickConfig()
+      .setStartVersion("1")
+      .setEndVersion("2.5.5")
+      .build();
+  runner.execute();         //  ------> starts migration changesets from version 1 to 2.5.5
+```
+
+This example will execute `ChangeSet` 1, 2 and 3, 
+because the specified version in the changeset should be greater equals the `startVersion` and lower than `endVersion`.
+
 
 ## Injecting custom dependencies to change logs
 Right now this is possible by using SpringBoot Application Context. 

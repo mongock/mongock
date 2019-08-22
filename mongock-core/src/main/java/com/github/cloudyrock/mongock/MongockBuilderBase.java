@@ -124,6 +124,27 @@ public abstract class MongockBuilderBase<BUILDER_TYPE extends MongockBuilderBase
     return returnInstance();
   }
 
+  /**
+   * Set up the start Version for versioned schema changes
+   * 
+   * @param startVersion
+   *          Version to start with
+   */
+  public BUILDER_TYPE setStartVersion(String startVersion) {
+    this.startVersion = startVersion;
+    return returnInstance();
+  }
+
+  /**
+   * Set up the end Version for versioned schema changes
+   * 
+   * @param endVersion
+   *          Version to end with
+   */
+  public BUILDER_TYPE setEndVersion(String endVersion) {
+    this.endVersion = endVersion;
+    return returnInstance();
+  }
 
   void validateMandatoryFields() throws MongockException {
     if (mongoClient == null) {
