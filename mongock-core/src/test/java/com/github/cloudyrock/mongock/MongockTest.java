@@ -1,7 +1,6 @@
 package com.github.cloudyrock.mongock;
 
 import com.github.cloudyrock.mongock.test.proxy.ProxiesMongockTestResource;
-import com.mongodb.DB;
 import com.mongodb.client.MongoDatabase;
 import org.bson.Document;
 import org.junit.Test;
@@ -9,7 +8,6 @@ import org.junit.runner.RunWith;
 import org.mockito.internal.verification.Times;
 import org.mockito.runners.MockitoJUnitRunner;
 
-import java.util.Arrays;
 import java.util.Collections;
 
 import static org.junit.Assert.assertEquals;
@@ -36,7 +34,7 @@ public class MongockTest extends MongockTestBase {
     runner.execute();
 
     // then
-    verify(changeEntryRepository, times(9)).save(any(ChangeEntry.class)); // 11 changesets saved to dbchangelog
+    verify(changeEntryRepository, times(19)).save(any(ChangeEntry.class)); // 21 changesets saved to dbchangelog
 
     // dbchangelog collection checking
     long change1 = fakeMongoDatabase.getCollection(CHANGELOG_COLLECTION_NAME).count(new Document()
@@ -60,7 +58,7 @@ public class MongockTest extends MongockTestBase {
 
     long changeAll = fakeMongoDatabase.getCollection(CHANGELOG_COLLECTION_NAME).count(new Document()
         .append(ChangeEntry.KEY_AUTHOR, "testuser"));
-    assertEquals(9, changeAll);
+    assertEquals(19, changeAll);
   }
 
   @Test

@@ -23,6 +23,8 @@ public abstract class MongockBuilderBase<BUILDER_TYPE extends MongockBuilderBase
   boolean enabled = true;
   String changeLogCollectionName = "mongockChangeLog";
   String lockCollectionName = "mongockLock";
+  String startVersion = "0";
+  String endVersion = String.valueOf(Integer.MAX_VALUE);
 
   //for build
   ChangeEntryRepository changeEntryRepository;
@@ -122,6 +124,27 @@ public abstract class MongockBuilderBase<BUILDER_TYPE extends MongockBuilderBase
     return returnInstance();
   }
 
+  /**
+   * Set up the start Version for versioned schema changes
+   * 
+   * @param startVersion
+   *          Version to start with
+   */
+  public BUILDER_TYPE setStartVersion(String startVersion) {
+    this.startVersion = startVersion;
+    return returnInstance();
+  }
+
+  /**
+   * Set up the end Version for versioned schema changes
+   * 
+   * @param endVersion
+   *          Version to end with
+   */
+  public BUILDER_TYPE setEndVersion(String endVersion) {
+    this.endVersion = endVersion;
+    return returnInstance();
+  }
 
   void validateMandatoryFields() throws MongockException {
     if (mongoClient == null) {
@@ -165,8 +188,10 @@ public abstract class MongockBuilderBase<BUILDER_TYPE extends MongockBuilderBase
   }
 
   ChangeService createChangeService() {
-    ChangeService changeService = new ChangeService();
+        ChangeService changeService = new ChangeService();
     changeService.setChangeLogsBasePackage(changeLogsScanPackage);
+        changeService.setStartVersion(startVersion);
+        changeService.setEndVersion(endVersion);
     return changeService;
   }
 
