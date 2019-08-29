@@ -20,7 +20,6 @@ import org.apache.maven.artifact.versioning.DefaultArtifactVersion;
  * @since 27/07/2014
  */
 class ChangeService {
-  private static final String DEFAULT_PROFILE = "default";
 
   private String changeLogsBasePackage;
 
