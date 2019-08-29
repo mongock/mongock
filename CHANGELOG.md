@@ -1,4 +1,4 @@
-# 3.0.1
+# 3.0.2.BETA
 ### Improvements 
 * Replaced `org.reflections` by `com.google.guave` in [PR](https://github.com/cloudyrock/mongock/pull/76)
 * Improved logs in [PR](https://github.com/cloudyrock/mongock/pull/83)
@@ -6,7 +6,7 @@
 ### Features and breaking changes
 * Feature [Version based schema changes](https://github.com/cloudyrock/mongock/issues/82) in [PR](https://github.com/cloudyrock/mongock/pull/83)
 __________________________________________________
-# 3.0.0
+# 3.0.0.BETA
 ### Breaking changes
 * Removed com.mongodb.DB support due to deprecation in mongoDB driver in [PR](https://github.com/cloudyrock/mongock/pull/74)
 * Removed Jongo support as it's based on com.mongodb.DB in [PR](https://github.com/cloudyrock/mongock/pull/73)
