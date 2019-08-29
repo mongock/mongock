@@ -98,11 +98,11 @@ public class LockChecker {
     boolean keepLooping = true;
     do {
       try {
-        logger.info("Mongbee trying to acquire the lock");
+        logger.info("Mongock trying to acquire the lock");
         final Date newLockExpiresAt = timeUtils.currentTimePlusMillis(lockAcquiredForMillis);
         final LockEntry lockEntry = new LockEntry(lockKey, LockStatus.LOCK_HELD.name(), owner, newLockExpiresAt);
         repository.insertUpdate(lockEntry);
-        logger.info("Mongbee acquired the lock until: {}", newLockExpiresAt);
+        logger.info("Mongock acquired the lock until: {}", newLockExpiresAt);
         updateStatus(newLockExpiresAt);
         keepLooping = false;
       } catch (LockPersistenceException ex) {
@@ -127,12 +127,12 @@ public class LockChecker {
     do {
       if (needsRefreshLock()) {
         try {
-          logger.info("Mongbee trying to refresh the lock");
+          logger.info("Mongock trying to refresh the lock");
           final Date lockExpiresAtTemp = timeUtils.currentTimePlusMillis(lockAcquiredForMillis);
           final LockEntry lockEntry = new LockEntry(lockKey, LockStatus.LOCK_HELD.name(), owner, lockExpiresAtTemp);
           repository.updateIfSameOwner(lockEntry);
           updateStatus(lockExpiresAtTemp);
-          logger.info("Mongbee refreshed the lock until: {}", lockExpiresAtTemp);
+          logger.info("Mongock refreshed the lock until: {}", lockExpiresAtTemp);
           keepLooping = false;
         } catch (LockPersistenceException ex) {
           handleLockException(false);
@@ -244,7 +244,7 @@ public class LockChecker {
       logger.info(GOING_TO_SLEEP_MSG, sleepingMillis, timeUtils.millisToMinutes(sleepingMillis));
       Thread.sleep(sleepingMillis);
     } catch (InterruptedException ex) {
-      logger.error("ERROR acquiring lock: {}", ex);
+      logger.error("ERROR acquiring the lock", ex);
       Thread.currentThread().interrupt();
     }
   }

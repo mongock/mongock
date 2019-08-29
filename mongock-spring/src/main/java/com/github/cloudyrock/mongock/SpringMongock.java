@@ -35,13 +35,13 @@ public class SpringMongock extends Mongock implements InitializingBean {
       throws IllegalAccessException, InvocationTargetException {
     if (changeSetMethod.getParameterTypes().length == 1
         && changeSetMethod.getParameterTypes()[0].equals(MongoTemplate.class)) {
-      logger.debug("method with MongoTemplate argument");
+      logger.debug("method[{}] with MongoTemplate argument", changeSetMethod.getName());
 
       changeSetMethod.invoke(changeLogInstance, this.mongoTemplate);
     } else if (changeSetMethod.getParameterTypes().length == 2
         && changeSetMethod.getParameterTypes()[0].equals(MongoTemplate.class)
         && changeSetMethod.getParameterTypes()[1].equals(Environment.class)) {
-      logger.debug("method with MongoTemplate and environment arguments");
+      logger.debug("method[{}] with MongoTemplate and environment arguments", changeSetMethod.getName());
 
       changeSetMethod.invoke(changeLogInstance, this.mongoTemplate, this.springEnvironment);
     } else {

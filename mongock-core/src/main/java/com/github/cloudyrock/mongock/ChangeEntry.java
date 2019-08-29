@@ -64,4 +64,15 @@ class ChangeEntry {
     return this.changeSetMethodName;
   }
 
+  @Override
+  public String toString() {
+
+    return String.format(
+        "Mongock change[%s] for method[%s.%s] at %s by %s",
+        changeId,
+        changeLogClass,
+        changeSetMethodName,
+        timestamp,
+        author);
+  }
 }

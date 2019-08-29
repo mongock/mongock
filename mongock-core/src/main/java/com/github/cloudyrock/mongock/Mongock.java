@@ -63,11 +63,12 @@ public class Mongock implements Closeable {
     } catch (LockCheckException lockEx) {
 
       if (throwExceptionIfCannotObtainLock) {
-        logger.error(lockEx.getMessage());
+        logger.error(lockEx.getMessage());//only message as the exception is propagated
         throw new MongockException(lockEx.getMessage());
+      }else {
+        logger.warn(lockEx.getMessage());
+        logger.warn("Mongock did not acquire process lock. EXITING WITHOUT RUNNING DATA MIGRATION");
       }
-      logger.warn(lockEx.getMessage());
-      logger.warn("Mongock did not acquire process lock. EXITING WITHOUT RUNNING DATA MIGRATION");
 
     } finally {
       lockChecker.releaseLockDefault();//we do it anyway, it's idempotent
@@ -126,15 +127,15 @@ public class Mongock implements Closeable {
       if (changeEntryRepository.isNewChange(changeEntry)) {
         executeChangeSetMethod(changesetMethod, changelogInstance);
         changeEntryRepository.save(changeEntry);
-        logger.info("{} applied", changeEntry);
+        logger.info("APPLIED - {}", changeEntry);
       } else if (changeService.isRunAlwaysChangeSet(changesetMethod)) {
         executeChangeSetMethod(changesetMethod, changelogInstance);
-        logger.info("{} re-applied", changeEntry);
+        logger.info("RE-APPLIED - {}", changeEntry);
       } else {
-        logger.info("{} pass over", changeEntry);
+        logger.info("PASSED OVER - {}", changeEntry);
       }
     } catch (MongockException e) {
-      logger.error(e.getMessage());
+      logger.error(e.getMessage(), e);
     }
   }
 
@@ -144,11 +145,11 @@ public class Mongock implements Closeable {
       throw new UnsupportedOperationException("DB not supported by Mongock. Please use MongoDatabase");
 
     } else if (changeSetMethod.getParameterTypes().length == 1 && changeSetMethod.getParameterTypes()[0].equals(MongoDatabase.class)) {
-      logger.debug("method with MongoDatabase argument");
+      logger.debug("method[{}] with MongoDatabase argument", changeSetMethod.getName());
       changeSetMethod.invoke(changeLogInstance, this.changelogMongoDatabase);
 
     } else if (changeSetMethod.getParameterTypes().length == 0) {
-      logger.debug("method with no params");
+      logger.debug("method[{}] with no params", changeSetMethod.getName());
       changeSetMethod.invoke(changeLogInstance);
 
     } else {

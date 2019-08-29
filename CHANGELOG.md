@@ -1,6 +1,7 @@
 # 3.0.1
 ### Improvements 
 * Replaced `org.reflections` by `com.google.guave` in [PR](https://github.com/cloudyrock/mongock/pull/76)
+* Improved logs in [PR](https://github.com/cloudyrock/mongock/pull/83)
 
 ### Features and breaking changes
 * Feature [Version based schema changes](https://github.com/cloudyrock/mongock/issues/82) in [PR](https://github.com/cloudyrock/mongock/pull/83)
@@ -21,7 +22,6 @@ __________________________________________________
 ### Bugs fixed
 * Fixed [issue 65: Injections in SpringBoot monitored by the lock](https://github.com/cloudyrock/mongock/issues/65) in [PR](https://github.com/cloudyrock/mongock/pull/69)
 
-
 ### Bugs fixed
 * Fixed [issue 59: Builder's children classes return parent class in methods where it should return the actual class](https://github.com/cloudyrock/mongock/issues/59) in [PR](https://github.com/cloudyrock/mongock/pull/60)
 __________________________________________________
@@ -29,6 +29,7 @@ __________________________________________________
 ### Features and breaking changes
 * Feature [Upgrade to Spring 5, Springboot 2.x and Spring data 2.x](https://github.com/cloudyrock/mongock/issues/20) in [PR](https://github.com/cloudyrock/mongock/pull/45)
 * Moved to [JDK 1.8](https://www.oracle.com/technetwork/java/javase/downloads/jdk8-downloads-2133151.html)
+
 ### Bugs fixed
 * Fixed [issue 53: Use mongock with springboot 2.0.7 but do not work](https://github.com/cloudyrock/mongock/issues/53) in [PR](https://github.com/cloudyrock/mongock/pull/45)
 __________________________________________________
