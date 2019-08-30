@@ -38,7 +38,7 @@ The concept is very similar to other db migration tools such as [Liquibase](http
      * [@ChangeSet](#changeset)
         * [Annotation parameters:](#annotation-parameters)
         * [Defining ChangeSet methods](#defining-changeset-methods)
-        * [Defining ChangeSet methods with versions](#defining-changeset-methods-with-versions)
+        * [Defining ChangeSet methods with versions(BETA)](#defining-changeset-methods-with-versions)
   * [Injecting custom dependencies to change logs](#injecting-custom-dependencies-to-change-logs)
   * [Using Spring profiles](#using-spring-profiles)
      * [Enabling @Profile annotation (option)](#enabling-profile-annotation-option)
@@ -261,8 +261,8 @@ public void someChange6(MongoTemplate mongoTemplate, Environment environment) {
 }
 ```
 
-#### Defining ChangeSet methods with versions
-Method annotated by `@ChangeSet` have also the possibility to contain a version:
+#### Defining ChangeSet methods with versions(BETA...we accept suggestions)
+Method annotated by `@ChangeSet` have also the possibility to contain a version. This a useful feature from a consultancy point of view. The more descriptive scenario is where a software provider has several customer to who he provides his software. His clients may be using different versions of the software at the same time. So when he install the product, the changesets need to be applied depending on the product version. With this solution, he can tag every changeset with his product version and will tell mongock which version range to apply.
 
 ```java
 @ChangeSet(order = "001", id = "someChangeToVersionOne", author = "testAuthor", version = "1")
