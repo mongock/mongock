@@ -13,6 +13,7 @@ import static com.github.cloudyrock.mongock.StringUtils.hasText;
 import static java.util.Arrays.asList;
 import org.apache.maven.artifact.versioning.ArtifactVersion;
 import org.apache.maven.artifact.versioning.DefaultArtifactVersion;
+import org.reflections.Reflections;
 
 /**
  * Utilities to deal with reflections and annotations
@@ -79,16 +80,12 @@ class ChangeService {
 
   @SuppressWarnings("unchecked")
   List<Class<?>> fetchChangeLogs() {
-    try {
-      ClassPath classPath = ClassPath.from(Thread.currentThread().getContextClassLoader());
-      return classPath.getTopLevelClassesRecursive(changeLogsBasePackage).stream()
-          .filter(classInfo -> classInfo.load().isAnnotationPresent(ChangeLog.class))
-          .map(ClassPath.ClassInfo::load)
-          .sorted(new ChangeLogComparator())
-          .collect(Collectors.toList());
-    } catch (IOException e) {
-      throw new MongockException("Could not read ChangeLog classes from package " + changeLogsBasePackage, e);
-    }
+    Reflections reflections = new Reflections(changeLogsBasePackage);
+    List<Class<?>> changeLogs = new ArrayList<>(reflections.getTypesAnnotatedWith(ChangeLog.class)); // TODO remove dependency, do own method
+
+    Collections.sort(changeLogs, new ChangeLogComparator());
+
+    return changeLogs;
   }
 
   @SuppressWarnings("unchecked")

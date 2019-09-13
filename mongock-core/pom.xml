@@ -5,7 +5,7 @@
   <parent>
     <artifactId>mongock</artifactId>
     <groupId>com.github.cloudyrock.mongock</groupId>
-    <version>3.0.3.BETA-SNAPSHOT</version>
+    <version>3.0.4.BETA-SNAPSHOT</version>
   </parent>
 
   <artifactId>mongock-core</artifactId>
@@ -17,12 +17,13 @@
     <dependency>
       <groupId>org.mongodb</groupId>
       <artifactId>mongo-java-driver</artifactId>
-      <version>3.5.0</version><!-- Make sure that decorators are adapted to new version(see file dependency_upgrade_considerations -->
+      <version>3.5.0
+      </version><!-- Make sure that decorators are adapted to new version(see file dependency_upgrade_considerations -->
     </dependency>
     <dependency>
-      <groupId>com.google.guava</groupId>
-      <artifactId>guava</artifactId>
-      <version>28.0-jre</version>
+      <groupId>org.reflections</groupId>
+      <artifactId>reflections</artifactId>
+      <version>0.9.9</version>
     </dependency>
 
     <dependency>

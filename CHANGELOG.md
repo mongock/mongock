@@ -1,6 +1,5 @@
-# 3.0.2.BETA
+# 3.0.3.BETA
 ### Improvements 
-* Replaced `org.reflections` by `com.google.guave` in [PR](https://github.com/cloudyrock/mongock/pull/76)
 * Improved logs in [PR](https://github.com/cloudyrock/mongock/pull/83)
 
 ### Features and breaking changes
