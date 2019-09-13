@@ -1,4 +1,4 @@
-# 3.0.2.BETA
+# 3.0.3.BETA
 ### Improvements 
 * Improved logs in [PR](https://github.com/cloudyrock/mongock/pull/83)
 
