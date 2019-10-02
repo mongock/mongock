@@ -7,11 +7,11 @@ import com.mongodb.client.MongoCollection;
 public class MongoCollectionDecoratorImpl<T> implements MongoCollectionDecorator<T> {
 
   private final MongoCollection<T> impl;
-  private final MethodInvoker checker;
+  private final MethodInvoker lockChecker;
 
   public MongoCollectionDecoratorImpl(MongoCollection<T> implementation, MethodInvoker lockerCheckInvoker) {
     this.impl = implementation;
-    this.checker = lockerCheckInvoker;
+    this.lockChecker = lockerCheckInvoker;
   }
 
   @Override
@@ -20,7 +20,8 @@ public class MongoCollectionDecoratorImpl<T> implements MongoCollectionDecorator
   }
 
   @Override
-  public MethodInvoker getInvoker() {
-    return checker;
+  public MethodInvoker getLockChecker() {
+    return lockChecker;
   }
+
 }
