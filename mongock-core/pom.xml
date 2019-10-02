@@ -17,8 +17,7 @@
     <dependency>
       <groupId>org.mongodb</groupId>
       <artifactId>mongo-java-driver</artifactId>
-      <version>3.5.0
-      </version><!-- Make sure that decorators are adapted to new version(see file dependency_upgrade_considerations -->
+      <version>3.11.0</version><!-- Make sure that decorators are adapted to new version(see file dependency_upgrade_considerations -->
     </dependency>
     <dependency>
       <groupId>org.reflections</groupId>

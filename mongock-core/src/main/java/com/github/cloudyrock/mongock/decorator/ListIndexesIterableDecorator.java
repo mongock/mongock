@@ -1,6 +1,7 @@
 package com.github.cloudyrock.mongock.decorator;
 
 import com.mongodb.client.ListIndexesIterable;
+import com.mongodb.client.MongoCursor;
 
 import java.util.concurrent.TimeUnit;
 
@@ -17,4 +18,5 @@ public interface ListIndexesIterableDecorator<T> extends ListIndexesIterable<T>,
   default ListIndexesIterable<T> batchSize(int batchSize) {
     return getImpl().batchSize(batchSize);
   }
+
 }

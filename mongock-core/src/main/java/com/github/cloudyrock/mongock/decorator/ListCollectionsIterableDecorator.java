@@ -1,6 +1,7 @@
 package com.github.cloudyrock.mongock.decorator;
 
 import com.mongodb.client.ListCollectionsIterable;
+import com.mongodb.client.MongoCursor;
 import org.bson.conversions.Bson;
 
 import java.util.concurrent.TimeUnit;
@@ -24,4 +25,5 @@ public interface ListCollectionsIterableDecorator<T> extends MongoIterableDecora
   default ListCollectionsIterable<T> batchSize(int batchSize) {
     return getImpl().batchSize(batchSize);
   }
+
 }
