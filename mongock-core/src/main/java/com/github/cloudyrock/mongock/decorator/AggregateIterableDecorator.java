@@ -1,7 +1,9 @@
 package com.github.cloudyrock.mongock.decorator;
 
+import com.github.cloudyrock.mongock.decorator.impl.AggregateIterableDecoratorImpl;
 import com.mongodb.client.AggregateIterable;
 import com.mongodb.client.model.Collation;
+import org.bson.conversions.Bson;
 
 import java.util.concurrent.TimeUnit;
 
@@ -17,32 +19,48 @@ public interface AggregateIterableDecorator<T> extends MongoIterableDecorator<T>
 
   @Override
   default AggregateIterable<T> allowDiskUse(Boolean allowDiskUse) {
-    return getImpl().allowDiskUse(allowDiskUse);
+    return new AggregateIterableDecoratorImpl<>(getImpl().allowDiskUse(allowDiskUse), getInvoker());
   }
 
   @Override
   default AggregateIterable<T> batchSize(int batchSize) {
-    return getImpl().batchSize(batchSize);
+    return new AggregateIterableDecoratorImpl<>(getImpl().batchSize(batchSize), getInvoker());
   }
 
   @Override
   default AggregateIterable<T> maxTime(long maxTime, TimeUnit timeUnit) {
-    return getImpl().maxTime(maxTime, timeUnit);
+    return new AggregateIterableDecoratorImpl<>(getImpl().maxTime(maxTime, timeUnit), getInvoker());
   }
 
   @Override
   @Deprecated
   default AggregateIterable<T> useCursor(Boolean useCursor) {
-    return getImpl().useCursor(useCursor);
+    return new AggregateIterableDecoratorImpl<>(getImpl().useCursor(useCursor), getInvoker());
   }
 
   @Override
   default AggregateIterable<T> bypassDocumentValidation(Boolean bypassDocumentValidation) {
-    return getImpl().bypassDocumentValidation(bypassDocumentValidation);
+    return new AggregateIterableDecoratorImpl<>(getImpl().bypassDocumentValidation(bypassDocumentValidation), getInvoker());
   }
 
   @Override
   default AggregateIterable<T> collation(Collation collation) {
-    return getImpl().collation(collation);
+    return new AggregateIterableDecoratorImpl<>(getImpl().collation(collation), getInvoker());
+  }
+
+
+  @Override
+  default AggregateIterable<T> maxAwaitTime(long l, TimeUnit timeUnit) {
+    return new AggregateIterableDecoratorImpl<>(getImpl().maxAwaitTime(l, timeUnit), getInvoker());
+  }
+
+  @Override
+  default AggregateIterable<T> comment(String s) {
+    return new AggregateIterableDecoratorImpl<>(getImpl().comment(s), getInvoker());
+  }
+
+  @Override
+  default AggregateIterable<T> hint(Bson bson) {
+    return new AggregateIterableDecoratorImpl<>(getImpl().hint(bson), getInvoker());
   }
 }

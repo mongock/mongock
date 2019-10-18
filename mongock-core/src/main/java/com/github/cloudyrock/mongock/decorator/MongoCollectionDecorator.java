@@ -388,142 +388,144 @@ public interface MongoCollectionDecorator<T> extends MongoCollection<T> {
 
   @Override
   default <TResult> DistinctIterable<TResult> distinct(ClientSession clientSession, String s, Class<TResult> aClass) {
-    return null;
+    return new DistinctIterableDecoratorImpl<>(getLockChecker().invoke(()-> getImpl().distinct(clientSession, s, aClass)), getLockChecker());
   }
 
   @Override
   default <TResult> DistinctIterable<TResult> distinct(ClientSession clientSession, String s, Bson bson, Class<TResult> aClass) {
-    return null;
+    return new DistinctIterableDecoratorImpl<>(getLockChecker().invoke(()-> getImpl().distinct(clientSession, s, bson, aClass)), getLockChecker());
   }
 
   @Override
   default FindIterable<T> find(ClientSession clientSession) {
-    return null;
+    return new FindIterableDecoratorImpl<>(getLockChecker().invoke(()-> getImpl().find(clientSession)), getLockChecker());
   }
 
   @Override
   default <TResult> FindIterable<TResult> find(ClientSession clientSession, Class<TResult> aClass) {
-    return null;
+    return new FindIterableDecoratorImpl<>(getLockChecker().invoke(()-> getImpl().find(clientSession, aClass)), getLockChecker());
   }
 
   @Override
   default FindIterable<T> find(ClientSession clientSession, Bson bson) {
-    return null;
+    return new FindIterableDecoratorImpl<>(getLockChecker().invoke(()-> getImpl().find(clientSession, bson)), getLockChecker());
   }
 
   @Override
   default <TResult> FindIterable<TResult> find(ClientSession clientSession, Bson bson, Class<TResult> aClass) {
-    return null;
+    return new FindIterableDecoratorImpl<>(getLockChecker().invoke(()-> getImpl().find(clientSession, bson, aClass)), getLockChecker());
   }
 
   @Override
   default AggregateIterable<T> aggregate(ClientSession clientSession, List<? extends Bson> list) {
-    return null;
+    return new AggregateIterableDecoratorImpl<>(getLockChecker().invoke(()-> getImpl().aggregate(clientSession, list)), getLockChecker());
   }
 
   @Override
   default <TResult> AggregateIterable<TResult> aggregate(ClientSession clientSession, List<? extends Bson> list, Class<TResult> aClass) {
-    return null;
+    return new AggregateIterableDecoratorImpl<>(getLockChecker().invoke(()-> getImpl().aggregate(clientSession, list, aClass)), getLockChecker());
   }
 
+  //TODO implement ChangeStreamIterable
   @Override
   default ChangeStreamIterable<T> watch() {
-    return null;
+    return new ChangeStreamIterableDecoratorImple<>(getLockChecker().invoke(()-> getImpl().watch()), getLockChecker());
   }
 
   @Override
   default <TResult> ChangeStreamIterable<TResult> watch(Class<TResult> aClass) {
-    return null;
+    return new ChangeStreamIterableDecoratorImple<>(getLockChecker().invoke(()-> getImpl().watch(aClass)), getLockChecker());
+
   }
 
   @Override
   default ChangeStreamIterable<T> watch(List<? extends Bson> list) {
-    return null;
+    return new ChangeStreamIterableDecoratorImple<>(getLockChecker().invoke(()-> getImpl().watch(list)), getLockChecker());
   }
 
   @Override
   default <TResult> ChangeStreamIterable<TResult> watch(List<? extends Bson> list, Class<TResult> aClass) {
-    return null;
+    return new ChangeStreamIterableDecoratorImple<>(getLockChecker().invoke(()-> getImpl().watch(list, aClass)), getLockChecker());
   }
 
   @Override
   default ChangeStreamIterable<T> watch(ClientSession clientSession) {
-    return null;
+    return new ChangeStreamIterableDecoratorImple<>(getLockChecker().invoke(()-> getImpl().watch(clientSession)), getLockChecker());
   }
 
   @Override
   default <TResult> ChangeStreamIterable<TResult> watch(ClientSession clientSession, Class<TResult> aClass) {
-    return null;
+    return new ChangeStreamIterableDecoratorImple<>(getLockChecker().invoke(()-> getImpl().watch(clientSession, aClass)), getLockChecker());
   }
 
   @Override
   default ChangeStreamIterable<T> watch(ClientSession clientSession, List<? extends Bson> list) {
-    return null;
+    return new ChangeStreamIterableDecoratorImple<>(getLockChecker().invoke(()-> getImpl().watch(clientSession, list)), getLockChecker());
   }
 
   @Override
   default <TResult> ChangeStreamIterable<TResult> watch(ClientSession clientSession, List<? extends Bson> list, Class<TResult> aClass) {
-    return null;
+    return new ChangeStreamIterableDecoratorImple<>(getLockChecker().invoke(()-> getImpl().watch(clientSession, list, aClass)), getLockChecker());
   }
 
   @Override
   default MapReduceIterable<T> mapReduce(ClientSession clientSession, String s, String s1) {
-    return null;
+    return new MapReduceIterableDecoratorImpl<>(getLockChecker().invoke(()-> getImpl().mapReduce(clientSession, s, s1)), getLockChecker());
   }
 
   @Override
   default <TResult> MapReduceIterable<TResult> mapReduce(ClientSession clientSession, String s, String s1, Class<TResult> aClass) {
-    return null;
+    return new MapReduceIterableDecoratorImpl<>(getLockChecker().invoke(()-> getImpl().mapReduce(clientSession, s, s1, aClass)), getLockChecker());
   }
 
   @Override
   default BulkWriteResult bulkWrite(ClientSession clientSession, List<? extends WriteModel<? extends T>> list) {
-    return null;
+    return getLockChecker().invoke(()-> getImpl().bulkWrite(clientSession, list));
   }
 
   @Override
   default BulkWriteResult bulkWrite(ClientSession clientSession, List<? extends WriteModel<? extends T>> list, BulkWriteOptions bulkWriteOptions) {
-    return null;
+    return getLockChecker().invoke(()-> getImpl().bulkWrite(clientSession, list, bulkWriteOptions));
   }
 
   @Override
   default void insertOne(ClientSession clientSession, T t) {
-
+    getLockChecker().invoke(()-> getImpl().insertOne(clientSession, t));
   }
 
   @Override
   default void insertOne(ClientSession clientSession, T t, InsertOneOptions insertOneOptions) {
-
+    getLockChecker().invoke(()-> getImpl().insertOne(clientSession, t, insertOneOptions));
   }
 
   @Override
   default void insertMany(ClientSession clientSession, List<? extends T> list) {
-
+    getLockChecker().invoke(()-> getImpl().insertMany(list));
   }
 
   @Override
   default void insertMany(ClientSession clientSession, List<? extends T> list, InsertManyOptions insertManyOptions) {
-
+    getLockChecker().invoke(()-> getImpl().insertMany(clientSession, list, insertManyOptions));
   }
 
   @Override
   default DeleteResult deleteOne(ClientSession clientSession, Bson bson) {
-    return null;
+    return getLockChecker().invoke(()-> getImpl().deleteOne(clientSession, bson));
   }
 
   @Override
   default DeleteResult deleteOne(ClientSession clientSession, Bson bson, DeleteOptions deleteOptions) {
-    return null;
+    return getLockChecker().invoke(()-> getImpl().deleteOne(clientSession, bson, deleteOptions));
   }
 
   @Override
   default DeleteResult deleteMany(ClientSession clientSession, Bson bson) {
-    return null;
+    return getLockChecker().invoke(()-> getImpl().deleteMany(clientSession, bson));
   }
 
   @Override
   default DeleteResult deleteMany(ClientSession clientSession, Bson bson, DeleteOptions deleteOptions) {
-    return null;
+    return getLockChecker().invoke(()-> getImpl().deleteMany(clientSession, bson, deleteOptions));
   }
 
   @Override
@@ -533,221 +535,221 @@ public interface MongoCollectionDecorator<T> extends MongoCollection<T> {
 
   @Override
   default UpdateResult replaceOne(ClientSession clientSession, Bson bson, T t) {
-    return null;
+    return getLockChecker().invoke(()-> getImpl().replaceOne(clientSession, bson,t));
   }
 
   @Override
   default UpdateResult replaceOne(ClientSession clientSession, Bson bson, T t, UpdateOptions updateOptions) {
-    return null;
+    return getLockChecker().invoke(()-> getImpl().replaceOne(clientSession, bson,t, updateOptions));
   }
 
   @Override
   default UpdateResult replaceOne(ClientSession clientSession, Bson bson, T t, ReplaceOptions replaceOptions) {
-    return null;
+    return getLockChecker().invoke(()-> getImpl().replaceOne(clientSession, bson,t, replaceOptions));
   }
 
   @Override
   default UpdateResult updateOne(ClientSession clientSession, Bson bson, Bson bson1) {
-    return null;
+    return getLockChecker().invoke(()-> getImpl().updateOne(clientSession, bson, bson1));
   }
 
   @Override
   default UpdateResult updateOne(ClientSession clientSession, Bson bson, Bson bson1, UpdateOptions updateOptions) {
-    return null;
+    return getLockChecker().invoke(()-> getImpl().updateOne(clientSession, bson, bson1, updateOptions));
   }
 
   @Override
   default UpdateResult updateOne(Bson bson, List<? extends Bson> list) {
-    return null;
+    return getLockChecker().invoke(()-> getImpl().updateOne(bson, list));
   }
 
   @Override
   default UpdateResult updateOne(Bson bson, List<? extends Bson> list, UpdateOptions updateOptions) {
-    return null;
+    return getLockChecker().invoke(()-> getImpl().updateOne(bson, list, updateOptions));
   }
 
   @Override
   default UpdateResult updateOne(ClientSession clientSession, Bson bson, List<? extends Bson> list) {
-    return null;
+    return getLockChecker().invoke(()-> getImpl().updateOne(clientSession, bson, list));
   }
 
   @Override
   default UpdateResult updateOne(ClientSession clientSession, Bson bson, List<? extends Bson> list, UpdateOptions updateOptions) {
-    return null;
+    return getLockChecker().invoke(()-> getImpl().updateOne(clientSession, bson, list, updateOptions));
   }
 
   @Override
   default UpdateResult updateMany(ClientSession clientSession, Bson bson, Bson bson1) {
-    return null;
+    return getLockChecker().invoke(()-> getImpl().updateMany(clientSession, bson, bson1));
   }
 
   @Override
   default UpdateResult updateMany(ClientSession clientSession, Bson bson, Bson bson1, UpdateOptions updateOptions) {
-    return null;
+    return getLockChecker().invoke(()-> getImpl().updateMany(clientSession, bson, bson1, updateOptions));
   }
 
   @Override
   default UpdateResult updateMany(Bson bson, List<? extends Bson> list) {
-    return null;
+    return getLockChecker().invoke(()-> getImpl().updateMany(bson, list));
   }
 
   @Override
   default UpdateResult updateMany(Bson bson, List<? extends Bson> list, UpdateOptions updateOptions) {
-    return null;
+    return getLockChecker().invoke(()-> getImpl().updateMany(bson, list, updateOptions));
   }
 
   @Override
   default UpdateResult updateMany(ClientSession clientSession, Bson bson, List<? extends Bson> list) {
-    return null;
+    return getLockChecker().invoke(()-> getImpl().updateMany(clientSession, bson, list));
   }
 
   @Override
   default UpdateResult updateMany(ClientSession clientSession, Bson bson, List<? extends Bson> list, UpdateOptions updateOptions) {
-    return null;
+    return getLockChecker().invoke(()-> getImpl().updateMany(clientSession, bson, list, updateOptions));
   }
 
   @Override
   default T findOneAndDelete(ClientSession clientSession, Bson bson) {
-    return null;
+    return getLockChecker().invoke(()-> getImpl().findOneAndDelete(clientSession, bson));
   }
 
   @Override
   default T findOneAndDelete(ClientSession clientSession, Bson bson, FindOneAndDeleteOptions findOneAndDeleteOptions) {
-    return null;
+    return getLockChecker().invoke(()-> getImpl().findOneAndDelete(clientSession, bson, findOneAndDeleteOptions));
   }
 
   @Override
   default T findOneAndReplace(ClientSession clientSession, Bson bson, T t) {
-    return null;
+    return getLockChecker().invoke(()-> getImpl().findOneAndReplace(clientSession, bson, t));
   }
 
   @Override
   default T findOneAndReplace(ClientSession clientSession, Bson bson, T t, FindOneAndReplaceOptions findOneAndReplaceOptions) {
-    return null;
+    return getLockChecker().invoke(()-> getImpl().findOneAndReplace(clientSession, bson, t, findOneAndReplaceOptions));
   }
 
   @Override
   default T findOneAndUpdate(ClientSession clientSession, Bson bson, Bson bson1) {
-    return null;
+    return getLockChecker().invoke(()-> getImpl().findOneAndUpdate(clientSession, bson, bson1));
   }
 
   @Override
   default T findOneAndUpdate(ClientSession clientSession, Bson bson, Bson bson1, FindOneAndUpdateOptions findOneAndUpdateOptions) {
-    return null;
+    return getLockChecker().invoke(()-> getImpl().findOneAndUpdate(clientSession, bson, bson1, findOneAndUpdateOptions));
   }
 
   @Override
   default T findOneAndUpdate(Bson bson, List<? extends Bson> list) {
-    return null;
+    return getLockChecker().invoke(()-> getImpl().findOneAndUpdate(bson, list));
   }
 
   @Override
   default T findOneAndUpdate(Bson bson, List<? extends Bson> list, FindOneAndUpdateOptions findOneAndUpdateOptions) {
-    return null;
+    return getLockChecker().invoke(()-> getImpl().findOneAndUpdate(bson, list, findOneAndUpdateOptions));
   }
 
   @Override
   default T findOneAndUpdate(ClientSession clientSession, Bson bson, List<? extends Bson> list) {
-    return null;
+    return getLockChecker().invoke(()-> getImpl().findOneAndUpdate(clientSession, bson, list));
   }
 
   @Override
   default T findOneAndUpdate(ClientSession clientSession, Bson bson, List<? extends Bson> list, FindOneAndUpdateOptions findOneAndUpdateOptions) {
-    return null;
+    return getLockChecker().invoke(()-> getImpl().findOneAndUpdate(clientSession, bson, list, findOneAndUpdateOptions));
   }
 
   @Override
   default void drop(ClientSession clientSession) {
-
+    getLockChecker().invoke(()-> getImpl().drop(clientSession));
   }
 
   @Override
   default String createIndex(ClientSession clientSession, Bson bson) {
-    return null;
+    return getLockChecker().invoke(()-> getImpl().createIndex(clientSession, bson));
   }
 
   @Override
   default String createIndex(ClientSession clientSession, Bson bson, IndexOptions indexOptions) {
-    return null;
+    return getLockChecker().invoke(()-> getImpl().createIndex(clientSession, bson, indexOptions));
   }
 
   @Override
   default List<String> createIndexes(List<IndexModel> list, CreateIndexOptions createIndexOptions) {
-    return null;
+    return getLockChecker().invoke(()-> getImpl().createIndexes(list, createIndexOptions));
   }
 
   @Override
   default List<String> createIndexes(ClientSession clientSession, List<IndexModel> list) {
-    return null;
+    return getLockChecker().invoke(()-> getImpl().createIndexes(clientSession, list));
   }
 
   @Override
   default List<String> createIndexes(ClientSession clientSession, List<IndexModel> list, CreateIndexOptions createIndexOptions) {
-    return null;
+    return getLockChecker().invoke(()-> getImpl().createIndexes(clientSession, list, createIndexOptions));
   }
 
   @Override
   default ListIndexesIterable<Document> listIndexes(ClientSession clientSession) {
-    return null;
+    return new ListIndexesIterableDecoratorImpl<>(getLockChecker().invoke(()-> getImpl().listIndexes(clientSession)), getLockChecker());
   }
 
   @Override
   default <TResult> ListIndexesIterable<TResult> listIndexes(ClientSession clientSession, Class<TResult> aClass) {
-    return null;
+    return new ListIndexesIterableDecoratorImpl<>(getLockChecker().invoke(()-> getImpl().listIndexes(clientSession, aClass)), getLockChecker());
   }
 
   @Override
   default void dropIndex(String s, DropIndexOptions dropIndexOptions) {
-
+    getLockChecker().invoke(()-> getImpl().dropIndex(s, dropIndexOptions));
   }
 
   @Override
   default void dropIndex(Bson bson, DropIndexOptions dropIndexOptions) {
-
+    getLockChecker().invoke(()-> getImpl().dropIndex(bson, dropIndexOptions));
   }
 
   @Override
   default void dropIndex(ClientSession clientSession, String s) {
-
+    getLockChecker().invoke(()-> getImpl().dropIndex(clientSession, s));
   }
 
   @Override
   default void dropIndex(ClientSession clientSession, Bson bson) {
-
+    getLockChecker().invoke(()-> getImpl().dropIndex(clientSession, bson));
   }
 
   @Override
   default void dropIndex(ClientSession clientSession, String s, DropIndexOptions dropIndexOptions) {
-
+    getLockChecker().invoke(()-> getImpl().dropIndex(clientSession, s, dropIndexOptions));
   }
 
   @Override
   default void dropIndex(ClientSession clientSession, Bson bson, DropIndexOptions dropIndexOptions) {
-
+    getLockChecker().invoke(()-> getImpl().dropIndex(clientSession, bson, dropIndexOptions));
   }
 
   @Override
   default void dropIndexes(ClientSession clientSession) {
-
+    getLockChecker().invoke(()-> getImpl().dropIndexes(clientSession));
   }
 
   @Override
   default void dropIndexes(DropIndexOptions dropIndexOptions) {
-
+    getLockChecker().invoke(()-> getImpl().dropIndexes(dropIndexOptions));
   }
 
   @Override
   default void dropIndexes(ClientSession clientSession, DropIndexOptions dropIndexOptions) {
-
+    getLockChecker().invoke(()-> getImpl().dropIndexes(clientSession, dropIndexOptions));
   }
 
   @Override
   default void renameCollection(ClientSession clientSession, MongoNamespace mongoNamespace) {
-
+    getLockChecker().invoke(()-> getImpl().renameCollection(clientSession, mongoNamespace));
   }
 
   @Override
   default void renameCollection(ClientSession clientSession, MongoNamespace mongoNamespace, RenameCollectionOptions renameCollectionOptions) {
-
+    getLockChecker().invoke(()-> getImpl().renameCollection(clientSession, mongoNamespace, renameCollectionOptions));
   }
 }
