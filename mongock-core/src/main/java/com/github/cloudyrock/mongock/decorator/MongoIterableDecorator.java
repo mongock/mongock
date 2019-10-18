@@ -48,6 +48,6 @@ public interface MongoIterableDecorator<T> extends MongoIterable<T> {
 
   @Override
   default MongoCursor<T> cursor() {
-    return getInvoker().invoke(() -> getImpl().cursor());
+    return new MongoCursorDecoratorImpl<>(getInvoker().invoke(() -> getImpl().cursor()), getInvoker());
   }
 }

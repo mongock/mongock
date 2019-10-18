@@ -20,7 +20,7 @@ public class MongoCollectionDecoratorImpl<T> implements MongoCollectionDecorator
   }
 
   @Override
-  public MethodInvoker getLockChecker() {
+  public MethodInvoker getInvoker() {
     return lockChecker;
   }
 

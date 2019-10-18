@@ -210,27 +210,27 @@ public interface MongoDatabaseDecorator extends MongoDatabase {
 
   @Override
   default ChangeStreamIterable<Document> watch() {
-    return getInvoker().invoke(() -> getImpl().watch());
+    return new ChangeStreamIterableDecoratorImple<>(getInvoker().invoke(() -> getImpl().watch()), getInvoker());
   }
 
   @Override
   default <TResult> ChangeStreamIterable<TResult> watch(Class<TResult> aClass) {
-    return getInvoker().invoke(() -> getImpl().watch(aClass));
+    return new ChangeStreamIterableDecoratorImple<>( getInvoker().invoke(() -> getImpl().watch(aClass)), getInvoker());
   }
 
   @Override
   default ChangeStreamIterable<Document> watch(List<? extends Bson> list) {
-    return getInvoker().invoke(() -> getImpl().watch(list));
+    return new ChangeStreamIterableDecoratorImple<>( getInvoker().invoke(() -> getImpl().watch(list)), getInvoker());
   }
 
   @Override
   default <TResult> ChangeStreamIterable<TResult> watch(List<? extends Bson> list, Class<TResult> aClass) {
-    return getInvoker().invoke(() -> getImpl().watch(list, aClass));
+    return new ChangeStreamIterableDecoratorImple<>( getInvoker().invoke(() -> getImpl().watch(list, aClass)), getInvoker());
   }
 
   @Override
   default ChangeStreamIterable<Document> watch(ClientSession clientSession) {
-    return getInvoker().invoke(() -> getImpl().watch(clientSession));
+    return new ChangeStreamIterableDecoratorImple<>( getInvoker().invoke(() -> getImpl().watch(clientSession)), getInvoker());
   }
 
   @Override
