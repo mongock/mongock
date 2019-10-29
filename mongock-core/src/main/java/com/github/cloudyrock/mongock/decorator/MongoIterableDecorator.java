@@ -45,4 +45,9 @@ public interface MongoIterableDecorator<T> extends MongoIterable<T> {
   default MongoIterable<T> batchSize(int batchSize) {
     return new MongoIterableDecoratorImpl<>(getInvoker().invoke(() -> getImpl().batchSize(batchSize)), getInvoker());
   }
+
+  @Override
+  default MongoCursor<T> cursor() {
+    return new MongoCursorDecoratorImpl<>(getInvoker().invoke(() -> getImpl().cursor()), getInvoker());
+  }
 }

@@ -3,6 +3,7 @@ package com.github.cloudyrock.mongock.decorator.impl;
 import com.github.cloudyrock.mongock.decorator.ListIndexesIterableDecorator;
 import com.github.cloudyrock.mongock.decorator.util.MethodInvoker;
 import com.mongodb.client.ListIndexesIterable;
+import com.mongodb.client.MongoCursor;
 
 public class ListIndexesIterableDecoratorImpl<T> implements ListIndexesIterableDecorator<T> {
 
@@ -23,4 +24,5 @@ public class ListIndexesIterableDecoratorImpl<T> implements ListIndexesIterableD
   public MethodInvoker getInvoker() {
     return checker;
   }
+
 }
