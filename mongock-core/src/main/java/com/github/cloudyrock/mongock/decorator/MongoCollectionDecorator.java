@@ -530,7 +530,7 @@ public interface MongoCollectionDecorator<T> extends MongoCollection<T> {
 
   @Override
   default UpdateResult replaceOne(Bson bson, T t, ReplaceOptions replaceOptions) {
-    return null;
+    return getInvoker().invoke(()-> getImpl().replaceOne(bson, t, replaceOptions));
   }
 
   @Override
