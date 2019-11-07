@@ -1,3 +1,8 @@
+__________________________________________________
+# 3.0.5.BETA
+### Bugs fixed
+* Fixed [Problem with replaceOne with upsert](https://github.com/cloudyrock/mongock/issues/90)
+__________________________________________________
 # 3.0.3.BETA
 ### Improvements 
 * Improved logs in [PR](https://github.com/cloudyrock/mongock/pull/83)
