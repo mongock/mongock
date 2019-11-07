@@ -1,3 +1,8 @@
+__________________________________________________
+# 3.0.5.BETA
+### Bugs fixed
+* Fixed [Problem with replaceOne with upsert](https://github.com/cloudyrock/mongock/issues/90)
+__________________________________________________
 # 3.0.3.BETA
 ### Improvements 
 * Improved logs in [PR](https://github.com/cloudyrock/mongock/pull/83)
@@ -24,7 +29,7 @@ __________________________________________________
 ### Bugs fixed
 * Fixed [issue 59: Builder's children classes return parent class in methods where it should return the actual class](https://github.com/cloudyrock/mongock/issues/59) in [PR](https://github.com/cloudyrock/mongock/pull/60)
 __________________________________________________
-# 2.0.0 (14/12/2018)
+# 2.0.0 
 ### Features and breaking changes
 * Feature [Upgrade to Spring 5, Springboot 2.x and Spring data 2.x](https://github.com/cloudyrock/mongock/issues/20) in [PR](https://github.com/cloudyrock/mongock/pull/45)
 * Moved to [JDK 1.8](https://www.oracle.com/technetwork/java/javase/downloads/jdk8-downloads-2133151.html)
@@ -32,7 +37,7 @@ __________________________________________________
 ### Bugs fixed
 * Fixed [issue 53: Use mongock with springboot 2.0.7 but do not work](https://github.com/cloudyrock/mongock/issues/53) in [PR](https://github.com/cloudyrock/mongock/pull/45)
 __________________________________________________
-# 1.16.2 (13/12/2018)
+# 1.16.2
 ### Features
 * Fixed [issue 55: Exception when using MongoDatabase](https://github.com/cloudyrock/mongock/issues/55) in [PR](https://github.com/cloudyrock/mongock/pull/56)
 
