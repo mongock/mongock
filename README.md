@@ -10,6 +10,7 @@
 
 ## LAST NEWS :bangbang::bangbang::collision::collision:
 > **We are looking contributors!!** Want to be part of a open source project? Send me an email to antonio@cloudyrock.com.
+
 > **3.0.5.BETA is released**. Take a look to our [changelog](./CHANGELOG.md) to find out what is new.
 
 # Mongock: MongoDB version control tool for Java
