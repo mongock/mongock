@@ -4,6 +4,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Profile;
 import org.springframework.core.env.Environment;
+import org.springframework.util.StringUtils;
 
 import java.lang.reflect.AnnotatedElement;
 import java.lang.reflect.Method;
@@ -48,21 +49,25 @@ public class SpringChangeService extends ChangeService {
   private <T extends AnnotatedElement> List<T> filterByActiveProfiles(Collection<T> annotated) {
     List<T> filtered = new ArrayList<>();
     for (T element : annotated) {
-      if (matchesActiveSpringProfile(element)){
+      if (matchesActiveSpringProfile(element)) {
         filtered.add(element);
       }
     }
     return filtered;
   }
+
   private boolean matchesActiveSpringProfile(AnnotatedElement element) {
     if (!element.isAnnotationPresent(Profile.class)) {
       return true; // no-profiled changeset always matches
     }
-    List<String> profiles = asList(element.getAnnotation(Profile.class).value());
+    String[] profiles = element.getAnnotation(Profile.class).value();
     for (String profile : profiles) {
-      if (profile != null && profile.length() > 0 && profile.charAt(0) == '!') {
-        if (!activeProfiles.contains(profile.substring(1))) {
-          return true;
+      if (StringUtils.isEmpty(profile)) {
+        continue;
+      }
+      if (profile.charAt(0) == '!') {
+        if (activeProfiles.contains(profile.substring(1))) {
+          return false;
         }
       } else if (activeProfiles.contains(profile)) {
         return true;
