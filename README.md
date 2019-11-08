@@ -314,7 +314,7 @@ See [SpringBoot set up](#usage-with-springBoot) for more information.
 **mongock** accepts Spring's `org.springframework.context.annotation.Profile` annotation. If a change log or change set 
 class is annotated  with `@Profile`, then it is activated for current application profiles.
 
-> Mongock will support the new Profile expression approach from Spring 5.
+> Mongock will soon support the new Profile expression approach from Spring 5 in 
 
 _Example 1_: annotated change set will be invoked for a `dev` profile
 ```java
