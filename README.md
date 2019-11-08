@@ -56,6 +56,7 @@ There are several good reasons to use Mongock in your project. Here we give you 
 
 * Solid solution which really works.
 * **Works well with sharded collections**: Unlike other similar projects using javascript, which requires `db.eval()`. [Documentation](https://docs.mongodb.com/manual/reference/method/db.eval/#sharded-data).
+* Works with [Mongo Atlas](https://www.mongodb.com/cloud/atlas).
 * Distributed solution with solid locking mechanism.
 * We are very responsive, aiming for 24-hours-response for new issues and 48 hours for reviews(Notice this is not a commitment, but so far so good).
 * Well maintained and regularly updated.
@@ -73,9 +74,8 @@ If you would like to contribute to Mongock project, please read [how to contribu
 
 ## Add a dependency
 
-Mongock can be used standalone or with Spring.  The `mongock-core` dependency is always required,
-and `mongock-spring` can also be added.  Using `mongock-spring`
-is not currently supported.
+Mongock can be used standalone or with Spring. When Using `mongock-spring` you don't need to import `mongock-core`, 
+as it's already imported out of the box.
 
 #### With Maven
 ```xml
@@ -86,7 +86,7 @@ is not currently supported.
   <version>3.0.5.BETA</version>
 </dependency>
 
-<!-- Add to use with Spring-->
+<!-- To use with Spring-->
 <dependency>
   <groupId>com.github.cloudyrock.mongock</groupId>
   <artifactId>mongock-spring</artifactId>
@@ -125,8 +125,7 @@ so you can inject any object to your change logs by using SpringBoot Application
 
 In order to use this feature you need to instantiate the SpringBoot mongock class and provide the required configuration. 
 Mongock will run as an [ApplicationRunner][ApplicationRunner] within SpringBoot.
-In terms of execution, it will be be very similar to the standard Spring implementation. 
-The key difference is that ApplicationRunner beans run *after* (as opposed to during) the context is fully initialized. 
+In terms of execution, it will be very similar to the standard Spring implementation, the key difference is that ApplicationRunner beans run *after* (as opposed to during) the context is fully initialized. 
 
 >**Note:** Using this implementation means you need all the dependencies in your changelogs(parameters in methods annotated with ```@ChangeSet```) declared as Spring beans.
 
@@ -314,6 +313,8 @@ See [SpringBoot set up](#usage-with-springBoot) for more information.
      
 **mongock** accepts Spring's `org.springframework.context.annotation.Profile` annotation. If a change log or change set 
 class is annotated  with `@Profile`, then it is activated for current application profiles.
+
+> Mongock will support the new Profile expression approach from Spring 5.
 
 _Example 1_: annotated change set will be invoked for a `dev` profile
 ```java
