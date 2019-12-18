@@ -60,19 +60,23 @@ public class SpringChangeService extends ChangeService {
     if (!element.isAnnotationPresent(Profile.class)) {
       return true; // no-profiled changeset always matches
     }
-    String[] profiles = element.getAnnotation(Profile.class).value();
-    for (String profile : profiles) {
+    boolean containsActiveProfile = false;
+    for (String profile : element.getAnnotation(Profile.class).value()) {
       if (StringUtils.isEmpty(profile)) {
         continue;
       }
-      if (profile.charAt(0) == '!') {
-        if (activeProfiles.contains(profile.substring(1))) {
+      if (ProfileUtil.isNegativeProfile(profile)) {
+        if (ProfileUtil.containsNegativeProfile(activeProfiles, profile)) {
           return false;
         }
-      } else if (activeProfiles.contains(profile)) {
-        return true;
+      } else {
+        containsActiveProfile = true;
+        if (ProfileUtil.containsProfile(activeProfiles, profile)) {
+          return true;
+        }
       }
     }
-    return false;
+    return !containsActiveProfile;
   }
+
 }
