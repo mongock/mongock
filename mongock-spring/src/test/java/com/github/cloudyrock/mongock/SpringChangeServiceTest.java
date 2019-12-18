@@ -26,7 +26,7 @@ public class SpringChangeServiceTest {
 
 
   @Test
-  public void shouldRunChangeSet_WhenDefaultProfileEnv_IfOnlyNegativeProfileInAnnotationOrNoAnnotation() {
+  public void shouldRunChangeSets_WhenDefaultProfileEnv_IfOnlyNegativeProfileInAnnotationOrNoAnnotation() {
     Mockito.when(environment.getActiveProfiles()).thenReturn(new String[]{});
     SpringChangeService service = new SpringChangeService();
     service.setEnvironment(environment);
@@ -35,12 +35,22 @@ public class SpringChangeServiceTest {
 
 
   @Test
-  public void shouldRunChangeSet_When1NonDefaultProfileEnv_IfPresentInAnnotationOrNoAnnotationOrOnlyNegative() {
+  public void shouldRunChangeSets_When1NonDefaultProfileEnv_IfPresentInAnnotationOrNoAnnotationOrOnlyOtherNegatives() {
     Mockito.when(environment.getActiveProfiles()).thenReturn(new String[]{"test"});
     SpringChangeService service = new SpringChangeService();
     service.setEnvironment(environment);
     assertEquals(service.fetchChangeSets(ChangeLogClass.class).size(), 4);
   }
+
+
+  @Test
+  public void shouldRunChangeSets_WhenMultipleNonDefaultProfileEnv_IfPresentInAnnotationOrNoAnnotationOrOnlyOtherNegatives() {
+    Mockito.when(environment.getActiveProfiles()).thenReturn(new String[]{"test", "dataset"});
+    SpringChangeService service = new SpringChangeService();
+    service.setEnvironment(environment);
+    assertEquals(service.fetchChangeSets(ChangeLogClass.class).size(), 5);
+  }
+
 }
 
 @ChangeLog
@@ -76,6 +86,11 @@ class ChangeLogClass {
   @Profile({"dataset"})
   @ChangeSet(id="oneOtherPositiveProfile", author = "testAuthor", order = "01")
   public void oneOtherPositiveProfile() {
+  }
+
+  @Profile({"dataset"})
+  @ChangeSet(id="oneOtherPositiveProfile2", author = "testAuthor", order = "01")
+  public void oneOtherPositiveProfile2() {
   }
 
 
