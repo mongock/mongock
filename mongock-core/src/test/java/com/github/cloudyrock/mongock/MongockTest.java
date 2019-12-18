@@ -8,6 +8,7 @@ import org.junit.runner.RunWith;
 import org.mockito.internal.verification.Times;
 import org.mockito.runners.MockitoJUnitRunner;
 
+import java.io.IOException;
 import java.util.Collections;
 
 import static org.junit.Assert.assertEquals;
@@ -148,7 +149,7 @@ public class MongockTest extends MongockTestBase {
   }
 
   @Test
-  public void callMongoClientWhenClosing() {
+  public void callMongoClientWhenClosing() throws IOException {
     //when
     runner.close();
 

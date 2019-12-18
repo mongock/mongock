@@ -1,13 +1,9 @@
 package com.github.cloudyrock.mongock;
 
-import com.github.cloudyrock.mongock.decorator.impl.MongoDataBaseDecoratorImpl;
 import com.github.cloudyrock.mongock.decorator.impl.MongoTemplateDecoratorImpl;
-import com.mongodb.DB;
 import com.mongodb.MongoClient;
-import com.mongodb.client.MongoDatabase;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.BeansException;
 import org.springframework.context.ApplicationContext;
 import org.springframework.core.env.Environment;
 import org.springframework.data.mongodb.core.MongoTemplate;
@@ -25,14 +21,29 @@ public class SpringBootMongockBuilder extends MongockBuilderBase<SpringBootMongo
    * </p><p>For more details about MongoClient please see com.mongodb.MongoClient docs
    * </p>
    *
-   * @param mongoClient           database connection client
+   * @param legacyMongoClient           database connection client
    * @param databaseName          database name
    * @param changeLogsScanPackage package path where the changelogs are located
    * @see MongoClient
    */
-  public SpringBootMongockBuilder(MongoClient mongoClient, String databaseName, String changeLogsScanPackage) {
-    super(mongoClient, databaseName, changeLogsScanPackage);
+  public SpringBootMongockBuilder(MongoClient legacyMongoClient, String databaseName, String changeLogsScanPackage) {
+    super(legacyMongoClient, databaseName, changeLogsScanPackage);
   }
+
+  /**
+   * <p>Builder constructor takes new API com.mongodb.client.MongoClient, database name and changelog scan package as parameters.
+   * </p><p>For more details about MongoClient please see om.mongodb.client.MongoClient docs
+   * </p>
+   *
+   * @param newMongoClient           database connection client
+   * @param databaseName          database name
+   * @param changeLogsScanPackage package path where the changelogs are located
+   * @see MongoClient
+   */
+  public SpringBootMongockBuilder(com.mongodb.client.MongoClient newMongoClient, String databaseName, String changeLogsScanPackage) {
+    super(newMongoClient, databaseName, changeLogsScanPackage);
+  }
+
 
   public SpringMongockBuilder setMongoTemplate(MongoTemplate mongoTemplate) {
     throw new UnsupportedOperationException("Please remove this from the builder. You don't need to replace it with anything. MongoTemplate will be generated from MongoClient and databaseName");
@@ -50,7 +61,7 @@ public class SpringBootMongockBuilder extends MongockBuilderBase<SpringBootMongo
 
   @Override
   SpringBootMongock createBuild() {
-    SpringBootMongock mongock = new SpringBootMongock(changeEntryRepository, mongoClient, createChangeService(), lockChecker);
+    SpringBootMongock mongock = new SpringBootMongock(changeEntryRepository, getMongoClientCloseable(), createChangeService(), lockChecker);
     mongock.setChangelogMongoDatabase(createMongoDataBaseProxy());
     mongock.setEnabled(enabled);
     mongock.springContext(context);
@@ -60,7 +71,7 @@ public class SpringBootMongockBuilder extends MongockBuilderBase<SpringBootMongo
   }
 
   private MongoTemplate createMongoTemplateProxy() {
-    return  new MongoTemplateDecoratorImpl(mongoClient, databaseName, methodInvoker);
+    return  new MongoTemplateDecoratorImpl(legacyMongoClient, databaseName, methodInvoker);
   }
 
 
