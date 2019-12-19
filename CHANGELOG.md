@@ -1,7 +1,7 @@
 
 # 3.0.8.BETA
 ### Feature
-* Fixed [@Profile with SpringBootMongock](https://github.com/cloudyrock/mongock/issues/81)
+* [Support for new com.mongodb.client.MongoClient ](https://github.com/cloudyrock/mongock/issues/98) in [PR](https://github.com/cloudyrock/mongock/pull/99)
 __________________________________________________
 # 3.0.7.BETA
 ### Bugs fixed
