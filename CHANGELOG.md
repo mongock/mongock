@@ -1,3 +1,8 @@
+
+# 3.0.8.BETA
+### Feature
+* Fixed [@Profile with SpringBootMongock](https://github.com/cloudyrock/mongock/issues/81)
+__________________________________________________
 # 3.0.7.BETA
 ### Bugs fixed
 * Fixed [@Profile with SpringBootMongock](https://github.com/cloudyrock/mongock/issues/81)
