@@ -6,6 +6,7 @@ import java.io.IOException;
 import java.io.Serializable;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -15,6 +16,7 @@ import org.apache.maven.artifact.versioning.ArtifactVersion;
 import org.apache.maven.artifact.versioning.DefaultArtifactVersion;
 import org.reflections.Reflections;
 
+//TODO: this can become a Util class, no a service: static methods and name is confusing
 /**
  * Utilities to deal with reflections and annotations
  *
@@ -106,11 +108,20 @@ class ChangeService {
     }
   }
 
-  ChangeEntry createChangeEntry(Method changesetMethod) {
+  /**
+   * Quick implementation to generate a execution id. date plus uuid. The date is for easier human identification
+   * @return unique execution id
+   */
+  String getNewExecutionId() {
+    return String.format("%s.%s", LocalDateTime.now().toString(), UUID.randomUUID().toString());
+  }
+
+  ChangeEntry createChangeEntry(String executionId, Method changesetMethod) {
     if (changesetMethod.isAnnotationPresent(ChangeSet.class)) {
       ChangeSet annotation = changesetMethod.getAnnotation(ChangeSet.class);
 
       return new ChangeEntry(
+          executionId,
           annotation.id(),
           annotation.author(),
           new Date(),

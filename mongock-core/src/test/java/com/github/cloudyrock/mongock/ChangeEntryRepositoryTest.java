@@ -38,7 +38,7 @@ public class ChangeEntryRepositoryTest {
     dao.ensureIndex();
     doReturn(null).when(dao).findRequiredUniqueIndex();
 
-    dao.isNewChange(new ChangeEntry("changeId", "author", new Date(), "class", "method"));
+    dao.isNewChange(new ChangeEntry("executionId1", "changeId", "author", new Date(), "class", "method"));
 
     //then
     verify(dao, times(1)).createRequiredUniqueIndex();

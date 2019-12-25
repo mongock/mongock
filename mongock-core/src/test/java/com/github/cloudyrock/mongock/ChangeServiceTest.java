@@ -20,6 +20,8 @@ import static junit.framework.Assert.assertTrue;
  */
 public class ChangeServiceTest {
 
+  private String executionId = "executionId";
+
   @Test
   public void shouldFindChangeLogClasses() {
     // given
@@ -112,7 +114,7 @@ public class ChangeServiceTest {
     for (Method foundMethod : foundMethods) {
 
       // when
-      ChangeEntry entry = service.createChangeEntry(foundMethod);
+      ChangeEntry entry = service.createChangeEntry(executionId, foundMethod);
 
       // then
       Assert.assertEquals("testuser", entry.getAuthor());
