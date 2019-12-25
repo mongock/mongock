@@ -130,6 +130,7 @@ public class Mongock implements Closeable {
         logger.info("APPLIED - {}", changeEntry);
       } else if (changeService.isRunAlwaysChangeSet(changesetMethod)) {
         executeChangeSetMethod(changesetMethod, changelogInstance);
+        changeEntryRepository.save(changeEntry);
         logger.info("RE-APPLIED - {}", changeEntry);
       } else {
         logger.info("PASSED OVER - {}", changeEntry);

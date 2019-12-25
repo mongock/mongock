@@ -19,8 +19,7 @@ class ChangeEntryRepository extends MongoRepository {
 
   boolean isNewChange(ChangeEntry changeEntry) throws MongockException {
     Document entry = collection.find(buildSearchQueryDBObject(changeEntry)).first();
-
-    return entry == null;
+    return entry == null || entry.isEmpty();
   }
 
   void save(ChangeEntry changeEntry) throws MongockException {
