@@ -35,8 +35,9 @@ public class SpringMongock extends Mongock implements InitializingBean {
   }
 
   @Override
-  protected void executeChangeSetMethod(Method changeSetMethod, Object changeLogInstance)
+  protected long executeChangeSetMethod(Method changeSetMethod, Object changeLogInstance)
       throws IllegalAccessException, InvocationTargetException {
+    final long startingTime = System.currentTimeMillis();
     if (changeSetMethod.getParameterTypes().length == 1
         && changeSetMethod.getParameterTypes()[0].equals(MongoTemplate.class)) {
       logger.debug("method[{}] with MongoTemplate argument", changeSetMethod.getName());
@@ -51,6 +52,7 @@ public class SpringMongock extends Mongock implements InitializingBean {
     } else {
       super.executeChangeSetMethod(changeSetMethod, changeLogInstance);
     }
+    return System.currentTimeMillis() - startingTime;
   }
 
   /**
