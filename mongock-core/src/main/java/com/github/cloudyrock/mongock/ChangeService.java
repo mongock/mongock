@@ -15,6 +15,7 @@ import org.apache.maven.artifact.versioning.ArtifactVersion;
 import org.apache.maven.artifact.versioning.DefaultArtifactVersion;
 import org.reflections.Reflections;
 
+//TODO: this can become a Util class, no a service: static methods and name is confusing
 /**
  * Utilities to deal with reflections and annotations
  *
