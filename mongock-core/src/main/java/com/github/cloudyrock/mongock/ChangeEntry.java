@@ -12,12 +12,12 @@ import java.util.Date;
  * @since 27/07/2014
  */
 class ChangeEntry {
-  static final String EXECUTION_ID = "changeId";
-  static final String KEY_CHANGEID = "changeId";
+  static final String EXECUTION_ID = "executionId";
+  static final String KEY_CHANGE_ID = "changeId";
   static final String KEY_AUTHOR = "author";
   private static final String KEY_TIMESTAMP = "timestamp";
-  private static final String KEY_CHANGELOGCLASS = "changeLogClass";
-  private static final String KEY_CHANGESETMETHOD = "changeSetMethod";
+  private static final String KEY_CHANGE_LOG_CLASS = "changeLogClass";
+  private static final String KEY_CHANGE_SET_METHOD = "changeSetMethod";
 
 
   private final String executionId;
@@ -39,11 +39,11 @@ class ChangeEntry {
   Document buildFullDBObject() {
     return new Document()
         .append(EXECUTION_ID, this.executionId)
-        .append(KEY_CHANGEID, this.changeId)
+        .append(KEY_CHANGE_ID, this.changeId)
         .append(KEY_AUTHOR, this.author)
         .append(KEY_TIMESTAMP, this.timestamp)
-        .append(KEY_CHANGELOGCLASS, this.changeLogClass)
-        .append(KEY_CHANGESETMETHOD, this.changeSetMethodName);
+        .append(KEY_CHANGE_LOG_CLASS, this.changeLogClass)
+        .append(KEY_CHANGE_SET_METHOD, this.changeSetMethodName);
   }
 
   public String getExecutionId() {
