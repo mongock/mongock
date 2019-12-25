@@ -101,7 +101,7 @@ public class Mongock implements Closeable {
 
   private void executeMigration() {
     logger.info("Mongock starting the data migration sequence..");
-
+    final String executionId = changeService.getNewExecutionId();
     for (Class<?> changelogClass : changeService.fetchChangeLogs()) {
 
       Object changelogInstance;
@@ -109,7 +109,7 @@ public class Mongock implements Closeable {
         changelogInstance = changeService.createInstance(changelogClass);
         List<Method> changesetMethods = changeService.fetchChangeSets(changelogInstance.getClass());
         for (Method changesetMethod : changesetMethods) {
-          executeIfNewOrRunAlways(changelogInstance, changesetMethod, changeService.createChangeEntry(changesetMethod));
+          executeIfNewOrRunAlways(changelogInstance, changesetMethod, changeService.createChangeEntry(executionId, changesetMethod));
         }
 
       } catch (NoSuchMethodException | IllegalAccessException | InstantiationException e) {
