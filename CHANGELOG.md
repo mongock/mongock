@@ -2,6 +2,8 @@
 # 3.0.8.BETA
 ### Feature
 * [Support for new com.mongodb.client.MongoClient ](https://github.com/cloudyrock/mongock/issues/98) in [PR](https://github.com/cloudyrock/mongock/pull/99)
+* [Track runAlways changesets ](https://github.com/cloudyrock/mongock/issues/100) in [PR](https://github.com/cloudyrock/mongock/pull/101)
+* [Display time duration for every changeset ](https://github.com/cloudyrock/mongock/issues/94) in [PR](https://github.com/cloudyrock/mongock/pull/102)
 __________________________________________________
 # 3.0.7.BETA
 ### Bugs fixed
