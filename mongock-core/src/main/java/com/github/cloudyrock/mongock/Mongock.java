@@ -125,11 +125,13 @@ public class Mongock implements Closeable {
   private void executeIfNewOrRunAlways(Object changelogInstance, Method changesetMethod, ChangeEntry changeEntry) throws IllegalAccessException, InvocationTargetException {
     try {
       if (changeEntryRepository.isNewChange(changeEntry)) {
-        executeChangeSetMethod(changesetMethod, changelogInstance);
+        final long executionTimeMillis = executeChangeSetMethod(changesetMethod, changelogInstance);
+        changeEntry.setExecutionMillis(executionTimeMillis);
         changeEntryRepository.save(changeEntry);
         logger.info("APPLIED - {}", changeEntry);
       } else if (changeService.isRunAlwaysChangeSet(changesetMethod)) {
-        executeChangeSetMethod(changesetMethod, changelogInstance);
+        final long executionTimeMillis = executeChangeSetMethod(changesetMethod, changelogInstance);
+        changeEntry.setExecutionMillis(executionTimeMillis);
         changeEntryRepository.save(changeEntry);
         logger.info("RE-APPLIED - {}", changeEntry);
       } else {
@@ -140,8 +142,13 @@ public class Mongock implements Closeable {
     }
   }
 
-  protected void executeChangeSetMethod(Method changeSetMethod, Object changeLogInstance)
+  /**
+   *
+   * @return duration time in milliseconds
+   */
+  protected long executeChangeSetMethod(Method changeSetMethod, Object changeLogInstance)
       throws IllegalAccessException, InvocationTargetException {
+    final long startingTime = System.currentTimeMillis();
     if (changeSetMethod.getParameterTypes().length == 1 && changeSetMethod.getParameterTypes()[0].equals(DB.class)) {
       throw new UnsupportedOperationException("DB not supported by Mongock. Please use MongoDatabase");
 
@@ -157,6 +164,7 @@ public class Mongock implements Closeable {
       throw new MongockException("ChangeSet method " + changeSetMethod.getName() +
           " has wrong arguments list. Please see docs for more info!");
     }
+    return System.currentTimeMillis() - startingTime;
   }
 
 }

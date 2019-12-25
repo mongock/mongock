@@ -47,7 +47,8 @@ public class SpringBootMongock extends Mongock implements ApplicationRunner {
    * @see Mongock#executeChangeSetMethod(Method, Object)
    */
   @Override
-  protected void executeChangeSetMethod(Method changeSetMethod, Object changeLogInstance) throws BeansException, IllegalAccessException, InvocationTargetException {
+  protected long executeChangeSetMethod(Method changeSetMethod, Object changeLogInstance) throws BeansException, IllegalAccessException, InvocationTargetException {
+    final long startingTime = System.currentTimeMillis();
     List<Object> changelogInvocationParameters = new ArrayList<>(changeSetMethod.getParameterTypes().length);
     for (Class<?> parameter : changeSetMethod.getParameterTypes()) {
       if (MongoTemplate.class.isAssignableFrom(parameter)) {
@@ -65,6 +66,7 @@ public class SpringBootMongock extends Mongock implements ApplicationRunner {
     }
     logMethodWithArguments(changeSetMethod.getName(), changelogInvocationParameters);
     changeSetMethod.invoke(changeLogInstance, changelogInvocationParameters.toArray());
+    return System.currentTimeMillis() - startingTime;
   }
 
   private void logMethodWithArguments(String methodName, List<Object> changelogInvocationParameters) {
