@@ -38,6 +38,6 @@ public interface MongoCursorDecorator<T> extends MongoCursor<T> {
 
   @Override
   default ServerAddress getServerAddress() {
-    return getInvoker().invoke(() -> getImpl().getServerAddress());
+    return getImpl().getServerAddress();
   }
 }
