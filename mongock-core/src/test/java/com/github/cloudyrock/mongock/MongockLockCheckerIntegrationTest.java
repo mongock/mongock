@@ -2,7 +2,6 @@ package com.github.cloudyrock.mongock;
 
 import com.github.cloudyrock.mongock.decorator.impl.MongoDataBaseDecoratorImpl;
 import com.github.cloudyrock.mongock.decorator.util.MethodInvoker;
-import com.github.cloudyrock.mongock.decorator.util.MethodInvokerImpl;
 import com.github.cloudyrock.mongock.decorator.util.VoidSupplier;
 import com.github.cloudyrock.mongock.test.proxy.ProxiesMongockTestResource;
 import com.github.fakemongo.Fongo;
@@ -217,7 +216,7 @@ class TestMongockBuilder extends MongockBuilderBase<TestMongockBuilder, Mongock>
   @Override
   Mongock createBuild() {
 //    changeService.setChangeLogsBasePackage(changeLogsScanPackage);
-    Mongock mongock = new Mongock(changeEntryRepository, mongoClient, changeService, lockChecker);
+    Mongock mongock = new Mongock(changeEntryRepository, getMongoClientCloseable(), changeService, lockChecker);
     mongock.setChangelogMongoDatabase(mongoDataBase);
     mongock.setEnabled(enabled);
     mongock.setThrowExceptionIfCannotObtainLock(throwExceptionIfCannotObtainLock);

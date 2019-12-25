@@ -308,29 +308,6 @@ public interface MongoCollectionDecorator<T> extends MongoCollection<T> {
     getInvoker().invoke(() -> getImpl().renameCollection(mongoNamespace, renameCollectionOptions));
   }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
   @Override
   default long count(ClientSession clientSession) {
     return getInvoker().invoke(() -> getImpl().count(clientSession));

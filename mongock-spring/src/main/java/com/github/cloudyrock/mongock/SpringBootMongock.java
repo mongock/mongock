@@ -11,6 +11,7 @@ import org.springframework.boot.ApplicationRunner;
 import org.springframework.context.ApplicationContext;
 import org.springframework.data.mongodb.core.MongoTemplate;
 
+import java.io.Closeable;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
@@ -25,10 +26,10 @@ public class SpringBootMongock extends Mongock implements ApplicationRunner {
   private MongoTemplate mongoTemplate;
 
   protected SpringBootMongock(ChangeEntryRepository changeEntryRepository,
-                              MongoClient mongoClient,
+                              Closeable mongoClientCloseable,
                               ChangeService changeService,
                               LockChecker lockChecker) {
-    super(changeEntryRepository, mongoClient, changeService, lockChecker);
+    super(changeEntryRepository, mongoClientCloseable, changeService, lockChecker);
   }
 
   /**

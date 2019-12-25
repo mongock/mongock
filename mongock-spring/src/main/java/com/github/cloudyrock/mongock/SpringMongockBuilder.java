@@ -15,13 +15,27 @@ public class SpringMongockBuilder extends MongockBuilderBase<SpringMongockBuilde
    * </p><p>For more details about MongoClient please see com.mongodb.MongoClient docs
    * </p>
    *
-   * @param mongoClient           database connection client
+   * @param legacyMongoClient           database connection client
    * @param databaseName          database name
    * @param changeLogsScanPackage package path where the changelogs are located
    * @see MongoClient
    */
-  public SpringMongockBuilder(MongoClient mongoClient, String databaseName, String changeLogsScanPackage) {
-    super(mongoClient, databaseName, changeLogsScanPackage);
+  public SpringMongockBuilder(MongoClient legacyMongoClient, String databaseName, String changeLogsScanPackage) {
+    super(legacyMongoClient, databaseName, changeLogsScanPackage);
+  }
+
+  /**
+   * <p>Builder constructor takes new API com.mongodb.client.MongoClient, database name and changelog scan package as parameters.
+   * </p><p>For more details about MongoClient please see com.mongodb.client.MongoClient docs
+   * </p>
+   *
+   * @param newMongoClient        database connection client
+   * @param databaseName          database name
+   * @param changeLogsScanPackage package path where the changelogs are located
+   * @see MongoClient
+   */
+  public SpringMongockBuilder(com.mongodb.client.MongoClient newMongoClient, String databaseName, String changeLogsScanPackage) {
+    super(newMongoClient, databaseName, changeLogsScanPackage);
   }
 
 
@@ -49,7 +63,7 @@ public class SpringMongockBuilder extends MongockBuilderBase<SpringMongockBuilde
 
   @Override
   SpringMongock createBuild() {
-    SpringMongock mongock = new SpringMongock(changeEntryRepository, mongoClient, createChangeService(), lockChecker);
+    SpringMongock mongock = new SpringMongock(changeEntryRepository, getMongoClientCloseable(), createChangeService(), lockChecker);
     mongock.setChangelogMongoDatabase(createMongoDataBaseProxy());
     mongock.setMongoTemplate(createMongoTemplateProxy());
     mongock.setEnabled(enabled);
@@ -58,7 +72,7 @@ public class SpringMongockBuilder extends MongockBuilderBase<SpringMongockBuilde
   }
 
   private MongoTemplate createMongoTemplateProxy() {
-    return  new MongoTemplateDecoratorImpl(mongoClient, databaseName, methodInvoker);
+    return  new MongoTemplateDecoratorImpl(legacyMongoClient, databaseName, methodInvoker);
   }
 
 

@@ -7,6 +7,7 @@ import org.springframework.beans.factory.InitializingBean;
 import org.springframework.core.env.Environment;
 import org.springframework.data.mongodb.core.MongoTemplate;
 
+import java.io.Closeable;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
@@ -16,8 +17,11 @@ public class SpringMongock extends Mongock implements InitializingBean {
   private Environment springEnvironment;
   private MongoTemplate mongoTemplate;
 
-  protected SpringMongock(ChangeEntryRepository changeEntryRepository, MongoClient mongoClient, ChangeService changeService, LockChecker lockChecker) {
-    super(changeEntryRepository, mongoClient, changeService, lockChecker);
+  protected SpringMongock(ChangeEntryRepository changeEntryRepository,
+                          Closeable mongoClientCloseable,
+                          ChangeService changeService,
+                          LockChecker lockChecker) {
+    super(changeEntryRepository, mongoClientCloseable, changeService, lockChecker);
   }
 
   /**
