@@ -38,19 +38,19 @@ public class SpringMongockProfileTest extends SpringMongockTestBase {
     // then
     long change1 = fakeMongoDatabase.getCollection(CHANGELOG_COLLECTION_NAME)
         .count(new Document()
-            .append(ChangeEntry.KEY_CHANGEID, "Pdev1")
+            .append(ChangeEntry.KEY_CHANGE_ID, "Pdev1")
             .append(ChangeEntry.KEY_AUTHOR, "testuser"));
     assertEquals(1, change1);  //  no-@Profile  should not match
 
     long change2 = fakeMongoDatabase.getCollection(CHANGELOG_COLLECTION_NAME)
         .count(new Document()
-            .append(ChangeEntry.KEY_CHANGEID, "Pdev4")
+            .append(ChangeEntry.KEY_CHANGE_ID, "Pdev4")
             .append(ChangeEntry.KEY_AUTHOR, "testuser"));
     assertEquals(1, change2);  //  @Profile("dev")  should not match
 
     long change3 = fakeMongoDatabase.getCollection(CHANGELOG_COLLECTION_NAME)
         .count(new Document()
-            .append(ChangeEntry.KEY_CHANGEID, "Pdev3")
+            .append(ChangeEntry.KEY_CHANGE_ID, "Pdev3")
             .append(ChangeEntry.KEY_AUTHOR, "testuser"));
     assertEquals(0, change3);  //  @Profile("default")  should not match
   }
@@ -68,31 +68,31 @@ public class SpringMongockProfileTest extends SpringMongockTestBase {
     // then
     long change1 = fakeMongoDatabase.getCollection(CHANGELOG_COLLECTION_NAME)
         .count(new Document()
-            .append(ChangeEntry.KEY_CHANGEID, "Pdev1")
+            .append(ChangeEntry.KEY_CHANGE_ID, "Pdev1")
             .append(ChangeEntry.KEY_AUTHOR, "testuser"));
     assertEquals(1, change1);
 
     long change2 = fakeMongoDatabase.getCollection(CHANGELOG_COLLECTION_NAME)
         .count(new Document()
-            .append(ChangeEntry.KEY_CHANGEID, "Pdev2")
+            .append(ChangeEntry.KEY_CHANGE_ID, "Pdev2")
             .append(ChangeEntry.KEY_AUTHOR, "testuser"));
     assertEquals(1, change2);
 
     long change3 = fakeMongoDatabase.getCollection(CHANGELOG_COLLECTION_NAME)
         .count(new Document()
-            .append(ChangeEntry.KEY_CHANGEID, "Pdev3")
+            .append(ChangeEntry.KEY_CHANGE_ID, "Pdev3")
             .append(ChangeEntry.KEY_AUTHOR, "testuser"));
     assertEquals(1, change3);  //  @Profile("dev")  should not match
 
     long change4 = fakeMongoDatabase.getCollection(CHANGELOG_COLLECTION_NAME)
         .count(new Document()
-            .append(ChangeEntry.KEY_CHANGEID, "Pdev4")
+            .append(ChangeEntry.KEY_CHANGE_ID, "Pdev4")
             .append(ChangeEntry.KEY_AUTHOR, "testuser"));
     assertEquals(0, change4);  //  @Profile("pro")  should not match
 
     long change5 = fakeMongoDatabase.getCollection(CHANGELOG_COLLECTION_NAME)
         .count(new Document()
-            .append(ChangeEntry.KEY_CHANGEID, "Pdev5")
+            .append(ChangeEntry.KEY_CHANGE_ID, "Pdev5")
             .append(ChangeEntry.KEY_AUTHOR, "testuser"));
     assertEquals(1, change5);  //  @Profile("!pro")  should match
   }

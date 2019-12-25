@@ -39,21 +39,21 @@ public class MongockTest extends MongockTestBase {
 
     // dbchangelog collection checking
     long change1 = fakeMongoDatabase.getCollection(CHANGELOG_COLLECTION_NAME).count(new Document()
-        .append(ChangeEntry.KEY_CHANGEID, "test1")
+        .append(ChangeEntry.KEY_CHANGE_ID, "test1")
         .append(ChangeEntry.KEY_AUTHOR, "testuser"));
     assertEquals(1, change1);
     long change2 = fakeMongoDatabase.getCollection(CHANGELOG_COLLECTION_NAME).count(new Document()
-        .append(ChangeEntry.KEY_CHANGEID, "test2")
+        .append(ChangeEntry.KEY_CHANGE_ID, "test2")
         .append(ChangeEntry.KEY_AUTHOR, "testuser"));
     assertEquals(1, change2);
 
 
     long change4 = fakeMongoDatabase.getCollection(CHANGELOG_COLLECTION_NAME).count(new Document()
-        .append(ChangeEntry.KEY_CHANGEID, "test4")
+        .append(ChangeEntry.KEY_CHANGE_ID, "test4")
         .append(ChangeEntry.KEY_AUTHOR, "testuser"));
     assertEquals(1, change4);
     long change5 = fakeMongoDatabase.getCollection(CHANGELOG_COLLECTION_NAME).count(new Document()
-        .append(ChangeEntry.KEY_CHANGEID, "test5")
+        .append(ChangeEntry.KEY_CHANGE_ID, "test5")
         .append(ChangeEntry.KEY_AUTHOR, "testuser"));
     assertEquals(1, change5);
 
