@@ -2,14 +2,15 @@ package com.github.cloudyrock.mongock;
 
 import com.github.cloudyrock.mongock.test.changelogs.MongockTestResource;
 import com.github.fakemongo.Fongo;
-import com.mongodb.DB;
 import com.mongodb.MongoClient;
 import com.mongodb.client.MongoDatabase;
 import org.junit.After;
 import org.junit.Before;
+import org.junit.Rule;
 import org.mockito.Mock;
 import org.mockito.Spy;
 import org.springframework.data.mongodb.core.MongoTemplate;
+import org.testcontainers.containers.GenericContainer;
 
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyString;
@@ -30,7 +31,7 @@ public class SpringMongockTestBase {
 
   protected SpringMongock runner;
 
-  protected MongoDatabase fakeMongoDatabase;
+  protected MongoDatabase mongoDatabase;
 
   @Mock
   protected ChangeEntryRepository changeEntryRepository;
@@ -49,24 +50,27 @@ public class SpringMongockTestBase {
   @Mock
   private MongoRepository indexDao;
 
-  public static MongoClient getFakeMongoClient(MongoDatabase fakeMongoDatabase) {
-    MongoClient mongoClient = mock(MongoClient.class);
-    when(mongoClient.getDatabase(anyString())).thenReturn(fakeMongoDatabase);
-    return mongoClient;
-  }
+
+  protected static final String MONGO_CONTAINER = "mongo:3.1.5";
+  protected static final Integer MONGO_PORT = 27017;
+  protected static final String DEFAULT_DATABASE_NAME = "mongocktest";
+
+  @Rule
+  public GenericContainer mongo = new GenericContainer(MONGO_CONTAINER).withExposedPorts(MONGO_PORT);
+
 
   @Before
-  public void init() throws Exception {
-    fakeMongoDatabase = new Fongo("testServer").getDatabase("mongocktest");
-    com.github.cloudyrock.mongock.TestUtils.setField(changeEntryRepository, "mongoDatabase", fakeMongoDatabase);
+  public final void setUpParent() {
+    mongoClient = new MongoClient(mongo.getContainerIpAddress(), mongo.getFirstMappedPort());
+    mongoDatabase = mongoClient.getDatabase(DEFAULT_DATABASE_NAME);
+    com.github.cloudyrock.mongock.TestUtils.setField(changeEntryRepository, "mongoDatabase", mongoDatabase);
 
     doCallRealMethod().when(changeEntryRepository).save(any(ChangeEntry.class));
     TestUtils.setField(changeEntryRepository, "indexDao", indexDao);
     TestUtils.setField(changeEntryRepository, "changelogCollectionName", CHANGELOG_COLLECTION_NAME);
-    TestUtils.setField(changeEntryRepository, "collection", fakeMongoDatabase.getCollection(CHANGELOG_COLLECTION_NAME));
+    TestUtils.setField(changeEntryRepository, "collection", mongoDatabase.getCollection(CHANGELOG_COLLECTION_NAME));
 
     changeService.setChangeLogsBasePackage(MongockTestResource.class.getPackage().getName());
-    mongoClient = getFakeMongoClient(fakeMongoDatabase);
 
     SpringMongock temp = new SpringMongock(
         changeEntryRepository,
@@ -74,7 +78,7 @@ public class SpringMongockTestBase {
         changeService,
         lockChecker);
 
-    temp.setChangelogMongoDatabase(fakeMongoDatabase);
+    temp.setChangelogMongoDatabase(mongoDatabase);
     temp.setMongoTemplate(new MongoTemplate(mongoClient, "mongocktest"));
     temp.setEnabled(true);
     temp.setThrowExceptionIfCannotObtainLock(true);

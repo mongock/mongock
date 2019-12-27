@@ -18,7 +18,7 @@ import static org.mockito.Mockito.when;
 public class SpringMongockEnvTest extends SpringMongockTestBase {
 
   @Test
-  public void shouldRunChangesetWithEnvironment() throws Exception {
+  public void shouldRunChangesetWithEnvironment() {
     // given
     changeService.setEnvironment(new EnvironmentMock());
     changeService.setChangeLogsBasePackage(EnvironmentDependentTestResource.class.getPackage().getName());
@@ -28,7 +28,7 @@ public class SpringMongockEnvTest extends SpringMongockTestBase {
     runner.execute();
 
     // then
-    long change1 = fakeMongoDatabase.getCollection(CHANGELOG_COLLECTION_NAME)
+    long change1 = mongoDatabase.getCollection(CHANGELOG_COLLECTION_NAME)
         .count(new Document()
             .append(ChangeEntry.KEY_CHANGE_ID, "Envtest1")
             .append(ChangeEntry.KEY_AUTHOR, "testuser"));
@@ -47,7 +47,7 @@ public class SpringMongockEnvTest extends SpringMongockTestBase {
     runner.execute();
 
     // then
-    long change1 = fakeMongoDatabase.getCollection(CHANGELOG_COLLECTION_NAME)
+    long change1 = mongoDatabase.getCollection(CHANGELOG_COLLECTION_NAME)
         .count(new Document()
             .append(ChangeEntry.KEY_CHANGE_ID, "Envtest1")
             .append(ChangeEntry.KEY_AUTHOR, "testuser"));

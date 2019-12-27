@@ -1,5 +1,6 @@
 package com.github.cloudyrock.mongock;
 
+import com.github.cloudyrock.mongock.utils.IndependentDbIntegrationTestBase;
 import com.github.fakemongo.Fongo;
 import com.mongodb.client.FindIterable;
 import com.mongodb.client.MongoDatabase;
@@ -17,7 +18,7 @@ import static org.junit.Assert.assertNull;
  *
  * @since 04/04/2018
  */
-public class LockCheckerITest {
+public class LockCheckerITest extends IndependentDbIntegrationTestBase {
   private static final String TEST_SERVER = "testServer";
   private static final String DB_NAME = "mongocktest";
   private static final String LOCK_COLLECTION_NAME = "mongocklock";
@@ -25,12 +26,10 @@ public class LockCheckerITest {
   private static final long maxWaitMillis = 5 * 60 * 1000;
   private static final int lockMaxTries = 3;
 
-  private MongoDatabase db;
   private LockChecker checker;
 
   @Before
   public void setUp() {
-    db = new Fongo(TEST_SERVER).getDatabase(DB_NAME);
     LockRepository repository = new LockRepository(LOCK_COLLECTION_NAME, db);
     repository.ensureIndex();
     TimeUtils timeUtils = new TimeUtils();

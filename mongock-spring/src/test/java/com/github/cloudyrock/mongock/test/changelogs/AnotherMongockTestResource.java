@@ -23,8 +23,8 @@ public class AnotherMongockTestResource {
   }
 
 //  @ChangeSet(author = "testuser", id = "Btest3", order = "03")
-//  public void testChangeSet3(DB db) {
-//    System.out.println("invoked B3 with db=" + db.toString());
+//  public void testChangeSet3(DB mongoDatabase) {
+//    System.out.println("invoked B3 with mongoDatabase=" + mongoDatabase.toString());
 //  }
 
   @ChangeSet(author = "testuser", id = "Btest4", order = "04")
@@ -39,7 +39,7 @@ public class AnotherMongockTestResource {
 
   @ChangeSet(author = "testuser", id = "Btest6", order = "06")
   public void testChangeSet6(MongoDatabase mongoDatabase) {
-    System.out.println("invoked B6 with db=" + mongoDatabase.toString());
+    System.out.println("invoked B6 with mongoDatabase=" + mongoDatabase.toString());
   }
 
 }

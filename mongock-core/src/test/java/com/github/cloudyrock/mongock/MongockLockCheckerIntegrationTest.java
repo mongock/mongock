@@ -4,6 +4,7 @@ import com.github.cloudyrock.mongock.decorator.impl.MongoDataBaseDecoratorImpl;
 import com.github.cloudyrock.mongock.decorator.util.MethodInvoker;
 import com.github.cloudyrock.mongock.decorator.util.VoidSupplier;
 import com.github.cloudyrock.mongock.test.proxy.ProxiesMongockTestResource;
+import com.github.cloudyrock.mongock.utils.IndependentDbIntegrationTestBase;
 import com.github.fakemongo.Fongo;
 import com.mongodb.MongoClient;
 import com.mongodb.client.MongoDatabase;
@@ -32,15 +33,10 @@ import static org.mockito.Mockito.when;
 /**
  * @since 04/04/2018
  */
-public class MongockLockCheckerIntegrationTest {
+public class MongockLockCheckerIntegrationTest extends IndependentDbIntegrationTestBase {
 
   private static final String LOCK_COLLECTION_NAME = "mongocklock";
-  private static final Set<String> unInterceptedMethods =
-      new HashSet<>(Arrays.asList("getCollection", "getCollectionFromString", "getDatabase", "toString"));
-  private static final Set<String> proxyCreatordMethods =
-      new HashSet<>(Arrays.asList("getCollection", "getCollectionFromString", "getDatabase"));
   private Mongock runner;
-  private MongoDatabase mongoDatabase;
   private ChangeService changeService;
   private LockRepository lockRepository;
   private TimeUtils timeUtils;
@@ -52,19 +48,14 @@ public class MongockLockCheckerIntegrationTest {
 
   @Before
   public void setUp() throws NoSuchMethodException, MongockException {
-//    mongoDatabase = spy(new Fongo("testServer").getDatabase("mongocktest"));
-    mongoDatabase = new Fongo("testServer").getDatabase("mongocktest");
-    String name = mongoDatabase.getName();
-    MongoClient mongoClient = mock(MongoClient.class);
-    when(mongoClient.getDatabase(anyString())).thenReturn(mongoDatabase);
 
-    builder = new TestMongockBuilder(mongoClient, "mongocktest", ProxiesMongockTestResource.class.getPackage().getName())
+    builder = new TestMongockBuilder(mongoClient, DEFAULT_DATABASE_NAME, ProxiesMongockTestResource.class.getPackage().getName())
         .setEnabled(true)
         .setThrowExceptionIfCannotObtainLock(true);
 
     timeUtils = spy(new TimeUtils());
     changeService = spy(new ChangeService());
-    lockRepository = spy(new LockRepository(LOCK_COLLECTION_NAME, mongoDatabase));
+    lockRepository = spy(new LockRepository(LOCK_COLLECTION_NAME, db));
 
     lockChecker = spy(new LockChecker(lockRepository, timeUtils));
     methodInvoker = new MethodInvoker() {
@@ -99,7 +90,7 @@ public class MongockLockCheckerIntegrationTest {
   @Test
   public void shouldCallEnsureLock() throws Exception {
     when(changeEntryRepository.isNewChange(any(ChangeEntry.class))).thenReturn(true);
-    MongoDatabase mongoDatabaseProxy = new MongoDataBaseDecoratorImpl(mongoDatabase, methodInvoker);
+    MongoDatabase mongoDatabaseProxy = new MongoDataBaseDecoratorImpl(db, methodInvoker);
 
     runner = builder.build(changeEntryRepository, changeService, lockChecker, mongoDatabaseProxy);
     // when
@@ -118,7 +109,7 @@ public class MongockLockCheckerIntegrationTest {
         .doReturn(new Date(System.currentTimeMillis() + tenMinutes))
         .when(timeUtils).currentTime();
     when(changeEntryRepository.isNewChange(any(ChangeEntry.class))).thenReturn(true);
-    MongoDatabase mongoDatabaseProxy = new MongoDataBaseDecoratorImpl(mongoDatabase, methodInvoker);//proxyFactory.createProxyFromOriginal(mongoDatabase);
+    MongoDatabase mongoDatabaseProxy = new MongoDataBaseDecoratorImpl(db, methodInvoker);//proxyFactory.createProxyFromOriginal(db);
     runner = builder.build(changeEntryRepository, changeService, lockChecker, mongoDatabaseProxy);
 
     // when
@@ -161,7 +152,7 @@ public class MongockLockCheckerIntegrationTest {
       }
     };
     when(changeEntryRepository.isNewChange(any(ChangeEntry.class))).thenReturn(true);
-    MongoDatabase mongoDatabaseProxy = new MongoDataBaseDecoratorImpl(mongoDatabase, methodInvoker);//proxyFactory.createProxyFromOriginal(mongoDatabase);
+    MongoDatabase mongoDatabaseProxy = new MongoDataBaseDecoratorImpl(db, methodInvoker);//proxyFactory.createProxyFromOriginal(db);
     runner = builder.build(changeEntryRepository, changeService, lockChecker, mongoDatabaseProxy);
 
     // when
@@ -177,7 +168,7 @@ public class MongockLockCheckerIntegrationTest {
         .append("status", "LOCK_HELD")
         .append("owner", owner)
         .append("expiresAt", System.currentTimeMillis() + 10000);
-    mongoDatabase.getCollection(LOCK_COLLECTION_NAME).updateMany(
+    db.getCollection(LOCK_COLLECTION_NAME).updateMany(
         new Document("key", "DEFAULT_LOCK"),
         new Document().append("$set", document),
         new UpdateOptions().upsert(false));

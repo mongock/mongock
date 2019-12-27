@@ -1,10 +1,10 @@
 package com.github.cloudyrock.mongock;
 
-import com.github.fakemongo.Fongo;
+import com.github.cloudyrock.mongock.utils.IndependentDbIntegrationTestBase;
+import com.github.cloudyrock.mongock.utils.SharedDbIntegrationTestBase;
 import com.mongodb.ErrorCategory;
 import com.mongodb.MongoWriteException;
 import com.mongodb.client.FindIterable;
-import com.mongodb.client.MongoDatabase;
 import com.mongodb.client.model.UpdateOptions;
 import org.bson.Document;
 import org.junit.Before;
@@ -16,23 +16,17 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 
-/**
- *
- * @since 04/04/2018
- */
-public class LockRepositoryITest {
 
-  private static final String TEST_SERVER = "testServer";
-  private static final String DB_NAME = "mongocktest";
+public class LockRepositoryITest extends IndependentDbIntegrationTestBase {
+
   private static final String LOCK_COLLECTION_NAME = "mongocklock";
   private static final String LOCK_KEY = "LOCK_KEY";
 
-  private MongoDatabase db;
   private LockRepository repository;
+
 
   @Before
   public void setUp() {
-    db = new Fongo(TEST_SERVER).getDatabase(DB_NAME);
     repository = new LockRepository(LOCK_COLLECTION_NAME, db);
     repository.ensureIndex();
   }
