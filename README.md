@@ -11,7 +11,7 @@
 ## LAST NEWS :bangbang::bangbang::collision::collision:
 > **We are looking contributors!!** Want to be part of a open source project? Send me an email to antonio@cloudyrock.com.
 
-> **3.0.6.BETA is released**. Take a look to our [changelog](./CHANGELOG.md) to find out what is new.
+> **3.0.8.BETA is released**. Take a look to our [changelog](./CHANGELOG.md) to find out what is new.
 
 # Mongock: MongoDB version control tool for Java
 
@@ -83,14 +83,14 @@ as it's already imported out of the box.
 <dependency>
   <groupId>com.github.cloudyrock.mongock</groupId>
   <artifactId>mongock-core</artifactId>
-  <version>3.0.5.BETA</version>
+  <version>3.0.8.BETA</version>
 </dependency>
 
 <!-- To use with Spring-->
 <dependency>
   <groupId>com.github.cloudyrock.mongock</groupId>
   <artifactId>mongock-spring</artifactId>
-  <version>3.0.5.BETA</version>
+  <version>3.0.8.BETA</version>
 </dependency>
 
 
@@ -98,8 +98,8 @@ as it's already imported out of the box.
 #### With Gradle
 ```groovy
 compile 'org.javassist:javassist:3.18.2-GA'          // workround for ${javassist.version} placeholder issue*
-compile 'com.github.cloudyrock.mongock:mongock-core:3.0.5.BETA'    // standalone
-compile 'com.github.cloudyrock.mongock:mongock-spring:3.0.5.BETA'  // with Spring (in addition to mongock-core)
+compile 'com.github.cloudyrock.mongock:mongock-core:3.0.8.BETA'    // standalone
+compile 'com.github.cloudyrock.mongock:mongock-spring:3.0.8.BETA'  // with Spring (in addition to mongock-core)
 ```
 
 ## Usage with Spring...Mongock as a Bean
