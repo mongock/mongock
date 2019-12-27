@@ -1,8 +1,8 @@
 package com.github.cloudyrock.mongock;
 
+import com.github.cloudyrock.mongock.utils.IndependentDbIntegrationTestBase;
 import com.github.fakemongo.Fongo;
 import com.mongodb.MongoClient;
-import com.mongodb.client.MongoDatabase;
 import org.bson.Document;
 import org.junit.Test;
 
@@ -21,17 +21,13 @@ import static org.mockito.Mockito.when;
  *
  * @since 10.12.14
  */
-public class ChangeEntryRepositoryTest {
+public class ChangeEntryRepositoryTest extends IndependentDbIntegrationTestBase {
   private static final String TEST_SERVER = "testServer";
   private static final String DB_NAME = "mongocktest";
   private static final String CHANGELOG_COLLECTION_NAME = "dbchangelog";
 
   @Test
   public void shouldCreateChangeIdAuthorIndexIfNotFound() throws MongockException {
-
-    // given
-
-    MongoDatabase db = new Fongo(TEST_SERVER).getDatabase(DB_NAME);
 
     // when
     ChangeEntryRepository dao = spy(new ChangeEntryRepository(CHANGELOG_COLLECTION_NAME, db));
@@ -51,7 +47,6 @@ public class ChangeEntryRepositoryTest {
 
     // given
     MongoClient mongoClient = mock(MongoClient.class);
-    MongoDatabase db = new Fongo(TEST_SERVER).getDatabase(DB_NAME);
     when(mongoClient.getDatabase(anyString())).thenReturn(db);
 
     MongoRepository mongoRepositoryMock = mock(MongoRepository.class);
