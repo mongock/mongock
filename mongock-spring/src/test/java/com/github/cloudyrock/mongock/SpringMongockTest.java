@@ -30,25 +30,25 @@ public class SpringMongockTest extends SpringMongockTestBase {
     verify(changeEntryRepository, times(11)).save(any(ChangeEntry.class)); // 13 changesets saved to dbchangelog
 
     // dbchangelog collection checking
-    long change1 = fakeMongoDatabase.getCollection(CHANGELOG_COLLECTION_NAME).count(new Document()
+    long change1 = mongoDatabase.getCollection(CHANGELOG_COLLECTION_NAME).count(new Document()
         .append(ChangeEntry.KEY_CHANGE_ID, "test1")
         .append(ChangeEntry.KEY_AUTHOR, "testuser"));
     assertEquals(1, change1);
-    long change2 = fakeMongoDatabase.getCollection(CHANGELOG_COLLECTION_NAME).count(new Document()
+    long change2 = mongoDatabase.getCollection(CHANGELOG_COLLECTION_NAME).count(new Document()
         .append(ChangeEntry.KEY_CHANGE_ID, "test2")
         .append(ChangeEntry.KEY_AUTHOR, "testuser"));
     assertEquals(1, change2);
 
-    long change4 = fakeMongoDatabase.getCollection(CHANGELOG_COLLECTION_NAME).count(new Document()
+    long change4 = mongoDatabase.getCollection(CHANGELOG_COLLECTION_NAME).count(new Document()
         .append(ChangeEntry.KEY_CHANGE_ID, "test4")
         .append(ChangeEntry.KEY_AUTHOR, "testuser"));
     assertEquals(1, change4);
-    long change5 = fakeMongoDatabase.getCollection(CHANGELOG_COLLECTION_NAME).count(new Document()
+    long change5 = mongoDatabase.getCollection(CHANGELOG_COLLECTION_NAME).count(new Document()
         .append(ChangeEntry.KEY_CHANGE_ID, "test5")
         .append(ChangeEntry.KEY_AUTHOR, "testuser"));
     assertEquals(1, change5);
 
-    long changeAll = fakeMongoDatabase.getCollection(CHANGELOG_COLLECTION_NAME).count(new Document()
+    long changeAll = mongoDatabase.getCollection(CHANGELOG_COLLECTION_NAME).count(new Document()
         .append(ChangeEntry.KEY_AUTHOR, "testuser"));
     assertEquals(10, changeAll);
   }
@@ -62,7 +62,7 @@ public class SpringMongockTest extends SpringMongockTestBase {
     runner.execute();
 
     // then
-    verify(changeEntryRepository, times(0)).save(any(ChangeEntry.class)); // no changesets saved to dbchangelog
+    verify(changeEntryRepository, times(1)).save(any(ChangeEntry.class)); // no changesets saved to dbchangelog
   }
 
   @Test
