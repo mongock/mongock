@@ -1,16 +1,11 @@
 package com.github.cloudyrock.mongock;
 
 import com.github.cloudyrock.mongock.utils.IndependentDbIntegrationTestBase;
-import com.github.fakemongo.Fongo;
-import com.mongodb.MongoClient;
 import org.bson.Document;
 import org.junit.Test;
 
-import java.util.Date;
-
 import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.anyString;
-import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.doCallRealMethod;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.times;
@@ -27,14 +22,11 @@ public class ChangeEntryRepositoryTest extends IndependentDbIntegrationTestBase 
   private static final String CHANGELOG_COLLECTION_NAME = "dbchangelog";
 
   @Test
-  public void shouldCreateChangeIdAuthorIndexIfNotFound() throws MongockException {
+  public void shouldCreateUniqueIndex_whenEnsureIndex_IfNotCreatedYet() throws MongockException {
 
     // when
     ChangeEntryRepository dao = spy(new ChangeEntryRepository(CHANGELOG_COLLECTION_NAME, db));
     dao.ensureIndex();
-    doReturn(null).when(dao).findRequiredUniqueIndex();
-
-    dao.isNewChange(new ChangeEntry("executionId1", "changeId", "author", new Date(), "class", "method"));
 
     //then
     verify(dao, times(1)).createRequiredUniqueIndex();
@@ -43,23 +35,21 @@ public class ChangeEntryRepositoryTest extends IndependentDbIntegrationTestBase 
   }
 
   @Test
-  public void shouldNotCreateChangeIdAuthorIndexIfFound() throws MongockException {
-
-    // given
-    MongoClient mongoClient = mock(MongoClient.class);
-    when(mongoClient.getDatabase(anyString())).thenReturn(db);
-
-    MongoRepository mongoRepositoryMock = mock(MongoRepository.class);
-    when(mongoRepositoryMock.findRequiredUniqueIndex()).thenReturn(new Document());
-    when(mongoRepositoryMock.isUniqueIndex(any(Document.class))).thenReturn(true);
+  public void shouldNoCreateUniqueIndex_whenEnsureIndex_IfAlreadyCreated() throws MongockException {
 
     // when
-    new ChangeEntryRepository(CHANGELOG_COLLECTION_NAME, mongoClient.getDatabase(DB_NAME));
+    ChangeEntryRepository dao = mock(ChangeEntryRepository.class);
+    when(dao.findRequiredUniqueIndex()).thenReturn(new Document());
+    when(dao.isUniqueIndex(any(Document.class))).thenReturn(true);
+    doCallRealMethod().when(dao).ensureIndex();
+
+    // when
+    dao.ensureIndex();
 
     //then
-    verify(mongoRepositoryMock, times(0)).createRequiredUniqueIndex();
+    verify(dao, times(0)).createRequiredUniqueIndex();
     // and not
-    verify(mongoRepositoryMock, times(0)).dropIndex(new Document());
+    verify(dao, times(0)).dropIndex(new Document());
   }
 
 }

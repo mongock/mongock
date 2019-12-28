@@ -40,12 +40,12 @@ public class LockCheckerITest extends IndependentDbIntegrationTestBase {
   }
 
   @Test
-  public void shouldAcquireLockWhenFirstTime() throws LockCheckException {
+  public void shouldAcquireLock_WhenFirstTime() throws LockCheckException {
     checker.acquireLockDefault();
   }
 
   @Test
-  public void shouldAcquireLockWhenLockHeldBySameOwner() throws LockCheckException {
+  public void shouldAcquireLock_WhenHeld_IfSameOwner() throws LockCheckException {
     //given
     db.getCollection(LOCK_COLLECTION_NAME).updateMany(
         new Document(),
@@ -60,7 +60,7 @@ public class LockCheckerITest extends IndependentDbIntegrationTestBase {
   }
 
   @Test
-  public void shouldAcquireLockWhenLockHeldByOtherAndExpired() throws LockCheckException {
+  public void shouldAcquireLock_WhenHeldByOtherOwner_IfExpired() throws LockCheckException {
     //given
     db.getCollection(LOCK_COLLECTION_NAME).updateMany(
         new Document(),
@@ -75,12 +75,11 @@ public class LockCheckerITest extends IndependentDbIntegrationTestBase {
   }
 
   @Test
-  public void shouldAcquireLockWhenLockHeldByOtherAndExpiresAtLtMaxWaitTime() throws LockCheckException {
+  public void shouldAcquireLock_WhenHeldByOtherOwner_IfExpiresAtIsLessThanMaxWaitTime() throws LockCheckException {
     //given
     db.getCollection(LOCK_COLLECTION_NAME).updateMany(
         new Document(),
-        new Document()
-            .append("$set", getLockDbBody("otherOwner", System.currentTimeMillis() + 100)),
+        new Document().append("$set", getLockDbBody("otherOwner", System.currentTimeMillis() + 100)),
         new UpdateOptions().upsert(true));
     FindIterable<Document> resultBefore = db.getCollection(LOCK_COLLECTION_NAME)
         .find(new Document().append("key", LockChecker.getDefaultKey()));
@@ -91,7 +90,7 @@ public class LockCheckerITest extends IndependentDbIntegrationTestBase {
   }
 
   @Test(expected = LockCheckException.class)
-  public void shouldNotAcquireLockWhenLockHeldByOtherAndExpiresAtGtMaxWaitTime() throws LockCheckException {
+  public void shouldNotAcquireLock_WhenHeldByOtherOwner_IfExpiresAtIsGreaterThanMaxWaitTime() throws LockCheckException {
     //given
     db.getCollection(LOCK_COLLECTION_NAME).updateMany(
         new Document(),
@@ -107,13 +106,16 @@ public class LockCheckerITest extends IndependentDbIntegrationTestBase {
   }
 
   @Test(expected = LockCheckException.class)
-  public void shouldNotEnsureWhenFirstTime() throws LockCheckException {
+  public void shouldNotEnsure_WhenFirstTime() throws LockCheckException {
     //when
     checker.ensureLockDefault();
   }
 
+  /**
+   * If it's not expired, the lock is ensured because still belongs to the owner
+   */
   @Test
-  public void shouldEnsureWhenHeldBySameOwnerAndNotExpiredInDB() throws LockCheckException {
+  public void shouldEnsureLock_WhenHeldBySameOwner_IfNotExpiredInDB() throws LockCheckException {
     //given
     db.getCollection(LOCK_COLLECTION_NAME).updateMany(
         new Document(),
@@ -127,8 +129,12 @@ public class LockCheckerITest extends IndependentDbIntegrationTestBase {
     checker.ensureLockDefault();
   }
 
+  /**
+   * If it's  expired, the lock should be ensured because no one has requested, so it should be extended for the same
+   * owner
+   */
   @Test
-  public void shouldEnsureWhenHeldBySameOwnerAndExpiredInDB() throws LockCheckException {
+  public void shouldEnsureLock_WhenHeldBySameOwner_IfExpiredInDB() throws LockCheckException {
     //given
     db.getCollection(LOCK_COLLECTION_NAME).updateMany(
         new Document(),
@@ -143,7 +149,7 @@ public class LockCheckerITest extends IndependentDbIntegrationTestBase {
   }
 
   @Test
-  public void shouldEnsureWhenAcquiredPreviouslyBySameOwner() throws LockCheckException {
+  public void shouldEnsureLock_WhenAcquiredPreviously_IfSameOwner() throws LockCheckException {
     //given
     checker.acquireLockDefault();
 
@@ -151,8 +157,9 @@ public class LockCheckerITest extends IndependentDbIntegrationTestBase {
     checker.ensureLockDefault();
   }
 
+
   @Test(expected = LockCheckException.class)
-  public void shouldNotEnsureWhenHeldByOtherOwnerAndExpiredInDB() throws LockCheckException {
+  public void shouldNotEnsureLock_WhenHeldByOtherOwnerAndExpiredInDB_ifHasNotBeenRequestedPreviously() throws LockCheckException {
     //given
     db.getCollection(LOCK_COLLECTION_NAME).updateMany(
         new Document(),
@@ -167,7 +174,7 @@ public class LockCheckerITest extends IndependentDbIntegrationTestBase {
   }
 
   @Test(expected = LockCheckException.class)
-  public void shouldNotEnsureWhenHeldByOtherOwnerAndNotExpiredInDB() throws LockCheckException {
+  public void shouldNotEnsureLock_WhenHeldByOtherOwner_IfNotExpiredInDB() throws LockCheckException {
     //given
     db.getCollection(LOCK_COLLECTION_NAME).updateMany(
         new Document(),
@@ -182,7 +189,7 @@ public class LockCheckerITest extends IndependentDbIntegrationTestBase {
   }
 
   @Test
-  public void shouldReleaseLockWhenHeldBySameOwner() {
+  public void shouldReleaseLock_WhenHeldBySameOwner() {
     //given
     db.getCollection(LOCK_COLLECTION_NAME).updateMany(
         new Document(),
@@ -202,7 +209,7 @@ public class LockCheckerITest extends IndependentDbIntegrationTestBase {
   }
 
   @Test
-  public void shouldNotReleaseLockWhenHeldByOtherOwner() {
+  public void shouldNotReleaseLock_IfHeldByOtherOwner() {
     //given
     db.getCollection(LOCK_COLLECTION_NAME).updateMany(
         new Document(),
@@ -222,7 +229,7 @@ public class LockCheckerITest extends IndependentDbIntegrationTestBase {
   }
 
   @Test
-  public void releaseLockShouldBeIdempotentWhenHeldBySameOwner() {
+  public void releaseLockShouldBeIdempotent_WhenHeldBySameOwner() {
     //given
     db.getCollection(LOCK_COLLECTION_NAME).updateMany(
         new Document(),
@@ -243,7 +250,7 @@ public class LockCheckerITest extends IndependentDbIntegrationTestBase {
   }
 
   @Test
-  public void releaseLockShouldBeIdempotentWhenHeldByOtherOwner() {
+  public void releaseLockShouldBeIdempotent_WhenHeldByOtherOwner() {
     //given
     db.getCollection(LOCK_COLLECTION_NAME).updateMany(
         new Document(),
@@ -264,7 +271,7 @@ public class LockCheckerITest extends IndependentDbIntegrationTestBase {
   }
 
   @Test
-  public void releaseLockShouldNotThrowAnyExceptionWhenNoLockPresent() {
+  public void releaseLockShouldNotThrowAnyException_WhenNoLockPresent() {
     //given
     FindIterable<Document> resultBefore = db.getCollection(LOCK_COLLECTION_NAME).find();
     assertNull("Precondition: Lock should not be in database", resultBefore.first());
