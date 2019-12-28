@@ -1,4 +1,8 @@
-
+# 3.1.0.BETA
+### Breaking changes
+* Renamed version to systemVersion, so startVersion and endVersion in the builder become startSystemVersion and endSystemVersion and version in
+changeSet annotation becomes systemVersion
+__________________________________________________
 # 3.0.8.BETA
 ### Feature
 * [Support for new com.mongodb.client.MongoClient ](https://github.com/cloudyrock/mongock/issues/98) in [PR](https://github.com/cloudyrock/mongock/pull/99)

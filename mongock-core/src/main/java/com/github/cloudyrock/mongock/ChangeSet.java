@@ -49,11 +49,11 @@ public @interface ChangeSet {
   boolean runAlways() default false;
 
   /**
-   * Specifies the software version on which the ChangeSet is to be applied.
+   * Specifies the software systemVersion on which the ChangeSet is to be applied.
    * Optional (default is 0 and means all)
    *
-   * @return version
+   * @return systemVersion
    */
-  String version() default "0";
+  String systemVersion() default "0";
 
 }
