@@ -19,8 +19,6 @@ import static org.junit.Assert.assertNull;
  * @since 04/04/2018
  */
 public class LockCheckerITest extends IndependentDbIntegrationTestBase {
-  private static final String TEST_SERVER = "testServer";
-  private static final String DB_NAME = "mongocktest";
   private static final String LOCK_COLLECTION_NAME = "mongocklock";
   private static final long lockActiveMillis = 5 * 60 * 1000;
   private static final long maxWaitMillis = 5 * 60 * 1000;
