@@ -107,9 +107,9 @@ public class Mongock implements Closeable {
       Object changelogInstance;
       try {
         changelogInstance = changeService.createInstance(changelogClass);
-        List<Method> changesetMethods = changeService.fetchChangeSets(changelogInstance.getClass());
-        for (Method changesetMethod : changesetMethods) {
-          executeIfNewOrRunAlways(changelogInstance, changesetMethod, changeService.createChangeEntry(executionId, changesetMethod));
+        List<Method> changeSetMethods = changeService.fetchChangeSets(changelogInstance.getClass());
+        for (Method changeSetMethod : changeSetMethods) {
+          executeIfNewOrRunAlways(changelogInstance, changeSetMethod, changeService.createChangeEntry(executionId, changeSetMethod));
         }
 
       } catch (NoSuchMethodException | IllegalAccessException | InstantiationException e) {
