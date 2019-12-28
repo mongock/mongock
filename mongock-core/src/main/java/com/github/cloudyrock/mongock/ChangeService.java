@@ -1,14 +1,10 @@
 package com.github.cloudyrock.mongock;
 
-import com.google.common.reflect.ClassPath;
-
-import java.io.IOException;
 import java.io.Serializable;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.time.LocalDateTime;
 import java.util.*;
-import java.util.stream.Collectors;
 
 import static com.github.cloudyrock.mongock.StringUtils.hasText;
 import static java.util.Arrays.asList;
@@ -54,11 +50,11 @@ class ChangeService {
 
   /**
    * <p>
-   * Indicates the changeLogs end version
+   * Indicates the changeLogs end systemVersion
    * </p>
    *
    * @param endVersion
-   *          version to upgrading upgrading with (lower than this version)
+   *          systemVersion to upgrading upgrading with (lower than this systemVersion)
    */
   // Implementation note: This has been added, replacing constructor, to be
   // able to inject this service as dependency
@@ -68,11 +64,11 @@ class ChangeService {
 
   /**
    * <p>
-   * Indicates the changeLogs start version
+   * Indicates the changeLogs start systemVersion
    * </p>
    *
    * @param startVersion
-   *          version to start upgrading from (greater equals this version)
+   *          systemVersion to start upgrading from (greater equals this systemVersion)
    */
   // Implementation note: This has been added, replacing constructor, to be
   // able to inject this service as dependency
@@ -159,7 +155,7 @@ class ChangeService {
         }
 
         changeSetIds.add(id);
-        String versionString = method.getAnnotation(ChangeSet.class).version();
+        String versionString = method.getAnnotation(ChangeSet.class).systemVersion();
         ArtifactVersion version = new DefaultArtifactVersion(versionString);
         if (version.compareTo(startVersion) >= 0 && version.compareTo(endVersion) < 0) {
           changesetMethods.add(method);

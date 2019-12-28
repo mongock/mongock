@@ -26,8 +26,8 @@ public abstract class MongockBuilderBase<BUILDER_TYPE extends MongockBuilderBase
   boolean enabled = true;
   String changeLogCollectionName = "mongockChangeLog";
   String lockCollectionName = "mongockLock";
-  String startVersion = "0";
-  String endVersion = String.valueOf(Integer.MAX_VALUE);
+  String startSystemVersion = "0";
+  String endSystemVersion = String.valueOf(Integer.MAX_VALUE);
 
   //for build
   ChangeEntryRepository changeEntryRepository;
@@ -152,22 +152,30 @@ public abstract class MongockBuilderBase<BUILDER_TYPE extends MongockBuilderBase
   }
 
   /**
-   * Set up the start Version for versioned schema changes
+   * Set up the start Version for versioned schema changes.
+   * This shouldn't be confused with the changeSet systemVersion. This is from a consultancy point of view.
+   * So the changeSet are tagged with a systemVersion and then when building Mongock, you specify
+   * the systemVersion range you want to apply, so all the changeSets tagget with systemVersion inside that
+   * range will be applied
    * 
-   * @param startVersion Version to start with
+   * @param startSystemVersion Version to start with
    */
-  public BUILDER_TYPE setStartVersion(String startVersion) {
-    this.startVersion = startVersion;
+  public BUILDER_TYPE setStartSystemVersion(String startSystemVersion) {
+    this.startSystemVersion = startSystemVersion;
     return returnInstance();
   }
 
   /**
-   * Set up the end Version for versioned schema changes
+   * Set up the end Version for versioned schema changes.
+   * This shouldn't be confused with the changeSet systemVersion. This is from a consultancy point of view.
+   * So the changeSet are tagged with a systemVersion and then when building Mongock, you specify
+   * the systemVersion range you want to apply, so all the changeSets tagget with systemVersion inside that
+   * range will be applied
    * 
-   * @param endVersion Version to end with
+   * @param endSystemVersion Version to end with
    */
-  public BUILDER_TYPE setEndVersion(String endVersion) {
-    this.endVersion = endVersion;
+  public BUILDER_TYPE setEndSystemVersion(String endSystemVersion) {
+    this.endSystemVersion = endSystemVersion;
     return returnInstance();
   }
 
@@ -223,8 +231,8 @@ public abstract class MongockBuilderBase<BUILDER_TYPE extends MongockBuilderBase
   ChangeService createChangeService() {
         ChangeService changeService = new ChangeService();
     changeService.setChangeLogsBasePackage(changeLogsScanPackage);
-        changeService.setStartVersion(startVersion);
-        changeService.setEndVersion(endVersion);
+        changeService.setStartVersion(startSystemVersion);
+        changeService.setEndVersion(endSystemVersion);
     return changeService;
   }
 
