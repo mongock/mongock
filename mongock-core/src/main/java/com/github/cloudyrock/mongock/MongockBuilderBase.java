@@ -82,6 +82,7 @@ public abstract class MongockBuilderBase<BUILDER_TYPE extends MongockBuilderBase
    * @param changeLogCollectionName name of the collection
    * @return Mongock builder
    */
+  @Deprecated
   public BUILDER_TYPE setChangeLogCollectionName(String changeLogCollectionName) {
     this.changeLogCollectionName = changeLogCollectionName;
     return returnInstance();
@@ -95,6 +96,7 @@ public abstract class MongockBuilderBase<BUILDER_TYPE extends MongockBuilderBase
    * @param lockCollectionName name of the collection
    * @return Mongock builder
    */
+  @Deprecated
   public BUILDER_TYPE setLockCollectionName(String lockCollectionName) {
     this.lockCollectionName = lockCollectionName;
     return returnInstance();
