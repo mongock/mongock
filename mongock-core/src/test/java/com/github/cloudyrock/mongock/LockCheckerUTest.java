@@ -36,10 +36,7 @@ public class LockCheckerUTest {
 
   @Before
   public void setUp() {
-    dao = Mockito.mock(LockRepository.class);
-    timeUtils = Mockito.mock(TimeUtils.class);
-
-    checker = new LockChecker(dao, timeUtils)
+    checker = new LockChecker(dao = Mockito.mock(LockRepository.class), timeUtils = Mockito.mock(TimeUtils.class))
         .setLockAcquiredForMillis(lockActiveMillis)
         .setLockMaxTries(lockMaxTries)
         .setLockMaxWaitMillis(maxWaitMillis);
