@@ -40,7 +40,7 @@ The concept is very similar to other db migration tools such as [Liquibase](http
      * [@ChangeSet](#changeset)
         * [Annotation parameters:](#annotation-parameters)
         * [Defining ChangeSet methods](#defining-changeset-methods)
-        * [Defining ChangeSet methods with versions(BETA)](#defining-changeset-methods-with-versions)
+        * [Defining ChangeSet methods with versions()](#defining-changeset-methods-with-versions)
   * [Injecting custom dependencies to change logs](#injecting-custom-dependencies-to-change-logs)
   * [Using Spring profiles](#using-spring-profiles)
      * [Enabling @Profile annotation (option)](#enabling-profile-annotation-option)
@@ -262,8 +262,12 @@ public void someChange6(MongoTemplate mongoTemplate, Environment environment) {
 }
 ```
 
-#### Defining ChangeSet methods with versions(BETA...we accept suggestions)
-Method annotated by `@ChangeSet` have also the possibility to contain a version. This is a useful feature from a consultancy point of view. The more descriptive scenario is where a software provider has several customers  who he provides his software to. The clients may be using different versions of the software at the same time. So when he install the product in a customer, the changesets need to be applied depending on the product version. With this solution, he can tag every changeset with his product version and will tell mongock which version range to apply.
+#### Defining ChangeSet methods with versions
+Method annotated by `@ChangeSet` have also the possibility to contain a version. 
+This is a useful feature from a consultancy point of view. The more descriptive scenario is where a software provider has 
+several customers  who he provides his software to. The clients may be using different versions of the software at the same time. 
+So when he install the product in a customer, the changeSets need to be applied depending on the product version. 
+With this solution, he can tag every changeSet with his product version and will tell mongock which version range to apply.
 
 ```java
 @ChangeSet(order = "001", id = "someChangeToVersionOne", author = "testAuthor", version = "1")
@@ -274,15 +278,15 @@ public void someChange1(MongoDatabase db) {
 public void someChange2(MongoDatabase db) {
 }
 
-@ChangeSet(order = "003", id = "someChangeToVersionTwoDotFiveDotOne", author = "testAuthor", version = "2.5.1")
+@ChangeSet(order = "003", id = "someChangeToVersionTwoDotFiveDotOne", author = "testAuthor", systemVersion = "2.5.1")
 public void someChange3(MongoDatabase db) {
 }
 
-@ChangeSet(order = "004", id = "someChangeToVersionTwoDotFiveDotFive", author = "testAuthor", version = "2.5.5")
+@ChangeSet(order = "004", id = "someChangeToVersionTwoDotFiveDotFive", author = "testAuthor", systemVersion = "2.5.5")
 public void someChange5(MongoDatabase db) {
 }
 
-@ChangeSet(order = "005", id = "someChangeToVersionTwoDotSix", author = "testAuthor", version = "2.6")
+@ChangeSet(order = "005", id = "someChangeToVersionTwoDotSix", author = "testAuthor", systemVersion = "2.6")
 public void someChange6(MongoDatabase db) {
 }
 ```
@@ -294,14 +298,14 @@ With specifying versions you are able to upgrade to specific versions:
   MongoClient mongoclient = new MongoClient(new MongoClientURI("yourDbName", yourMongoClientBuilder));
   Mongock runner=  new MongockBuilder(mongoclient, "yourDbName", "com.package.to.be.scanned.for.changesets")
       .setLockQuickConfig()
-      .setStartVersion("1")
-      .setEndVersion("2.5.5")
+      .setStartSystemVersion("1")
+      .setEndSystemVersion("2.5.5")
       .build();
-  runner.execute();         //  ------> starts migration changesets from version 1 to 2.5.5
+  runner.execute();         //  ------> starts migration changesets from systemVersion 1 to 2.5.5
 ```
 
 This example will execute `ChangeSet` 1, 2 and 3, 
-because the specified version in the changeset should be greater equals the `startVersion` and lower than `endVersion`.
+because the specified systemVersion in the changeset should be greater equals the `startSystemVersion` and lower than `endSystemVersion`.
 
 
 ## Injecting custom dependencies to change logs
