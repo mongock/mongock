@@ -2,6 +2,9 @@
 ### Breaking changes
 * Renamed version to systemVersion, so startVersion and endVersion in the builder become startSystemVersion and endSystemVersion and version in
 changeSet annotation becomes systemVersion
+
+### Bugs fixed
+* Fixed bug introduced in version 3.0.8.BETA[Mongock reexecutes ChangeSet on every run](https://github.com/cloudyrock/mongock/issues/107) in [PR](https://github.com/cloudyrock/mongock/pull/108)
 __________________________________________________
 # 3.0.8.BETA
 ### Feature
