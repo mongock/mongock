@@ -28,7 +28,6 @@ class ChangeEntryRepository extends MongoRepository {
 
   private Document buildSearchQueryDBObject(ChangeEntry entry) {
     return new Document()
-        .append(KEY_EXECUTION_ID, entry.getExecutionId())
         .append(KEY_CHANGE_ID, entry.getChangeId())
         .append(KEY_AUTHOR, entry.getAuthor());
   }
