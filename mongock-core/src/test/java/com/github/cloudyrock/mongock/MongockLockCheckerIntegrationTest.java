@@ -188,6 +188,10 @@ class TestMongockBuilder extends MongockBuilderBase<TestMongockBuilder, Mongock>
     super(mongoClient, databaseName, changeLogsScanPackage);
   }
 
+  public TestMongockBuilder(com.mongodb.client.MongoClient mongoClient, String databaseName, String changeLogsScanPackage) {
+    super(mongoClient, databaseName, changeLogsScanPackage);
+  }
+
   @Override
   protected TestMongockBuilder returnInstance() {
     return this;

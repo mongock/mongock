@@ -57,7 +57,7 @@ public class MongockTest extends IndependentDbIntegrationTestBase {
     TestUtils.setField(changeEntryRepository, "collection", db.getCollection(CHANGELOG_COLLECTION_NAME));
 
     changeService.setChangeLogsBasePackage(MongockTestResource.class.getPackage().getName());
-    mongoClient = MongockTestBase.getFakeMongoClient(db);
+    mongoClient = MongockTestBase.getFakeNewMongoClient(db);
 
     Mongock temp = new Mongock(
         changeEntryRepository,

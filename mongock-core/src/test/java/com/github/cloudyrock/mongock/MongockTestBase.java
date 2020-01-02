@@ -54,6 +54,12 @@ public class MongockTestBase {
     return mongoClient;
   }
 
+  public static com.mongodb.client.MongoClient getFakeNewMongoClient(MongoDatabase fakeMongoDatabase) {
+    com.mongodb.client.MongoClient mongoClient = mock(com.mongodb.client.MongoClient.class);
+    when(mongoClient.getDatabase(anyString())).thenReturn(fakeMongoDatabase);
+    return mongoClient;
+  }
+
   @Before
   public void init() throws Exception {
     fakeMongoDatabase = new Fongo("testServer").getDatabase("mongocktest");
