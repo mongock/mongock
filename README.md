@@ -9,7 +9,7 @@
 [![Hex.pm](https://img.shields.io/hexpm/l/plug.svg)](https://github.com/dieppa/mongock/blob/master/LICENSE)
 
 ## LAST NEWS :bangbang::bangbang::collision::collision:
-> **We are looking contributors!!** Want to be part of a open source project? Send me an email to antonio@cloudyrock.com.
+> **We are looking contributors!!** Want to be part of a open source project? Send me an email to antonio@cloudyrock.io
 
 > **3.2.0.BETA is released**. Take a look to our [changelog](./CHANGELOG.md) to find out what is new.
 
