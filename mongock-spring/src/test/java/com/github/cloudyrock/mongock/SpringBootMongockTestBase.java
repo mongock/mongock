@@ -30,6 +30,8 @@ public class SpringBootMongockTestBase extends IndependentDbIntegrationTestBase 
 
   protected SpringBootMongock runner;
 
+  protected MongoDatabase mongoDatabase;
+
   @Mock
   protected ChangeEntryRepository changeEntryRepository;
 
