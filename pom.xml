@@ -52,7 +52,8 @@
   <properties>
     <java.version>1.8</java.version>
     <spring.version>5.0.10.RELEASE</spring.version>
-    <spring.boot.version>2.0.6.RELEASE</spring.boot.version>
+    <springboot.version>2.0.6.RELEASE</springboot.version>
+    <springboot.data.mongodb.version>2.2.3.RELEASE</springboot.data.mongodb.version>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
     <maven.javadoc.failOnError>false</maven.javadoc.failOnError>

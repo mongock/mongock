@@ -36,6 +36,8 @@ import org.springframework.data.mongodb.core.query.NearQuery;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.data.mongodb.core.query.Update;
 import org.springframework.data.util.CloseableIterator;
+import org.springframework.util.Assert;
+import org.springframework.util.ClassUtils;
 
 import java.util.Collection;
 import java.util.List;
@@ -305,39 +307,39 @@ public class MongoTemplateDecoratorImpl extends MongoTemplate {
   }
 
   @Override
-  public void insert(Object objectToSave) {
-    getInvoker().invoke(() -> super.insert(objectToSave));
+  public <T> T insert(T objectToSave) {
+    return getInvoker().invoke(() -> super.insert(objectToSave));
   }
 
   @Override
-  public void insert(Object objectToSave, String collectionName) {
-    getInvoker().invoke(() -> super.insert(objectToSave, collectionName));
+  public <T> T  insert(T objectToSave, String collectionName) {
+    return getInvoker().invoke(() -> super.insert(objectToSave, collectionName));
   }
 
 
   @Override
-  public void insert(Collection<? extends Object> batchToSave, Class<?> entityClass) {
-    getInvoker().invoke(() -> super.insert(batchToSave, entityClass));
+  public <T> Collection<T>  insert(Collection<? extends T> batchToSave, Class<?> entityClass) {
+    return getInvoker().invoke(() -> super.insert(batchToSave, entityClass));
   }
 
   @Override
-  public void insert(Collection<? extends Object> batchToSave, String collectionName) {
-    getInvoker().invoke(() -> super.insert(batchToSave, collectionName));
+  public <T> Collection<T> insert(Collection<? extends T> batchToSave, String collectionName) {
+    return getInvoker().invoke(() -> super.insert(batchToSave, collectionName));
   }
 
   @Override
-  public void insertAll(Collection<? extends Object> objectsToSave) {
-    getInvoker().invoke(() -> super.insertAll(objectsToSave));
+  public <T> Collection<T> insertAll(Collection<? extends T> objectsToSave) {
+    return getInvoker().invoke(() -> super.insertAll(objectsToSave));
   }
 
   @Override
-  public void save(Object objectToSave) {
-    getInvoker().invoke(() -> super.save(objectToSave));
+  public <T> T save(T objectToSave) {
+    return getInvoker().invoke(() -> super.save(objectToSave));
   }
 
   @Override
-  public void save(Object objectToSave, String collectionName) {
-    getInvoker().invoke(() -> super.save(objectToSave, collectionName));
+  public <T> T save(T objectToSave, String collectionName) {
+    return getInvoker().invoke(() -> super.save(objectToSave, collectionName));
   }
 
   @Override
