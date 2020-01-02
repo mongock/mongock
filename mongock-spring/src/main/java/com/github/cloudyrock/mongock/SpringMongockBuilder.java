@@ -72,7 +72,9 @@ public class SpringMongockBuilder extends MongockBuilderBase<SpringMongockBuilde
   }
 
   private MongoTemplate createMongoTemplateProxy() {
-    return  new MongoTemplateDecoratorImpl(legacyMongoClient, databaseName, methodInvoker);
+    return mongoClient !=null
+        ? new MongoTemplateDecoratorImpl(mongoClient, databaseName, methodInvoker)
+        : new MongoTemplateDecoratorImpl(legacyMongoClient, databaseName, methodInvoker) ;
   }
 
 

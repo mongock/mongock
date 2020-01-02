@@ -1,10 +1,15 @@
+# 3.2.0.BETA
+### Breaking changes
+*  [Upgraded library spring-data-mongodb to 2.2.3.RELEASE](https://github.com/cloudyrock/mongock/issues/113) in [PR](https://github.com/cloudyrock/mongock/pull/114)
+
+
 # 3.1.0.BETA
 ### Breaking changes
 * Renamed version to systemVersion, so startVersion and endVersion in the builder become startSystemVersion and endSystemVersion and version in
 changeSet annotation becomes systemVersion
 
 ### Bugs fixed
-* Fixed bug introduced in version 3.0.8.BETA[Mongock reexecutes ChangeSet on every run](https://github.com/cloudyrock/mongock/issues/107) in [PR](https://github.com/cloudyrock/mongock/pull/108)
+* Fixed bug introduced in version 3.0.8.BETA in issue [Mongock reexecutes ChangeSet on every run](https://github.com/cloudyrock/mongock/issues/107) in [PR](https://github.com/cloudyrock/mongock/pull/108)
 __________________________________________________
 # 3.0.8.BETA
 ### Feature
