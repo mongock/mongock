@@ -20,6 +20,7 @@ import org.springframework.data.mongodb.core.DbCallback;
 import org.springframework.data.mongodb.core.DocumentCallbackHandler;
 import org.springframework.data.mongodb.core.FindAndModifyOptions;
 import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.data.mongodb.core.SimpleMongoClientDbFactory;
 import org.springframework.data.mongodb.core.SimpleMongoDbFactory;
 import org.springframework.data.mongodb.core.WriteConcernResolver;
 import org.springframework.data.mongodb.core.WriteResultChecking;
@@ -46,8 +47,14 @@ import java.util.Set;
 public class MongoTemplateDecoratorImpl extends MongoTemplate {
   private final MethodInvoker methodInvoker;
 
+  @Deprecated
   public MongoTemplateDecoratorImpl(MongoClient mongoClient, String databaseName, MethodInvoker methodInvoker) {
     this(new MongoDbFactoryDecoratorImpl(new SimpleMongoDbFactory(mongoClient, databaseName), methodInvoker), methodInvoker);
+  }
+
+
+  public MongoTemplateDecoratorImpl(com.mongodb.client.MongoClient mongoClient, String databaseName, MethodInvoker methodInvoker) {
+    this(new MongoDbFactoryDecoratorImpl(new SimpleMongoClientDbFactory(mongoClient, databaseName), methodInvoker), methodInvoker);
   }
 
   public MongoTemplateDecoratorImpl(MongoDbFactory mongoDbFactory, MethodInvoker methodInvoker) {

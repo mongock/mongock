@@ -14,8 +14,6 @@ import org.springframework.data.mongodb.core.MongoTemplate;
 public class SpringBootMongockBuilder extends MongockBuilderBase<SpringBootMongockBuilder, SpringBootMongock> {
   private ApplicationContext context;
 
-  private static final Logger logger = LoggerFactory.getLogger(SpringMongockBuilder.class);
-
   /**
    * <p>Builder constructor takes db.mongodb.MongoClient, database name and changelog scan package as parameters.
    * </p><p>For more details about MongoClient please see com.mongodb.MongoClient docs
@@ -54,10 +52,7 @@ public class SpringBootMongockBuilder extends MongockBuilderBase<SpringBootMongo
     return this;
   }
 
-  public SpringBootMongockBuilder setApplicationContext(ApplicationContext context) {
-    this.context = context;
-    return this;
-  }
+
 
   @Override
   SpringBootMongock createBuild() {
@@ -71,7 +66,9 @@ public class SpringBootMongockBuilder extends MongockBuilderBase<SpringBootMongo
   }
 
   private MongoTemplate createMongoTemplateProxy() {
-    return  new MongoTemplateDecoratorImpl(legacyMongoClient, databaseName, methodInvoker);
+    return mongoClient !=null
+        ? new MongoTemplateDecoratorImpl(mongoClient, databaseName, methodInvoker)
+        : new MongoTemplateDecoratorImpl(legacyMongoClient, databaseName, methodInvoker) ;
   }
 
 
@@ -91,4 +88,17 @@ public class SpringBootMongockBuilder extends MongockBuilderBase<SpringBootMongo
     }
   }
 
+
+
+
+
+
+
+
+
+
+  public SpringBootMongockBuilder setApplicationContext(ApplicationContext context) {
+    this.context = context;
+    return this;
+  }
 }

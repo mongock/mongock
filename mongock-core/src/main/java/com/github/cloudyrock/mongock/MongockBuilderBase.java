@@ -3,7 +3,8 @@ package com.github.cloudyrock.mongock;
 import com.github.cloudyrock.mongock.decorator.impl.MongoDataBaseDecoratorImpl;
 import com.github.cloudyrock.mongock.decorator.util.MethodInvoker;
 import com.github.cloudyrock.mongock.decorator.util.MethodInvokerImpl;
-import com.mongodb.MongoClient;
+
+import com.mongodb.client.MongoClient;
 import com.mongodb.client.MongoDatabase;
 
 import java.io.Closeable;
@@ -13,8 +14,8 @@ import static com.github.cloudyrock.mongock.StringUtils.hasText;
 public abstract class MongockBuilderBase<BUILDER_TYPE extends MongockBuilderBase, RETURN_TYPE extends Mongock> {
 
   //Mandatory
-  final MongoClient legacyMongoClient;
-  final com.mongodb.client.MongoClient newMongoClientImpl;
+  final com.mongodb.MongoClient legacyMongoClient;
+  final MongoClient mongoClient;
   String changeLogsScanPackage;
   String databaseName;
 
@@ -39,18 +40,18 @@ public abstract class MongockBuilderBase<BUILDER_TYPE extends MongockBuilderBase
    * <p>Builder constructor takes db.mongodb.MongoClient, database name and changelog scan package as parameters.
    * </p><p>For more details about MongoClient please see om.mongodb.client.MongoClient docs
    * </p>
-   *
    * @param legacyMongoClient           database connection client
    * @param databaseName          database name
    * @param changeLogsScanPackage package path where the changelogs are located
-   * @see MongoClient
+   * @see com.mongodb.MongoClient
    */
-  public MongockBuilderBase(MongoClient legacyMongoClient, String databaseName, String changeLogsScanPackage) {
+  @Deprecated
+  public MongockBuilderBase(com.mongodb.MongoClient legacyMongoClient, String databaseName, String changeLogsScanPackage) {
     this(null, legacyMongoClient, databaseName, changeLogsScanPackage);
   }
 
   /**
-   * <p>Builder constructor takes the new API com.mongodb.client.MongoClient, database name and changelog scan package as parameters.
+   * <p>Builder constructor takes the new API MongoClient, database name and changelog scan package as parameters.
    * </p><p>For more details about MongoClient please see com.mongodb.MongoClient docs
    * </p>
    *
@@ -59,15 +60,15 @@ public abstract class MongockBuilderBase<BUILDER_TYPE extends MongockBuilderBase
    * @param changeLogsScanPackage package path where the changelogs are located
    * @see MongoClient
    */
-  public MongockBuilderBase(com.mongodb.client.MongoClient newMongoClient, String databaseName, String changeLogsScanPackage) {
+  public MongockBuilderBase(MongoClient newMongoClient, String databaseName, String changeLogsScanPackage) {
     this(newMongoClient, null, databaseName, changeLogsScanPackage);
   }
 
-  private MongockBuilderBase(com.mongodb.client.MongoClient newMongoClientImpl,
-                             MongoClient legacyMongoClient,
+  private MongockBuilderBase(MongoClient mongoClient,
+                             com.mongodb.MongoClient legacyMongoClient,
                              String databaseName,
                              String changeLogsScanPackage) {
-    this.newMongoClientImpl = newMongoClientImpl;
+    this.mongoClient = mongoClient;
     this.legacyMongoClient = legacyMongoClient;
     this.databaseName = databaseName;
     this.changeLogsScanPackage = changeLogsScanPackage;
@@ -180,7 +181,7 @@ public abstract class MongockBuilderBase<BUILDER_TYPE extends MongockBuilderBase
   }
 
   void validateMandatoryFields() throws MongockException {
-    if (legacyMongoClient == null && newMongoClientImpl == null) {
+    if (legacyMongoClient == null && mongoClient == null) {
       throw new MongockException("MongoClient cannot be null");
     }
     if (!hasText(databaseName)) {
@@ -203,11 +204,11 @@ public abstract class MongockBuilderBase<BUILDER_TYPE extends MongockBuilderBase
   }
 
   private MongoDatabase getDataBaseFromMongoClient() {
-    return newMongoClientImpl!=null ? newMongoClientImpl.getDatabase(databaseName) : legacyMongoClient.getDatabase(databaseName);
+    return mongoClient !=null ? mongoClient.getDatabase(databaseName) : legacyMongoClient.getDatabase(databaseName);
   }
 
   Closeable getMongoClientCloseable() {
-    return newMongoClientImpl != null ? newMongoClientImpl : legacyMongoClient;
+    return mongoClient != null ? mongoClient : legacyMongoClient;
   }
 
   private LockChecker createLockChecker() {

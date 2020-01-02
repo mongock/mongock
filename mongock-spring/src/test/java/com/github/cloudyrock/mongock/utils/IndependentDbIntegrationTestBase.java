@@ -10,6 +10,7 @@ public abstract class IndependentDbIntegrationTestBase {
 
   protected static final String MONGO_CONTAINER = "mongo:3.1.5";
   protected static final Integer MONGO_PORT = 27017;
+  protected static final String DEFAULT_DATABASE_NAME = "mongocktest";
 
   protected MongoClient mongoClient;
 
