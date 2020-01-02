@@ -1,6 +1,7 @@
 package com.github.cloudyrock.mongock;
 
 import com.github.cloudyrock.mongock.test.changelogs.MongockTestResource;
+import com.github.cloudyrock.mongock.utils.IndependentDbIntegrationTestBase;
 import com.mongodb.MongoClient;
 import com.mongodb.client.MongoDatabase;
 import org.junit.After;
@@ -23,13 +24,11 @@ import static org.mockito.Mockito.spy;
  *
  * @since 04/04/2018
  */
-public class SpringBootMongockTestBase {
+public class SpringBootMongockTestBase extends IndependentDbIntegrationTestBase {
 
   static final String CHANGELOG_COLLECTION_NAME = "dbchangelog";
 
   protected SpringBootMongock runner;
-
-  protected MongoDatabase mongoDatabase;
 
   @Mock
   protected ChangeEntryRepository changeEntryRepository;
@@ -37,29 +36,16 @@ public class SpringBootMongockTestBase {
   @Mock
   protected LockChecker lockChecker;
 
-  @Mock
-  protected LockRepository lockRepository;
 
   @Spy
   protected SpringChangeService changeService;
-
-  protected MongoClient mongoClient;
 
   @Mock
   private MongoRepository indexDao;
 
 
-  protected static final String MONGO_CONTAINER = "mongo:3.1.5";
-  protected static final Integer MONGO_PORT = 27017;
-  protected static final String DEFAULT_DATABASE_NAME = "mongocktest";
-
-  @Rule
-  public GenericContainer mongo = new GenericContainer(MONGO_CONTAINER).withExposedPorts(MONGO_PORT);
-
   @Before
-  public final void setUpParent() {
-    mongoClient = new MongoClient(mongo.getContainerIpAddress(), mongo.getFirstMappedPort());
-    mongoDatabase = mongoClient.getDatabase(DEFAULT_DATABASE_NAME);
+  public final void setUpMockParent() {
     TestUtils.setField(changeEntryRepository, "mongoDatabase", mongoDatabase);
 
     doCallRealMethod().when(changeEntryRepository).save(any(ChangeEntry.class));
