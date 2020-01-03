@@ -1,10 +1,8 @@
 package com.github.cloudyrock.mongock;
 
-import com.mongodb.MongoClient;
+import com.mongodb.client.MongoClient;
 
 public class SpringMongockBuilder extends SpringMongockBuilderBase<SpringMongockBuilder, SpringMongock> {
-
-
   /**
    * <p>Builder constructor takes db.mongodb.MongoClient, database name and changelog scan package as parameters.
    * </p><p>For more details about MongoClient please see com.mongodb.MongoClient docs
@@ -13,9 +11,10 @@ public class SpringMongockBuilder extends SpringMongockBuilderBase<SpringMongock
    * @param legacyMongoClient           database connection client
    * @param databaseName          database name
    * @param changeLogsScanPackage package path where the changelogs are located
-   * @see MongoClient
+   * @see com.mongodb.MongoClient
    */
-  public SpringMongockBuilder(MongoClient legacyMongoClient, String databaseName, String changeLogsScanPackage) {
+  @Deprecated
+  public SpringMongockBuilder(com.mongodb.MongoClient legacyMongoClient, String databaseName, String changeLogsScanPackage) {
     super(legacyMongoClient, databaseName, changeLogsScanPackage);
   }
 
@@ -29,7 +28,7 @@ public class SpringMongockBuilder extends SpringMongockBuilderBase<SpringMongock
    * @param changeLogsScanPackage package path where the changeLogs are located
    * @see MongoClient
    */
-  public SpringMongockBuilder(com.mongodb.client.MongoClient newMongoClient, String databaseName, String changeLogsScanPackage) {
+  public SpringMongockBuilder(MongoClient newMongoClient, String databaseName, String changeLogsScanPackage) {
     super(newMongoClient, databaseName, changeLogsScanPackage);
   }
 
