@@ -9,7 +9,7 @@ import org.springframework.data.mongodb.core.MongoTemplate;
 /**
  * Factory for {@link SpringBootMongock}
  */
-public class SpringBootMongockBuilder extends MongockBuilderBase<SpringBootMongockBuilder, SpringBootMongock> {
+public class SpringBootMongockBuilder extends SpringBaseMongockBuilder<SpringBootMongockBuilder, SpringBootMongock> {
   private ApplicationContext context;
 
   /**
@@ -48,23 +48,18 @@ public class SpringBootMongockBuilder extends MongockBuilderBase<SpringBootMongo
    */
   public SpringBootMongockBuilder setApplicationContext(ApplicationContext context) {
     this.context = context;
+    this.setSpringEnvironment(context.getBean(Environment.class));
     return this;
   }
 
   @Override
   protected SpringBootMongock createMongockInstance() {
     SpringBootMongock mongock = new SpringBootMongock(changeEntryRepository, getMongoClientCloseable(), createChangeService(), lockChecker);
-    mongock.springContext(context);
     mongock.setMongoTemplate(createMongoTemplateProxy());
+    mongock.springContext(context);
     return mongock;
   }
 
-  @Override
-  protected ChangeService createChangeServiceInstance() {
-    SpringChangeService changeService = new SpringChangeService();
-    changeService.setEnvironment(context.getBean(Environment.class));
-    return changeService;
-  }
 
   @Override
   void validateMandatoryFields() throws MongockException {
@@ -74,12 +69,6 @@ public class SpringBootMongockBuilder extends MongockBuilderBase<SpringBootMongo
     }
   }
 
-
-  private MongoTemplate createMongoTemplateProxy() {
-    return mongoClient !=null
-        ? new MongoTemplateDecoratorImpl(mongoClient, databaseName, methodInvoker)
-        : new MongoTemplateDecoratorImpl(legacyMongoClient, databaseName, methodInvoker) ;
-  }
 
   @Override
   protected SpringBootMongockBuilder returnInstance() {
