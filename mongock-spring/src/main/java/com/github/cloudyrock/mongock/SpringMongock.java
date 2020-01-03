@@ -17,20 +17,19 @@ public class SpringMongock extends Mongock implements InitializingBean {
   private Environment springEnvironment;
   private MongoTemplate mongoTemplate;
 
-  protected SpringMongock(ChangeEntryRepository changeEntryRepository,
-                          Closeable mongoClientCloseable,
-                          ChangeService changeService,
-                          LockChecker lockChecker) {
+  SpringMongock(ChangeEntryRepository changeEntryRepository,
+                Closeable mongoClientCloseable,
+                ChangeService changeService,
+                LockChecker lockChecker) {
     super(changeEntryRepository, mongoClientCloseable, changeService, lockChecker);
   }
 
   /**
    * For Spring users: executing mongock after bean is created in the Spring context
    *
-   * @throws Exception exception
    */
   @Override
-  public void afterPropertiesSet() throws Exception {
+  public void afterPropertiesSet() {
     execute();
   }
 

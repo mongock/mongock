@@ -18,14 +18,14 @@ public class MongockBuilder extends MongockBuilderBase<MongockBuilder, Mongock> 
   }
 
   @Override
-  Mongock createBuild() {
-
-    Mongock mongock = new Mongock(changeEntryRepository, getMongoClientCloseable(), createChangeService(), lockChecker);
-    mongock.setChangelogMongoDatabase(createMongoDataBaseProxy());
-    mongock.setEnabled(enabled);
-    mongock.setThrowExceptionIfCannotObtainLock(throwExceptionIfCannotObtainLock);
-    mongock.setMetadata(this.metadata);
-    return mongock;
+  protected Mongock createMongockInstance() {
+    return new Mongock(changeEntryRepository, getMongoClientCloseable(), createChangeService(), lockChecker);
   }
+
+  @Override
+  protected ChangeService createChangeServiceInstance() {
+    return new ChangeService();
+  }
+
 
 }

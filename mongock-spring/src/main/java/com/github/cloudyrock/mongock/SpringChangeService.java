@@ -16,7 +16,6 @@ import java.util.List;
 import static java.util.Arrays.asList;
 
 public class SpringChangeService extends ChangeService {
-  private static final Logger log = LoggerFactory.getLogger(SpringChangeService.class);
 
   private static final String DEFAULT_PROFILE = "default";
 

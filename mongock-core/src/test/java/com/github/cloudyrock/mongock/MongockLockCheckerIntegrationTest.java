@@ -5,7 +5,6 @@ import com.github.cloudyrock.mongock.decorator.util.MethodInvoker;
 import com.github.cloudyrock.mongock.decorator.util.VoidSupplier;
 import com.github.cloudyrock.mongock.test.proxy.ProxiesMongockTestResource;
 import com.github.cloudyrock.mongock.utils.IndependentDbIntegrationTestBase;
-import com.github.fakemongo.Fongo;
 import com.mongodb.MongoClient;
 import com.mongodb.client.MongoDatabase;
 import com.mongodb.client.model.UpdateOptions;
@@ -14,16 +13,12 @@ import org.junit.Before;
 import org.junit.Test;
 import org.mockito.internal.verification.Times;
 
-import java.util.Arrays;
 import java.util.Date;
-import java.util.HashSet;
-import java.util.Set;
 import java.util.function.Supplier;
 
 import static java.util.Collections.singletonList;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyLong;
-import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.spy;
@@ -184,9 +179,6 @@ class TestMongockBuilder extends MongockBuilderBase<TestMongockBuilder, Mongock>
   private ChangeEntryRepository changeEntryRepository;
   private LockChecker lockChecker;
 
-  public TestMongockBuilder(MongoClient mongoClient, String databaseName, String changeLogsScanPackage) {
-    super(mongoClient, databaseName, changeLogsScanPackage);
-  }
 
   public TestMongockBuilder(com.mongodb.client.MongoClient mongoClient, String databaseName, String changeLogsScanPackage) {
     super(mongoClient, databaseName, changeLogsScanPackage);
@@ -205,16 +197,21 @@ class TestMongockBuilder extends MongockBuilderBase<TestMongockBuilder, Mongock>
     this.changeService = changeService;
     this.lockChecker = lockChecker;
     this.mongoDataBase = mongoDatabase;
-    return createBuild();
+    return createMongockInstance();
   }
 
   @Override
-  Mongock createBuild() {
+  protected Mongock createMongockInstance() {
 //    changeService.setChangeLogsBasePackage(changeLogsScanPackage);
     Mongock mongock = new Mongock(changeEntryRepository, getMongoClientCloseable(), changeService, lockChecker);
     mongock.setChangelogMongoDatabase(mongoDataBase);
     mongock.setEnabled(enabled);
     mongock.setThrowExceptionIfCannotObtainLock(throwExceptionIfCannotObtainLock);
     return mongock;
+  }
+
+  @Override
+  protected ChangeService createChangeServiceInstance() {
+    return null;
   }
 }

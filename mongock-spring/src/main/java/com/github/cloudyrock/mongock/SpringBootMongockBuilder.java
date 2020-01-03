@@ -2,8 +2,6 @@ package com.github.cloudyrock.mongock;
 
 import com.github.cloudyrock.mongock.decorator.impl.MongoTemplateDecoratorImpl;
 import com.mongodb.MongoClient;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationContext;
 import org.springframework.core.env.Environment;
 import org.springframework.data.mongodb.core.MongoTemplate;
@@ -11,7 +9,7 @@ import org.springframework.data.mongodb.core.MongoTemplate;
 /**
  * Factory for {@link SpringBootMongock}
  */
-public class SpringBootMongockBuilder extends MongockBuilderBase<SpringBootMongockBuilder, SpringBootMongock> {
+public class SpringBootMongockBuilder extends SpringBaseMongockBuilder<SpringBootMongockBuilder, SpringBootMongock> {
   private ApplicationContext context;
 
   /**
@@ -42,44 +40,26 @@ public class SpringBootMongockBuilder extends MongockBuilderBase<SpringBootMongo
     super(newMongoClient, databaseName, changeLogsScanPackage);
   }
 
-
-  public SpringMongockBuilder setMongoTemplate(MongoTemplate mongoTemplate) {
-    throw new UnsupportedOperationException("Please remove this from the builder. You don't need to replace it with anything. MongoTemplate will be generated from MongoClient and databaseName");
-  }
-
-  @Override
-  protected SpringBootMongockBuilder returnInstance() {
+  /**
+   * Set the Springboot application context from which the dependencies will be retrieved
+   * @param context Springboot application context
+   * @return Mongock builder for fluent interface
+   * @see org.springframework.context.ApplicationContext
+   */
+  public SpringBootMongockBuilder setApplicationContext(ApplicationContext context) {
+    this.context = context;
+    this.setSpringEnvironment(context.getBean(Environment.class));
     return this;
   }
 
-
-
   @Override
-  SpringBootMongock createBuild() {
+  protected SpringBootMongock createMongockInstance() {
     SpringBootMongock mongock = new SpringBootMongock(changeEntryRepository, getMongoClientCloseable(), createChangeService(), lockChecker);
-    mongock.setChangelogMongoDatabase(createMongoDataBaseProxy());
-    mongock.setEnabled(enabled);
-    mongock.springContext(context);
     mongock.setMongoTemplate(createMongoTemplateProxy());
-    mongock.setThrowExceptionIfCannotObtainLock(throwExceptionIfCannotObtainLock);
-    mongock.setMetadata(this.metadata);
+    mongock.springContext(context);
     return mongock;
   }
 
-  private MongoTemplate createMongoTemplateProxy() {
-    return mongoClient !=null
-        ? new MongoTemplateDecoratorImpl(mongoClient, databaseName, methodInvoker)
-        : new MongoTemplateDecoratorImpl(legacyMongoClient, databaseName, methodInvoker) ;
-  }
-
-
-  @Override
-  ChangeService createChangeService() {
-    SpringChangeService changeService = new SpringChangeService();
-    changeService.setEnvironment(context.getBean(Environment.class));
-    changeService.setChangeLogsBasePackage(changeLogsScanPackage);
-    return changeService;
-  }
 
   @Override
   void validateMandatoryFields() throws MongockException {
@@ -90,16 +70,9 @@ public class SpringBootMongockBuilder extends MongockBuilderBase<SpringBootMongo
   }
 
 
-
-
-
-
-
-
-
-
-  public SpringBootMongockBuilder setApplicationContext(ApplicationContext context) {
-    this.context = context;
+  @Override
+  protected SpringBootMongockBuilder returnInstance() {
     return this;
   }
+
 }
