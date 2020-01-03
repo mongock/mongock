@@ -48,6 +48,7 @@ public class SpringBootMongockTestBase extends IndependentDbIntegrationTestBase 
 
   @Before
   public final void setUpMockParent() {
+    mongoDatabase = mongoClient.getDatabase(DEFAULT_DATABASE_NAME);
     TestUtils.setField(changeEntryRepository, "mongoDatabase", mongoDatabase);
 
     doCallRealMethod().when(changeEntryRepository).save(any(ChangeEntry.class));

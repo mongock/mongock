@@ -25,10 +25,10 @@ public class SpringBootMongock extends Mongock implements ApplicationRunner {
   private ApplicationContext springContext;
   private MongoTemplate mongoTemplate;
 
-  protected SpringBootMongock(ChangeEntryRepository changeEntryRepository,
-                              Closeable mongoClientCloseable,
-                              ChangeService changeService,
-                              LockChecker lockChecker) {
+  SpringBootMongock(ChangeEntryRepository changeEntryRepository,
+                    Closeable mongoClientCloseable,
+                    ChangeService changeService,
+                    LockChecker lockChecker) {
     super(changeEntryRepository, mongoClientCloseable, changeService, lockChecker);
   }
 
@@ -37,15 +37,11 @@ public class SpringBootMongock extends Mongock implements ApplicationRunner {
    * @see Mongock#execute()
    */
   @Override
-  public void run(ApplicationArguments args) throws Exception {
+  public void run(ApplicationArguments args) {
     execute();
   }
 
-  /**
-   * Overrides the internal argument resolution strategy to allow spring to inject the appropriate parameters.
-   *
-   * @see Mongock#executeChangeSetMethod(Method, Object)
-   */
+
   @Override
   protected long executeChangeSetMethod(Method changeSetMethod, Object changeLogInstance) throws BeansException, IllegalAccessException, InvocationTargetException {
     final long startingTime = System.currentTimeMillis();
@@ -77,22 +73,13 @@ public class SpringBootMongock extends Mongock implements ApplicationRunner {
 
   }
 
-  /**
-   * Configures the internal {@link ApplicationContext} to be used when resolving {@link org.springframework.context.annotation.Bean} objects on change set method calls.
-   *
-   * @return This {@link SpringBootMongock} instance for further configuration
-   */
+
   SpringBootMongock springContext(ApplicationContext springContext) {
     this.springContext = springContext;
     return this;
   }
 
-  /**
-   * Sets pre-configured {@link MongoTemplate} instance to use by the Mongock
-   *
-   * @param mongoTemplate instance of the {@link MongoTemplate}
-   * @return SpringMongock object for fluent interface
-   */
+
   SpringBootMongock setMongoTemplate(MongoTemplate mongoTemplate) {
     this.mongoTemplate = mongoTemplate;
     return this;
