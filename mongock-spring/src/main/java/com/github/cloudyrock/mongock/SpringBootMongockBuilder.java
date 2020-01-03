@@ -2,8 +2,6 @@ package com.github.cloudyrock.mongock;
 
 import com.github.cloudyrock.mongock.decorator.impl.MongoTemplateDecoratorImpl;
 import com.mongodb.MongoClient;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationContext;
 import org.springframework.core.env.Environment;
 import org.springframework.data.mongodb.core.MongoTemplate;
@@ -42,7 +40,7 @@ public class SpringBootMongockBuilder extends MongockBuilderBase<SpringBootMongo
     super(newMongoClient, databaseName, changeLogsScanPackage);
   }
 
-
+  @Deprecated
   public SpringMongockBuilder setMongoTemplate(MongoTemplate mongoTemplate) {
     throw new UnsupportedOperationException("Please remove this from the builder. You don't need to replace it with anything. MongoTemplate will be generated from MongoClient and databaseName");
   }
@@ -57,12 +55,8 @@ public class SpringBootMongockBuilder extends MongockBuilderBase<SpringBootMongo
   @Override
   SpringBootMongock createBuild() {
     SpringBootMongock mongock = new SpringBootMongock(changeEntryRepository, getMongoClientCloseable(), createChangeService(), lockChecker);
-    mongock.setChangelogMongoDatabase(createMongoDataBaseProxy());
-    mongock.setEnabled(enabled);
     mongock.springContext(context);
     mongock.setMongoTemplate(createMongoTemplateProxy());
-    mongock.setThrowExceptionIfCannotObtainLock(throwExceptionIfCannotObtainLock);
-    mongock.setMetadata(this.metadata);
     return mongock;
   }
 

@@ -12,7 +12,7 @@ import java.util.Map;
 
 import static com.github.cloudyrock.mongock.StringUtils.hasText;
 
-public abstract class MongockBuilderBase<BUILDER_TYPE extends MongockBuilderBase, RETURN_TYPE extends Mongock> {
+public abstract class MongockBuilderBase<BUILDER_TYPE extends MongockBuilderBase, MONGOCK_TYPE extends Mongock> {
 
   //Mandatory
   final com.mongodb.MongoClient legacyMongoClient;
@@ -208,13 +208,18 @@ public abstract class MongockBuilderBase<BUILDER_TYPE extends MongockBuilderBase
   }
 
 
-  public RETURN_TYPE build() {
+  public MONGOCK_TYPE build() {
     validateMandatoryFields();
     database = getDataBaseFromMongoClient();
     lockChecker = createLockChecker();
     methodInvoker = new MethodInvokerImpl(lockChecker);
     changeEntryRepository = createChangeRepository();
-    return this.createBuild();
+    MONGOCK_TYPE mongock = this.createBuild();
+    mongock.setChangelogMongoDatabase(createMongoDataBaseProxy());
+    mongock.setEnabled(enabled);
+    mongock.setThrowExceptionIfCannotObtainLock(throwExceptionIfCannotObtainLock);
+    mongock.setMetadata(this.metadata);
+    return mongock;
   }
 
   private MongoDatabase getDataBaseFromMongoClient() {
@@ -255,7 +260,7 @@ public abstract class MongockBuilderBase<BUILDER_TYPE extends MongockBuilderBase
     return new MongoDataBaseDecoratorImpl(getDataBaseFromMongoClient(), methodInvoker);
   }
 
-  abstract RETURN_TYPE createBuild();
+  abstract MONGOCK_TYPE createBuild();
 
 
 }
