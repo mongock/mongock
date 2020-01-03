@@ -437,7 +437,7 @@ You can exclude mongo-java-driver from **mongock**  and use your dependency only
 <dependency>
   <groupId>com.github.cloudyrock.mongock</groupId>
   <artifactId>mongock-core</artifactId>
-  <version>3.0.5.BETA</version>
+  <version>3.2.1.BETA</version>
   <exclusions>
     <exclusion>
       <groupId>org.mongodb</groupId>
