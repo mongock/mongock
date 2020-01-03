@@ -2,7 +2,7 @@ package com.github.cloudyrock.mongock;
 
 import com.mongodb.MongoClient;
 
-public class SpringMongockBuilder extends SpringBaseMongockBuilder<SpringMongockBuilder, SpringMongock> {
+public class SpringMongockBuilder extends SpringMongockBuilderBase<SpringMongockBuilder, SpringMongock> {
 
 
   /**
