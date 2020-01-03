@@ -3,7 +3,6 @@ package com.github.cloudyrock.mongock;
 import com.github.cloudyrock.mongock.decorator.impl.MongoDataBaseDecoratorImpl;
 import com.github.cloudyrock.mongock.decorator.util.MethodInvoker;
 import com.github.cloudyrock.mongock.decorator.util.MethodInvokerImpl;
-
 import com.mongodb.client.MongoClient;
 import com.mongodb.client.MongoDatabase;
 
@@ -17,7 +16,7 @@ public abstract class MongockBuilderBase<BUILDER_TYPE extends MongockBuilderBase
   //Mandatory
   final com.mongodb.MongoClient legacyMongoClient;
   final MongoClient mongoClient;
-  String changeLogsScanPackage;
+  private String changeLogsScanPackage;
   String databaseName;
 
   //Optionals
@@ -30,27 +29,13 @@ public abstract class MongockBuilderBase<BUILDER_TYPE extends MongockBuilderBase
   private String lockCollectionName = "mongockLock";
   private String startSystemVersion = "0";
   private String endSystemVersion = String.valueOf(Integer.MAX_VALUE);
-  protected Map<String, Object> metadata;
+  private Map<String, Object> metadata;
 
   //for build
   ChangeEntryRepository changeEntryRepository;
   LockChecker lockChecker;
   MethodInvoker methodInvoker;
   private MongoDatabase database;
-
-  /**
-   * <p>Builder constructor takes db.mongodb.MongoClient, database name and changelog scan package as parameters.
-   * </p><p>For more details about MongoClient please see om.mongodb.client.MongoClient docs
-   * </p>
-   * @param legacyMongoClient           database connection client
-   * @param databaseName          database name
-   * @param changeLogsScanPackage package path where the changelogs are located
-   * @see com.mongodb.MongoClient
-   */
-  @Deprecated
-  public MongockBuilderBase(com.mongodb.MongoClient legacyMongoClient, String databaseName, String changeLogsScanPackage) {
-    this(null, legacyMongoClient, databaseName, changeLogsScanPackage);
-  }
 
   /**
    * <p>Builder constructor takes the new API MongoClient, database name and changelog scan package as parameters.
@@ -66,6 +51,21 @@ public abstract class MongockBuilderBase<BUILDER_TYPE extends MongockBuilderBase
     this(newMongoClient, null, databaseName, changeLogsScanPackage);
   }
 
+  /**
+   * <p>Builder constructor takes db.mongodb.MongoClient, database name and changelog scan package as parameters.
+   * </p><p>For more details about MongoClient please see om.mongodb.client.MongoClient docs
+   * </p>
+   *
+   * @param legacyMongoClient     database connection client
+   * @param databaseName          database name
+   * @param changeLogsScanPackage package path where the changelogs are located
+   * @see com.mongodb.MongoClient
+   */
+  @Deprecated
+  public MongockBuilderBase(com.mongodb.MongoClient legacyMongoClient, String databaseName, String changeLogsScanPackage) {
+    this(null, legacyMongoClient, databaseName, changeLogsScanPackage);
+  }
+
   private MongockBuilderBase(MongoClient mongoClient,
                              com.mongodb.MongoClient legacyMongoClient,
                              String databaseName,
@@ -74,35 +74,6 @@ public abstract class MongockBuilderBase<BUILDER_TYPE extends MongockBuilderBase
     this.legacyMongoClient = legacyMongoClient;
     this.databaseName = databaseName;
     this.changeLogsScanPackage = changeLogsScanPackage;
-  }
-
-  protected abstract BUILDER_TYPE returnInstance();
-
-  /**
-   * <p>Changes the changelog collection name</p>
-   * <p>Be careful as changing the changelog collection name can make Mongock to undesirably run twice the same changelog</p>
-   *
-   * @param changeLogCollectionName name of the collection
-   * @return Mongock builder for fluent interface
-   */
-  @Deprecated
-  public BUILDER_TYPE setChangeLogCollectionName(String changeLogCollectionName) {
-    this.changeLogCollectionName = changeLogCollectionName;
-    return returnInstance();
-  }
-
-  /**
-   * <p>Changes the lock collection name</p>
-   * <p>Be careful as changing the lock collection name can make Mongock to run twice the same changelog and other
-   * undesirable scenarios</p>
-   *
-   * @param lockCollectionName name of the collection
-   * @return Mongock builder for fluent interface
-   */
-  @Deprecated
-  public BUILDER_TYPE setLockCollectionName(String lockCollectionName) {
-    this.lockCollectionName = lockCollectionName;
-    return returnInstance();
   }
 
   /**
@@ -160,7 +131,7 @@ public abstract class MongockBuilderBase<BUILDER_TYPE extends MongockBuilderBase
    * So the changeSet are tagged with a systemVersion and then when building Mongock, you specify
    * the systemVersion range you want to apply, so all the changeSets tagget with systemVersion inside that
    * range will be applied
-   * 
+   *
    * @param startSystemVersion Version to start with
    * @return Mongock builder for fluent interface
    */
@@ -175,7 +146,7 @@ public abstract class MongockBuilderBase<BUILDER_TYPE extends MongockBuilderBase
    * So the changeSet are tagged with a systemVersion and then when building Mongock, you specify
    * the systemVersion range you want to apply, so all the changeSets tagget with systemVersion inside that
    * range will be applied
-   * 
+   *
    * @param endSystemVersion Version to end with
    * @return Mongock builder for fluent interface
    */
@@ -187,6 +158,7 @@ public abstract class MongockBuilderBase<BUILDER_TYPE extends MongockBuilderBase
   /**
    * Set the metadata for the mongock process. This metadata will be added to each document in the mongockChangeLog
    * collection. This is useful when the system needs to add some extra info to the changeLog.
+   *
    * @param metadata Custom metadata object  to be added
    * @return Mongock builder for fluent interface
    */
@@ -214,7 +186,7 @@ public abstract class MongockBuilderBase<BUILDER_TYPE extends MongockBuilderBase
     lockChecker = createLockChecker();
     methodInvoker = new MethodInvokerImpl(lockChecker);
     changeEntryRepository = createChangeRepository();
-    MONGOCK_TYPE mongock = this.createBuild();
+    MONGOCK_TYPE mongock = this.createMongockInstance();
     mongock.setChangelogMongoDatabase(createMongoDataBaseProxy());
     mongock.setEnabled(enabled);
     mongock.setThrowExceptionIfCannotObtainLock(throwExceptionIfCannotObtainLock);
@@ -223,7 +195,7 @@ public abstract class MongockBuilderBase<BUILDER_TYPE extends MongockBuilderBase
   }
 
   private MongoDatabase getDataBaseFromMongoClient() {
-    return mongoClient !=null ? mongoClient.getDatabase(databaseName) : legacyMongoClient.getDatabase(databaseName);
+    return mongoClient != null ? mongoClient.getDatabase(databaseName) : legacyMongoClient.getDatabase(databaseName);
   }
 
   Closeable getMongoClientCloseable() {
@@ -248,19 +220,22 @@ public abstract class MongockBuilderBase<BUILDER_TYPE extends MongockBuilderBase
     return changeEntryRepository;
   }
 
-  ChangeService createChangeService() {
-        ChangeService changeService = new ChangeService();
-    changeService.setChangeLogsBasePackage(changeLogsScanPackage);
-        changeService.setStartVersion(startSystemVersion);
-        changeService.setEndVersion(endSystemVersion);
-    return changeService;
-  }
-
-  MongoDatabase createMongoDataBaseProxy() {
+  private MongoDatabase createMongoDataBaseProxy() {
     return new MongoDataBaseDecoratorImpl(getDataBaseFromMongoClient(), methodInvoker);
   }
 
-  abstract MONGOCK_TYPE createBuild();
+  protected final ChangeService createChangeService() {
+    ChangeService changeService = createChangeServiceInstance();
+    changeService.setChangeLogsBasePackage(changeLogsScanPackage);
+    changeService.setStartVersion(startSystemVersion);
+    changeService.setEndVersion(endSystemVersion);
+    return changeService;
+  }
+
+  protected abstract MONGOCK_TYPE createMongockInstance();
+  protected abstract ChangeService createChangeServiceInstance();
+  protected abstract BUILDER_TYPE returnInstance();
+
 
 
 }

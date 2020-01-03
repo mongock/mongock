@@ -40,38 +40,29 @@ public class SpringBootMongockBuilder extends MongockBuilderBase<SpringBootMongo
     super(newMongoClient, databaseName, changeLogsScanPackage);
   }
 
-  @Deprecated
-  public SpringMongockBuilder setMongoTemplate(MongoTemplate mongoTemplate) {
-    throw new UnsupportedOperationException("Please remove this from the builder. You don't need to replace it with anything. MongoTemplate will be generated from MongoClient and databaseName");
-  }
-
-  @Override
-  protected SpringBootMongockBuilder returnInstance() {
+  /**
+   * Set the Springboot application context from which the dependencies will be retrieved
+   * @param context Springboot application context
+   * @return Mongock builder for fluent interface
+   * @see org.springframework.context.ApplicationContext
+   */
+  public SpringBootMongockBuilder setApplicationContext(ApplicationContext context) {
+    this.context = context;
     return this;
   }
 
-
-
   @Override
-  SpringBootMongock createBuild() {
+  protected SpringBootMongock createMongockInstance() {
     SpringBootMongock mongock = new SpringBootMongock(changeEntryRepository, getMongoClientCloseable(), createChangeService(), lockChecker);
     mongock.springContext(context);
     mongock.setMongoTemplate(createMongoTemplateProxy());
     return mongock;
   }
 
-  private MongoTemplate createMongoTemplateProxy() {
-    return mongoClient !=null
-        ? new MongoTemplateDecoratorImpl(mongoClient, databaseName, methodInvoker)
-        : new MongoTemplateDecoratorImpl(legacyMongoClient, databaseName, methodInvoker) ;
-  }
-
-
   @Override
-  ChangeService createChangeService() {
+  protected ChangeService createChangeServiceInstance() {
     SpringChangeService changeService = new SpringChangeService();
     changeService.setEnvironment(context.getBean(Environment.class));
-    changeService.setChangeLogsBasePackage(changeLogsScanPackage);
     return changeService;
   }
 
@@ -84,16 +75,15 @@ public class SpringBootMongockBuilder extends MongockBuilderBase<SpringBootMongo
   }
 
 
+  private MongoTemplate createMongoTemplateProxy() {
+    return mongoClient !=null
+        ? new MongoTemplateDecoratorImpl(mongoClient, databaseName, methodInvoker)
+        : new MongoTemplateDecoratorImpl(legacyMongoClient, databaseName, methodInvoker) ;
+  }
 
-
-
-
-
-
-
-
-  public SpringBootMongockBuilder setApplicationContext(ApplicationContext context) {
-    this.context = context;
+  @Override
+  protected SpringBootMongockBuilder returnInstance() {
     return this;
   }
+
 }
