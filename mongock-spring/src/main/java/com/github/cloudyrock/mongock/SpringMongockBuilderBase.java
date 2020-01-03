@@ -1,7 +1,8 @@
 package com.github.cloudyrock.mongock;
 
 import com.github.cloudyrock.mongock.decorator.impl.MongoTemplateDecoratorImpl;
-import com.mongodb.MongoClient;
+
+import com.mongodb.client.MongoClient;
 import org.springframework.core.env.Environment;
 import org.springframework.data.mongodb.core.MongoTemplate;
 
@@ -17,9 +18,10 @@ abstract class SpringMongockBuilderBase<BUILDER_TYPE extends SpringMongockBuilde
    * @param legacyMongoClient           database connection client
    * @param databaseName          database name
    * @param changeLogsScanPackage package path where the changelogs are located
-   * @see MongoClient
+   * @see com.mongodb.MongoClient
    */
-  SpringMongockBuilderBase(MongoClient legacyMongoClient, String databaseName, String changeLogsScanPackage) {
+  @Deprecated
+  SpringMongockBuilderBase(com.mongodb.MongoClient legacyMongoClient, String databaseName, String changeLogsScanPackage) {
     super(legacyMongoClient, databaseName, changeLogsScanPackage);
   }
 
@@ -33,7 +35,7 @@ abstract class SpringMongockBuilderBase<BUILDER_TYPE extends SpringMongockBuilde
    * @param changeLogsScanPackage package path where the changeLogs are located
    * @see MongoClient
    */
-  SpringMongockBuilderBase(com.mongodb.client.MongoClient newMongoClient, String databaseName, String changeLogsScanPackage) {
+  SpringMongockBuilderBase(MongoClient newMongoClient, String databaseName, String changeLogsScanPackage) {
     super(newMongoClient, databaseName, changeLogsScanPackage);
   }
 
