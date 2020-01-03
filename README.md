@@ -44,6 +44,7 @@ The concept is very similar to other db migration tools such as [Liquibase](http
   * [Injecting custom dependencies to change logs](#injecting-custom-dependencies-to-change-logs)
   * [Using Spring profiles](#using-spring-profiles)
      * [Enabling @Profile annotation (option)](#enabling-profile-annotation-option)
+  * [Adding metadata](#adding-metadata)
   * [Configuring Lock](#configuring-lock)
   * [Known issues](#known-issues)
      * [Mongo java driver conflicts](#mongo-java-driver-conflicts)
