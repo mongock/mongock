@@ -5,7 +5,7 @@ import com.mongodb.MongoClient;
 import org.springframework.core.env.Environment;
 import org.springframework.data.mongodb.core.MongoTemplate;
 
-abstract class SpringBaseMongockBuilder<BUILDER_TYPE extends SpringBaseMongockBuilder, MONGOCK_TYPE extends Mongock> extends MongockBuilderBase<BUILDER_TYPE, MONGOCK_TYPE> {
+abstract class SpringMongockBuilderBase<BUILDER_TYPE extends SpringMongockBuilderBase, MONGOCK_TYPE extends Mongock> extends MongockBuilderBase<BUILDER_TYPE, MONGOCK_TYPE> {
 
   private Environment springEnvironment = null;
 
@@ -19,7 +19,7 @@ abstract class SpringBaseMongockBuilder<BUILDER_TYPE extends SpringBaseMongockBu
    * @param changeLogsScanPackage package path where the changelogs are located
    * @see MongoClient
    */
-  SpringBaseMongockBuilder(MongoClient legacyMongoClient, String databaseName, String changeLogsScanPackage) {
+  SpringMongockBuilderBase(MongoClient legacyMongoClient, String databaseName, String changeLogsScanPackage) {
     super(legacyMongoClient, databaseName, changeLogsScanPackage);
   }
 
@@ -33,7 +33,7 @@ abstract class SpringBaseMongockBuilder<BUILDER_TYPE extends SpringBaseMongockBu
    * @param changeLogsScanPackage package path where the changeLogs are located
    * @see MongoClient
    */
-  SpringBaseMongockBuilder(com.mongodb.client.MongoClient newMongoClient, String databaseName, String changeLogsScanPackage) {
+  SpringMongockBuilderBase(com.mongodb.client.MongoClient newMongoClient, String databaseName, String changeLogsScanPackage) {
     super(newMongoClient, databaseName, changeLogsScanPackage);
   }
 

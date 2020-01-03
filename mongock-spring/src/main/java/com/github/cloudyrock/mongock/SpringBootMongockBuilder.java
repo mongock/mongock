@@ -1,15 +1,13 @@
 package com.github.cloudyrock.mongock;
 
-import com.github.cloudyrock.mongock.decorator.impl.MongoTemplateDecoratorImpl;
 import com.mongodb.MongoClient;
 import org.springframework.context.ApplicationContext;
 import org.springframework.core.env.Environment;
-import org.springframework.data.mongodb.core.MongoTemplate;
 
 /**
  * Factory for {@link SpringBootMongock}
  */
-public class SpringBootMongockBuilder extends SpringBaseMongockBuilder<SpringBootMongockBuilder, SpringBootMongock> {
+public class SpringBootMongockBuilder extends SpringMongockBuilderBase<SpringBootMongockBuilder, SpringBootMongock> {
   private ApplicationContext context;
 
   /**
