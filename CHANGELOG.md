@@ -1,6 +1,6 @@
 # 3.2.1.BETA
 ### Features
-*  [Support for metadata in mongockChangeLog documents](https://github.com/cloudyrock/mongock/issues/112) in [PR](https://github.com/cloudyrock/mongock/pull/115)
+*  [Support for metadata in mongockChangeLog documents](https://github.com/cloudyrock/mongock/issues/112) in [PR](https://github.com/cloudyrock/mongock/pull/116)
 __________________________________________________
 # 3.2.0.BETA
 ### Breaking changes
