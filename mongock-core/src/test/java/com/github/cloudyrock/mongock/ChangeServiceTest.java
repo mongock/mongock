@@ -114,7 +114,7 @@ public class ChangeServiceTest {
     for (Method foundMethod : foundMethods) {
 
       // when
-      ChangeEntry entry = service.createChangeEntry(executionId, foundMethod);
+      ChangeEntry entry = service.createChangeEntry(executionId, foundMethod, null);
 
       // then
       Assert.assertEquals("testuser", entry.getAuthor());

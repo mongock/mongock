@@ -112,7 +112,7 @@ class ChangeService {
     return String.format("%s.%s", LocalDateTime.now().toString(), UUID.randomUUID().toString());
   }
 
-  ChangeEntry createChangeEntry(String executionId, Method changesetMethod) {
+  ChangeEntry createChangeEntry(String executionId, Method changesetMethod, Map<String, Object> metadata) {
     if (changesetMethod.isAnnotationPresent(ChangeSet.class)) {
       ChangeSet annotation = changesetMethod.getAnnotation(ChangeSet.class);
 
@@ -122,7 +122,8 @@ class ChangeService {
           annotation.author(),
           new Date(),
           changesetMethod.getDeclaringClass().getName(),
-          changesetMethod.getName());
+          changesetMethod.getName(),
+          metadata);
     } else {
       return null;
     }

@@ -8,6 +8,7 @@ import com.mongodb.client.MongoClient;
 import com.mongodb.client.MongoDatabase;
 
 import java.io.Closeable;
+import java.util.Map;
 
 import static com.github.cloudyrock.mongock.StringUtils.hasText;
 
@@ -20,21 +21,22 @@ public abstract class MongockBuilderBase<BUILDER_TYPE extends MongockBuilderBase
   String databaseName;
 
   //Optionals
-  long lockAcquiredForMinutes = 24L * 60L;
-  long maxWaitingForLockMinutes = 3L;
-  int maxTries = 1;
+  private long lockAcquiredForMinutes = 24L * 60L;
+  private long maxWaitingForLockMinutes = 3L;
+  private int maxTries = 1;
   boolean throwExceptionIfCannotObtainLock = false;
   boolean enabled = true;
-  String changeLogCollectionName = "mongockChangeLog";
-  String lockCollectionName = "mongockLock";
-  String startSystemVersion = "0";
-  String endSystemVersion = String.valueOf(Integer.MAX_VALUE);
+  private String changeLogCollectionName = "mongockChangeLog";
+  private String lockCollectionName = "mongockLock";
+  private String startSystemVersion = "0";
+  private String endSystemVersion = String.valueOf(Integer.MAX_VALUE);
+  protected Map<String, Object> metadata;
 
   //for build
   ChangeEntryRepository changeEntryRepository;
   LockChecker lockChecker;
   MethodInvoker methodInvoker;
-  MongoDatabase database;
+  private MongoDatabase database;
 
   /**
    * <p>Builder constructor takes db.mongodb.MongoClient, database name and changelog scan package as parameters.
@@ -180,6 +182,12 @@ public abstract class MongockBuilderBase<BUILDER_TYPE extends MongockBuilderBase
     return returnInstance();
   }
 
+
+  public BUILDER_TYPE withMetadata(Map<String, Object> metadata) {
+    this.metadata = metadata;
+    return returnInstance();
+  }
+
   void validateMandatoryFields() throws MongockException {
     if (legacyMongoClient == null && mongoClient == null) {
       throw new MongockException("MongoClient cannot be null");
@@ -196,7 +204,6 @@ public abstract class MongockBuilderBase<BUILDER_TYPE extends MongockBuilderBase
   public RETURN_TYPE build() {
     validateMandatoryFields();
     database = getDataBaseFromMongoClient();
-
     lockChecker = createLockChecker();
     methodInvoker = new MethodInvokerImpl(lockChecker);
     changeEntryRepository = createChangeRepository();

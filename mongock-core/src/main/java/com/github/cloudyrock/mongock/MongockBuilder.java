@@ -24,6 +24,7 @@ public class MongockBuilder extends MongockBuilderBase<MongockBuilder, Mongock> 
     mongock.setChangelogMongoDatabase(createMongoDataBaseProxy());
     mongock.setEnabled(enabled);
     mongock.setThrowExceptionIfCannotObtainLock(throwExceptionIfCannotObtainLock);
+    mongock.setMetadata(this.metadata);
     return mongock;
   }
 
