@@ -1,8 +1,11 @@
+# 3.2.1.BETA
+### Features
+*  [Support for metadata in mongockChangeLog documents](https://github.com/cloudyrock/mongock/issues/112) in [PR](https://github.com/cloudyrock/mongock/pull/116)
+__________________________________________________
 # 3.2.0.BETA
 ### Breaking changes
 *  [Upgraded library spring-data-mongodb to 2.2.3.RELEASE](https://github.com/cloudyrock/mongock/issues/113) in [PR](https://github.com/cloudyrock/mongock/pull/114)
-
-
+__________________________________________________
 # 3.1.0.BETA
 ### Breaking changes
 * Renamed version to systemVersion, so startVersion and endVersion in the builder become startSystemVersion and endSystemVersion and version in
