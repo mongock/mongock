@@ -11,7 +11,7 @@
 ## LAST NEWS :bangbang::bangbang::collision::collision:
 > **We are looking contributors!!** Want to be part of a open source project? Send me an email to antonio@cloudyrock.io
 
-> **3.2.0.BETA is released**. Take a look to our [changelog](./CHANGELOG.md) to find out what is new.
+> **3.2.1.BETA is released**. Take a look to our [changelog](./CHANGELOG.md) to find out what is new.
 
 # Mongock: MongoDB version control tool for Java
 
@@ -83,14 +83,14 @@ as it's already imported out of the box.
 <dependency>
   <groupId>com.github.cloudyrock.mongock</groupId>
   <artifactId>mongock-core</artifactId>
-  <version>3.2.0.BETA</version>
+  <version>3.2.1.BETA</version>
 </dependency>
 
 <!-- To use with Spring-->
 <dependency>
   <groupId>com.github.cloudyrock.mongock</groupId>
   <artifactId>mongock-spring</artifactId>
-  <version>3.2.0.BETA</version>
+  <version>3.2.1.BETA</version>
 </dependency>
 
 
@@ -98,8 +98,8 @@ as it's already imported out of the box.
 #### With Gradle
 ```groovy
 compile 'org.javassist:javassist:3.18.2-GA'          // workround for ${javassist.version} placeholder issue*
-compile 'com.github.cloudyrock.mongock:mongock-core:3.2.0.BETA'    // standalone
-compile 'com.github.cloudyrock.mongock:mongock-spring:3.2.0.BETA'  // with Spring (in addition to mongock-core)
+compile 'com.github.cloudyrock.mongock:mongock-core:3.2.1.BETA'    // standalone
+compile 'com.github.cloudyrock.mongock:mongock-spring:3.2.1.BETA'  // with Spring (in addition to mongock-core)
 ```
 
 ## Usage with Spring...Mongock as a Bean
@@ -357,6 +357,23 @@ public SpringMongock mongock(Environment environment) {
 }
 ```
 
+## Adding metadata
+Sometimes there is the need of adding some extra information to the mongockChangeLog documents at execution time. This 
+is address by Mongock allowing to set a Map object to the MongockBuilder(core, Spring and Springboot) with the metadata which will be added later 
+to each mongockChangeLog document inserted in the Mongock 'transaction'.
+```java      
+Map<String, Object> metadata = new HashMap<>();
+metadata.put("string_key", "string_value");
+
+Mongock runner = new MongockBuilder(mongoclient, "yourDbName", "com.package.to.be.scanned.for.changesets")
+    .setLockQuickConfig()
+    .withMetadata(metadata)
+    .build();
+
+  //... etc
+}
+```
+
 ## Configuring Lock 
 In order to execute the changelogs, mongock needs to manage the lock to ensure only one instance executes a changelog at a time.
 By default the lock is reserved 24 hours and, in case the lock is held by another mongock instance, will ignore the execution
@@ -432,7 +449,7 @@ You can exclude mongo-java-driver from **mongock**  and use your dependency only
 ```gradle
     // build.gradle
     compile "org.mongodb:mongo-java-driver:3.4.0"
-    compile("com.github.cloudyrock.mongock:mongock:3.2.0.BETA") {
+    compile("com.github.cloudyrock.mongock:mongock:3.2.1.BETA") {
         exclude group: 'org.mongodb', module: 'mongo-java-driver'
     }
 

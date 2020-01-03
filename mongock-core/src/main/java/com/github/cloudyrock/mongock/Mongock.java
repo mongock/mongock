@@ -10,6 +10,7 @@ import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Mongock runner
@@ -27,6 +28,7 @@ public class Mongock implements Closeable {
   private boolean throwExceptionIfCannotObtainLock;
   private boolean enabled;
   protected MongoDatabase changelogMongoDatabase;
+  protected Map<String, Object> metadata;
 
   protected Mongock(
       ChangeEntryRepository changeEntryRepository,
@@ -37,6 +39,24 @@ public class Mongock implements Closeable {
     this.mongoClientCloseable = mongoClientCloseable;
     this.changeService = changeService;
     this.lockChecker = lockChecker;
+  }
+
+  /**
+   * @return true if an execution is in progress, in any process.
+   */
+  public boolean isExecutionInProgress() {
+    return lockChecker.isLockHeld();
+  }
+
+  /**
+   * @return true if Mongock runner is enabled and able to run, otherwise false
+   */
+  public boolean isEnabled() {
+    return enabled;
+  }
+
+  void setMetadata(Map<String, Object> metadata) {
+    this.metadata = metadata;
   }
 
   void setThrowExceptionIfCannotObtainLock(boolean throwExceptionIfCannotObtainLock) {
@@ -50,7 +70,6 @@ public class Mongock implements Closeable {
   void setChangelogMongoDatabase(MongoDatabase changelogMongoDatabase) {
     this.changelogMongoDatabase = changelogMongoDatabase;
   }
-
   public void execute() {
     if (!isEnabled()) {
       logger.info("Mongock is disabled. Exiting.");
@@ -78,20 +97,6 @@ public class Mongock implements Closeable {
   }
 
   /**
-   * @return true if an execution is in progress, in any process.
-   */
-  public boolean isExecutionInProgress() {
-    return lockChecker.isLockHeld();
-  }
-
-  /**
-   * @return true if Mongock runner is enabled and able to run, otherwise false
-   */
-  public boolean isEnabled() {
-    return enabled;
-  }
-
-  /**
    * Closes the Mongo instance used by Mongock.
    * This will close either the connection Mongock was initiated with or that which was internally created.
    */
@@ -109,7 +114,7 @@ public class Mongock implements Closeable {
         changelogInstance = changeService.createInstance(changelogClass);
         List<Method> changeSetMethods = changeService.fetchChangeSets(changelogInstance.getClass());
         for (Method changeSetMethod : changeSetMethods) {
-          executeIfNewOrRunAlways(changelogInstance, changeSetMethod, changeService.createChangeEntry(executionId, changeSetMethod));
+          executeIfNewOrRunAlways(changelogInstance, changeSetMethod, changeService.createChangeEntry(executionId, changeSetMethod, this.metadata));
         }
 
       } catch (NoSuchMethodException | IllegalAccessException | InstantiationException e) {
@@ -122,15 +127,15 @@ public class Mongock implements Closeable {
     }
   }
 
-  private void executeIfNewOrRunAlways(Object changelogInstance, Method changesetMethod, ChangeEntry changeEntry) throws IllegalAccessException, InvocationTargetException {
+  private void executeIfNewOrRunAlways(Object changelogInstance, Method changeSetMethod, ChangeEntry changeEntry) throws IllegalAccessException, InvocationTargetException {
     try {
       if (changeEntryRepository.isNewChange(changeEntry)) {
-        final long executionTimeMillis = executeChangeSetMethod(changesetMethod, changelogInstance);
+        final long executionTimeMillis = executeChangeSetMethod(changeSetMethod, changelogInstance);
         changeEntry.setExecutionMillis(executionTimeMillis);
         changeEntryRepository.save(changeEntry);
         logger.info("APPLIED - {}", changeEntry);
-      } else if (changeService.isRunAlwaysChangeSet(changesetMethod)) {
-        final long executionTimeMillis = executeChangeSetMethod(changesetMethod, changelogInstance);
+      } else if (changeService.isRunAlwaysChangeSet(changeSetMethod)) {
+        final long executionTimeMillis = executeChangeSetMethod(changeSetMethod, changelogInstance);
         changeEntry.setExecutionMillis(executionTimeMillis);
         changeEntryRepository.save(changeEntry);
         logger.info("RE-APPLIED - {}", changeEntry);

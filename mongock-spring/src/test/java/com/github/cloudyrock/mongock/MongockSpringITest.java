@@ -11,6 +11,9 @@ import org.mockito.runners.MockitoJUnitRunner;
 import org.springframework.context.ApplicationContext;
 import org.springframework.core.env.Environment;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import static org.junit.Assert.assertEquals;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -18,19 +21,13 @@ public class MongockSpringITest extends IndependentDbIntegrationTestBase {
 
   private static final String CHANGELOG_COLLECTION_NAME = "mongockChangeLog";
 
-  private SpringMongock runner;
-
-  @Before
-  public void init()  {
-    runner = new SpringMongockBuilder(this.mongoClient, DEFAULT_DATABASE_NAME, MongockTestResource.class.getPackage().getName())
+  @Test
+  public void shouldExecuteAllChangeSets() {
+    // given
+    SpringMongock runner = new SpringMongockBuilder(this.mongoClient, DEFAULT_DATABASE_NAME, MongockTestResource.class.getPackage().getName())
         .setLockQuickConfig()
         .setSpringEnvironment(Mockito.mock(Environment.class))
         .build();
-
-  }
-
-  @Test
-  public void shouldExecuteAllChangeSets() {
 
     // when
     runner.execute();
@@ -45,5 +42,36 @@ public class MongockSpringITest extends IndependentDbIntegrationTestBase {
     assertEquals(1, change1);
   }
 
+
+  @Test
+  public void shouldStoreMetadata_WhenChangeSetIsTrack_IfAddedInBuilder() {
+    // given
+    Map<String, Object> metadata = new HashMap<>();
+    metadata.put("string_key", "string_value");
+    metadata.put("integer_key", 10);
+    metadata.put("float_key", 11.11F);
+    metadata.put("double_key", 12.12D);
+    metadata.put("long_key", 13L);
+    metadata.put("boolean_key", true);
+
+    SpringMongock runner = new SpringMongockBuilder(this.mongoClient, DEFAULT_DATABASE_NAME, MongockTestResource.class.getPackage().getName())
+        .setLockQuickConfig()
+        .setSpringEnvironment(Mockito.mock(Environment.class))
+        .withMetadata(metadata)
+        .build();
+
+    // when
+    runner.execute();
+
+    // then
+    Map metadataResult = this.mongoClient.getDatabase(DEFAULT_DATABASE_NAME).getCollection(CHANGELOG_COLLECTION_NAME).find().first().get("metadata", Map.class);
+    assertEquals("string_value", metadataResult.get("string_key"));
+    assertEquals(10, metadataResult.get("integer_key"));
+    assertEquals(11.11F, (Double) metadataResult.get("float_key"), 0.01);
+    assertEquals(12.12D, (Double) metadataResult.get("double_key"), 0.01);
+    assertEquals(13L, metadataResult.get("long_key"));
+    assertEquals(true, metadataResult.get("boolean_key"));
+
+  }
 
 }

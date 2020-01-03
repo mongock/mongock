@@ -8,6 +8,7 @@ import com.mongodb.client.MongoClient;
 import com.mongodb.client.MongoDatabase;
 
 import java.io.Closeable;
+import java.util.Map;
 
 import static com.github.cloudyrock.mongock.StringUtils.hasText;
 
@@ -20,21 +21,22 @@ public abstract class MongockBuilderBase<BUILDER_TYPE extends MongockBuilderBase
   String databaseName;
 
   //Optionals
-  long lockAcquiredForMinutes = 24L * 60L;
-  long maxWaitingForLockMinutes = 3L;
-  int maxTries = 1;
+  private long lockAcquiredForMinutes = 24L * 60L;
+  private long maxWaitingForLockMinutes = 3L;
+  private int maxTries = 1;
   boolean throwExceptionIfCannotObtainLock = false;
   boolean enabled = true;
-  String changeLogCollectionName = "mongockChangeLog";
-  String lockCollectionName = "mongockLock";
-  String startSystemVersion = "0";
-  String endSystemVersion = String.valueOf(Integer.MAX_VALUE);
+  private String changeLogCollectionName = "mongockChangeLog";
+  private String lockCollectionName = "mongockLock";
+  private String startSystemVersion = "0";
+  private String endSystemVersion = String.valueOf(Integer.MAX_VALUE);
+  protected Map<String, Object> metadata;
 
   //for build
   ChangeEntryRepository changeEntryRepository;
   LockChecker lockChecker;
   MethodInvoker methodInvoker;
-  MongoDatabase database;
+  private MongoDatabase database;
 
   /**
    * <p>Builder constructor takes db.mongodb.MongoClient, database name and changelog scan package as parameters.
@@ -81,7 +83,7 @@ public abstract class MongockBuilderBase<BUILDER_TYPE extends MongockBuilderBase
    * <p>Be careful as changing the changelog collection name can make Mongock to undesirably run twice the same changelog</p>
    *
    * @param changeLogCollectionName name of the collection
-   * @return Mongock builder
+   * @return Mongock builder for fluent interface
    */
   @Deprecated
   public BUILDER_TYPE setChangeLogCollectionName(String changeLogCollectionName) {
@@ -95,7 +97,7 @@ public abstract class MongockBuilderBase<BUILDER_TYPE extends MongockBuilderBase
    * undesirable scenarios</p>
    *
    * @param lockCollectionName name of the collection
-   * @return Mongock builder
+   * @return Mongock builder for fluent interface
    */
   @Deprecated
   public BUILDER_TYPE setLockCollectionName(String lockCollectionName) {
@@ -107,7 +109,7 @@ public abstract class MongockBuilderBase<BUILDER_TYPE extends MongockBuilderBase
    * Feature which enables/disables throwing MongockException if the lock cannot be obtained
    *
    * @param throwExceptionIfCannotObtainLock Mongock will throw MongockException if lock can not be obtained
-   * @return Mongock builder
+   * @return Mongock builder for fluent interface
    */
   public BUILDER_TYPE setThrowExceptionIfCannotObtainLock(boolean throwExceptionIfCannotObtainLock) {
     this.throwExceptionIfCannotObtainLock = throwExceptionIfCannotObtainLock;
@@ -119,7 +121,7 @@ public abstract class MongockBuilderBase<BUILDER_TYPE extends MongockBuilderBase
    * Feature which enables/disables execution
    *
    * @param enabled Migration process will run only if this option is set to true
-   * @return Mongock builder
+   * @return Mongock builder for fluent interface
    */
   public BUILDER_TYPE setEnabled(boolean enabled) {
     this.enabled = enabled;
@@ -132,7 +134,7 @@ public abstract class MongockBuilderBase<BUILDER_TYPE extends MongockBuilderBase
    * @param lockAcquiredForMinutes   Acquired time in minutes
    * @param maxWaitingForLockMinutes max time in minutes to wait for the lock in each try.
    * @param maxTries                 number of tries
-   * @return Mongock object for fluent interface
+   * @return Mongock builder for fluent interface
    */
   public BUILDER_TYPE setLockConfig(long lockAcquiredForMinutes, long maxWaitingForLockMinutes, int maxTries) {
     this.lockAcquiredForMinutes = lockAcquiredForMinutes;
@@ -145,7 +147,7 @@ public abstract class MongockBuilderBase<BUILDER_TYPE extends MongockBuilderBase
   /**
    * Set up the lock with default configuration to wait for it and through an exception when cannot obtain it.
    *
-   * @return Mongock object for fluent interface
+   * @return Mongock builder for fluent interface
    */
   public BUILDER_TYPE setLockQuickConfig() {
     setLockConfig(3, 4, 3);
@@ -160,6 +162,7 @@ public abstract class MongockBuilderBase<BUILDER_TYPE extends MongockBuilderBase
    * range will be applied
    * 
    * @param startSystemVersion Version to start with
+   * @return Mongock builder for fluent interface
    */
   public BUILDER_TYPE setStartSystemVersion(String startSystemVersion) {
     this.startSystemVersion = startSystemVersion;
@@ -174,9 +177,21 @@ public abstract class MongockBuilderBase<BUILDER_TYPE extends MongockBuilderBase
    * range will be applied
    * 
    * @param endSystemVersion Version to end with
+   * @return Mongock builder for fluent interface
    */
   public BUILDER_TYPE setEndSystemVersion(String endSystemVersion) {
     this.endSystemVersion = endSystemVersion;
+    return returnInstance();
+  }
+
+  /**
+   * Set the metadata for the mongock process. This metadata will be added to each document in the mongockChangeLog
+   * collection. This is useful when the system needs to add some extra info to the changeLog.
+   * @param metadata Custom metadata object  to be added
+   * @return Mongock builder for fluent interface
+   */
+  public BUILDER_TYPE withMetadata(Map<String, Object> metadata) {
+    this.metadata = metadata;
     return returnInstance();
   }
 
@@ -196,7 +211,6 @@ public abstract class MongockBuilderBase<BUILDER_TYPE extends MongockBuilderBase
   public RETURN_TYPE build() {
     validateMandatoryFields();
     database = getDataBaseFromMongoClient();
-
     lockChecker = createLockChecker();
     methodInvoker = new MethodInvokerImpl(lockChecker);
     changeEntryRepository = createChangeRepository();

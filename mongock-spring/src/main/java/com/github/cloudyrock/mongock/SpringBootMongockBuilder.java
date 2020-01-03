@@ -62,6 +62,7 @@ public class SpringBootMongockBuilder extends MongockBuilderBase<SpringBootMongo
     mongock.springContext(context);
     mongock.setMongoTemplate(createMongoTemplateProxy());
     mongock.setThrowExceptionIfCannotObtainLock(throwExceptionIfCannotObtainLock);
+    mongock.setMetadata(this.metadata);
     return mongock;
   }
 

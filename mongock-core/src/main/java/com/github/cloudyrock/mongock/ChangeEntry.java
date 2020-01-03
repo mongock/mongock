@@ -19,6 +19,7 @@ class ChangeEntry {
   private static final String KEY_CHANGE_LOG_CLASS = "changeLogClass";
   private static final String KEY_CHANGE_SET_METHOD = "changeSetMethod";
   private static final String KEY_EXECUTION_MILLIS = "executionMillis";
+  private static final String KEY_METADATA = "metadata";
 
 
   private final String executionId;
@@ -27,15 +28,17 @@ class ChangeEntry {
   private final Date timestamp;
   private final String changeLogClass;
   private final String changeSetMethodName;
+  private final Object metadata;
   private long executionMillis = -1;
 
-  public ChangeEntry(String executionId, String changeId, String author, Date timestamp, String changeLogClass, String changeSetMethodName) {
+  public ChangeEntry(String executionId, String changeId, String author, Date timestamp, String changeLogClass, String changeSetMethodName, Object metadata) {
     this.executionId = executionId;
     this.changeId = changeId;
     this.author = author;
     this.timestamp = new Date(timestamp.getTime());
     this.changeLogClass = changeLogClass;
     this.changeSetMethodName = changeSetMethodName;
+    this.metadata = metadata;
   }
 
   Document buildFullDBObject() {
@@ -46,7 +49,8 @@ class ChangeEntry {
         .append(KEY_TIMESTAMP, this.timestamp)
         .append(KEY_CHANGE_LOG_CLASS, this.changeLogClass)
         .append(KEY_CHANGE_SET_METHOD, this.changeSetMethodName)
-        .append(KEY_EXECUTION_MILLIS, this.executionMillis);
+        .append(KEY_EXECUTION_MILLIS, this.executionMillis)
+        .append(KEY_METADATA, this.metadata);
   }
 
   public String getExecutionId() {
@@ -77,9 +81,14 @@ class ChangeEntry {
     return executionMillis;
   }
 
+  public Object getMetadata() {
+    return metadata;
+  }
+
   public void setExecutionMillis(long executionMillis) {
     this.executionMillis = executionMillis;
   }
+
 
   @Override
   public String toString() {
