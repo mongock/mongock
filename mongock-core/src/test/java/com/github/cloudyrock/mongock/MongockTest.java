@@ -3,7 +3,6 @@ package com.github.cloudyrock.mongock;
 import com.github.cloudyrock.mongock.test.changelogs.MongockTestResource;
 import com.github.cloudyrock.mongock.test.proxy.ProxiesMongockTestResource;
 import com.github.cloudyrock.mongock.utils.IndependentDbIntegrationTestBase;
-import com.github.fakemongo.Fongo;
 import com.mongodb.client.MongoDatabase;
 import org.bson.Document;
 import org.junit.Before;
@@ -65,7 +64,7 @@ public class MongockTest extends IndependentDbIntegrationTestBase {
         changeService,
         lockChecker);
 
-    temp.setChangelogMongoDatabase(db);
+    temp.addChangeSetDependency(db);
     temp.setEnabled(true);
     temp.setThrowExceptionIfCannotObtainLock(true);
     runner = spy(temp);
@@ -227,11 +226,11 @@ public class MongockTest extends IndependentDbIntegrationTestBase {
     when(changeEntryRepository.isNewChange(any(ChangeEntry.class))).thenReturn(true);
     // given
     when(changeEntryRepository.isNewChange(any(ChangeEntry.class))).thenReturn(true);
-    runner.setChangelogMongoDatabase(db);
+    runner.addChangeSetDependency(db);
 
 
     MongoDatabase proxyMongoDatabase = mock(MongoDatabase.class);
-    runner.setChangelogMongoDatabase(proxyMongoDatabase);
+    runner.addChangeSetDependency(proxyMongoDatabase);
 
     // when
     runner.execute();

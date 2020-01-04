@@ -51,6 +51,10 @@ abstract class SpringMongockBuilderBase<BUILDER_TYPE extends SpringMongockBuilde
     return returnInstance();
   }
 
+  Environment getSpringEnvironment() {
+    return this.springEnvironment;
+  }
+
 
   @Override
   protected  final ChangeService createChangeServiceInstance() {

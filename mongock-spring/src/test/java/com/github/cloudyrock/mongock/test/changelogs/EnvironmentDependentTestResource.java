@@ -9,6 +9,9 @@ import org.springframework.data.mongodb.core.MongoTemplate;
 public class EnvironmentDependentTestResource {
   @ChangeSet(author = "testuser", id = "Envtest1", order = "01")
   public void testChangeSet7WithEnvironment(MongoTemplate template, Environment env) {
+    if(env == null) {
+      throw new NullPointerException("Environment in method " + EnvironmentDependentTestResource.class.getName() + ".testChangeSet7WithEnvironment is null");
+    }
     System.out.println("invoked Envtest1 with mongotemplate=" + template.toString() + " and Environment " + env);
   }
 }

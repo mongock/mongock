@@ -5,7 +5,6 @@ import com.github.cloudyrock.mongock.decorator.util.MethodInvoker;
 import com.github.cloudyrock.mongock.decorator.util.VoidSupplier;
 import com.github.cloudyrock.mongock.test.proxy.ProxiesMongockTestResource;
 import com.github.cloudyrock.mongock.utils.IndependentDbIntegrationTestBase;
-import com.mongodb.MongoClient;
 import com.mongodb.client.MongoDatabase;
 import com.mongodb.client.model.UpdateOptions;
 import org.bson.Document;
@@ -204,7 +203,7 @@ class TestMongockBuilder extends MongockBuilderBase<TestMongockBuilder, Mongock>
   protected Mongock createMongockInstance() {
 //    changeService.setChangeLogsBasePackage(changeLogsScanPackage);
     Mongock mongock = new Mongock(changeEntryRepository, getMongoClientCloseable(), changeService, lockChecker);
-    mongock.setChangelogMongoDatabase(mongoDataBase);
+    mongock.addChangeSetDependency(mongoDataBase);
     mongock.setEnabled(enabled);
     mongock.setThrowExceptionIfCannotObtainLock(throwExceptionIfCannotObtainLock);
     return mongock;

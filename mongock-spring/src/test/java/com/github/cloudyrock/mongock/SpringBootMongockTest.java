@@ -10,13 +10,16 @@ import java.util.Collections;
 
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Matchers.any;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
 public class SpringBootMongockTest extends SpringBootMongockTestBase {
 
   @Test
-  public void shouldExecuteAllChangeSets() throws Exception {
+  public void shouldExecuteAllChangeSets() {
     // given
     when(changeEntryRepository.isNewChange(any(ChangeEntry.class))).thenReturn(true);
 
@@ -51,7 +54,7 @@ public class SpringBootMongockTest extends SpringBootMongockTestBase {
   }
 
   @Test
-  public void shouldPassOverChangeSets() throws Exception {
+  public void shouldPassOverChangeSets() {
     // given
     when(changeEntryRepository.isNewChange(any(ChangeEntry.class))).thenReturn(false);
 
@@ -63,7 +66,7 @@ public class SpringBootMongockTest extends SpringBootMongockTestBase {
   }
 
   @Test
-  public void  shouldUsePreConfiguredMongoTemplate() throws Exception {
+  public void  shouldUsePreConfiguredMongoTemplate() {
     MongoTemplate mt = mock(MongoTemplate.class);
     when(mt.getCollectionNames()).thenReturn(Collections.EMPTY_SET);
     when(changeEntryRepository.isNewChange(any(ChangeEntry.class))).thenReturn(true);
