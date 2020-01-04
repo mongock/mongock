@@ -1,7 +1,6 @@
 package com.github.cloudyrock.mongock;
 
 import com.mongodb.DB;
-import com.mongodb.MongoClient;
 import com.mongodb.client.MongoDatabase;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -16,7 +15,6 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 import java.util.stream.Collectors;
 
 public class SpringBootMongock extends Mongock implements ApplicationRunner {
