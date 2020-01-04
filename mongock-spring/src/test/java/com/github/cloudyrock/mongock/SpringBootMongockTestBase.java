@@ -67,7 +67,7 @@ public class SpringBootMongockTestBase extends IndependentDbIntegrationTestBase 
     when(appContextMock.getBean(Environment.class)).thenReturn(mock(Environment.class));
     temp.springContext(appContextMock);
     temp.addChangeSetDependency(mongoDatabase);
-    temp.setMongoTemplate(new MongoTemplate(mongoClient, "mongocktest"));
+    temp.addChangeSetDependency(MongoTemplate.class, new MongoTemplate(mongoClient, "mongocktest"));
     temp.setEnabled(true);
     temp.setThrowExceptionIfCannotObtainLock(true);
     runner = spy(temp);

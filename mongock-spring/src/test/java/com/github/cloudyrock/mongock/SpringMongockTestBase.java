@@ -77,7 +77,7 @@ public class SpringMongockTestBase {
         lockChecker);
 
     temp.addChangeSetDependency(mongoDatabase);
-    temp.setMongoTemplate(new MongoTemplate(mongoClient, "mongocktest"));
+    temp.addChangeSetDependency(MongoTemplate.class, new MongoTemplate(mongoClient, "mongocktest"));
     temp.setEnabled(true);
     temp.setThrowExceptionIfCannotObtainLock(true);
     temp.addChangeSetDependency(Environment.class, null);

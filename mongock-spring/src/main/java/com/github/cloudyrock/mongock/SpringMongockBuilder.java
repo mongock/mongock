@@ -1,6 +1,8 @@
 package com.github.cloudyrock.mongock;
 
 import com.mongodb.client.MongoClient;
+import org.springframework.core.env.Environment;
+import org.springframework.data.mongodb.core.MongoTemplate;
 
 public class SpringMongockBuilder extends SpringMongockBuilderBase<SpringMongockBuilder, SpringMongock> {
   /**
@@ -35,8 +37,8 @@ public class SpringMongockBuilder extends SpringMongockBuilderBase<SpringMongock
   @Override
   protected SpringMongock createMongockInstance() {
     SpringMongock mongock = new SpringMongock(changeEntryRepository, getMongoClientCloseable(), createChangeService(), lockChecker);
-    mongock.setSpringEnvironment(this.getSpringEnvironment());
-    mongock.setMongoTemplate(createMongoTemplateProxy());
+    mongock.addChangeSetDependency(Environment.class, this.getSpringEnvironment());
+    mongock.addChangeSetDependency(MongoTemplate.class, createMongoTemplateProxy());
     return mongock;
   }
 

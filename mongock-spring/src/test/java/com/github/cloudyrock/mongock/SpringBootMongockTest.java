@@ -70,7 +70,7 @@ public class SpringBootMongockTest extends SpringBootMongockTestBase {
     MongoTemplate mt = mock(MongoTemplate.class);
     when(mt.getCollectionNames()).thenReturn(Collections.EMPTY_SET);
     when(changeEntryRepository.isNewChange(any(ChangeEntry.class))).thenReturn(true);
-    runner.setMongoTemplate(mt);
+    runner.addChangeSetDependency(MongoTemplate.class, mt);
     runner.run(null);
     verify(mt).getCollectionNames();
   }

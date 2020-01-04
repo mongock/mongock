@@ -12,6 +12,9 @@ public class EnvironmentDependentTestResource {
     if(env == null) {
       throw new NullPointerException("Environment in method " + EnvironmentDependentTestResource.class.getName() + ".testChangeSet7WithEnvironment is null");
     }
+    if(template == null) {
+      throw new NullPointerException("MongoTemplate in method " + EnvironmentDependentTestResource.class.getName() + ".testChangeSet7WithEnvironment is null");
+    }
     System.out.println("invoked Envtest1 with mongotemplate=" + template.toString() + " and Environment " + env);
   }
 }
