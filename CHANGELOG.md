@@ -1,3 +1,7 @@
+# 3.3.0.BETA
+### Breaking change
+* Removed default support for com.mongodb.DB. Currently a UnsupportedOperationException is thrown when used in a changeSet in core mongock
+__________________________________________________
 # 3.2.1.BETA
 ### Features
 *  [Support for metadata in mongockChangeLog documents](https://github.com/cloudyrock/mongock/issues/112) in [PR](https://github.com/cloudyrock/mongock/pull/116)

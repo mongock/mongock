@@ -1,6 +1,5 @@
 package com.github.cloudyrock.mongock;
 
-import com.mongodb.DB;
 import com.mongodb.client.MongoDatabase;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -154,10 +153,7 @@ public class Mongock implements Closeable {
   protected long executeChangeSetMethod(Method changeSetMethod, Object changeLogInstance)
       throws IllegalAccessException, InvocationTargetException {
     final long startingTime = System.currentTimeMillis();
-    if (changeSetMethod.getParameterTypes().length == 1 && changeSetMethod.getParameterTypes()[0].equals(DB.class)) {
-      throw new UnsupportedOperationException("DB not supported by Mongock. Please use MongoDatabase");
-
-    } else if (changeSetMethod.getParameterTypes().length == 1 && changeSetMethod.getParameterTypes()[0].equals(MongoDatabase.class)) {
+    if (changeSetMethod.getParameterTypes().length == 1 && changeSetMethod.getParameterTypes()[0].equals(MongoDatabase.class)) {
       logger.debug("method[{}] with MongoDatabase argument", changeSetMethod.getName());
       changeSetMethod.invoke(changeLogInstance, this.changelogMongoDatabase);
 

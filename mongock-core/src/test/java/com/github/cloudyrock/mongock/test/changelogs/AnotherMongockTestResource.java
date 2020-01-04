@@ -2,7 +2,6 @@ package com.github.cloudyrock.mongock.test.changelogs;
 
 import com.github.cloudyrock.mongock.ChangeLog;
 import com.github.cloudyrock.mongock.ChangeSet;
-import com.mongodb.DB;
 import com.mongodb.client.MongoDatabase;
 
 /**
