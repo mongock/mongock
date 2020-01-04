@@ -237,16 +237,6 @@ public void someChange2(MongoDatabase db) {
   mycollection.insertOne(doc);
 }
 
-@ChangeSet(order = "003", id = "someChangeWithDb", author = "testAuthor")
-public void someChange3(DB db) {
-  // This is deprecated in mongo-java-driver 3.x, use MongoDatabase instead
-  // type: com.mongodb.DB : original MongoDB driver v. 2.x, operations allowed by driver are possible
-  // example: 
-  DBCollection mycollection = db.getCollection("mycollection");
-  BasicDBObject doc = new BasicDBObject().append("test", "1");
-  mycollection .insert(doc);
-}
-
 @ChangeSet(order = "005", id = "someChangeWithSpringDataTemplate", author = "testAuthor")
 public void someChange5(MongoTemplate mongoTemplate) {
   // type: org.springframework.data.mongodb.core.MongoTemplate
