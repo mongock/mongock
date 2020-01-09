@@ -32,7 +32,6 @@ public class Mongock implements Closeable {
   private boolean throwExceptionIfCannotObtainLock;
   private boolean enabled;
   protected Map<String, Object> metadata;
-  protected MongoDatabase changelogMongoDatabase;
   protected Map<Class, Object> dependencies = new HashMap<>();
 
   protected Mongock(
