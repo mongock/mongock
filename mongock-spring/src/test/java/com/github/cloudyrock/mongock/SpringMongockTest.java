@@ -54,7 +54,7 @@ public class SpringMongockTest extends SpringMongockTestBase {
   }
 
   @Test
-  public void shouldPassOverChangeSets() throws Exception {
+  public void shouldPassOverChangeSets() {
     // given
     when(changeEntryRepository.isNewChange(any(ChangeEntry.class))).thenReturn(false);
 
@@ -66,11 +66,11 @@ public class SpringMongockTest extends SpringMongockTestBase {
   }
 
   @Test
-  public void shouldUsePreConfiguredMongoTemplate() throws Exception {
+  public void shouldUsePreConfiguredMongoTemplate() {
     MongoTemplate mt = mock(MongoTemplate.class);
     when(mt.getCollectionNames()).thenReturn(Collections.EMPTY_SET);
     when(changeEntryRepository.isNewChange(any(ChangeEntry.class))).thenReturn(true);
-    runner.setMongoTemplate(mt);
+    runner.addChangeSetDependency(MongoTemplate.class, mt);
     runner.afterPropertiesSet();
     verify(mt).getCollectionNames();
   }

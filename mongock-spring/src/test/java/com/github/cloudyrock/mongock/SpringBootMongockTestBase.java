@@ -2,21 +2,20 @@ package com.github.cloudyrock.mongock;
 
 import com.github.cloudyrock.mongock.test.changelogs.MongockTestResource;
 import com.github.cloudyrock.mongock.utils.IndependentDbIntegrationTestBase;
-import com.mongodb.MongoClient;
 import com.mongodb.client.MongoDatabase;
 import org.junit.After;
 import org.junit.Before;
-import org.junit.Rule;
 import org.mockito.Mock;
 import org.mockito.Spy;
 import org.springframework.context.ApplicationContext;
+import org.springframework.core.env.Environment;
 import org.springframework.data.mongodb.core.MongoTemplate;
-import org.testcontainers.containers.GenericContainer;
 
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.doCallRealMethod;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.spy;
+import static org.mockito.Mockito.when;
 
 /**
  * Class to provide common configuration for Mongock**Test
@@ -33,7 +32,7 @@ public class SpringBootMongockTestBase extends IndependentDbIntegrationTestBase 
   protected MongoDatabase mongoDatabase;
 
   @Mock
-  protected ChangeEntryRepository changeEntryRepository;
+  protected ChangeEntryMongoRepository changeEntryRepository;
 
   @Mock
   protected LockChecker lockChecker;
@@ -43,7 +42,7 @@ public class SpringBootMongockTestBase extends IndependentDbIntegrationTestBase 
   protected SpringChangeService changeService;
 
   @Mock
-  private MongoRepository indexDao;
+  private MongoRepositoryBase indexDao;
 
 
   @Before
@@ -64,9 +63,11 @@ public class SpringBootMongockTestBase extends IndependentDbIntegrationTestBase 
         changeService,
         lockChecker);
 
-    temp.springContext(mock(ApplicationContext.class));
-    temp.setChangelogMongoDatabase(mongoDatabase);
-    temp.setMongoTemplate(new MongoTemplate(mongoClient, "mongocktest"));
+    ApplicationContext appContextMock = mock(ApplicationContext.class);
+    when(appContextMock.getBean(Environment.class)).thenReturn(mock(Environment.class));
+    temp.springContext(appContextMock);
+    temp.addChangeSetDependency(mongoDatabase);
+    temp.addChangeSetDependency(MongoTemplate.class, new MongoTemplate(mongoClient, "mongocktest"));
     temp.setEnabled(true);
     temp.setThrowExceptionIfCannotObtainLock(true);
     runner = spy(temp);

@@ -187,7 +187,7 @@ public abstract class MongockBuilderBase<BUILDER_TYPE extends MongockBuilderBase
     methodInvoker = new MethodInvokerImpl(lockChecker);
     changeEntryRepository = createChangeRepository();
     MONGOCK_TYPE mongock = this.createMongockInstance();
-    mongock.setChangelogMongoDatabase(createMongoDataBaseProxy());
+    mongock.addChangeSetDependency(createMongoDataBaseProxy());
     mongock.setEnabled(enabled);
     mongock.setThrowExceptionIfCannotObtainLock(throwExceptionIfCannotObtainLock);
     mongock.setMetadata(this.metadata);
@@ -203,8 +203,8 @@ public abstract class MongockBuilderBase<BUILDER_TYPE extends MongockBuilderBase
   }
 
   private LockChecker createLockChecker() {
-    LockRepository lockRepository = new LockRepository(lockCollectionName, database);
-    lockRepository.ensureIndex();
+    LockRepository lockRepository = new LockMongoRepository(lockCollectionName, database);
+    lockRepository.initialize();
 
     TimeUtils timeUtils = new TimeUtils();
     return new LockChecker(lockRepository, timeUtils)
@@ -215,8 +215,8 @@ public abstract class MongockBuilderBase<BUILDER_TYPE extends MongockBuilderBase
 
 
   private ChangeEntryRepository createChangeRepository() {
-    ChangeEntryRepository changeEntryRepository = new ChangeEntryRepository(changeLogCollectionName, database);
-    changeEntryRepository.ensureIndex();
+    ChangeEntryRepository changeEntryRepository = new ChangeEntryMongoRepository(changeLogCollectionName, database);
+    changeEntryRepository.initialize();
     return changeEntryRepository;
   }
 
