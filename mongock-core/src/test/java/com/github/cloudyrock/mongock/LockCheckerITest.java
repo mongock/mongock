@@ -1,9 +1,7 @@
 package com.github.cloudyrock.mongock;
 
 import com.github.cloudyrock.mongock.utils.IndependentDbIntegrationTestBase;
-import com.github.fakemongo.Fongo;
 import com.mongodb.client.FindIterable;
-import com.mongodb.client.MongoDatabase;
 import com.mongodb.client.model.UpdateOptions;
 import org.bson.Document;
 import org.junit.Before;
@@ -28,8 +26,8 @@ public class LockCheckerITest extends IndependentDbIntegrationTestBase {
 
   @Before
   public void setUp() {
-    LockRepository repository = new LockRepository(LOCK_COLLECTION_NAME, db);
-    repository.ensureIndex();
+    LockRepository repository = new LockMongoRepository(LOCK_COLLECTION_NAME, db);
+    repository.initialize();
     TimeUtils timeUtils = new TimeUtils();
     checker = new LockChecker(repository, timeUtils)
         .setLockAcquiredForMillis(lockActiveMillis)

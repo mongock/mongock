@@ -45,7 +45,7 @@ public class MongockTestBase {
   protected MongoClient mongoClient;
 
   @Mock
-  private MongoRepository indexDao;
+  private MongoRepositoryBase indexDao;
 
   public static MongoClient getFakeMongoClient(MongoDatabase fakeMongoDatabase) {
     MongoClient mongoClient = mock(MongoClient.class);
@@ -78,7 +78,7 @@ public class MongockTestBase {
         changeService,
         lockChecker);
 
-    temp.setChangelogMongoDatabase(fakeMongoDatabase);
+    temp.addChangeSetDependency(fakeMongoDatabase);
     temp.setEnabled(true);
     temp.setThrowExceptionIfCannotObtainLock(true);
     runner = spy(temp);

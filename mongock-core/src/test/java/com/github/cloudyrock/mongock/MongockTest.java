@@ -3,7 +3,6 @@ package com.github.cloudyrock.mongock;
 import com.github.cloudyrock.mongock.test.changelogs.MongockTestResource;
 import com.github.cloudyrock.mongock.test.proxy.ProxiesMongockTestResource;
 import com.github.cloudyrock.mongock.utils.IndependentDbIntegrationTestBase;
-import com.github.fakemongo.Fongo;
 import com.mongodb.client.MongoDatabase;
 import org.bson.Document;
 import org.junit.Before;
@@ -41,14 +40,14 @@ public class MongockTest extends IndependentDbIntegrationTestBase {
   @Spy
   protected ChangeService changeService;
   @Mock
-  protected ChangeEntryRepository changeEntryRepository;
+  protected ChangeEntryMongoRepository changeEntryRepository;
   @Mock
-  private MongoRepository indexDao;
+  private MongoRepositoryBase indexDao;
 
   @Mock
   protected LockChecker lockChecker;
   @Before
-  public void init() throws Exception {
+  public void init() {
     TestUtils.setField(changeEntryRepository, "mongoDatabase", db);
 
     doCallRealMethod().when(changeEntryRepository).save(any(ChangeEntry.class));
@@ -65,7 +64,7 @@ public class MongockTest extends IndependentDbIntegrationTestBase {
         changeService,
         lockChecker);
 
-    temp.setChangelogMongoDatabase(db);
+    temp.addChangeSetDependency(db);
     temp.setEnabled(true);
     temp.setThrowExceptionIfCannotObtainLock(true);
     runner = spy(temp);
@@ -73,7 +72,7 @@ public class MongockTest extends IndependentDbIntegrationTestBase {
   }
 
   @Test
-  public void shouldExecuteAllChangeSets() throws Exception {
+  public void shouldExecuteAllChangeSets() {
     // given
     when(changeEntryRepository.isNewChange(any(ChangeEntry.class))).thenReturn(true);
 
@@ -109,7 +108,7 @@ public class MongockTest extends IndependentDbIntegrationTestBase {
   }
 
   @Test
-  public void shouldRunAndSaveRunAlwaysMethodAfterFirstExecution() throws Exception {
+  public void shouldRunAndSaveRunAlwaysMethodAfterFirstExecution() {
     // given
     when(changeEntryRepository.isNewChange(any(ChangeEntry.class))).thenReturn(false);
 
@@ -121,7 +120,7 @@ public class MongockTest extends IndependentDbIntegrationTestBase {
   }
 
   @Test
-  public void shouldExecuteProcessWhenLockAcquired() throws Exception {
+  public void shouldExecuteProcessWhenLockAcquired() {
 
     // when
     runner.execute();
@@ -131,7 +130,7 @@ public class MongockTest extends IndependentDbIntegrationTestBase {
   }
 
   @Test
-  public void shouldReleaseLockAfterWhenLockAcquired() throws Exception {
+  public void shouldReleaseLockAfterWhenLockAcquired() {
     // when
     runner.execute();
 
@@ -140,7 +139,7 @@ public class MongockTest extends IndependentDbIntegrationTestBase {
   }
 
   @Test
-  public void shouldNotExecuteProcessWhenLockNotAcquired() throws Exception {
+  public void shouldNotExecuteProcessWhenLockNotAcquired() {
     // given
     doThrow(new LockCheckException()).when(lockChecker).acquireLockDefault();
     runner.setThrowExceptionIfCannotObtainLock(false);
@@ -152,8 +151,7 @@ public class MongockTest extends IndependentDbIntegrationTestBase {
   }
 
   @Test(expected = MongockException.class)
-  public void shouldNotExecuteProcessAndThrowsExceptionWhenLockNotAcquiredAndFlagThrowExceptionIfLockNotAcquiredTrue()
-      throws Exception {
+  public void shouldNotExecuteProcessAndThrowsExceptionWhenLockNotAcquiredAndFlagThrowExceptionIfLockNotAcquiredTrue() {
     // given
     doThrow(new LockCheckException("")).when(lockChecker).acquireLockDefault();
     TestUtils.setField(runner, "throwExceptionIfCannotObtainLock", true);
@@ -164,7 +162,7 @@ public class MongockTest extends IndependentDbIntegrationTestBase {
   }
 
   @Test
-  public void shouldReturnExecutionStatusBasedOnDao() throws Exception {
+  public void shouldReturnExecutionStatusBasedOnDao() {
     // given
     when(lockChecker.isLockHeld()).thenReturn(true);
 
@@ -176,7 +174,7 @@ public class MongockTest extends IndependentDbIntegrationTestBase {
 
   @SuppressWarnings("unchecked")
   @Test
-  public void shouldReleaseLockWhenExceptionInMigration() throws Exception {
+  public void shouldReleaseLockWhenExceptionInMigration() {
 
     // given
     // would be nicer with a mock for the whole execution, but this would mean breaking out to separate class..
@@ -227,11 +225,11 @@ public class MongockTest extends IndependentDbIntegrationTestBase {
     when(changeEntryRepository.isNewChange(any(ChangeEntry.class))).thenReturn(true);
     // given
     when(changeEntryRepository.isNewChange(any(ChangeEntry.class))).thenReturn(true);
-    runner.setChangelogMongoDatabase(db);
+    runner.addChangeSetDependency(db);
 
 
     MongoDatabase proxyMongoDatabase = mock(MongoDatabase.class);
-    runner.setChangelogMongoDatabase(proxyMongoDatabase);
+    runner.addChangeSetDependency(proxyMongoDatabase);
 
     // when
     runner.execute();

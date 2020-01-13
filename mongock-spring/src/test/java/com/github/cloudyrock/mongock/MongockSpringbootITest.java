@@ -10,6 +10,7 @@ import org.junit.runner.RunWith;
 import org.mockito.Mockito;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.springframework.context.ApplicationContext;
+import org.springframework.core.env.Environment;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -21,13 +22,18 @@ public class MongockSpringbootITest extends IndependentDbIntegrationTestBase {
 
   private static final String CHANGELOG_COLLECTION_NAME = "mongockChangeLog";
 
+  private ApplicationContext getApplicationContext() {
+    ApplicationContext context = Mockito.mock(ApplicationContext.class);
+    Mockito.when(context.getBean(Environment.class)).thenReturn(Mockito.mock(Environment.class));
+    return context;
+  }
 
   @Test
   public void shouldExecuteAllChangeSets() {
     // given
     SpringBootMongock runner = new SpringBootMongockBuilder(this.mongoClient, DEFAULT_DATABASE_NAME, MongockTestResource.class.getPackage().getName())
         .setLockQuickConfig()
-        .setApplicationContext(Mockito.mock(ApplicationContext.class))
+        .setApplicationContext(getApplicationContext())
         .build();
 
 
@@ -58,7 +64,7 @@ public class MongockSpringbootITest extends IndependentDbIntegrationTestBase {
     SpringBootMongock runner = new SpringBootMongockBuilder(this.mongoClient, DEFAULT_DATABASE_NAME, MongockTestResource.class.getPackage().getName())
         .setLockQuickConfig()
         .withMetadata(metadata)
-        .setApplicationContext(Mockito.mock(ApplicationContext.class))
+        .setApplicationContext(getApplicationContext())
         .build();
 
     // when

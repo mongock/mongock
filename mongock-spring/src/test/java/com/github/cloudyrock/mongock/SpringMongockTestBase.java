@@ -1,23 +1,22 @@
 package com.github.cloudyrock.mongock;
 
 import com.github.cloudyrock.mongock.test.changelogs.MongockTestResource;
-import com.github.fakemongo.Fongo;
 import com.mongodb.MongoClient;
 import com.mongodb.client.MongoDatabase;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Rule;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.mockito.Spy;
+import org.springframework.core.env.Environment;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.testcontainers.containers.GenericContainer;
 
 import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.doCallRealMethod;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.spy;
-import static org.mockito.Mockito.when;
 
 /**
  * Class to provide common configuration for Mongock**Test
@@ -34,7 +33,7 @@ public class SpringMongockTestBase {
   protected MongoDatabase mongoDatabase;
 
   @Mock
-  protected ChangeEntryRepository changeEntryRepository;
+  protected ChangeEntryMongoRepository changeEntryRepository;
 
   @Mock
   protected LockChecker lockChecker;
@@ -48,7 +47,7 @@ public class SpringMongockTestBase {
   protected MongoClient mongoClient;
 
   @Mock
-  private MongoRepository indexDao;
+  private MongoRepositoryBase indexDao;
 
 
   protected static final String MONGO_CONTAINER = "mongo:3.1.5";
@@ -78,17 +77,17 @@ public class SpringMongockTestBase {
         changeService,
         lockChecker);
 
-    temp.setChangelogMongoDatabase(mongoDatabase);
-    temp.setMongoTemplate(new MongoTemplate(mongoClient, "mongocktest"));
+    temp.addChangeSetDependency(mongoDatabase);
+    temp.addChangeSetDependency(MongoTemplate.class, new MongoTemplate(mongoClient, "mongocktest"));
     temp.setEnabled(true);
     temp.setThrowExceptionIfCannotObtainLock(true);
-    temp.setSpringEnvironment(null);
+    temp.addChangeSetDependency(Environment.class, Mockito.mock(Environment.class));
     runner = spy(temp);
 
   }
 
   @After
-  public void cleanUp() throws NoSuchFieldException, IllegalAccessException {
+  public void cleanUp() {
     TestUtils.setField(runner, "mongoTemplate", null);
   }
 

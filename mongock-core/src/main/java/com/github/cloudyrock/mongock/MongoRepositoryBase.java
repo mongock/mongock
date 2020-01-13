@@ -8,11 +8,8 @@ import org.bson.Document;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-/**
- *
- * @since 20.04.2018
- */
-abstract class MongoRepository {
+
+abstract class MongoRepositoryBase implements Repository{
 
   private static final Logger logger = LoggerFactory.getLogger("MongoRepository");
   final MongoCollection<Document> collection;
@@ -20,14 +17,14 @@ abstract class MongoRepository {
   private final String fullCollectionName;
   private boolean ensuredCollectionIndex = false;
 
-  MongoRepository(MongoDatabase mongoDatabase, String collectionName, String[] uniqueFields) {
+  MongoRepositoryBase(MongoDatabase mongoDatabase, String collectionName, String[] uniqueFields) {
     this.collection = mongoDatabase.getCollection(collectionName);
     this.fullCollectionName =
         collection.getNamespace().getDatabaseName() + "." + collection.getNamespace().getCollectionName();
     this.uniqueFields = uniqueFields;
   }
 
-  synchronized void ensureIndex() {
+  public synchronized void initialize() {
     if (!this.ensuredCollectionIndex) {
       final Document index = findRequiredUniqueIndex();
       if (index == null) {
@@ -57,11 +54,11 @@ abstract class MongoRepository {
     return null;
   }
 
-  private String getCollectionName() {
+  String getCollectionName() {
     return collection.getNamespace().getCollectionName();
   }
 
-  private Document getIndexDocument(String[] uniqueFields) {
+  Document getIndexDocument(String[] uniqueFields) {
     final Document indexDocument = new Document();
     for (String field : uniqueFields) {
       indexDocument.append(field, 1);
