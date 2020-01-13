@@ -45,7 +45,7 @@ public class MongockTestBase {
   protected MongoClient mongoClient;
 
   @Mock
-  private MongoRepository indexDao;
+  private MongoRepositoryBase indexDao;
 
   public static MongoClient getFakeMongoClient(MongoDatabase fakeMongoDatabase) {
     MongoClient mongoClient = mock(MongoClient.class);

@@ -17,16 +17,15 @@ import static org.mockito.Mockito.when;
  * @since 10.12.14
  */
 public class ChangeEntryRepositoryTest extends IndependentDbIntegrationTestBase {
-  private static final String TEST_SERVER = "testServer";
-  private static final String DB_NAME = "mongocktest";
+
   private static final String CHANGELOG_COLLECTION_NAME = "dbchangelog";
 
   @Test
   public void shouldCreateUniqueIndex_whenEnsureIndex_IfNotCreatedYet() throws MongockException {
 
     // when
-    ChangeEntryRepository dao = spy(new ChangeEntryRepository(CHANGELOG_COLLECTION_NAME, db));
-    dao.ensureIndex();
+    ChangeEntryMongoRepository dao = spy(new ChangeEntryMongoRepository(CHANGELOG_COLLECTION_NAME, db));
+    dao.initialize();
 
     //then
     verify(dao, times(1)).createRequiredUniqueIndex();
@@ -38,13 +37,13 @@ public class ChangeEntryRepositoryTest extends IndependentDbIntegrationTestBase 
   public void shouldNoCreateUniqueIndex_whenEnsureIndex_IfAlreadyCreated() throws MongockException {
 
     // when
-    ChangeEntryRepository dao = mock(ChangeEntryRepository.class);
+    ChangeEntryMongoRepository dao = mock(ChangeEntryMongoRepository.class);
     when(dao.findRequiredUniqueIndex()).thenReturn(new Document());
     when(dao.isUniqueIndex(any(Document.class))).thenReturn(true);
-    doCallRealMethod().when(dao).ensureIndex();
+    doCallRealMethod().when(dao).initialize();
 
     // when
-    dao.ensureIndex();
+    dao.initialize();
 
     //then
     verify(dao, times(0)).createRequiredUniqueIndex();

@@ -18,7 +18,7 @@ import java.util.Date;
  *
  * @since 04/04/2018
  */
-class LockRepository extends MongoRepository {
+class LockRepository extends MongoRepositoryBase implements Repository {
 
   LockRepository(String collectionName, MongoDatabase db) {
     super(db, collectionName, new String[]{LockEntry.KEY_FIELD});

@@ -42,7 +42,7 @@ public class SpringBootMongockTestBase extends IndependentDbIntegrationTestBase 
   protected SpringChangeService changeService;
 
   @Mock
-  private MongoRepository indexDao;
+  private MongoRepositoryBase indexDao;
 
 
   @Before

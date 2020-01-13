@@ -46,7 +46,7 @@ public class SpringMongockTestBase {
   protected MongoClient mongoClient;
 
   @Mock
-  private MongoRepository indexDao;
+  private MongoRepositoryBase indexDao;
 
 
   protected static final String MONGO_CONTAINER = "mongo:3.1.5";
