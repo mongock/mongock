@@ -32,7 +32,7 @@ public class SpringBootMongockTestBase extends IndependentDbIntegrationTestBase 
   protected MongoDatabase mongoDatabase;
 
   @Mock
-  protected ChangeEntryRepository changeEntryRepository;
+  protected ChangeEntryMongoRepository changeEntryRepository;
 
   @Mock
   protected LockChecker lockChecker;

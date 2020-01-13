@@ -26,7 +26,7 @@ public class LockRepositoryITest extends IndependentDbIntegrationTestBase {
 
   @Before
   public void setUp() {
-    repository = new LockRepository(LOCK_COLLECTION_NAME, db);
+    repository = new LockMongoRepository(LOCK_COLLECTION_NAME, db);
     repository.initialize();
   }
 

@@ -7,6 +7,7 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Rule;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.mockito.Spy;
 import org.springframework.core.env.Environment;
 import org.springframework.data.mongodb.core.MongoTemplate;
@@ -32,7 +33,7 @@ public class SpringMongockTestBase {
   protected MongoDatabase mongoDatabase;
 
   @Mock
-  protected ChangeEntryRepository changeEntryRepository;
+  protected ChangeEntryMongoRepository changeEntryRepository;
 
   @Mock
   protected LockChecker lockChecker;
@@ -80,7 +81,7 @@ public class SpringMongockTestBase {
     temp.addChangeSetDependency(MongoTemplate.class, new MongoTemplate(mongoClient, "mongocktest"));
     temp.setEnabled(true);
     temp.setThrowExceptionIfCannotObtainLock(true);
-    temp.addChangeSetDependency(Environment.class, null);
+    temp.addChangeSetDependency(Environment.class, Mockito.mock(Environment.class));
     runner = spy(temp);
 
   }

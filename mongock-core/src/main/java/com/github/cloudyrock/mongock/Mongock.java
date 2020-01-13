@@ -167,7 +167,7 @@ public class Mongock implements Closeable {
         .findFirst();
   }
 
-  protected long executeChangeSetMethod(Method changeSetMethod, Object changeLogInstance)
+  private long executeChangeSetMethod(Method changeSetMethod, Object changeLogInstance)
       throws IllegalAccessException, InvocationTargetException {
     final long startingTime = System.currentTimeMillis();
     List<Object> changelogInvocationParameters = new ArrayList<>(changeSetMethod.getParameterTypes().length);

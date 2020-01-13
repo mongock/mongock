@@ -49,7 +49,7 @@ public class MongockLockCheckerIntegrationTest extends IndependentDbIntegrationT
 
     timeUtils = spy(new TimeUtils());
     changeService = spy(new ChangeService());
-    lockRepository = spy(new LockRepository(LOCK_COLLECTION_NAME, db));
+    lockRepository = spy(new LockMongoRepository(LOCK_COLLECTION_NAME, db));
 
     lockChecker = spy(new LockChecker(lockRepository, timeUtils));
     methodInvoker = new MethodInvoker() {

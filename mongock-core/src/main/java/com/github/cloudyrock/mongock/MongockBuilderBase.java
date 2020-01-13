@@ -203,7 +203,7 @@ public abstract class MongockBuilderBase<BUILDER_TYPE extends MongockBuilderBase
   }
 
   private LockChecker createLockChecker() {
-    LockRepository lockRepository = new LockRepository(lockCollectionName, database);
+    LockRepository lockRepository = new LockMongoRepository(lockCollectionName, database);
     lockRepository.initialize();
 
     TimeUtils timeUtils = new TimeUtils();

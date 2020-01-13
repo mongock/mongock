@@ -13,9 +13,6 @@ import java.util.UUID;
  * releasing the lock.</p>
  * <p>Implementation note: This class is not thread safe. If in future development thread safety is needed, please consider
  * using volatile for expiresAt field and synchronized mechanism.</p>
- *
- *
- * @since 04/04/2018
  */
 @NotThreadSafe
 public class LockChecker {
@@ -71,8 +68,7 @@ public class LockChecker {
    * @param repository lock repository
    * @param timeUtils  time utils service
    */
-  LockChecker(LockRepository repository,
-              TimeUtils timeUtils) {
+  LockChecker(LockRepository repository, TimeUtils timeUtils) {
     this.repository = repository;
     this.timeUtils = timeUtils;
     this.owner = UUID.randomUUID().toString();
@@ -90,7 +86,7 @@ public class LockChecker {
    *
    * @throws LockCheckException if the lock cannot be acquired
    */
-  public void acquireLockDefault() {
+  public void acquireLockDefault() throws LockCheckException {
     acquireLock(getDefaultKey());
   }
 
@@ -100,8 +96,7 @@ public class LockChecker {
       try {
         logger.info("Mongock trying to acquire the lock");
         final Date newLockExpiresAt = timeUtils.currentTimePlusMillis(lockAcquiredForMillis);
-        final LockEntry lockEntry = new LockEntry(lockKey, LockStatus.LOCK_HELD.name(), owner, newLockExpiresAt);
-        repository.insertUpdate(lockEntry);
+        repository.insertUpdate(new LockEntry(lockKey, LockStatus.LOCK_HELD.name(), owner, newLockExpiresAt));
         logger.info("Mongock acquired the lock until: {}", newLockExpiresAt);
         updateStatus(newLockExpiresAt);
         keepLooping = false;
@@ -118,7 +113,7 @@ public class LockChecker {
    *
    * @throws LockCheckException if, in case of needed, the lock cannot be refreshed
    */
-  public void ensureLockDefault() {
+  public void ensureLockDefault() throws LockCheckException {
     ensureLock(getDefaultKey());
   }
 
