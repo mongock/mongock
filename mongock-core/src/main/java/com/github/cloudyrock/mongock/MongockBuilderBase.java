@@ -16,7 +16,7 @@ public abstract class MongockBuilderBase<BUILDER_TYPE extends MongockBuilderBase
   //Mandatory
   final com.mongodb.MongoClient legacyMongoClient;
   final MongoClient mongoClient;
-  private String changeLogsScanPackage;
+  String changeLogsScanPackage;
   String databaseName;
 
   //Optionals
