@@ -3,6 +3,7 @@ package com.github.cloudyrock.mongock;
 import com.github.cloudyrock.mongock.decorator.impl.MongoTemplateDecoratorImpl;
 
 import com.mongodb.client.MongoClient;
+import com.mongodb.client.MongoDatabase;
 import org.springframework.core.env.Environment;
 import org.springframework.data.mongodb.MongoDbFactory;
 import org.springframework.data.mongodb.core.MongoTemplate;
@@ -55,11 +56,21 @@ abstract class SpringMongockBuilderBase<BUILDER_TYPE extends SpringMongockBuilde
    * @param changeLogsScanPackage package path where the changeLogs are located
    * @see MongoClient
    */
-  SpringMongockBuilderBase(MongoTemplate template, String databaseName, String changeLogsScanPackage) {
-    super((MongoClient)null, databaseName, changeLogsScanPackage);
+  SpringMongockBuilderBase(MongoTemplate template, String changeLogsScanPackage) {
+    super((MongoClient)null, template.getDb().getName(), changeLogsScanPackage);
     this.template = template;
   }
 
+  @Override
+  MongoDatabase getMongoDatabase() {
+    if(template != null ) {
+      return template.getDb();
+    } else if(mongoClient !=null) {
+      return mongoClient.getDatabase(databaseName);
+    } else {
+      return legacyMongoClient.getDatabase(databaseName);
+    }
+  }
 
   @Override
   void validateMandatoryFields() throws MongockException {

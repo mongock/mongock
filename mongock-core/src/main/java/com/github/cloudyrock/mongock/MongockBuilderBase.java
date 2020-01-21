@@ -182,7 +182,7 @@ public abstract class MongockBuilderBase<BUILDER_TYPE extends MongockBuilderBase
 
   public MONGOCK_TYPE build() {
     validateMandatoryFields();
-    database = getDataBaseFromMongoClient();
+    database = getMongoDatabase();
     lockChecker = createLockChecker();
     methodInvoker = new MethodInvokerImpl(lockChecker);
     changeEntryRepository = createChangeRepository();
@@ -194,7 +194,7 @@ public abstract class MongockBuilderBase<BUILDER_TYPE extends MongockBuilderBase
     return mongock;
   }
 
-  private MongoDatabase getDataBaseFromMongoClient() {
+  MongoDatabase getMongoDatabase() {
     return mongoClient != null ? mongoClient.getDatabase(databaseName) : legacyMongoClient.getDatabase(databaseName);
   }
 
@@ -221,7 +221,7 @@ public abstract class MongockBuilderBase<BUILDER_TYPE extends MongockBuilderBase
   }
 
   private MongoDatabase createMongoDataBaseProxy() {
-    return new MongoDataBaseDecoratorImpl(getDataBaseFromMongoClient(), methodInvoker);
+    return new MongoDataBaseDecoratorImpl(getMongoDatabase(), methodInvoker);
   }
 
   protected final ChangeService createChangeService() {
