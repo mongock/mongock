@@ -41,6 +41,19 @@ public class SpringBootMongockBuilder extends SpringMongockBuilderBase<SpringBoo
   }
 
   /**
+   * <p>Builder constructor takes new API com.mongodb.client.MongoClient, database name and changelog scan package as parameters.
+   * </p><p>For more details about MongoClient please see om.mongodb.client.MongoClient docs
+   * </p>
+   *
+   * @param mongoTemplate         mongoTemplate
+   * @param changeLogsScanPackage package path where the changelogs are located
+   * @see MongoClient
+   */
+  public SpringBootMongockBuilder(MongoTemplate mongoTemplate, String changeLogsScanPackage) {
+    super(mongoTemplate, changeLogsScanPackage);
+  }
+
+  /**
    * Set the Springboot application context from which the dependencies will be retrieved
    * @param context Springboot application context
    * @return Mongock builder for fluent interface
