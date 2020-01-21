@@ -10,6 +10,8 @@ import org.mockito.Mockito;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.springframework.context.ApplicationContext;
 import org.springframework.core.env.Environment;
+import org.springframework.data.mongodb.MongoDbFactory;
+import org.springframework.data.mongodb.core.MongoTemplate;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -37,6 +39,28 @@ public class MongockSpringITest extends IndependentDbIntegrationTestBase {
 
     // dbchangelog collection checking
     long change1 = this.mongoClient.getDatabase(DEFAULT_DATABASE_NAME).getCollection(CHANGELOG_COLLECTION_NAME).count(new Document()
+        .append(ChangeEntry.KEY_CHANGE_ID, "test1")
+        .append(ChangeEntry.KEY_AUTHOR, "testuser"));
+    assertEquals(1, change1);
+  }
+
+  @Test
+  public void shouldExecuteAllChangeSetsWithMongoTemplate() {
+    // given
+    MongoTemplate mongoTemplate = new MongoTemplate(mongoClient, DEFAULT_DATABASE_NAME);
+    SpringMongock runner = new SpringMongockBuilder(mongoTemplate, MongockTestResource.class.getPackage().getName())
+        .setLockQuickConfig()
+        .setSpringEnvironment(Mockito.mock(Environment.class))
+        .build();
+
+    // when
+    runner.execute();
+    runner.execute();
+
+    // then
+
+    // dbchangelog collection checking
+    long change1 = mongoTemplate.getCollection(CHANGELOG_COLLECTION_NAME).count(new Document()
         .append(ChangeEntry.KEY_CHANGE_ID, "test1")
         .append(ChangeEntry.KEY_AUTHOR, "testuser"));
     assertEquals(1, change1);

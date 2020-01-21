@@ -34,6 +34,19 @@ public class SpringMongockBuilder extends SpringMongockBuilderBase<SpringMongock
     super(newMongoClient, databaseName, changeLogsScanPackage);
   }
 
+  /**
+   * <p>Builder constructor takes new API com.mongodb.client.MongoClient, database name and changelog scan package as parameters.
+   * </p><p>For more details about MongoClient please see om.mongodb.client.MongoClient docs
+   * </p>
+   *
+   * @param mongoTemplate         mongoTemplate
+   * @param changeLogsScanPackage package path where the changelogs are located
+   * @see MongoClient
+   */
+  public SpringMongockBuilder(MongoTemplate mongoTemplate, String changeLogsScanPackage) {
+    super(mongoTemplate, changeLogsScanPackage);
+  }
+
   @Override
   protected SpringMongock createMongockInstance() {
     SpringMongock mongock = new SpringMongock(changeEntryRepository, getMongoClientCloseable(), createChangeService(), lockChecker);
