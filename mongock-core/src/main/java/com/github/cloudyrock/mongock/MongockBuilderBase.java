@@ -125,6 +125,14 @@ public abstract class MongockBuilderBase<BUILDER_TYPE extends MongockBuilderBase
     return returnInstance();
   }
 
+  public BUILDER_TYPE setChangeLogCollectionName(String changeLogCollectionName) {
+    if(changeLogCollectionName == null || "".equals(changeLogCollectionName)) {
+      throw new MongockException("invalid changeLog collection name");
+    }
+    this.changeLogCollectionName = changeLogCollectionName;
+    return returnInstance();
+  }
+
   /**
    * Set up the start Version for versioned schema changes.
    * This shouldn't be confused with the changeSet systemVersion. This is from a consultancy point of view.
