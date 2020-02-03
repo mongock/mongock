@@ -35,47 +35,16 @@ public class SpringChangeService extends ChangeService {
   @Override
   public List<Class<?>> fetchChangeLogs() {
     List<Class<?>> changeLogs = super.fetchChangeLogs();
-    return filterByActiveProfiles(changeLogs);
+    return ProfileUtil.filterByActiveProfiles(activeProfiles, changeLogs);
   }
 
   @Override
   public List<Method> fetchChangeSets(Class<?> type) throws MongockException {
     final List<Method> changeSets = super.fetchChangeSets(type);
-    return filterByActiveProfiles(changeSets);
+    return ProfileUtil.filterByActiveProfiles(activeProfiles, changeSets);
   }
 
 
-  private <T extends AnnotatedElement> List<T> filterByActiveProfiles(Collection<T> annotated) {
-    List<T> filtered = new ArrayList<>();
-    for (T element : annotated) {
-      if (matchesActiveSpringProfile(element)) {
-        filtered.add(element);
-      }
-    }
-    return filtered;
-  }
 
-  private boolean matchesActiveSpringProfile(AnnotatedElement element) {
-    if (!element.isAnnotationPresent(Profile.class)) {
-      return true; // no-profiled changeset always matches
-    }
-    boolean containsActiveProfile = false;
-    for (String profile : element.getAnnotation(Profile.class).value()) {
-      if (StringUtils.isEmpty(profile)) {
-        continue;
-      }
-      if (ProfileUtil.isNegativeProfile(profile)) {
-        if (ProfileUtil.containsNegativeProfile(activeProfiles, profile)) {
-          return false;
-        }
-      } else {
-        containsActiveProfile = true;
-        if (ProfileUtil.containsProfile(activeProfiles, profile)) {
-          return true;
-        }
-      }
-    }
-    return !containsActiveProfile;
-  }
 
 }
