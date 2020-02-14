@@ -9,9 +9,8 @@
 [![Hex.pm](https://img.shields.io/hexpm/l/plug.svg)](https://github.com/dieppa/mongock/blob/master/LICENSE)
 
 ## LAST NEWS :bangbang::bangbang::collision::collision:
-> **We are looking contributors!!** Want to be part of a open source project? Send me an email to antonio@cloudyrock.io
 
-> **3.2.1.BETA is released**. Take a look to our [changelog](./CHANGELOG.md) to find out what is new.
+> **3.2.3 is released** Don't upgrade from 2.X until we document the upgrade process, which is extremely easy, but necessary.
 
 # Mongock: MongoDB version control tool for Java
 
