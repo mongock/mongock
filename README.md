@@ -10,7 +10,7 @@
 
 ## LAST NEWS :bangbang::bangbang::collision::collision:
 
-> **3.2.3 is released** Don't upgrade from 2.X until we document the upgrade process, which is extremely easy, but necessary.
+> **3.2.3 is released**, but don't upgrade from 2.X until we document the upgrade process, which is extremely easy, but necessary. There is also a small bug when using Spring Repositories, which will be fixed by Monday 17/02/2020
 
 # Mongock: MongoDB version control tool for Java
 
