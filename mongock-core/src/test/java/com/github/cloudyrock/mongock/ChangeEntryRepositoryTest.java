@@ -38,7 +38,6 @@ public class ChangeEntryRepositoryTest extends IndependentDbIntegrationTestBase 
 
     // when
     ChangeEntryMongoRepository dao = mock(ChangeEntryMongoRepository.class);
-    when(dao.findRequiredUniqueIndex()).thenReturn(new Document());
     when(dao.isRightIndex(any(Document.class))).thenReturn(true);
     doCallRealMethod().when(dao).initialize();
 
