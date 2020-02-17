@@ -1,7 +1,7 @@
 package com.github.cloudyrock.mongock.decorator.impl;
 
-import com.github.cloudyrock.mongock.decorator.CloseableIteratorDecorator;
 import com.github.cloudyrock.mongock.decorator.util.MethodInvoker;
+import com.github.cloudyrock.mongock.decorator.CloseableIteratorDecorator;
 import org.springframework.data.util.CloseableIterator;
 
 public class CloseableIteratorDecoratorImpl<T> implements CloseableIteratorDecorator<T> {
@@ -23,4 +23,6 @@ public class CloseableIteratorDecoratorImpl<T> implements CloseableIteratorDecor
   public MethodInvoker getInvoker() {
     return invoker;
   }
+
+
 }

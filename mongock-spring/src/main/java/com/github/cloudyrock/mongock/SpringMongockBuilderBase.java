@@ -1,12 +1,14 @@
 package com.github.cloudyrock.mongock;
 
 import com.github.cloudyrock.mongock.decorator.impl.MongoTemplateDecoratorImpl;
-
+import com.github.cloudyrock.mongock.decorator.util.MethodInvoker;
+import com.github.cloudyrock.mongock.decorator.util.VoidSupplier;
 import com.mongodb.client.MongoClient;
 import com.mongodb.client.MongoDatabase;
 import org.springframework.core.env.Environment;
-import org.springframework.data.mongodb.MongoDbFactory;
 import org.springframework.data.mongodb.core.MongoTemplate;
+
+import java.util.function.Supplier;
 
 import static com.github.cloudyrock.mongock.StringUtils.hasText;
 
@@ -20,7 +22,7 @@ abstract class SpringMongockBuilderBase<BUILDER_TYPE extends SpringMongockBuilde
    * </p><p>For more details about MongoClient please see com.mongodb.MongoClient docs
    * </p>
    *
-   * @param legacyMongoClient           database connection client
+   * @param legacyMongoClient     database connection client
    * @param databaseName          database name
    * @param changeLogsScanPackage package path where the changelogs are located
    * @see com.mongodb.MongoClient
@@ -57,15 +59,15 @@ abstract class SpringMongockBuilderBase<BUILDER_TYPE extends SpringMongockBuilde
    * @see MongoClient
    */
   SpringMongockBuilderBase(MongoTemplate template, String changeLogsScanPackage) {
-    super((MongoClient)null, template.getDb().getName(), changeLogsScanPackage);
+    super((MongoClient) null, template.getDb().getName(), changeLogsScanPackage);
     this.template = template;
   }
 
   @Override
   MongoDatabase getMongoDatabase() {
-    if(template != null ) {
+    if (template != null) {
       return template.getDb();
-    } else if(mongoClient !=null) {
+    } else if (mongoClient != null) {
       return mongoClient.getDatabase(databaseName);
     } else {
       return legacyMongoClient.getDatabase(databaseName);
@@ -104,21 +106,32 @@ abstract class SpringMongockBuilderBase<BUILDER_TYPE extends SpringMongockBuilde
 
 
   @Override
-  protected  final ChangeService createChangeServiceInstance() {
+  protected final ChangeService createChangeServiceInstance() {
     SpringChangeService changeService = new SpringChangeService();
     changeService.setEnvironment(springEnvironment);
     return changeService;
   }
 
   final MongoTemplate createMongoTemplateProxy() {
-    if(template != null ) {
+    MongoTemplateDecoratorImpl.setDefaultMethodInvoker(new MethodInvoker() {
+      @Override
+      public <T> T invoke(Supplier<T> supplier) {
+        lockChecker.acquireLockDefault();
+        return supplier.get();
+      }
+
+      @Override
+      public void invoke(VoidSupplier supplier) {
+        lockChecker.acquireLockDefault();
+        supplier.execute();
+      }
+    });
+    if (template != null) {
       return new MongoTemplateDecoratorImpl(template.getMongoDbFactory(), template.getConverter(), methodInvoker);
-    } else if(mongoClient !=null) {
+    } else if (mongoClient != null) {
       return new MongoTemplateDecoratorImpl(mongoClient, databaseName, methodInvoker);
     } else {
-      return new MongoTemplateDecoratorImpl(legacyMongoClient, databaseName, methodInvoker) ;
+      return new MongoTemplateDecoratorImpl(legacyMongoClient, databaseName, methodInvoker);
     }
   }
-
-
 }
