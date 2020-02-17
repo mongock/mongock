@@ -1,6 +1,7 @@
 package com.github.cloudyrock.mongock;
 
 import com.github.cloudyrock.mongock.test.changelogs.MongockTestResource;
+import com.github.cloudyrock.mongock.test.changelogs.runAlways.RunAlwaysChangeLog;
 import com.github.cloudyrock.mongock.utils.IndependentDbIntegrationTestBase;
 import com.mongodb.client.FindIterable;
 import org.bson.Document;
@@ -44,6 +45,32 @@ public class MongockITest extends IndependentDbIntegrationTestBase {
         .append(ChangeEntry.KEY_CHANGE_ID, "test1")
         .append(ChangeEntry.KEY_AUTHOR, "testuser"));
     assertEquals(1, change1);
+  }
+
+  @Test
+  public void shouldRunTwice_WhenRunAlways() {
+    // given
+    Mongock runner = new MongockBuilder(this.mongoClient, DEFAULT_DATABASE_NAME, RunAlwaysChangeLog.class.getPackage().getName())
+        .setLockQuickConfig()
+        .build();
+
+
+    // when
+    runner.execute();
+    runner.execute();
+
+    // then
+
+    // dbchangelog collection checking
+    final long changeSetWithRunAlways = db.getCollection(CHANGELOG_COLLECTION_NAME).countDocuments(new Document()
+        .append(ChangeEntry.KEY_CHANGE_ID, "runAlways")
+        .append(ChangeEntry.KEY_AUTHOR, "testuser"));
+    assertEquals(2, changeSetWithRunAlways);
+
+    final long changeSetWithNoRunAlways = db.getCollection(CHANGELOG_COLLECTION_NAME).countDocuments(new Document()
+        .append(ChangeEntry.KEY_CHANGE_ID, "noRunAlways")
+        .append(ChangeEntry.KEY_AUTHOR, "testuser"));
+    assertEquals(1, changeSetWithNoRunAlways);
   }
 
 
