@@ -116,7 +116,8 @@ public class MongockTest extends IndependentDbIntegrationTestBase {
     runner.execute();
 
     // then
-    verify(changeEntryRepository, times(1)).save(any(ChangeEntry.class)); // no changesets saved to dbchangelog
+    verify(changeEntryRepository, times(2)).save(any(ChangeEntry.class));
+    //two RunAlwaysChangeLog.runAlways() and AnotherMongockTestResource.testChangeSetWithAlways()
   }
 
   @Test

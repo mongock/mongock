@@ -33,21 +33,6 @@ public class ChangeEntryRepositoryTest extends IndependentDbIntegrationTestBase 
     verify(dao, times(0)).dropIndex(any(Document.class));
   }
 
-  @Test
-  public void shouldNoCreateUniqueIndex_whenEnsureIndex_IfAlreadyCreated() throws MongockException {
-
-    // when
-    ChangeEntryMongoRepository dao = mock(ChangeEntryMongoRepository.class);
-    when(dao.isRightIndex(any(Document.class))).thenReturn(true);
-    doCallRealMethod().when(dao).initialize();
-
-    // when
-    dao.initialize();
-
-    //then
-    verify(dao, times(0)).createRequiredUniqueIndex();
-    // and not
-    verify(dao, times(0)).dropIndex(new Document());
-  }
+  //TODO add test for index creation and upgrade from older versions
 
 }
