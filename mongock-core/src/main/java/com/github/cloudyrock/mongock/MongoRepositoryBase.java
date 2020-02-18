@@ -71,7 +71,7 @@ abstract class MongoRepositoryBase implements Repository {
     return fullCollectionName.equals(index.getString("ns")) && index.getBoolean("unique", false);
   }
 
-  private String getCollectionName() {
+  String getCollectionName() {
     return collection.getNamespace().getCollectionName();
   }
 
