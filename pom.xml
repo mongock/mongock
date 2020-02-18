@@ -13,7 +13,7 @@
 
   <groupId>com.github.cloudyrock.mongock</groupId>
   <artifactId>mongock</artifactId>
-  <version>3.2.4-SNAPSHOT</version>
+  <version>3.2.5-SNAPSHOT</version>
   <packaging>pom</packaging>
 
   <licenses>
