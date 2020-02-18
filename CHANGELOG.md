@@ -1,6 +1,15 @@
-# 3.3.0.BETA
+
+
+# 3.2.4
+### Features
+* [New builder support for MongoTemplate](https://github.com/cloudyrock/mongock/issues/127)
+
 ### Breaking change
 * Removed default support for com.mongodb.DB. Currently a UnsupportedOperationException is thrown when used in a changeSet in core mongock
+
+### Bugs fixed
+* [RunAlways throws a key duplication exception when Mongock is upgraded from version 2.x to >3.3](https://github.com/cloudyrock/mongock/issues/133)
+* [Entities with @Indexed cause Mongock instantiation failure](https://github.com/cloudyrock/mongock/issues/132)
 __________________________________________________
 # 3.2.1.BETA
 ### Features
