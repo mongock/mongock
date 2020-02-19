@@ -13,21 +13,21 @@ import java.util.Map;
 /**
  * Factory for {@link SpringBootMongock}
  */
-public class SpringMongockBuilderBase {
+public abstract class SpringMongockBuilderBase<BUILDER_TYPE extends SpringMongockBuilderBase> {
 
-  private final MongoTemplate mongoTemplate;
-  private final String changeLogsScanPackage;
-  private long lockAcquiredForMinutes = 24L * 60L;
-  private long maxWaitingForLockMinutes = 3L;
-  private int maxTries = 1;
-  boolean throwExceptionIfCannotObtainLock = false;
-  boolean enabled = true;
-  private String changeLogCollectionName = "mongockChangeLog";
-  private String lockCollectionName = "mongockLock";
-  private String startSystemVersion = "0";
-  private String endSystemVersion = String.valueOf(Integer.MAX_VALUE);
-  private Map<String, Object> metadata = new HashMap<>();
-  private ApplicationContext springContext;
+  protected final MongoTemplate mongoTemplate;
+  protected final String changeLogsScanPackage;
+  protected long lockAcquiredForMinutes = 24L * 60L;
+  protected long maxWaitingForLockMinutes = 3L;
+  protected int maxTries = 1;
+  protected boolean throwExceptionIfCannotObtainLock = false;
+  protected boolean enabled = true;
+  protected String changeLogCollectionName = "mongockChangeLog";
+  protected String lockCollectionName = "mongockLock";
+  protected String startSystemVersion = "0";
+  protected String endSystemVersion = String.valueOf(Integer.MAX_VALUE);
+  protected Map<String, Object> metadata = new HashMap<>();
+
 
   /**
    * <p>Builder constructor takes db.mongodb.MongoClient, database name and changelog scan package as parameters.
@@ -74,18 +74,15 @@ public class SpringMongockBuilderBase {
     this.changeLogsScanPackage = changeLogsScanPackage;
   }
 
-
-
-
   /**
    * Feature which enables/disables throwing MongockException if the lock cannot be obtained
    *
    * @param throwExceptionIfCannotObtainLock Mongock will throw MongockException if lock can not be obtained
    * @return Mongock builder for fluent interface
    */
-  public SpringMongockBuilderBase setThrowExceptionIfCannotObtainLock(boolean throwExceptionIfCannotObtainLock) {
+  public BUILDER_TYPE setThrowExceptionIfCannotObtainLock(boolean throwExceptionIfCannotObtainLock) {
     this.throwExceptionIfCannotObtainLock = throwExceptionIfCannotObtainLock;
-    return this;
+    return getInstance();
   }
 
 
@@ -95,9 +92,9 @@ public class SpringMongockBuilderBase {
    * @param enabled Migration process will run only if this option is set to true
    * @return Mongock builder for fluent interface
    */
-  public SpringMongockBuilderBase setEnabled(boolean enabled) {
+  public BUILDER_TYPE setEnabled(boolean enabled) {
     this.enabled = enabled;
-    return this;
+    return getInstance();
   }
 
   /**
@@ -108,12 +105,12 @@ public class SpringMongockBuilderBase {
    * @param maxTries                 number of tries
    * @return Mongock builder for fluent interface
    */
-  public SpringMongockBuilderBase setLockConfig(long lockAcquiredForMinutes, long maxWaitingForLockMinutes, int maxTries) {
+  public BUILDER_TYPE setLockConfig(long lockAcquiredForMinutes, long maxWaitingForLockMinutes, int maxTries) {
     this.lockAcquiredForMinutes = lockAcquiredForMinutes;
     this.maxWaitingForLockMinutes = maxWaitingForLockMinutes;
     this.maxTries = maxTries;
     this.throwExceptionIfCannotObtainLock = true;
-    return this;
+    return getInstance();
   }
 
   /**
@@ -121,17 +118,17 @@ public class SpringMongockBuilderBase {
    *
    * @return Mongock builder for fluent interface
    */
-  public SpringMongockBuilderBase setLockQuickConfig() {
+  public BUILDER_TYPE setLockQuickConfig() {
     setLockConfig(3, 4, 3);
-    return this;
+    return getInstance();
   }
 
-  public SpringMongockBuilderBase setChangeLogCollectionName(String changeLogCollectionName) {
+  public BUILDER_TYPE setChangeLogCollectionName(String changeLogCollectionName) {
     if(changeLogCollectionName == null || "".equals(changeLogCollectionName)) {
       throw new ChangockException("invalid changeLog collection name");
     }
     this.changeLogCollectionName = changeLogCollectionName;
-    return this;
+    return getInstance();
   }
 
   /**
@@ -144,9 +141,9 @@ public class SpringMongockBuilderBase {
    * @param startSystemVersion Version to start with
    * @return Mongock builder for fluent interface
    */
-  public SpringMongockBuilderBase setStartSystemVersion(String startSystemVersion) {
+  public BUILDER_TYPE setStartSystemVersion(String startSystemVersion) {
     this.startSystemVersion = startSystemVersion;
-    return this;
+    return getInstance();
   }
 
   /**
@@ -159,9 +156,9 @@ public class SpringMongockBuilderBase {
    * @param endSystemVersion Version to end with
    * @return Mongock builder for fluent interface
    */
-  public SpringMongockBuilderBase setEndSystemVersion(String endSystemVersion) {
+  public BUILDER_TYPE setEndSystemVersion(String endSystemVersion) {
     this.endSystemVersion = endSystemVersion;
-    return this;
+    return getInstance();
   }
 
   /**
@@ -171,40 +168,11 @@ public class SpringMongockBuilderBase {
    * @param metadata Custom metadata object  to be added
    * @return Mongock builder for fluent interface
    */
-  public SpringMongockBuilderBase withMetadata(Map<String, Object> metadata) {
+  public BUILDER_TYPE withMetadata(Map<String, Object> metadata) {
     this.metadata = metadata;
-    return this;
+    return getInstance();
   }
 
-  /**
-   * Set the Springboot application springContext from which the dependencies will be retrieved
-   * @param context Springboot application springContext
-   * @return Mongock builder for fluent interface
-   * @see ApplicationContext
-   */
-  public SpringMongockBuilderBase setApplicationContext(ApplicationContext context) {
-    this.springContext = context;
-    return this;
-  }
-
-
-  public ChangockSpringApplicationRunner build() {
-    ChangockSpringDataMongoDriver driver = new ChangockSpringDataMongoDriver(this.mongoTemplate)
-        .setChangeLogCollectionName(changeLogCollectionName)
-        .setLockCollectionName(lockCollectionName);
-
-    return ChangockSpringApplicationRunner.builderV2_0()
-        .setDriver(driver)
-        .addChangeLogsScanPackage(changeLogsScanPackage)
-        .setThrowExceptionIfCannotObtainLock(throwExceptionIfCannotObtainLock)
-        .setLockConfig(lockAcquiredForMinutes, maxWaitingForLockMinutes, maxTries)
-        .setEnabled(enabled)
-        .setStartSystemVersion(startSystemVersion)
-        .setEndSystemVersion(endSystemVersion)
-        .withMetadata(metadata)
-        .setSpringContext(springContext)
-        .build();
-  }
-
+  protected abstract BUILDER_TYPE getInstance();
 
 }

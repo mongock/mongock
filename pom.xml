@@ -9,6 +9,7 @@
   <modules>
     <module>mongock-core</module>
     <module>mongock-spring</module>
+    <module>mongock-api</module>
   </modules>
 
   <groupId>com.github.cloudyrock.mongock</groupId>

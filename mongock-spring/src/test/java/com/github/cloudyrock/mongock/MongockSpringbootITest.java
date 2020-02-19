@@ -3,6 +3,9 @@ package com.github.cloudyrock.mongock;
 import com.github.cloudyrock.mongock.test.changelogs.MongockTestResource;
 import com.github.cloudyrock.mongock.utils.IndependentDbIntegrationTestBase;
 import com.mongodb.client.MongoDatabase;
+import io.changock.driver.api.entry.ChangeEntry;
+import io.changock.driver.core.entry.ChangeEntryRepository;
+import io.changock.driver.mongo.v3.core.repository.MongoChangeEntryRepository;
 import org.bson.Document;
 import org.junit.Before;
 import org.junit.Test;
@@ -46,8 +49,8 @@ public class MongockSpringbootITest extends IndependentDbIntegrationTestBase {
 
     // dbchangelog collection checking
     long change1 = this.mongoClient.getDatabase(DEFAULT_DATABASE_NAME).getCollection(CHANGELOG_COLLECTION_NAME).count(new Document()
-        .append(ChangeEntry.KEY_CHANGE_ID, "test1")
-        .append(ChangeEntry.KEY_AUTHOR, "testuser"));
+        .append("changeId", "test1")
+        .append("author", "testuser"));
     assertEquals(1, change1);
   }
 
@@ -58,7 +61,6 @@ public class MongockSpringbootITest extends IndependentDbIntegrationTestBase {
     SpringBootMongock runner = new SpringBootMongockBuilder(mongoTemplate, MongockTestResource.class.getPackage().getName())
         .setLockQuickConfig()
         .setApplicationContext(getApplicationContext())
-        .setSpringEnvironment(Mockito.mock(Environment.class))
         .build();
 
     // when
@@ -69,8 +71,8 @@ public class MongockSpringbootITest extends IndependentDbIntegrationTestBase {
 
     // dbchangelog collection checking
     long change1 = mongoTemplate.getCollection(CHANGELOG_COLLECTION_NAME).count(new Document()
-        .append(ChangeEntry.KEY_CHANGE_ID, "test1")
-        .append(ChangeEntry.KEY_AUTHOR, "testuser"));
+        .append("changeId", "test1")
+        .append("author", "testuser"));
     assertEquals(1, change1);
   }
 
