@@ -2,31 +2,15 @@ package com.github.cloudyrock.mongock;
 
 import com.mongodb.client.MongoClient;
 import io.changock.driver.mongo.springdata.v2.driver.ChangockSpringDataMongoDriver;
-import io.changock.migration.api.exception.ChangockException;
 import io.changock.runner.spring.v5.ChangockSpringApplicationRunner;
 import org.springframework.context.ApplicationContext;
 import org.springframework.data.mongodb.core.MongoTemplate;
 
-import java.util.HashMap;
-import java.util.Map;
-
 /**
  * Factory for {@link SpringBootMongock}
  */
-public class SpringBootMongockBuilder  {
+public class SpringBootMongockBuilder extends SpringMongockBuilderBase<SpringBootMongockBuilder> {
 
-  private final MongoTemplate mongoTemplate;
-  private final String changeLogsScanPackage;
-  private long lockAcquiredForMinutes = 24L * 60L;
-  private long maxWaitingForLockMinutes = 3L;
-  private int maxTries = 1;
-  boolean throwExceptionIfCannotObtainLock = false;
-  boolean enabled = true;
-  private String changeLogCollectionName = "mongockChangeLog";
-  private String lockCollectionName = "mongockLock";
-  private String startSystemVersion = "0";
-  private String endSystemVersion = String.valueOf(Integer.MAX_VALUE);
-  private Map<String, Object> metadata = new HashMap<>();
   private ApplicationContext springContext;
 
   /**
@@ -41,7 +25,7 @@ public class SpringBootMongockBuilder  {
    */
   @Deprecated
   public SpringBootMongockBuilder(com.mongodb.MongoClient legacyMongoClient, String databaseName, String changeLogsScanPackage) {
-    this(new MongoTemplate(legacyMongoClient, databaseName), changeLogsScanPackage);
+    super(legacyMongoClient, databaseName, changeLogsScanPackage);
 
   }
 
@@ -57,7 +41,7 @@ public class SpringBootMongockBuilder  {
    */
   @Deprecated
   public SpringBootMongockBuilder(MongoClient newMongoClient, String databaseName, String changeLogsScanPackage) {
-    this(new MongoTemplate(newMongoClient, databaseName), changeLogsScanPackage);
+    super(newMongoClient, databaseName, changeLogsScanPackage);
   }
 
   /**
@@ -70,109 +54,12 @@ public class SpringBootMongockBuilder  {
    * @see MongoClient
    */
   public SpringBootMongockBuilder(MongoTemplate mongoTemplate, String changeLogsScanPackage) {
-    this.mongoTemplate = mongoTemplate;
-    this.changeLogsScanPackage = changeLogsScanPackage;
+    super(mongoTemplate, changeLogsScanPackage);
+
   }
 
-
-
-
-  /**
-   * Feature which enables/disables throwing MongockException if the lock cannot be obtained
-   *
-   * @param throwExceptionIfCannotObtainLock Mongock will throw MongockException if lock can not be obtained
-   * @return Mongock builder for fluent interface
-   */
-  public SpringBootMongockBuilder setThrowExceptionIfCannotObtainLock(boolean throwExceptionIfCannotObtainLock) {
-    this.throwExceptionIfCannotObtainLock = throwExceptionIfCannotObtainLock;
-    return this;
-  }
-
-
-  /**
-   * Feature which enables/disables execution
-   *
-   * @param enabled Migration process will run only if this option is set to true
-   * @return Mongock builder for fluent interface
-   */
-  public SpringBootMongockBuilder setEnabled(boolean enabled) {
-    this.enabled = enabled;
-    return this;
-  }
-
-  /**
-   * Set up the lock with minimal configuration. This implies Mongock will throw an exception if cannot obtains the lock.
-   *
-   * @param lockAcquiredForMinutes   Acquired time in minutes
-   * @param maxWaitingForLockMinutes max time in minutes to wait for the lock in each try.
-   * @param maxTries                 number of tries
-   * @return Mongock builder for fluent interface
-   */
-  public SpringBootMongockBuilder setLockConfig(long lockAcquiredForMinutes, long maxWaitingForLockMinutes, int maxTries) {
-    this.lockAcquiredForMinutes = lockAcquiredForMinutes;
-    this.maxWaitingForLockMinutes = maxWaitingForLockMinutes;
-    this.maxTries = maxTries;
-    this.throwExceptionIfCannotObtainLock = true;
-    return this;
-  }
-
-  /**
-   * Set up the lock with default configuration to wait for it and through an exception when cannot obtain it.
-   *
-   * @return Mongock builder for fluent interface
-   */
-  public SpringBootMongockBuilder setLockQuickConfig() {
-    setLockConfig(3, 4, 3);
-    return this;
-  }
-
-  public SpringBootMongockBuilder setChangeLogCollectionName(String changeLogCollectionName) {
-    if(changeLogCollectionName == null || "".equals(changeLogCollectionName)) {
-      throw new ChangockException("invalid changeLog collection name");
-    }
-    this.changeLogCollectionName = changeLogCollectionName;
-    return this;
-  }
-
-  /**
-   * Set up the start Version for versioned schema changes.
-   * This shouldn't be confused with the changeSet systemVersion. This is from a consultancy point of view.
-   * So the changeSet are tagged with a systemVersion and then when building Mongock, you specify
-   * the systemVersion range you want to apply, so all the changeSets tagget with systemVersion inside that
-   * range will be applied
-   *
-   * @param startSystemVersion Version to start with
-   * @return Mongock builder for fluent interface
-   */
-  public SpringBootMongockBuilder setStartSystemVersion(String startSystemVersion) {
-    this.startSystemVersion = startSystemVersion;
-    return this;
-  }
-
-  /**
-   * Set up the end Version for versioned schema changes.
-   * This shouldn't be confused with the changeSet systemVersion. This is from a consultancy point of view.
-   * So the changeSet are tagged with a systemVersion and then when building Mongock, you specify
-   * the systemVersion range you want to apply, so all the changeSets tagget with systemVersion inside that
-   * range will be applied
-   *
-   * @param endSystemVersion Version to end with
-   * @return Mongock builder for fluent interface
-   */
-  public SpringBootMongockBuilder setEndSystemVersion(String endSystemVersion) {
-    this.endSystemVersion = endSystemVersion;
-    return this;
-  }
-
-  /**
-   * Set the metadata for the mongock process. This metadata will be added to each document in the mongockChangeLog
-   * collection. This is useful when the system needs to add some extra info to the changeLog.
-   *
-   * @param metadata Custom metadata object  to be added
-   * @return Mongock builder for fluent interface
-   */
-  public SpringBootMongockBuilder withMetadata(Map<String, Object> metadata) {
-    this.metadata = metadata;
+  @Override
+  protected SpringBootMongockBuilder getInstance() {
     return this;
   }
 
@@ -188,12 +75,12 @@ public class SpringBootMongockBuilder  {
   }
 
 
-  public ChangockSpringApplicationRunner build() {
+  public SpringBootMongock build() {
     ChangockSpringDataMongoDriver driver = new ChangockSpringDataMongoDriver(this.mongoTemplate)
         .setChangeLogCollectionName(changeLogCollectionName)
         .setLockCollectionName(lockCollectionName);
 
-    return ChangockSpringApplicationRunner.builderV2_0()
+    ChangockSpringApplicationRunner runner = ChangockSpringApplicationRunner.builderV2_0()
         .setDriver(driver)
         .addChangeLogsScanPackage(changeLogsScanPackage)
         .setThrowExceptionIfCannotObtainLock(throwExceptionIfCannotObtainLock)
@@ -203,7 +90,9 @@ public class SpringBootMongockBuilder  {
         .setEndSystemVersion(endSystemVersion)
         .withMetadata(metadata)
         .setSpringContext(springContext)
+        .overrideAnnoatationProcessor(new MongockAnnotationProcessor())
         .build();
+    return new SpringBootMongock(runner);
   }
 
 

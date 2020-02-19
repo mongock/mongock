@@ -1,13 +1,20 @@
 package com.github.cloudyrock.mongock;
 
+import io.changock.runner.spring.v5.ChangockSpringApplicationRunner;
+import io.changock.runner.spring.v5.ChangockSpringInitializingBeanRunner;
 import org.springframework.beans.factory.InitializingBean;
+import org.springframework.boot.ApplicationArguments;
+import org.springframework.boot.ApplicationRunner;
 
 import java.io.Closeable;
 
-public class SpringMongock extends Mongock implements InitializingBean {
+public class SpringMongock implements InitializingBean {
 
-  SpringMongock(ChangeEntryRepository changeEntryRepository, Closeable mongoClientCloseable, ChangeService changeService, LockChecker lockChecker) {
-    super(changeEntryRepository, mongoClientCloseable, changeService, lockChecker);
+
+  private final ChangockSpringInitializingBeanRunner runner;
+
+  SpringMongock(ChangockSpringInitializingBeanRunner runner) {
+    this.runner = runner;
   }
 
   /**
@@ -16,5 +23,9 @@ public class SpringMongock extends Mongock implements InitializingBean {
   @Override
   public void afterPropertiesSet() {
     execute();
+  }
+
+  public void execute() {
+    this.runner.execute();
   }
 }
