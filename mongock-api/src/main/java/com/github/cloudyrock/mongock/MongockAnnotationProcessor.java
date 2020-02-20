@@ -5,15 +5,21 @@ import io.changock.migration.api.ChangockAnnotationProcessor;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
-import java.util.Arrays;
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 
 public class MongockAnnotationProcessor extends ChangockAnnotationProcessor {
   @Override
   public Collection<Class<? extends Annotation>> getChangeLogAnnotationClass() {
-    Collection<Class<? extends Annotation>> changeLogClasses = Arrays.asList(ChangeLog.class);
+    Collection<Class<? extends Annotation>> changeLogClasses = new ArrayList<>(Collections.singletonList(ChangeLog.class));
     changeLogClasses.addAll(super.getChangeLogAnnotationClass());
     return changeLogClasses;
+  }
+
+  @Override
+  public boolean isChangeSetAnnotated(Method method) {
+    return method.isAnnotationPresent(ChangeSet.class);
   }
 
   @Override

@@ -3,32 +3,35 @@ package com.github.cloudyrock.mongock;
 import com.github.cloudyrock.mongock.test.changelogs.MongockTestResource;
 import com.github.cloudyrock.mongock.utils.IndependentDbIntegrationTestBase;
 import org.bson.Document;
-import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import static org.mockito.Mockito.mock;
+
 import org.mockito.Mockito;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.springframework.context.ApplicationContext;
 import org.springframework.core.env.Environment;
-import org.springframework.data.mongodb.MongoDbFactory;
 import org.springframework.data.mongodb.core.MongoTemplate;
 
 import java.util.HashMap;
 import java.util.Map;
 
 import static org.junit.Assert.assertEquals;
+import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
 public class MongockSpringITest extends IndependentDbIntegrationTestBase {
 
   private static final String CHANGELOG_COLLECTION_NAME = "mongockChangeLog";
+  private ApplicationContext springContextMock;
 
   @Test
   public void shouldExecuteAllChangeSets() {
     // given
+    setSpringContext();
     SpringMongock runner = new SpringMongockBuilder(this.mongoClient, DEFAULT_DATABASE_NAME, MongockTestResource.class.getPackage().getName())
         .setLockQuickConfig()
-        .setSpringEnvironment(Mockito.mock(Environment.class))
+        .setApplicationContext(springContextMock)
         .build();
 
     // when
@@ -48,9 +51,10 @@ public class MongockSpringITest extends IndependentDbIntegrationTestBase {
   public void shouldExecuteAllChangeSetsWithMongoTemplate() {
     // given
     MongoTemplate mongoTemplate = new MongoTemplate(mongoClient, DEFAULT_DATABASE_NAME);
+    setSpringContext();
     SpringMongock runner = new SpringMongockBuilder(mongoTemplate, MongockTestResource.class.getPackage().getName())
         .setLockQuickConfig()
-        .setSpringEnvironment(Mockito.mock(Environment.class))
+        .setApplicationContext(springContextMock)
         .build();
 
     // when
@@ -66,7 +70,6 @@ public class MongockSpringITest extends IndependentDbIntegrationTestBase {
     assertEquals(1, change1);
   }
 
-
   @Test
   public void shouldStoreMetadata_WhenChangeSetIsTrack_IfAddedInBuilder() {
     // given
@@ -77,10 +80,10 @@ public class MongockSpringITest extends IndependentDbIntegrationTestBase {
     metadata.put("double_key", 12.12D);
     metadata.put("long_key", 13L);
     metadata.put("boolean_key", true);
-
+    setSpringContext();
     SpringMongock runner = new SpringMongockBuilder(this.mongoClient, DEFAULT_DATABASE_NAME, MongockTestResource.class.getPackage().getName())
         .setLockQuickConfig()
-        .setSpringEnvironment(Mockito.mock(Environment.class))
+        .setApplicationContext(springContextMock)
         .withMetadata(metadata)
         .build();
 
@@ -96,6 +99,14 @@ public class MongockSpringITest extends IndependentDbIntegrationTestBase {
     assertEquals(13L, metadataResult.get("long_key"));
     assertEquals(true, metadataResult.get("boolean_key"));
 
+  }
+
+
+  private void setSpringContext() {
+    Environment springEnvironmentMock = mock(Environment.class);
+    springContextMock = mock(ApplicationContext.class);
+    when(springContextMock.getEnvironment()).thenReturn(springEnvironmentMock);
+    when(springContextMock.getBean(Environment.class)).thenReturn(springEnvironmentMock);
   }
 
 }
