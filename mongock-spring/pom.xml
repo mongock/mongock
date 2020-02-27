@@ -10,8 +10,8 @@
 
   <properties>
     <jacoco.version>0.7.7.201606060606</jacoco.version>
-    <changock.runner.spring-v5.version>0.0.3-SNAPSHOT</changock.runner.spring-v5.version>
-    <changock.driver.spring-data-v2.version>0.0.3-SNAPSHOT</changock.driver.spring-data-v2.version>
+    <changock.runner.spring-v5.version>0.0.3-BETA</changock.runner.spring-v5.version>
+    <changock.driver.spring-data-v2.version>0.0.3-BETA</changock.driver.spring-data-v2.version>
   </properties>
 
   <artifactId>mongock-spring</artifactId>
@@ -24,13 +24,13 @@
       <version>${project.version}</version>
     </dependency>
     <dependency>
-      <groupId>io.changock</groupId>
+      <groupId>com.github.cloudyrock.changock</groupId>
       <artifactId>changock-spring-v5-runner</artifactId>
       <version>${changock.runner.spring-v5.version}</version>
     </dependency>
 
     <dependency>
-      <groupId>io.changock</groupId>
+      <groupId>com.github.cloudyrock.changock</groupId>
       <artifactId>changock-mongo-springdata-v2-driver</artifactId>
       <version>${changock.driver.spring-data-v2.version}</version>
     </dependency>

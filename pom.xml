@@ -16,40 +16,6 @@
   <artifactId>mongock</artifactId>
   <version>3.2.5-SNAPSHOT</version>
   <packaging>pom</packaging>
-
-  <licenses>
-    <license>
-      <name>The Apache Software License, Version 2.0</name>
-      <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
-      <distribution>repo</distribution>
-    </license>
-  </licenses>
-
-  <scm>
-    <connection>scm:git:git@github.com:cloudyrock/mongock.git</connection>
-    <developerConnection>scm:git:git@github.com:cloudyrock/mongock.git</developerConnection>
-    <url>https://github.com/cloudyrock/mongock</url>
-    <tag>mongock-1.13</tag>
-  </scm>
-  <developers>
-    <developer>
-      <id>dieppa</id>
-      <name>dieppa</name>
-    </developer>
-  </developers>
-
-  <distributionManagement>
-    <snapshotRepository>
-      <id>ossrh</id>
-      <url>https://oss.sonatype.org/content/repositories/snapshots</url>
-    </snapshotRepository>
-    <repository>
-      <id>ossrh</id>
-      <url>https://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
-    </repository>
-  </distributionManagement>
-
-
   <properties>
     <java.version>1.8</java.version>
     <spring.version>5.0.10.RELEASE</spring.version>
@@ -82,6 +48,40 @@
       </dependency>
     </dependencies>
   </dependencyManagement>
+
+
+
+  <licenses>
+    <license>
+      <name>The Apache Software License, Version 2.0</name>
+      <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
+      <distribution>repo</distribution>
+    </license>
+  </licenses>
+
+  <scm>
+    <connection>scm:git:git@github.com:cloudyrock/mongock.git</connection>
+    <developerConnection>scm:git:git@github.com:cloudyrock/mongock.git</developerConnection>
+    <url>https://github.com/cloudyrock/mongock</url>
+    <tag>mongock-1.13</tag>
+  </scm>
+  <developers>
+    <developer>
+      <id>dieppa</id>
+      <name>dieppa</name>
+    </developer>
+  </developers>
+
+  <distributionManagement>
+    <snapshotRepository>
+      <id>ossrh</id>
+      <url>https://oss.sonatype.org/content/repositories/snapshots</url>
+    </snapshotRepository>
+    <repository>
+      <id>ossrh</id>
+      <url>https://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
+    </repository>
+  </distributionManagement>
 
   <build>
     <plugins>
