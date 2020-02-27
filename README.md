@@ -63,7 +63,7 @@ There are several good reasons to use Mongock in your project. Here we give you 
 * Used by several tech companies in different industries.
 * Can be used together with most, if not all, frameworks.
 * Provides great integration for Spring, allowing you to inject any dependency you want to your changelog method.
-* We walk with you to production. Get more info at dev@cloudyrock.io
+* We walk with you to production. Get more information about our support model at dev@cloudyrock.io
 
 ## Sample projects
 In [here](https://github.com/cloudyrock/mongock-samples) you can find some sample projects that show you how to use Mongock.
