@@ -94,7 +94,7 @@ public class SpringMongockBuilder extends SpringMongockBuilderBase<SpringMongock
         .setChangeLogCollectionName(changeLogCollectionName)
         .setLockCollectionName(lockCollectionName);
 
-    ChangockSpringInitializingBeanRunner runner = ChangockSpringInitializingBeanRunner.builderV5_0()
+    ChangockSpringInitializingBeanRunner runner = ChangockSpringInitializingBeanRunner.builder()
         .setDriver(driver)
         .addChangeLogsScanPackage(changeLogsScanPackage)
         .setThrowExceptionIfCannotObtainLock(throwExceptionIfCannotObtainLock)
@@ -103,10 +103,9 @@ public class SpringMongockBuilder extends SpringMongockBuilderBase<SpringMongock
         .setStartSystemVersion(startSystemVersion)
         .setEndSystemVersion(endSystemVersion)
         .withMetadata(metadata)
-        .setSpringEnvironment(springEnvironment)
         .setSpringContext(springContext)
         .overrideAnnoatationProcessor(new MongockAnnotationProcessor())
-        .build();
+        .buildInitializingBeanRunner();
     return new SpringMongock(runner);
   }
 
