@@ -58,11 +58,12 @@ There are several good reasons to use Mongock in your project. Here we give you 
 * **Works well with sharded collections**: Unlike other similar projects using javascript, which requires `db.eval()`. [Documentation](https://docs.mongodb.com/manual/reference/method/db.eval/#sharded-data).
 * Works with [Mongo Atlas](https://www.mongodb.com/cloud/atlas).
 * Distributed solution with solid locking mechanism.
-* We are very responsive, aiming for 24-hours-response for new issues and 48 hours for reviews(Notice this is not a commitment, but so far so good).
+* We are very responsive for community license and maximum 2 business days for professional license.
 * Well maintained and regularly updated.
 * Used by several tech companies in different industries.
 * Can be used together with most, if not all, frameworks.
 * Provides great integration for Spring, allowing you to inject any dependency you want to your changelog method.
+* We walk with you to production. Get more information about our support model at dev@cloudyrock.io
 
 ## Sample projects
 In [here](https://github.com/cloudyrock/mongock-samples) you can find some sample projects that show you how to use Mongock.
