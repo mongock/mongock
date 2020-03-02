@@ -329,7 +329,7 @@ _Example 1_: annotated change set will be invoked for a `dev` profile
 ```java
 @Profile("dev")
 @ChangeSet(author = "testuser", id = "myDevChangest", order = "01")
-public void devEnvOnly(DB db){
+public void devEnvOnly(MongoDatabase db){
   // ...
 }
 ```
@@ -339,7 +339,7 @@ _Example 2_: all change sets in a changelog will be invoked for a `test` profile
 @Profile("test")
 public class ChangelogForTestEnv{
   @ChangeSet(author = "testuser", id = "myTestChangest", order = "01")
-  public void testingEnvOnly(DB db){
+  public void testingEnvOnly(MongoDatabase db){
     // ...
   } 
 }
