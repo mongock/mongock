@@ -301,9 +301,10 @@ because the specified systemVersion in the changeset should be greater equals th
 
 ## Injecting custom dependencies to change logs
 Right now this is possible by using SpringBoot Application Context. 
-As explained in section [Usage with Spring...Mongock as a Bean](#usage-with-springmongock-as-a-bean), once you have injected the sprinc ApplicationContext, you can use spring beans in your changeSet methods. The way Mongock inject these dependencies is by method signature, don't use @autowired annotation.
+As explained in section [Usage with Spring...Mongock as a Bean](#usage-with-springmongock-as-a-bean), once you have injected the Spring ApplicationContext, you can use your beans in Mongock changeSet methods via method parameter. Don't use @autowired annotation.
 
-For example having a PersonRepository class, which is a springdata repository, you could use it like follow
+For example having a springdata repository  'PersonRepository' in your project, that you wish to use in your changeSet, you can use it like follow
+
 ```java
 @ChangeLog(order = "1")
 @Profile("test")
