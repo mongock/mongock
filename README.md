@@ -10,6 +10,8 @@
 
 ## LAST NEWS :bangbang::bangbang::collision::collision:
 
+> **ROADMAP** for next features. We are designing the roadmap for the next features and we think that it's crucial that we understand the user's needs and preferences. For this we have created a quick survey to understand what is important for you and also to allow you to give us any idea or need you have and we haven't thought about. [Mongock roadmap survey](https://forms.gle/uk9jmtKvxJzi5Bda7)
+
 > **3.2.4 is released** 
 
 # Mongock: MongoDB version control tool for Java
