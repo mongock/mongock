@@ -1,18 +1,13 @@
 package com.github.cloudyrock.mongock;
 
-import com.mongodb.client.MongoClient;
 import io.changock.migration.api.exception.ChangockException;
-import org.springframework.data.mongodb.core.MongoTemplate;
 
 import java.util.HashMap;
 import java.util.Map;
 
-/**
- * Factory for {@link SpringBootMongock}
- */
-public abstract class SpringMongockBuilderBase<BUILDER_TYPE extends SpringMongockBuilderBase, MONGOCK_RUNNER extends MongockBase> {
 
-  protected final MongoTemplate mongoTemplate;
+public abstract class MongockBuilderBase<BUILDER_TYPE extends MongockBuilderBase, MONGOCK_RUNNER extends MongockBase> {
+
   protected final String changeLogsScanPackage;
   protected long lockAcquiredForMinutes = 24L * 60L;
   protected long maxWaitingForLockMinutes = 3L;
@@ -27,47 +22,13 @@ public abstract class SpringMongockBuilderBase<BUILDER_TYPE extends SpringMongoc
 
 
   /**
-   * <p>Builder constructor takes db.mongodb.MongoClient, database name and changelog scan package as parameters.
-   * </p><p>For more details about MongoClient please see com.mongodb.MongoClient docs
-   * </p>
-   *
-   * @param legacyMongoClient           database connection client
-   * @param databaseName          database name
-   * @param changeLogsScanPackage package path where the changelogs are located
-   * @see com.mongodb.MongoClient
-   */
-  @Deprecated
-  public SpringMongockBuilderBase(com.mongodb.MongoClient legacyMongoClient, String databaseName, String changeLogsScanPackage) {
-    this(new MongoTemplate(legacyMongoClient, databaseName), changeLogsScanPackage);
-
-  }
-
-  /**
    * <p>Builder constructor takes new API com.mongodb.client.MongoClient, database name and changelog scan package as parameters.
    * </p><p>For more details about MongoClient please see om.mongodb.client.MongoClient docs
    * </p>
    *
-   * @param newMongoClient           database connection client
-   * @param databaseName          database name
    * @param changeLogsScanPackage package path where the changelogs are located
-   * @see MongoClient
    */
-  @Deprecated
-  public SpringMongockBuilderBase(MongoClient newMongoClient, String databaseName, String changeLogsScanPackage) {
-    this(new MongoTemplate(newMongoClient, databaseName), changeLogsScanPackage);
-  }
-
-  /**
-   * <p>Builder constructor takes new API com.mongodb.client.MongoClient, database name and changelog scan package as parameters.
-   * </p><p>For more details about MongoClient please see om.mongodb.client.MongoClient docs
-   * </p>
-   *
-   * @param mongoTemplate         mongoTemplate
-   * @param changeLogsScanPackage package path where the changelogs are located
-   * @see MongoClient
-   */
-  public SpringMongockBuilderBase(MongoTemplate mongoTemplate, String changeLogsScanPackage) {
-    this.mongoTemplate = mongoTemplate;
+  public MongockBuilderBase(String changeLogsScanPackage) {
     this.changeLogsScanPackage = changeLogsScanPackage;
   }
 

@@ -1,17 +1,13 @@
 package com.github.cloudyrock.mongock;
 
 import com.mongodb.client.MongoClient;
-import io.changock.migration.api.exception.ChangockException;
 import org.springframework.data.mongodb.core.MongoTemplate;
-
-import java.util.HashMap;
-import java.util.Map;
 
 /**
  * Factory for {@link SpringBootMongock}
  */
-public abstract class SpringMongockBuilderBase<BUILDER_TYPE extends MongockBuilderBaseNew, MONGOCK_RUNNER extends MongockBase>
-    extends MongockBuilderBaseNew<BUILDER_TYPE, MONGOCK_RUNNER> {
+public abstract class SpringMongockBuilderBase<BUILDER_TYPE extends MongockBuilderBase, MONGOCK_RUNNER extends MongockBase>
+    extends MongockBuilderBase<BUILDER_TYPE, MONGOCK_RUNNER> {
 
   protected final MongoTemplate mongoTemplate;
 
