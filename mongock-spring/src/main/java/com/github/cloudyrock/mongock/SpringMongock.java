@@ -8,7 +8,7 @@ import org.springframework.boot.ApplicationRunner;
 
 import java.io.Closeable;
 
-public class SpringMongock implements InitializingBean {
+public class SpringMongock implements MongockBase, InitializingBean {
 
 
   private final ChangockSpringInitializingBeanRunner runner;

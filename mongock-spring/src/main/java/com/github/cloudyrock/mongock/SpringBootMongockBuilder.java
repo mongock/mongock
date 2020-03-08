@@ -9,7 +9,7 @@ import org.springframework.data.mongodb.core.MongoTemplate;
 /**
  * Factory for {@link SpringBootMongock}
  */
-public class SpringBootMongockBuilder extends SpringMongockBuilderBase<SpringBootMongockBuilder> {
+public class SpringBootMongockBuilder extends SpringMongockBuilderBase<SpringBootMongockBuilder, SpringBootMongock> {
 
   private ApplicationContext springContext;
 

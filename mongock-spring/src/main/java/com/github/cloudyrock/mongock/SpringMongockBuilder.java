@@ -7,7 +7,7 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.core.env.Environment;
 import org.springframework.data.mongodb.core.MongoTemplate;
 
-public class SpringMongockBuilder extends SpringMongockBuilderBase<SpringMongockBuilder> {
+public class SpringMongockBuilder extends SpringMongockBuilderBase<SpringMongockBuilder, SpringMongock> {
 
 
   private ApplicationContext springContext;
