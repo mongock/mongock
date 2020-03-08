@@ -42,8 +42,8 @@ public class MongockITest extends IndependentDbIntegrationTestBase {
 
     // dbchangelog collection checking
     final long change1 = db.getCollection(CHANGELOG_COLLECTION_NAME).countDocuments(new Document()
-        .append(ChangeEntry.KEY_CHANGE_ID, "test1")
-        .append(ChangeEntry.KEY_AUTHOR, "testuser"));
+        .append("changeId", "test1")
+        .append("author", "testuser"));
     assertEquals(1, change1);
   }
 
@@ -63,13 +63,13 @@ public class MongockITest extends IndependentDbIntegrationTestBase {
 
     // dbchangelog collection checking
     final long changeSetWithRunAlways = db.getCollection(CHANGELOG_COLLECTION_NAME).countDocuments(new Document()
-        .append(ChangeEntry.KEY_CHANGE_ID, "runAlways")
-        .append(ChangeEntry.KEY_AUTHOR, "testuser"));
+        .append("changeId", "runAlways")
+        .append("author", "testuser"));
     assertEquals(2, changeSetWithRunAlways);
 
     final long changeSetWithNoRunAlways = db.getCollection(CHANGELOG_COLLECTION_NAME).countDocuments(new Document()
-        .append(ChangeEntry.KEY_CHANGE_ID, "noRunAlways")
-        .append(ChangeEntry.KEY_AUTHOR, "testuser"));
+        .append("changeId", "noRunAlways")
+        .append("author", "testuser"));
     assertEquals(1, changeSetWithNoRunAlways);
   }
 
