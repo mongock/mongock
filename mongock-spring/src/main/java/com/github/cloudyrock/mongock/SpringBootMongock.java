@@ -5,7 +5,7 @@ import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
 
 
-public class SpringBootMongock implements ApplicationRunner {
+public class SpringBootMongock implements MongockBase, ApplicationRunner {
 
   private final ChangockSpringApplicationRunner runner;
 
