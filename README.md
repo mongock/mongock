@@ -10,18 +10,13 @@
 
 ## LAST NEWS :bangbang::bangbang::collision::collision:
 
+> **ROADMAP** for next features. We are designing the roadmap for the next features and we think that it's crucial that we understand the user's needs and preferences. For this we have created a quick survey to understand what is important for you and also to allow you to give us any idea or need you have and we haven't thought about. [Mongock roadmap survey](https://forms.gle/uk9jmtKvxJzi5Bda7)
+
 > **3.2.4 is released** 
 
 # Mongock: MongoDB version control tool for Java
 
-**mongock** is a java MongoDB tool for tracking, managing and applying database schema changes. 
-
-The motivation of this project is to add some important and useful features, provide a different code design, which we believe is easier to maintain, extend and debug, 
-applying what we believe are best practices, and specially providing a more fluent maintenance to apply collaborator's contributions.
-The concept is very similar to other db migration tools such as [Liquibase](http://www.liquibase.org) or [Flyway](http://flywaydb.org) but *without using XML/JSON/YML files*.
-
-
-**mongock** provides new approach for adding changes (change sets) based on Java classes and methods with appropriate annotations.
+**Mongock** is a java MongoDB tool for tracking, managing and applying database schema changes accross all your environments based on a coding approach.  
 
 ## Table of contents
 
@@ -301,8 +296,22 @@ because the specified systemVersion in the changeset should be greater equals th
 
 ## Injecting custom dependencies to change logs
 Right now this is possible by using SpringBoot Application Context. 
-See [SpringBoot set up](#usage-with-springBoot) for more information.
+As explained in section [Usage with Spring...Mongock as a Bean](#usage-with-springmongock-as-a-bean), once you have injected the Spring ApplicationContext, you can use your beans in Mongock changeSet methods via method parameter. Don't use @autowired annotation.
 
+For example having a springdata repository  'PersonRepository' in your project, that you wish to use in your changeSet, you can use it like follow
+
+```java
+@ChangeLog(order = "1")
+@Profile("test")
+public class ChangelogForTestEnv{
+  @ChangeSet(author = "testuser", id = "myTestChangest", order = "01")
+  public void testingEnvOnly(MongoTemplate template, PersonRepository repository){
+    List<Person> allPersons = repository.findAll();
+  } 
+}
+```
+
+Notice that you shouldn't use the repository to write to Mongo, as it won't be covered by the lock.(this feature which allows you to use your own repositories freely in yout changeSet methods will be availble in future releases)
 
 ## Using Spring profiles
      
@@ -315,7 +324,7 @@ _Example 1_: annotated change set will be invoked for a `dev` profile
 ```java
 @Profile("dev")
 @ChangeSet(author = "testuser", id = "myDevChangest", order = "01")
-public void devEnvOnly(DB db){
+public void devEnvOnly(MongoDatabase db){
   // ...
 }
 ```
@@ -325,7 +334,7 @@ _Example 2_: all change sets in a changelog will be invoked for a `test` profile
 @Profile("test")
 public class ChangelogForTestEnv{
   @ChangeSet(author = "testuser", id = "myTestChangest", order = "01")
-  public void testingEnvOnly(DB db){
+  public void testingEnvOnly(MongoDatabase db){
     // ...
   } 
 }
