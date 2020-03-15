@@ -10,8 +10,8 @@
 
   <properties>
     <jacoco.version>0.7.7.201606060606</jacoco.version>
-    <changock.runner.spring-v5.version>0.0.3-BETA</changock.runner.spring-v5.version>
-    <changock.driver.spring-data-v2.version>0.0.3-BETA</changock.driver.spring-data-v2.version>
+    <changock.runner.spring-v5.version>0.0.5-BETA</changock.runner.spring-v5.version>
+    <changock.driver.spring-data-v2.version>0.0.4-BETA</changock.driver.spring-data-v2.version>
   </properties>
 
   <artifactId>mongock-spring</artifactId>
