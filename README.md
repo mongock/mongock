@@ -156,7 +156,6 @@ to make the tool more flexible:
 
 ```java
 builder.setChangelogCollectionName(logColName);   // default is dbchangelog, collection with applied change sets
-builder.setLockCollectionName(lockColName);       // default is mongocklock, collection used during migration process
 builder.setEnabled(shouldBeEnabled);              // default is true, migration won't start if set to false
 ```
 
