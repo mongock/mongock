@@ -40,6 +40,7 @@
      * [Enabling @Profile annotation (option)](#enabling-profile-annotation-option)
   * [Adding metadata](#adding-metadata)
   * [Configuring Lock](#configuring-lock)
+  * [Parallel process](#parallel-process)
   * [Known issues](#known-issues)
      * [Mongo java driver conflicts](#mongo-java-driver-conflicts)
   * [Mongo transaction limitations](#mongo-transaction-limitations)
@@ -372,6 +373,11 @@ Mongock runner = new MongockBuilder(mongoclient, "yourDbName", "com.package.to.b
   //... etc
 }
 ```
+## Parallel process
+Currently Mongock does not support parallel process in the same JVM. This means if you are thinking to create two or more 
+Mongock instances in order to run them simultaneously, this wil produce unexpected results, specially related to lock synchronization.
+
+However, this feature is in our road map for the next release. This roadmap and the expected release date will be published soon.
 
 ## Configuring Lock 
 In order to execute the changelogs, mongock needs to manage the lock to ensure only one instance executes a changelog at a time.
