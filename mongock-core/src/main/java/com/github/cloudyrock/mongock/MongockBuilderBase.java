@@ -100,7 +100,7 @@ public abstract class MongockBuilderBase<BUILDER_TYPE extends MongockBuilderBase
   }
 
   /**
-   * Set up the lock with minimal configuration. This implies Mongock will throw an exception if cannot obtains the lock.
+   * Sets up the lock with minimal configuration. This implies Mongock will throw an exception if cannot obtains the lock.
    *
    * @param lockAcquiredForMinutes   Acquired time in minutes
    * @param maxWaitingForLockMinutes max time in minutes to wait for the lock in each try.
@@ -116,7 +116,7 @@ public abstract class MongockBuilderBase<BUILDER_TYPE extends MongockBuilderBase
   }
 
   /**
-   * Set up the lock with default configuration to wait for it and through an exception when cannot obtain it.
+   * Sets up the lock with default configuration to wait for it and through an exception when cannot obtain it.
    *
    * @return Mongock builder for fluent interface
    */
@@ -125,6 +125,11 @@ public abstract class MongockBuilderBase<BUILDER_TYPE extends MongockBuilderBase
     return returnInstance();
   }
 
+  /**
+   * Sets changeLog collection name
+   * @param changeLogCollectionName changeLog collection name
+   * @return
+   */
   public BUILDER_TYPE setChangeLogCollectionName(String changeLogCollectionName) {
     if(changeLogCollectionName == null || "".equals(changeLogCollectionName)) {
       throw new MongockException("invalid changeLog collection name");
@@ -134,7 +139,21 @@ public abstract class MongockBuilderBase<BUILDER_TYPE extends MongockBuilderBase
   }
 
   /**
-   * Set up the start Version for versioned schema changes.
+   * Sets the lock collection name
+   * @param lockCollectionName lock collection name
+   * @return
+   */
+  public BUILDER_TYPE setLockCollectionName(String lockCollectionName) {
+    if(lockCollectionName == null || "".equals(lockCollectionName)) {
+      throw new MongockException("invalid changeLog collection name");
+    }
+    this.lockCollectionName = lockCollectionName;
+    return returnInstance();
+  }
+
+
+  /**
+   * Sets up the start Version for versioned schema changes.
    * This shouldn't be confused with the changeSet systemVersion. This is from a consultancy point of view.
    * So the changeSet are tagged with a systemVersion and then when building Mongock, you specify
    * the systemVersion range you want to apply, so all the changeSets tagget with systemVersion inside that
@@ -149,7 +168,7 @@ public abstract class MongockBuilderBase<BUILDER_TYPE extends MongockBuilderBase
   }
 
   /**
-   * Set up the end Version for versioned schema changes.
+   * Sets up the end Version for versioned schema changes.
    * This shouldn't be confused with the changeSet systemVersion. This is from a consultancy point of view.
    * So the changeSet are tagged with a systemVersion and then when building Mongock, you specify
    * the systemVersion range you want to apply, so all the changeSets tagget with systemVersion inside that
@@ -164,7 +183,7 @@ public abstract class MongockBuilderBase<BUILDER_TYPE extends MongockBuilderBase
   }
 
   /**
-   * Set the metadata for the mongock process. This metadata will be added to each document in the mongockChangeLog
+   * Sets the metadata for the mongock process. This metadata will be added to each document in the mongockChangeLog
    * collection. This is useful when the system needs to add some extra info to the changeLog.
    *
    * @param metadata Custom metadata object  to be added

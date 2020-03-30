@@ -80,7 +80,7 @@ public class MongockTest extends IndependentDbIntegrationTestBase {
     runner.execute();
 
     // then
-    verify(changeEntryRepository, times(19)).save(any(ChangeEntry.class)); // 21 changesets saved to dbchangelog
+    verify(changeEntryRepository, times(21)).save(any(ChangeEntry.class)); // 21 changesets saved to dbchangelog
 
     // dbchangelog collection checking
     long change1 = db.getCollection(CHANGELOG_COLLECTION_NAME).count(new Document()
@@ -104,7 +104,7 @@ public class MongockTest extends IndependentDbIntegrationTestBase {
 
     long changeAll = db.getCollection(CHANGELOG_COLLECTION_NAME).count(new Document()
         .append(ChangeEntry.KEY_AUTHOR, "testuser"));
-    assertEquals(19, changeAll);
+    assertEquals(21, changeAll);
   }
 
   @Test
@@ -116,7 +116,8 @@ public class MongockTest extends IndependentDbIntegrationTestBase {
     runner.execute();
 
     // then
-    verify(changeEntryRepository, times(1)).save(any(ChangeEntry.class)); // no changesets saved to dbchangelog
+    //there is 2 runAlways methods RunAlwaysChangeLog.testChangeSet() and AnotherMongockTestResource.testChangeSetWithAlways()
+    verify(changeEntryRepository, times(2)).save(any(ChangeEntry.class)); // no changesets saved to dbchangelog
   }
 
   @Test

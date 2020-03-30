@@ -51,7 +51,7 @@ abstract class MongoRepositoryBase implements Repository {
     return (((Document) index.get("key")).getInteger("_id", 0) == 1);
   }
 
-  private boolean isIndexCreationRequired() {
+  boolean isIndexCreationRequired() {
     return StreamSupport.stream(collection.listIndexes().spliterator(), false).noneMatch(this::isRightIndex);
   }
 
