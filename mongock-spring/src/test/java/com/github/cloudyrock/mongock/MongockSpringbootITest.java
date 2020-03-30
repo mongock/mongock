@@ -13,6 +13,7 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.core.env.Environment;
 import org.springframework.data.mongodb.core.MongoTemplate;
 
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -72,6 +73,21 @@ public class MongockSpringbootITest extends IndependentDbIntegrationTestBase {
         .append(ChangeEntry.KEY_CHANGE_ID, "test1")
         .append(ChangeEntry.KEY_AUTHOR, "testuser"));
     assertEquals(1, change1);
+  }
+
+
+  @Test
+  public void shouldNotThrowNullPointerException_whenCloseRunner_IfMongoClientIsNull() throws IOException {
+    // given
+    MongoTemplate mongoTemplate = new MongoTemplate(mongoClient, DEFAULT_DATABASE_NAME);
+    SpringBootMongock runner = new SpringBootMongockBuilder(mongoTemplate, MongockTestResource.class.getPackage().getName())
+        .setLockQuickConfig()
+        .setApplicationContext(getApplicationContext())
+        .setSpringEnvironment(Mockito.mock(Environment.class))
+        .build();
+
+    // when
+    runner.close();
   }
 
   @Test
