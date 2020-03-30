@@ -115,8 +115,9 @@ public class Mongock implements Closeable {
    * The `mongoClientCloseable` may be null when using `mongoTemplate` instead of a `mongoClient`.
    */
   public void close() throws IOException {
-    if (mongoClientCloseable != null)
+    if (mongoClientCloseable != null) {
       mongoClientCloseable.close();
+    }
   }
 
   private void executeMigration() {
