@@ -112,9 +112,12 @@ public class Mongock implements Closeable {
   /**
    * Closes the Mongo instance used by Mongock.
    * This will close either the connection Mongock was initiated with or that which was internally created.
+   * The `mongoClientCloseable` may be null when using `mongoTemplate` instead of a `mongoClient`.
    */
   public void close() throws IOException {
-    mongoClientCloseable.close();
+    if (mongoClientCloseable != null) {
+      mongoClientCloseable.close();
+    }
   }
 
   private void executeMigration() {
