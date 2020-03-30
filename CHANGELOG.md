@@ -1,6 +1,7 @@
 # 3.2.5
 ### Features
 * [Avoid NullPointerException in Mongock.close](https://github.com/cloudyrock/mongock/issues/141)
+* [Re-enabled setLockCollectionName method in builder](https://github.com/cloudyrock/mongock/issues/139)
 
 # 3.2.4
 ### Features
