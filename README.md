@@ -35,7 +35,7 @@
           * [Annotation parameters:](#annotation-parameters)
           * [Defining ChangeSet methods](#defining-changeset-methods)
           * [Defining ChangeSet methods with versions()](#defining-changeset-methods-with-versions)
-    * [Build parameters](#build-parameters)
+   * [Build parameters](#build-parameters)
        * [Common](#common)
        * [Spring](#spring)  
        * [Spring boot](#spring-boot)  
