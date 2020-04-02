@@ -2,21 +2,23 @@
     <img src="https://raw.githubusercontent.com/cloudyrock/mongock/master/misc/logo.png" width="200" />
 </p>
 
+# Mongock: MongoDB version control tool for Java
+
 [![Maven Central](https://maven-badges.herokuapp.com/maven-central/com.github.cloudyrock.mongock/mongock/badge.png)](https://search.maven.org/artifact/com.github.cloudyrock.mongock/mongock)
 [![Build Status](https://travis-ci.org/cloudyrock/mongock.svg?branch=master)](https://travis-ci.org/cloudyrock/mongock)
 [![Bugs](https://sonarcloud.io/api/project_badges/measure?project=com.github.cloudyrock.mongock&metric=bugs)](https://sonarcloud.io/component_measures?id=com.github.cloudyrock.mongock&metric=bugs)
 [![Vulnerabilities](https://sonarcloud.io/api/project_badges/measure?project=com.github.cloudyrock.mongock&metric=vulnerabilities)](https://sonarcloud.io/component_measures?id=com.github.cloudyrock.mongock&metric=vulnerabilities)
 [![Hex.pm](https://img.shields.io/hexpm/l/plug.svg)](https://github.com/dieppa/mongock/blob/master/LICENSE)
 
+
+**Mongock** is a java MongoDB tool for tracking, managing and applying database schema changes accross all your environments based on a coding approach.  
+
+
 ## LAST NEWS :bangbang::bangbang::collision::collision:
 
 > **ROADMAP** for next features. We are designing the roadmap for the next features and we think that it's crucial that we understand the user's needs and preferences. For this we have created a quick survey to understand what is important for you and also to allow you to give us any idea or need you have and we haven't thought about. [Mongock roadmap survey](https://forms.gle/uk9jmtKvxJzi5Bda7)
 
-> **3.2.4 is released** 
-
-# Mongock: MongoDB version control tool for Java
-
-**Mongock** is a java MongoDB tool for tracking, managing and applying database schema changes accross all your environments based on a coding approach.  
+> **3.2.5 is released with minor bux fixes** 
 
 ## Table of contents
 
@@ -26,15 +28,20 @@
   * [Add a dependency](#add-a-dependency)
      * [With Maven](#with-maven)
      * [With Gradle](#with-gradle)
+  * [Basic concepts](#basic-concepts)
+  * [Creating change logs](#creating-change-logs)
+       * [@ChangeLog](#changelog)
+       * [@ChangeSet](#changeset)
+          * [Annotation parameters:](#annotation-parameters)
+          * [Defining ChangeSet methods](#defining-changeset-methods)
+          * [Defining ChangeSet methods with versions()](#defining-changeset-methods-with-versions)
+    * [Build parameters](#build-parameters)
+       * [Common](#common)
+       * [Spring](#spring)  
+       * [Spring boot](#spring-boot)  
   * [Usage with Spring...Mongock as a Bean](#usage-with-springmongock-as-a-bean)
   * [Usage with SpringBoot...When you need to inject your own dependencies](#usage-with-springbootwhen-you-need-to-inject-your-own-dependencies)
   * [Standalone usage](#standalone-usage)
-  * [Creating change logs](#creating-change-logs)
-     * [@ChangeLog](#changelog)
-     * [@ChangeSet](#changeset)
-        * [Annotation parameters:](#annotation-parameters)
-        * [Defining ChangeSet methods](#defining-changeset-methods)
-        * [Defining ChangeSet methods with versions()](#defining-changeset-methods-with-versions)
   * [Injecting custom dependencies to change logs](#injecting-custom-dependencies-to-change-logs)
   * [Using Spring profiles](#using-spring-profiles)
      * [Enabling @Profile annotation (option)](#enabling-profile-annotation-option)
@@ -76,18 +83,18 @@ as it's already imported out of the box.
 
 #### With Maven
 ```xml
-<!-- To use standalone (i.e., w/o Spring ) -->
+<!-- To use standalone -->
 <dependency>
   <groupId>com.github.cloudyrock.mongock</groupId>
   <artifactId>mongock-core</artifactId>
-  <version>3.2.4</version>
+  <version>3.2.5</version>
 </dependency>
 
-<!-- To use with Spring-->
+<!-- To use with Spring -->
 <dependency>
   <groupId>com.github.cloudyrock.mongock</groupId>
   <artifactId>mongock-spring</artifactId>
-  <version>3.2.4</version>
+  <version>3.2.5</version>
 </dependency>
 
 
@@ -95,72 +102,22 @@ as it's already imported out of the box.
 #### With Gradle
 ```groovy
 compile 'org.javassist:javassist:3.18.2-GA'          // workround for ${javassist.version} placeholder issue*
-compile 'com.github.cloudyrock.mongock:mongock-core:3.2.4'    // standalone
-compile 'com.github.cloudyrock.mongock:mongock-spring:3.2.4'  // with Spring (in addition to mongock-core)
+compile 'com.github.cloudyrock.mongock:mongock-core:3.2.5'    // standalone
+compile 'com.github.cloudyrock.mongock:mongock-spring:3.2.5'  // with Spring (in addition to mongock-core)
 ```
 
-## Usage with Spring...Mongock as a Bean
+## Basic concepts
+| Concept    | Mongock Module | Type | Description 
+|---------------------------|---------------|---------------|--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| `@ChangeLog`              | Common        | Annotation    | Annotation used to annotate a class that contains changeSet methods
+| `@ChangeSet`              | Common        | Annotation    | Annotation used to annotate a a method inside a class annotated with `@ChangeLog` and contains the code for a specific change
+| `Mongock`                 | Standalone    | Class         | It's the class in charge of running the migration as standalone, independently from any framework
+| `MongockBuiler`           | Standalone    | Class         | It's the class used to build a Mongock instance
+| `SpringMongock`           | Spring        | Class         | A Mongock extension for Spring framework, allowing what a normal Mongock runner does, plus the use of MongoTemplate and  Spring Profiles
+| `SpringMongockBuiler`     | Spring        | Class         | It's the class used to build a SpringMongock instance
+| `SpringBootMongock`       | Spring boot   | Class         | A SpringMongock extension for Spring boot framework, allowing what a SpringMongock runner does, plus Spring ApplicationContext for custom injection in your ChangeSet methods
+| `SpringBootMongockBuiler` | Spring boot   | Class         | It's the class used to build a SpringBootMongock instance
 
-You need to instantiate mongock object and provide some configuration.
-If you use Spring, mongock can be instantiated as a singleton bean in the Spring context. 
-In this case the migration process will be executed automatically on startup.
-
-```java
-@Bean
-public SpringMongock mongock() {
-  MongoClient mongoclient = new MongoClient(new MongoClientURI("yourDbName", yourMongoClientBuilder));
-  return new SpringMongockBuilder(mongoclient, "yourDbName", "com.package.to.be.scanned.for.changesets")
-      .setLockQuickConfig()
-      .build();
-}
-```
-
-## Usage with SpringBoot...When you need to inject your own dependencies
-
-The main benefit of using SpringBoot integration is that it provides a totally flexible way to inject dependencies,
-so you can inject any object to your change logs by using SpringBoot ApplicationContext.
-
-In order to use this feature you need to instantiate the SpringBoot mongock class and provide the required configuration. 
-Mongock will run as an [ApplicationRunner][ApplicationRunner] within SpringBoot.
-In terms of execution, it will be very similar to the standard Spring implementation, the key difference is that ApplicationRunner beans run *after* (as opposed to during) the context is fully initialized. 
-
->**Note:** Using this implementation means you need all the dependencies in your changelogs(parameters in methods annotated with ```@ChangeSet```) declared as Spring beans.
-
->**Note:** The dependencies injected by the ApplicationContext (other than [MongoTemplate][MongoTemplate], [MongoDatabase][MongoDatabase] and [DB][DB]) won't be covered by the lock. This means
-that if you are accessing to Mongo through a different mechanism to the ones mentioned, the lock synchronization is not guaranteed as Mongock only ensures synchronization when Mongo is accessed via either [MongoTemplate][MongoTemplate], [MongoDatabase][MongoDatabase] or [DB][DB]. 
-For more information, please consult the [lock section](#configuring-lock)
-
-```java
-@Bean
-public SpringBootMongock mongock(ApplicationContext springContext, MongoClient mongoClient) {
-  return new SpringBootMongockBuilder(mongoClient, "yourDbName", "com.package.to.be.scanned.for.changesets")
-      .setApplicationContext(springContext) 
-      .setLockQuickConfig()
-      .build();
-}
-```
-
-## Standalone usage
-Using mongock standalone.
-
-```java
-
-  MongoClient mongoclient = new MongoClient(new MongoClientURI("yourDbName", yourMongoClientBuilder));
-  Mongock runner=  new MongockBuilder(mongoclient, "yourDbName", "com.package.to.be.scanned.for.changesets")
-      .setLockQuickConfig()
-      .build();
-  runner.execute();         //  ------> starts migration changesets
-```
-
-Above examples provide minimal configuration. The various `Mongock` builders provide some other possibilities (setters) 
-to make the tool more flexible:
-
-```java
-builder.setChangelogCollectionName(logColName);   // default is dbchangelog, collection with applied change sets
-builder.setEnabled(shouldBeEnabled);              // default is true, migration won't start if set to false
-```
-
-[More about URI](http://mongodb.github.io/mongo-java-driver/3.5/javadoc/)
 
 
 ## Creating change logs
@@ -202,17 +159,13 @@ collection called `dbchangelog` (by default) in your MongoDB
 
 #### Annotation parameters:
 
-`order` - string for sorting change sets in one changelog. Sorting in alphabetical order, ascending. It can be a number, 
-a date etc.
-
-`id` - name of a change set, **must be unique** for all change logs in a database
-
-`author` - author of a change set
-
-`runAlways` - _[optional, default: false]_ changeset will always be executed but only first execution event will be 
-stored in dbchangelog collection
-
-`version` - _[optional, default: "0"]_ defines a version on which this changeset is relate to. E.g. "0.1" means, this changeset should be applied to schema version 0.1 of your MongoDB. See [Defining ChangeSet methods with versions](#defining-changeset-methods-with-versions) for more information.
+| Parameter     | Type      | Mandatory | Considerations    | Description 
+|---------------|-----------|-----------|-------------------|-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+|`id`           | String    |YES        | Must be Unique    | Name of a change set, **must be unique** for all change logs in a database
+|`author`       | String    |YES        | N/A               | Author of a change set
+|`order`        | String    |Optional   | Alphabetic order  | String for sorting change sets in one changelog. Sorting in alphabetical order, ascending. It can be a number, a date etc.
+|`runAlways`    | Boolean   |Optional   | default: false  | ChangeSet will always be executed but only first execution event will be stored in dbchangelog collection
+|`version`      | String    |Optional   | default: "0"    | efines a version on which this changeset is relate to. E.g. "0.1" means, this changeset should be applied to schema version 0.1 of your MongoDB. See [Defining ChangeSet methods with versions](#defining-changeset-methods-with-versions) for more information.
 
 #### Defining ChangeSet methods
 Method annotated by `@ChangeSet` can have one of the following definition:
@@ -292,6 +245,105 @@ With specifying versions you are able to upgrade to specific versions:
 
 This example will execute `ChangeSet` 1, 2 and 3, 
 because the specified systemVersion in the changeset should be greater equals the `startSystemVersion` and lower than `endSystemVersion`.
+
+
+## Build parameters
+### Common
+| Parameter                         | Injection type| Default   | Description 
+|-----------------------------------|---------------|-----------|---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+|`mongoClient`                      | constructor   | N/A               | New database connection client API. Recommended for standalone use over `legacyMongoClient`
+|`legacyMongoClient`                | constructor   | N/A               | Old database connection client API. Deprecated
+|`databaseName`                     | constructor   | Mandatory         | Database name
+|`changeLogScanPackage`             | constructor   | Mandatory         | Package path where the changeLogs are located
+|`enabled`                          | setter        | `true`              | Migration process will run only if this option is set to true
+|`changeLogCollectionName`          | setter        | `mongockChangeLog`| ChangeLog collection name
+|`lockCollectionName`               | setter        | `mongockLock`     | Lock collection name
+|`metadata`                         | setter        | empty Map         | Map for custom data you want to attach to your migration
+|`throwExceptionIfCannotObtainLock` | String        | `false`           | Mongock will throw MongockException if lock can not be obtained
+|`lockAcquiredForMinutes`           | setter        | 24 * 60(1 day)    | Indicates how long the lock will be hold once acquired in minutes
+|`maxWaitingForLockMinutes`         | setter        | 3                 | Indicates max time in minutes to wait for the lock in each try
+|`maxTries`                         | setter        | 1                 | Number of times Mongock will try to acquire the lock
+|`startSystemVersion`               | setter        | `"0"`             | System version to start with (see [Defining ChangeSet methods with versions()](#defining-changeset-methods-with-versions))
+|`endSystemVersion`                 | setter        | Integer.MAX_VALUE | System version to end with (see [Defining ChangeSet methods with versions()](#defining-changeset-methods-with-versions))
+
+### Spring 
+Provides all the commons parameters plus:
+
+| Parameter                         | Injection type| Default   | Description 
+|-----------------------------------|---------------|-----------|---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+|`mongoTemplate`                    | constructor   | N/A       | Spring MongoTemplate. Recommended for Spring and Spring boot use. Without this, specific Spring feature related to Mongo, like Spring converters, repositories and so on, won't work
+|`springEnvironment`                | setter        | null      | Spring Environment. Recommended for Spring and Spring boot use. Without this Spring Profiles won't work.
+
+### Spring  boot
+Provides all the commons and Spring parameters plus:
+
+| Parameter         | Injection type| Default   | Description 
+|-------------------|---------------|-----------|---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------| 
+|`springContext`    | setter        | null      | Spring Application context. Recommended. Required for bean injections into ChangeSet methods
+
+
+## Usage with Spring...Mongock as a Bean
+
+You need to instantiate mongock object and provide some configuration.
+If you use Spring, mongock can be instantiated as a singleton bean in the Spring context. 
+In this case the migration process will be executed automatically on startup.
+
+```java
+@Bean
+public SpringMongock mongock() {
+  MongoClient mongoclient = new MongoClient(new MongoClientURI("yourDbName", yourMongoClientBuilder));
+  return new SpringMongockBuilder(mongoclient, "yourDbName", "com.package.to.be.scanned.for.changesets")
+      .setLockQuickConfig()
+      .build();
+}
+```
+
+## Usage with SpringBoot...When you need to inject your own dependencies
+
+The main benefit of using SpringBoot integration is that it provides a totally flexible way to inject dependencies,
+so you can inject any object to your change logs by using SpringBoot ApplicationContext.
+
+In order to use this feature you need to instantiate the SpringBoot mongock class and provide the required configuration. 
+Mongock will run as an [ApplicationRunner][ApplicationRunner] within SpringBoot.
+In terms of execution, it will be very similar to the standard Spring implementation, the key difference is that ApplicationRunner beans run *after* (as opposed to during) the context is fully initialized. 
+
+>**Note:** Using this implementation means you need all the dependencies in your changelogs(parameters in methods annotated with ```@ChangeSet```) declared as Spring beans.
+
+>**Note:** The dependencies injected by the ApplicationContext (other than [MongoTemplate][MongoTemplate], [MongoDatabase][MongoDatabase] and [DB][DB]) won't be covered by the lock. This means
+that if you are accessing to Mongo through a different mechanism to the ones mentioned, the lock synchronization is not guaranteed as Mongock only ensures synchronization when Mongo is accessed via either [MongoTemplate][MongoTemplate], [MongoDatabase][MongoDatabase] or [DB][DB]. 
+For more information, please consult the [lock section](#configuring-lock)
+
+```java
+@Bean
+public SpringBootMongock mongock(ApplicationContext springContext, MongoClient mongoClient) {
+  return new SpringBootMongockBuilder(mongoClient, "yourDbName", "com.package.to.be.scanned.for.changesets")
+      .setApplicationContext(springContext) 
+      .setLockQuickConfig()
+      .build();
+}
+```
+
+## Standalone usage
+Using mongock standalone.
+
+```java
+
+  MongoClient mongoclient = new MongoClient(new MongoClientURI("yourDbName", yourMongoClientBuilder));
+  Mongock runner=  new MongockBuilder(mongoclient, "yourDbName", "com.package.to.be.scanned.for.changesets")
+      .setLockQuickConfig()
+      .build();
+  runner.execute();         //  ------> starts migration changesets
+```
+
+Above examples provide minimal configuration. The various `Mongock` builders provide some other possibilities (setters) 
+to make the tool more flexible:
+
+```java
+builder.setChangelogCollectionName(logColName);   // default is dbchangelog, collection with applied change sets
+builder.setEnabled(shouldBeEnabled);              // default is true, migration won't start if set to false
+```
+
+[More about URI](http://mongodb.github.io/mongo-java-driver/3.5/javadoc/)
 
 
 ## Injecting custom dependencies to change logs
@@ -441,7 +493,7 @@ You can exclude mongo-java-driver from **mongock**  and use your dependency only
 <dependency>
   <groupId>com.github.cloudyrock.mongock</groupId>
   <artifactId>mongock-core</artifactId>
-  <version>3.2.4</version>
+  <version>3.2.5</version>
   <exclusions>
     <exclusion>
       <groupId>org.mongodb</groupId>
@@ -454,7 +506,7 @@ You can exclude mongo-java-driver from **mongock**  and use your dependency only
 ```gradle
     // build.gradle
     compile "org.mongodb:mongo-java-driver:3.4.0"
-    compile("com.github.cloudyrock.mongock:mongock:3.2.4") {
+    compile("com.github.cloudyrock.mongock:mongock:3.2.5") {
         exclude group: 'org.mongodb', module: 'mongo-java-driver'
     }
 
