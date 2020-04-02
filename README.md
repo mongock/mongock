@@ -272,14 +272,14 @@ Provides all the commons parameters plus:
 | Parameter                         | Injection type| Default   | Description 
 |-----------------------------------|---------------|-----------|---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 |`mongoTemplate`                    | constructor   | N/A       | Spring MongoTemplate. Recommended for Spring and Spring boot use. Without this, specific Spring feature related to Mongo, like Spring converters, repositories and so on, won't work
-|`springEnvironment`                | setter        | null      | Spring Environment. Recommended for Spring and Spring boot use. Without this Spring Profiles won't work.
+|`springEnvironment`                | setter        | null      | Spring Environment. Recommended for Spring. Without this Spring Profiles won't work. Not needed in Spring boot if ApplicationContext is provided
 
 ### Spring  boot
 Provides all the commons and Spring parameters plus:
 
 | Parameter         | Injection type| Default   | Description 
 |-------------------|---------------|-----------|---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------| 
-|`springContext`    | setter        | null      | Spring Application context. Recommended. Required for bean injections into ChangeSet methods
+|`springContext`    | setter        | null      | Spring Application context. Recommended. Required for bean injections into ChangeSet methods. If this is provided, Spring Environment is not needed.
 
 
 ## Usage with Spring...Mongock as a Bean
