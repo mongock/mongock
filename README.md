@@ -25,6 +25,7 @@
   * [Why Mongock](#why-mongock)
   * [Sample projects](#sample-projects)
   * [Contributing](#contributing)
+  * [Roadmap](#roadmap)
   * [Add a dependency](#add-a-dependency)
      * [With Maven](#with-maven)
      * [With Gradle](#with-gradle)
@@ -79,7 +80,7 @@ In [here](https://github.com/cloudyrock/mongock-samples) you can find some sampl
 ## Contributing
 If you would like to contribute to Mongock project, please read [how to contribute](././community/CONTRIBUTING.md) for details on our collaboration process and standards.
 
-
+## Roadmap
 
 ## Add a dependency
 
@@ -270,16 +271,16 @@ so by instantiating the Mongock runner as singleton bean in the spring context, 
 
 By using SpringMongock you can also take advantage of the Spring Profile's benefits and, if using MongoTemplate, all the SpringData features are implicitly provided.
 
->**Note:** We really recommend using [MongoTemplate][MongoTemplate] for building SpringBootMongock runner. It provides a provides a better integration with Spring boot and it's the only way
+>**Note:** We really recommend using [MongoTemplate][MongoTemplate] for building SpringMongock runner. It provides a provides a better integration with [Spring][spring] and it's the only way
 of taking advantage of SpringData, so you can use features like Mongo [CustomConversions][customConversions], etc. 
 
 ### When use SpringBootMongock
 
 The main benefit of using SpringBoot integration is that it provides a totally flexible way to inject dependencies,
-so you can inject any object to your change logs by using SpringBoot [ApplicationContext][ApplicationContext].
+so you can inject any object to your changeSets by using [Spring boot][springboot] [ApplicationContext][ApplicationContext].
 
-In order to use this feature you need to instantiate the SpringBoot mongock class and provide the required configuration. 
-Mongock will run as an [ApplicationRunner][ApplicationRunner] within SpringBoot.
+In order to use this feature you need to instantiate the SpringBootMongock runner and provide the required configuration. 
+Mongock will run as an [ApplicationRunner][ApplicationRunner] within [Spring boot][springboot].
 In terms of execution, it will be very similar to the standard Spring implementation, the key difference is that ApplicationRunner beans run *after* (as opposed to during) the context is fully initialized. 
 
 >**Note:** We really recommend using [MongoTemplate][MongoTemplate] for building SpringBootMongock runner. It provides a provides a better integration with Spring boot and it's the only way
@@ -287,9 +288,9 @@ of taking advantage of SpringData, so you can use features like Mongo [CustomCon
 
 >**Note:** Using this implementation means you need all the dependencies in your changeLogs(parameters in methods annotated with ```@ChangeSet```) declared as Spring beans.
 
->**Note:** In order to have you beans injected into your changeSet methods, you need to provide the [SpringBoot][springBoot] [ApplicationContext][ApplicationContext] at building time.
+>**Note:** In order to have your beans injected into your changeSet methods, you need to provide the [SpringBoot][springBoot] [ApplicationContext][ApplicationContext] at building time.
 
->**Note:** The dependencies injected by the ApplicationContext (other than [MongoTemplate][MongoTemplate] and [MongoDatabase][MongoDatabase]) won't be covered by the lock. This means
+>**Note:** Currently(we are working on it, please take a look to our [Roadmap](#roadmap)) the dependencies injected by the ApplicationContext (other than [MongoTemplate][MongoTemplate] and [MongoDatabase][MongoDatabase]) won't be covered by the lock. This means
 that if you are accessing to Mongo through a different mechanism to the ones mentioned, the lock synchronization is not guaranteed as Mongock only ensures synchronization when Mongo is accessed via either [MongoTemplate][MongoTemplate], [MongoDatabase][MongoDatabase] or [DB][DB]. 
 For more information, please consult the [lock section](#configuring-lock)
 
