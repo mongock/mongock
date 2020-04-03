@@ -36,10 +36,14 @@
           * [Annotation parameters:](#annotation-parameters)
           * [Defining ChangeSet methods](#defining-changeset-methods)
           * [Defining ChangeSet methods with versions()](#defining-changeset-methods-with-versions)
+   * [When use each](#when-use-each)
+       * [When use Mongock standalone](#when-use-mongock-standalone)
+       * [When use SpringMongock](#when-use-springmongock)
+       * [When use SpringBootMongock](#when-use-springbootmongock)
    * [Build parameters](#build-parameters)
        * [Common](#common)
-       * [Spring](#spring)  
-       * [Spring boot](#spring-boot)  
+       * [SpringMongock](#springMongock)  
+       * [SpringBootMongock](#springBootMongock)
   * [Usage with Spring...Mongock as a Bean](#usage-with-springmongock-as-a-bean)
   * [Usage with SpringBoot...When you need to inject your own dependencies](#usage-with-springbootwhen-you-need-to-inject-your-own-dependencies)
   * [Standalone usage](#standalone-usage)
@@ -66,7 +70,7 @@ There are several good reasons to use Mongock in your project. Here we give you 
 * Well maintained and regularly updated.
 * Used by several tech companies in different industries.
 * Can be used together with most, if not all, frameworks.
-* Provides great integration for Spring, allowing you to inject any dependency you want to your changelog method.
+* Provides great integration for [Spring][spring], allowing you to inject any dependency you want to your changelog method.
 * We walk with you to production. Get more information about our support model at dev@cloudyrock.io
 
 ## Sample projects
@@ -79,7 +83,7 @@ If you would like to contribute to Mongock project, please read [how to contribu
 
 ## Add a dependency
 
-Mongock can be used standalone or with Spring. When Using `mongock-spring` you don't need to import `mongock-core`, 
+Mongock can be used standalone or with [Spring][spring]/[Spring boot][springboot]. When Using `mongock-spring` you don't need to import `mongock-core`, 
 as it's already imported out of the box.
 
 #### With Maven
@@ -114,9 +118,9 @@ compile 'com.github.cloudyrock.mongock:mongock-spring:3.2.5'  // with Spring (in
 | `@ChangeSet`              | Common        | Annotation    | Annotation used to annotate a a method inside a class annotated with `@ChangeLog` and contains the code for a specific change
 | `Mongock`                 | Standalone    | Class         | It's the class in charge of running the migration as standalone, independently from any framework
 | `MongockBuiler`           | Standalone    | Class         | It's the class used to build a Mongock instance
-| `SpringMongock`           | Spring        | Class         | A Mongock extension for Spring framework, allowing what a normal Mongock runner does, plus the use of MongoTemplate and  Spring Profiles
+| `SpringMongock`           | Spring        | Class         | A Mongock extension for [Spring framework][spring], allowing what a normal Mongock runner does, plus the use of MongoTemplate, SpringData and Spring Profiles
 | `SpringMongockBuiler`     | Spring        | Class         | It's the class used to build a SpringMongock instance
-| `SpringBootMongock`       | Spring boot   | Class         | A SpringMongock extension for Spring boot framework, allowing what a SpringMongock runner does, plus Spring ApplicationContext for custom injection in your ChangeSet methods
+| `SpringBootMongock`       | Spring boot   | Class         | A SpringMongock extension for [Spring boot][springboot] framework, allowing what a SpringMongock runner does, plus Spring ApplicationContext for custom injection in your ChangeSet methods
 | `SpringBootMongockBuiler` | Spring boot   | Class         | It's the class used to build a SpringBootMongock instance
 
 ## How it works
@@ -126,7 +130,7 @@ section [Key concepts](#key-concepts).
 Basic steps for you to understand the process:
 1. Create your ChangeLog class with ChangeSet methods in a package, which we'll call it "changes_package"
 2. Build the Mongock runner with Mongock Builder. Among other parameters, you will need to give him your "changes_package"
-3. Run Mongock object built in the previous step. You will see that this step will be automatically performed when used in frameworks like Spring, JHipster, etc.
+3. Run Mongock object built in the previous step. You will see that this step will be automatically performed when used in frameworks like [Spring][spring], [JHipster][JHipster], etc.
 
 ## Creating change logs
 
@@ -254,6 +258,41 @@ With specifying versions you are able to upgrade to specific versions:
 This example will execute `ChangeSet` 1, 2 and 3, 
 because the specified systemVersion in the changeset should be greater equals the `startSystemVersion` and lower than `endSystemVersion`.
 
+## When use each
+### When use Mongock standalone
+Mongock standalone(`mongock-core`) is the original Mongock implementation. It provides the main features and while it still very easy to run, it does not rely on any framework to be executed, so that responsibility belongs to you. 
+As mentioned, it's recommended when you are running an standalone java application without any framework or, even using a framework, you want to have the control of when Mongock is executed and you don't need any extra feature provided by Spring, such as
+bean injection, profiles, converters, etc.
+
+### When use SpringMongock
+This is a specialization of Mongock for [Spring][spring] users. SpringMongock runner implements the interface [InitializingBean][InitializingBean] provided by [Spring][spring]. 
+so by instantiating the Mongock runner as singleton bean in the spring context, the framework will take care of the dependencies and will execute at startup.
+
+By using SpringMongock you can also take advantage of the Spring Profile's benefits and, if using MongoTemplate, all the SpringData features are implicitly provided.
+
+>**Note:** We really recommend using [MongoTemplate][MongoTemplate] for building SpringBootMongock runner. It provides a provides a better integration with Spring boot and it's the only way
+of taking advantage of SpringData, so you can use features like Mongo [CustomConversions][customConversions], etc. 
+
+### When use SpringBootMongock
+
+The main benefit of using SpringBoot integration is that it provides a totally flexible way to inject dependencies,
+so you can inject any object to your change logs by using SpringBoot [ApplicationContext][ApplicationContext].
+
+In order to use this feature you need to instantiate the SpringBoot mongock class and provide the required configuration. 
+Mongock will run as an [ApplicationRunner][ApplicationRunner] within SpringBoot.
+In terms of execution, it will be very similar to the standard Spring implementation, the key difference is that ApplicationRunner beans run *after* (as opposed to during) the context is fully initialized. 
+
+>**Note:** We really recommend using [MongoTemplate][MongoTemplate] for building SpringBootMongock runner. It provides a provides a better integration with Spring boot and it's the only way
+of taking advantage of SpringData, so you can use features like Mongo [CustomConversions][customConversions], etc. 
+
+>**Note:** Using this implementation means you need all the dependencies in your changeLogs(parameters in methods annotated with ```@ChangeSet```) declared as Spring beans.
+
+>**Note:** In order to have you beans injected into your changeSet methods, you need to provide the [SpringBoot][springBoot] [ApplicationContext][ApplicationContext] at building time.
+
+>**Note:** The dependencies injected by the ApplicationContext (other than [MongoTemplate][MongoTemplate] and [MongoDatabase][MongoDatabase]) won't be covered by the lock. This means
+that if you are accessing to Mongo through a different mechanism to the ones mentioned, the lock synchronization is not guaranteed as Mongock only ensures synchronization when Mongo is accessed via either [MongoTemplate][MongoTemplate], [MongoDatabase][MongoDatabase] or [DB][DB]. 
+For more information, please consult the [lock section](#configuring-lock)
+
 
 ## Build parameters
 ### Common
@@ -274,7 +313,7 @@ because the specified systemVersion in the changeset should be greater equals th
 |`startSystemVersion`               | setter        | `"0"`             | System version to start with (see [Defining ChangeSet methods with versions()](#defining-changeset-methods-with-versions))
 |`endSystemVersion`                 | setter        | Integer.MAX_VALUE | System version to end with (see [Defining ChangeSet methods with versions()](#defining-changeset-methods-with-versions))
 
-### Spring 
+### SpringMongock 
 Provides all the commons parameters plus:
 
 | Parameter                         | Injection type| Default   | Description 
@@ -282,13 +321,12 @@ Provides all the commons parameters plus:
 |`mongoTemplate`                    | constructor   | N/A       | Spring MongoTemplate. Recommended for Spring and Spring boot use. Without this, specific Spring feature related to Mongo, like Spring converters, repositories and so on, won't work
 |`springEnvironment`                | setter        | null      | Spring Environment. Recommended for Spring. Without this Spring Profiles won't work. Not needed in Spring boot if ApplicationContext is provided
 
-### Spring  boot
+### SpringBootMongock
 Provides all the commons and Spring parameters plus:
 
 | Parameter         | Injection type| Default   | Description 
 |-------------------|---------------|-----------|---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------| 
 |`springContext`    | setter        | null      | Spring Application context. Recommended. Required for bean injections into ChangeSet methods. If this is provided, Spring Environment is not needed.
-
 
 ## Usage with Spring...Mongock as a Bean
 
@@ -309,15 +347,17 @@ public SpringMongock mongock() {
 ## Usage with SpringBoot...When you need to inject your own dependencies
 
 The main benefit of using SpringBoot integration is that it provides a totally flexible way to inject dependencies,
-so you can inject any object to your change logs by using SpringBoot ApplicationContext.
+so you can inject any object to your change logs by using SpringBoot [ApplicationContext][ApplicationContext].
 
 In order to use this feature you need to instantiate the SpringBoot mongock class and provide the required configuration. 
 Mongock will run as an [ApplicationRunner][ApplicationRunner] within SpringBoot.
 In terms of execution, it will be very similar to the standard Spring implementation, the key difference is that ApplicationRunner beans run *after* (as opposed to during) the context is fully initialized. 
 
->**Note:** Using this implementation means you need all the dependencies in your changelogs(parameters in methods annotated with ```@ChangeSet```) declared as Spring beans.
+>**Note:** Using this implementation means you need all the dependencies in your changeLogs(parameters in methods annotated with ```@ChangeSet```) declared as Spring beans.
 
->**Note:** The dependencies injected by the ApplicationContext (other than [MongoTemplate][MongoTemplate], [MongoDatabase][MongoDatabase] and [DB][DB]) won't be covered by the lock. This means
+>**Note:** In order to have you beans injected into your changeSet methods, you need to provide the [SpringBoot][springBoot] [ApplicationContext][ApplicationContext] at building time.
+
+>**Note:** The dependencies injected by the ApplicationContext (other than [MongoTemplate][MongoTemplate] and [MongoDatabase][MongoDatabase]) won't be covered by the lock. This means
 that if you are accessing to Mongo through a different mechanism to the ones mentioned, the lock synchronization is not guaranteed as Mongock only ensures synchronization when Mongo is accessed via either [MongoTemplate][MongoTemplate], [MongoDatabase][MongoDatabase] or [DB][DB]. 
 For more information, please consult the [lock section](#configuring-lock)
 
@@ -553,6 +593,13 @@ Mongock propject is licensed under the [Apache License Version 2.0](http://www.a
 
 
 [ApplicationRunner]: https://docs.spring.io/spring-boot/docs/current/api/org/springframework/boot/ApplicationRunner.html
+[InitializingBean]: https://docs.spring.io/spring-framework/docs/current/javadoc-api/org/springframework/beans/factory/InitializingBean.html
+[ApplicationContext]: https://docs.spring.io/spring-framework/docs/current/javadoc-api/org/springframework/context/ApplicationContext.html
 [MongoTemplate]: https://docs.spring.io/spring-data/mongodb/docs/current/api/org/springframework/data/mongodb/core/MongoTemplate.html
+[converter]: https://docs.spring.io/spring-framework/docs/current/javadoc-api/org/springframework/core/convert/converter/Converter.html
+[customConversions]: https://docs.spring.io/spring-data/data-mongodb/docs/current/api/org/springframework/data/mongodb/core/convert/CustomConversions.html
 [MongoDatabase]: http://mongodb.github.io/mongo-java-driver/3.6/javadoc/?com/mongodb/client/MongoDatabase.html
 [DB]: http://mongodb.github.io/mongo-java-driver/3.6/javadoc/?com/mongodb/DB.html
+[JHipster]: https://www.jhipster.tech/
+[spring]: https://spring.io/
+[springboot]:https://spring.io/projects/spring-boot
