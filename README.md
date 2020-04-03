@@ -36,7 +36,7 @@
           * [Annotation parameters:](#annotation-parameters)
           * [Defining ChangeSet methods](#defining-changeset-methods)
           * [Defining ChangeSet methods with versions()](#defining-changeset-methods-with-versions)
-   * [When use each](#when-use-each)
+   * [When use...](#when-use-each)
        * [When use Mongock standalone](#when-use-mongock-standalone)
        * [When use SpringMongock](#when-use-springmongock)
        * [When use SpringBootMongock](#when-use-springbootmongock)
