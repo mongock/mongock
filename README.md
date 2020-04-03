@@ -28,7 +28,8 @@
   * [Add a dependency](#add-a-dependency)
      * [With Maven](#with-maven)
      * [With Gradle](#with-gradle)
-  * [Basic concepts](#basic-concepts)
+  * [Key concepts](#key-concepts)
+  * [How it works](#how-it-works)
   * [Creating change logs](#creating-change-logs)
        * [@ChangeLog](#changelog)
        * [@ChangeSet](#changeset)
@@ -106,7 +107,7 @@ compile 'com.github.cloudyrock.mongock:mongock-core:3.2.5'    // standalone
 compile 'com.github.cloudyrock.mongock:mongock-spring:3.2.5'  // with Spring (in addition to mongock-core)
 ```
 
-## Basic concepts
+## Key concepts
 | Concept    | Mongock Module | Type | Description 
 |---------------------------|---------------|---------------|--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | `@ChangeLog`              | Common        | Annotation    | Annotation used to annotate a class that contains changeSet methods
@@ -118,7 +119,14 @@ compile 'com.github.cloudyrock.mongock:mongock-spring:3.2.5'  // with Spring (in
 | `SpringBootMongock`       | Spring boot   | Class         | A SpringMongock extension for Spring boot framework, allowing what a SpringMongock runner does, plus Spring ApplicationContext for custom injection in your ChangeSet methods
 | `SpringBootMongockBuiler` | Spring boot   | Class         | It's the class used to build a SpringBootMongock instance
 
+## How it works
+How Mongock works is very. The migration consists in three main elements: Your changes(based on ChangeLog classes that contains one or more ChangeSet methods), Mongock builder and Mongock runner. To understand these terms, please refer to
+section [Key concepts](#key-concepts).
 
+Basic steps for you to understand the process:
+1. Create your ChangeLog class with ChangeSet methods in a package, which we'll call it "changes_package"
+2. Build the Mongock runner with Mongock Builder. Among other parameters, you will need to give him your "changes_package"
+3. Run Mongock object built in the previous step. You will see that this step will be automatically performed when used in frameworks like Spring, JHipster, etc.
 
 ## Creating change logs
 
