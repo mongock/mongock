@@ -297,13 +297,13 @@ For more information, please consult the [lock section](#configuring-lock)
 
 ## Build parameters
 ### Common
-| Parameter                         | Injection type| Default   | Description 
-|-----------------------------------|---------------|-----------|---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| Parameter                         | Injection type| Default           | Description 
+|-----------------------------------|---------------|-------------------|---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 |`mongoClient`                      | constructor   | N/A               | New database connection client API. Recommended for standalone use over `legacyMongoClient`
 |`legacyMongoClient`                | constructor   | N/A               | Old database connection client API. Deprecated
 |`databaseName`                     | constructor   | Mandatory         | Database name
 |`changeLogScanPackage`             | constructor   | Mandatory         | Package path where the changeLogs are located
-|`enabled`                          | setter        | `true`              | Migration process will run only if this option is set to true
+|`enabled`                          | setter        | `true`            | Migration process will run only if this option is set to true
 |`changeLogCollectionName`          | setter        | `mongockChangeLog`| ChangeLog collection name
 |`lockCollectionName`               | setter        | `mongockLock`     | Lock collection name
 |`metadata`                         | setter        | empty Map         | Map for custom data you want to attach to your migration
