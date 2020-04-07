@@ -44,7 +44,11 @@
    * [Build parameters](#build-parameters)
        * [Common](#common)
        * [SpringMongock](#springMongock)  
-       * [SpringBootMongock](#springBootMongock)
+       * [SpringBootMongock](#springBootMongock)    
+   * [Build and run](#build-and-run)
+       * [Build and run standalone](#build-and-run-standalone)
+       * [Build and run SpringMongock](#build-and-run-springMongock)
+       * [Build and run SpringBootMongock](#build-and-run-springBootMongock)
   * [Usage with Spring...Mongock as a Bean](#usage-with-springmongock-as-a-bean)
   * [Usage with SpringBoot...When you need to inject your own dependencies](#usage-with-springbootwhen-you-need-to-inject-your-own-dependencies)
   * [Standalone usage](#standalone-usage)
@@ -329,75 +333,67 @@ Provides all the commons and Spring parameters plus:
 |-------------------|---------------|-----------|---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------| 
 |`springContext`    | setter        | null      | Spring Application context. Recommended. Required for bean injections into ChangeSet methods. If this is provided, Spring Environment is not needed.
 
-## Usage with Spring...Mongock as a Bean
 
-You need to instantiate mongock object and provide some configuration.
+## Build and run
+
+Once we have seen how to create our migration classes in [Creating change logs](#creating-change-logs), we need to build and run Mongock. As mentioned, we have three modes: standalone, Spring and Spring boot
+>**Note:** For backward compatibility, the lock is configured by default with too long values(24 hours). This is really basic strategy which can produce unexpected behaviour like
+not been able to execute Mongock in the next 24hours if there is any error and the lock is not released. For this reason we RECOMMEND to activate by either setting the values manually
+with `setLockConfig` or with the default values for a proper lock with `setLockQuickConfig`
+
+by default the lock is configured with values(24 hours) that in practice is like . This means that the lock is there but the time is taken is so
+long that it's like you have no lock, or even worse, if anything happens and the lock is not released, the next execution won't be able to run before 24 hours.
+
+### Build and run standalone
+For more attributes, please see [Build parameters](#build-parameters)
+```java
+  Mongock runner=  new MongockBuilder(mongoclient, "databaseName", "changeLogScanPackage")
+      .setLockQuickConfig() OR .setLockConfig(3, 4, 3) 
+      ...other setters
+      .build();
+  runner.execute();         //  ------> starts migration changeSets straight away
+```
+
+### Build and run SpringMongock
+
 If you use Spring, mongock can be instantiated as a singleton bean in the Spring context. 
 In this case the migration process will be executed automatically on startup.
+You can use MongoClient, like with standalone, but we recommend using MongoTemplate.
+For more attributes, please see [Build parameters](#build-parameters)
 
 ```java
 @Bean
-public SpringMongock mongock() {
-  MongoClient mongoclient = new MongoClient(new MongoClientURI("yourDbName", yourMongoClientBuilder));
-  return new SpringMongockBuilder(mongoclient, "yourDbName", "com.package.to.be.scanned.for.changesets")
-      .setLockQuickConfig()
+public SpringMongock springMongock(MongoTemplate mongoTemplate, Environment springEnvironment) {
+  return new SpringMongockBuilder(mongoTemplate, "changeLogScanPackage")
+        .setSpringEnvironment(springEnvironment)
+      .setLockQuickConfig() OR .setLockConfig(3, 4, 3) 
+       ...other setters
       .build();
 }
 ```
 
-## Usage with SpringBoot...When you need to inject your own dependencies
+### Build and run SpringBootMongock
 
-The main benefit of using SpringBoot integration is that it provides a totally flexible way to inject dependencies,
-so you can inject any object to your change logs by using SpringBoot [ApplicationContext][ApplicationContext].
+You  can see the benefits of using SpringBootMongock in [this section](#when-use-springbootmongock)
+By injecting the Spring ApplicationRunner, you are implicitly injecting the Spring Environment, so you don't need to do it manually.
 
-In order to use this feature you need to instantiate the SpringBoot mongock class and provide the required configuration. 
-Mongock will run as an [ApplicationRunner][ApplicationRunner] within SpringBoot.
-In terms of execution, it will be very similar to the standard Spring implementation, the key difference is that ApplicationRunner beans run *after* (as opposed to during) the context is fully initialized. 
-
->**Note:** Using this implementation means you need all the dependencies in your changeLogs(parameters in methods annotated with ```@ChangeSet```) declared as Spring beans.
-
->**Note:** In order to have you beans injected into your changeSet methods, you need to provide the [SpringBoot][springBoot] [ApplicationContext][ApplicationContext] at building time.
-
->**Note:** The dependencies injected by the ApplicationContext (other than [MongoTemplate][MongoTemplate] and [MongoDatabase][MongoDatabase]) won't be covered by the lock. This means
-that if you are accessing to Mongo through a different mechanism to the ones mentioned, the lock synchronization is not guaranteed as Mongock only ensures synchronization when Mongo is accessed via either [MongoTemplate][MongoTemplate], [MongoDatabase][MongoDatabase] or [DB][DB]. 
-For more information, please consult the [lock section](#configuring-lock)
+As mentioned in previous sections, with SpringBootMongock now you can use your beans in your changeSets, please see [this section](#Injecting-custom-dependencies-to-change-logs) 
+to discover how
 
 ```java
 @Bean
-public SpringBootMongock mongock(ApplicationContext springContext, MongoClient mongoClient) {
-  return new SpringBootMongockBuilder(mongoClient, "yourDbName", "com.package.to.be.scanned.for.changesets")
+public SpringBootMongock mongock(MongoTemplate mongoTemplate, ApplicationContext springContext) {
+  return new SpringBootMongockBuilder(mongoTemplate, "changeLogScanPackage")
       .setApplicationContext(springContext) 
-      .setLockQuickConfig()
+      .setLockQuickConfig() OR .setLockConfig(3, 4, 3) 
       .build();
 }
 ```
-
-## Standalone usage
-Using mongock standalone.
-
-```java
-
-  MongoClient mongoclient = new MongoClient(new MongoClientURI("yourDbName", yourMongoClientBuilder));
-  Mongock runner=  new MongockBuilder(mongoclient, "yourDbName", "com.package.to.be.scanned.for.changesets")
-      .setLockQuickConfig()
-      .build();
-  runner.execute();         //  ------> starts migration changesets
-```
-
-Above examples provide minimal configuration. The various `Mongock` builders provide some other possibilities (setters) 
-to make the tool more flexible:
-
-```java
-builder.setChangelogCollectionName(logColName);   // default is dbchangelog, collection with applied change sets
-builder.setEnabled(shouldBeEnabled);              // default is true, migration won't start if set to false
-```
-
-[More about URI](http://mongodb.github.io/mongo-java-driver/3.5/javadoc/)
-
 
 ## Injecting custom dependencies to change logs
-Right now this is possible by using SpringBoot Application Context. 
-As explained in section [Usage with Spring...Mongock as a Bean](#usage-with-springmongock-as-a-bean), once you have injected the Spring ApplicationContext, you can use your beans in Mongock changeSet methods via method parameter. Don't use @autowired annotation.
+
+Right now this is only possible by using SpringBootMongock(no SpringMongock) and injecting Spring Application Context to your builder as shown below.
+As explained in section [Build and run SpringBootMongock](#build-and-run-springBootMongock), once you have injected the Spring ApplicationContext, you can use your beans in Mongock changeSet methods via method parameter. Don't use @autowired annotation.
 
 For example having a springdata repository  'PersonRepository' in your project, that you wish to use in your changeSet, you can use it like follow
 
@@ -412,10 +408,12 @@ public class ChangelogForTestEnv{
 }
 ```
 
-Notice that you shouldn't use the repository to write to Mongo, as it won't be covered by the lock.(this feature which allows you to use your own repositories freely in yout changeSet methods will be availble in future releases)
+>**Note:**  You shouldn't use the repository to write to Mongo, as it won't be covered by the lock.(this feature which allows you to use your own repositories freely in your 
+changeSet methods will be available in future releases)
 
 ## Using Spring profiles
-     
+This feature available for both Springs builders, SpringMongock and SpringBootMongock
+
 **mongock** accepts Spring's `org.springframework.context.annotation.Profile` annotation. If a change log or change set 
 class is annotated  with `@Profile`, then it is activated for current application profiles.
 
@@ -442,7 +440,7 @@ public class ChangelogForTestEnv{
 ```
 
 ### Enabling @Profile annotation (option)
-      
+This feature available for both Springs builders, SpringMongock and SpringBootMongock
 To enable the `@Profile` integration, please inject `org.springframework.core.env.Environment` to your runner.
 
 ```java      
