@@ -96,14 +96,14 @@ as it's already imported out of the box.
 <dependency>
   <groupId>com.github.cloudyrock.mongock</groupId>
   <artifactId>mongock-core</artifactId>
-  <version>3.2.5</version>
+  <version>{LATEST_VERSION}</version>
 </dependency>
 
 <!-- To use with Spring -->
 <dependency>
   <groupId>com.github.cloudyrock.mongock</groupId>
   <artifactId>mongock-spring</artifactId>
-  <version>3.2.5</version>
+  <version>{LATEST_VERSION}</version>
 </dependency>
 
 
@@ -111,8 +111,8 @@ as it's already imported out of the box.
 #### With Gradle
 ```groovy
 compile 'org.javassist:javassist:3.18.2-GA'          // workround for ${javassist.version} placeholder issue*
-compile 'com.github.cloudyrock.mongock:mongock-core:3.2.5'    // standalone
-compile 'com.github.cloudyrock.mongock:mongock-spring:3.2.5'  // with Spring (in addition to mongock-core)
+compile 'com.github.cloudyrock.mongock:mongock-core:{LATEST_VERSION}'    // standalone
+compile 'com.github.cloudyrock.mongock:mongock-spring:{LATEST_VERSION}'  // with Spring (in addition to mongock-core)
 ```
 
 ## Key concepts
@@ -550,7 +550,7 @@ You can exclude mongo-java-driver from **mongock**  and use your dependency only
 <dependency>
   <groupId>com.github.cloudyrock.mongock</groupId>
   <artifactId>mongock-core</artifactId>
-  <version>3.2.5</version>
+  <version>{LATEST_VERSION}</version>
   <exclusions>
     <exclusion>
       <groupId>org.mongodb</groupId>
@@ -563,7 +563,7 @@ You can exclude mongo-java-driver from **mongock**  and use your dependency only
 ```gradle
     // build.gradle
     compile "org.mongodb:mongo-java-driver:3.4.0"
-    compile("com.github.cloudyrock.mongock:mongock:3.2.5") {
+    compile("com.github.cloudyrock.mongock:mongock:{LATEST_VERSION}") {
         exclude group: 'org.mongodb', module: 'mongo-java-driver'
     }
 
