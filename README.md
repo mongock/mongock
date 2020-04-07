@@ -15,9 +15,6 @@
 
 
 ## LAST NEWS :bangbang::bangbang::collision::collision:
-
-> **ROADMAP** for next features. We are designing the roadmap for the next features and we think that it's crucial that we understand the user's needs and preferences. For this we have created a quick survey to understand what is important for you and also to allow you to give us any idea or need you have and we haven't thought about. [Mongock roadmap survey](https://forms.gle/uk9jmtKvxJzi5Bda7)
-
 > **3.2.5 is released with minor bux fixes** 
 
 ## Table of contents
@@ -494,16 +491,15 @@ By default the lock is reserved 24 hours and, in case the lock is held by anothe
 and no exception will be sent, unless the parameter throwExceptionIfCannotObtainLock is set to true.
 
 There are 3 parameters to configure:
-
-`lockAcquiredForMinutes` - Number of minutes mongock will acquire the lock for. It will refresh the lock when is close 
-to be expired anyway. 
-
-`maxTries` - Max tries when the lock is held by another mongock instance.
-
-`maxWaitingForLockMinutes` - Max minutes mongock will wait for the lock in every try. 
+| Parameter                 | Description 
+|---------------------------|---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+|`lockAcquiredForMinutes`   | Number of minutes mongock will acquire the lock for. It will refresh the lock when is close to be expired anyway. 
+|`maxTries`                 | Max tries when the lock is held by another mongock instance.
+|`maxWaitingForLockMinutes` | Max minutes mongock will wait for the lock in every try. 
 
 To configure these parameters there are two methods: setLockConfig and `setLockConfig` and `setLockQuickConfig`. Both
  will set the parameter throwExceptionIfCannotObtainLock to true.
+ 
  ```java      
  @Bean @Autowired
  public Mongock mongock(Environment environment) {
@@ -511,7 +507,9 @@ To configure these parameters there are two methods: setLockConfig and `setLockC
    runner.setLockConfig(5, 6, 3);
  }
  ```
+ 
  or quick config with 3 minutes for lockAcquiredFor, 3 max tries and 4 minutes for maxWaitingForLock
+ 
  ```java      
   @Bean @Autowired
   public Mongock mongock(Environment environment) {
@@ -519,8 +517,6 @@ To configure these parameters there are two methods: setLockConfig and `setLockC
     runner.setLockQuickConfig();
   }
   ```
- 
- 
 
 ## Known issues
 
