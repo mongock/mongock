@@ -56,7 +56,7 @@
   * [Parallel process](#parallel-process)
   * [Known issues](#known-issues)
      * [Mongo java driver conflicts](#mongo-java-driver-conflicts)
-  * [Mongo transaction limitations](#mongo-transaction-limitations)
+     * [Mongo transaction limitations](#mongo-transaction-limitations)
   * [Code of conduct](#code-of-conduct)
   * [LICENSE](#license)
   
@@ -565,7 +565,11 @@ You can exclude mongo-java-driver from **mongock**  and use your dependency only
 
 ```
 
-## Mongo transaction limitations
+###  Mongo transaction limitations
+
+>**Note:**  We are working on providing transaction support and UNDO operations. However until then, this will still be relevant
+and even with that, will remain relevant for older MongoDB versions without transaction support. 
+Please checkout our [roadmap](#roadmap)
 
 Due to Mongo limitations, there is no way to provide atomicity at ChangelogSet level. So a Changelog could need 
 more than one execution to be finished, as any interruption could happen, leaving the changelog in a inconsistent state.
