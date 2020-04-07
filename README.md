@@ -23,8 +23,9 @@
   * [Sample projects](#sample-projects)
   * [Contributing](#contributing)
   * [Roadmap](#roadmap)
-     * [Version 4 - Community version](#4.0.0-community-version)
-     * [Version 4 - Professional version](#4.0.0-professional-version)
+     * [Version 4.0.0](#version-4.0.0)
+        * [Community version](#community-version)
+        * [Professional version](#professional-version)
      * [What's up next](#What's-up-next)
   * [Add a dependency](#add-a-dependency)
      * [With Maven](#with-maven)
@@ -84,7 +85,8 @@ In [here](https://github.com/cloudyrock/mongock-samples) you can find some sampl
 If you would like to contribute to Mongock project, please read [how to contribute](././community/CONTRIBUTING.md) for details on our collaboration process and standards.
 
 ## Roadmap
-### 4.0.0 Community Version
+### Version 4.0.0
+#### Community Version
 * Non-fail-fast changeSets
 * Richer data in changelogCollection
 * Migration validation
@@ -93,7 +95,7 @@ If you would like to contribute to Mongock project, please read [how to contribu
 * Allow multiple changeLog packages
 * Custom injections in standalone and Spring(right now only possible in Spring boot via Spring Application Context)
 
-### 4.0.0 Professional Version
+#### Professional Version
 * All community features
 * Better and more information in changeLog collection
 * Spring Rest endpoint to retrieve migration data
