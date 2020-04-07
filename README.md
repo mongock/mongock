@@ -106,6 +106,7 @@ If you would like to contribute to Mongock project, please read [how to contribu
 * Migration validation
 * Scheduled migration
 * Alerts
+* Professional support
 
 
 ### What's up next
