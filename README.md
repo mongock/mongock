@@ -24,8 +24,6 @@
   * [Contributing](#contributing)
   * [Roadmap](#roadmap)
      * [Version 4.0.0](#version-4.0.0)
-        * [Community version](#community-version)
-        * [Professional version](#professional-version)
      * [What's up next](#What's-up-next)
   * [Add a dependency](#add-a-dependency)
      * [With Maven](#with-maven)
@@ -79,6 +77,8 @@ There are several good reasons to use Mongock in your project. Here we give you 
 * We walk with you to production. Get more information about our support model at dev@cloudyrock.io
 
 ## Sample projects
+>**Note:** Sample projects are not updated. We are working to have them updated as soon as possible.
+
 In [here](https://github.com/cloudyrock/mongock-samples) you can find some sample projects that show you how to use Mongock.
 
 ## Contributing
@@ -86,7 +86,6 @@ If you would like to contribute to Mongock project, please read [how to contribu
 
 ## Roadmap
 ### Version 4.0.0
-#### Community Version
 * Non-fail-fast changeSets
 * Richer data in changelogCollection
 * Migration validation
@@ -95,8 +94,7 @@ If you would like to contribute to Mongock project, please read [how to contribu
 * Allow multiple changeLog packages
 * Custom injections in standalone and Spring(right now only possible in Spring boot via Spring Application Context)
 
-#### Professional Version
-* All community features
+### What's up next
 * Better and more information in changeLog collection
 * Spring Rest endpoint to retrieve migration data
 * Spring Html endpoint to retrieve migration report
@@ -107,9 +105,6 @@ If you would like to contribute to Mongock project, please read [how to contribu
 * Scheduled migration
 * Alerts
 * Professional support
-
-
-### What's up next
 * Parallel process
 * More Spring friendly  builders
 * Spring Expression language support in Profiles
