@@ -380,8 +380,8 @@ long that it's like you have no lock, or even worse, if anything happens and the
 For more attributes, please see [Build parameters](#build-parameters)
 ```java
   Mongock runner=  new MongockBuilder(mongoclient, "databaseName", "changeLogScanPackage")
-      .setLockQuickConfig() OR .setLockConfig(3, 4, 3) 
-      ...other setters
+      .setLockQuickConfig() // OR .setLockConfig(3, 4, 3) 
+      // ...other setters
       .build();
   runner.execute();         //  ------> starts migration changeSets straight away
 ```
@@ -399,8 +399,8 @@ For more attributes, please see [Build parameters](#build-parameters)
 public SpringMongock springMongock(MongoTemplate mongoTemplate, Environment springEnvironment) {
   return new SpringMongockBuilder(mongoTemplate, "changeLogScanPackage")
         .setSpringEnvironment(springEnvironment)
-      .setLockQuickConfig() OR .setLockConfig(3, 4, 3) 
-       ...other setters
+      .setLockQuickConfig() // OR .setLockConfig(3, 4, 3) 
+       // ...other setters
       .build();
 }
 ```
@@ -421,7 +421,7 @@ For more attributes, please see [Build parameters](#build-parameters)
 public SpringBootMongock mongock(MongoTemplate mongoTemplate, ApplicationContext springContext) {
   return new SpringBootMongockBuilder(mongoTemplate, "changeLogScanPackage")
       .setApplicationContext(springContext) 
-      .setLockQuickConfig() OR .setLockConfig(3, 4, 3) 
+      .setLockQuickConfig() // OR .setLockConfig(3, 4, 3) 
       .build();
 }
 ```
