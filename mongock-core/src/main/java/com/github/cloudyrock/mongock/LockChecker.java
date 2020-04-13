@@ -213,9 +213,9 @@ public class LockChecker {
     this.tries++;
     if (this.tries >= lockMaxTries) {
       updateStatus(null);
-      throw new LockCheckException(String.format("MaxTries(%d) reached : due to exception:\n%s", lockMaxTries, ex.getMessage()));
+      throw new LockCheckException(String.format("MaxTries(%d) reached : due to exception: %s", lockMaxTries, ex.getMessage()));
     } else {
-      logger.warn("Error acquiring lock({} try of {} max tries) due to exception{}", tries, lockMaxTries, ex.getMessage(), ex);
+      logger.warn("Error acquiring lock({} try of {} max tries) due to exception: {}", tries, lockMaxTries, ex.getMessage(), ex);
     }
 
     final LockEntry currentLock = repository.findByKey(getDefaultKey());
@@ -224,7 +224,7 @@ public class LockChecker {
       final Date currentLockExpiresAt = currentLock.getExpiresAt();
       logger.info("Lock is taken by other process until: {}", currentLockExpiresAt);
       if (!acquiringLock) {
-        throw new LockCheckException("Lock held by other process. Cannot ensure lock");
+        throw new LockCheckException("Lock held by other process. Cannot ensure lock: " + ex.getMessage());
       }
       waitForLock(currentLockExpiresAt);
     }
