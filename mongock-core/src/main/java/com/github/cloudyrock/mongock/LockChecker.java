@@ -101,7 +101,7 @@ public class LockChecker {
         updateStatus(newLockExpiresAt);
         keepLooping = false;
       } catch (LockPersistenceException ex) {
-        handleLockException(true);
+        handleLockException(true, ex);
       }
     } while (keepLooping);
   }
@@ -130,7 +130,7 @@ public class LockChecker {
           logger.info("Mongock refreshed the lock until: {}", lockExpiresAtTemp);
           keepLooping = false;
         } catch (LockPersistenceException ex) {
-          handleLockException(false);
+          handleLockException(false, ex);
         }
       } else {
         keepLooping = false;
@@ -208,12 +208,14 @@ public class LockChecker {
     return this;
   }
 
-  private void handleLockException(boolean acquiringLock) {
+  private void handleLockException(boolean acquiringLock, Exception ex) {
 
     this.tries++;
     if (this.tries >= lockMaxTries) {
       updateStatus(null);
-      throw new LockCheckException("MaxTries(" + lockMaxTries + ") reached");
+      throw new LockCheckException(String.format("MaxTries(%d) reached : due to exception:\n%s", lockMaxTries, ex.getMessage()));
+    } else {
+      logger.warn("Error acquiring lock({} try of {} max tries) due to exception{}", tries, lockMaxTries, ex.getMessage(), ex);
     }
 
     final LockEntry currentLock = repository.findByKey(getDefaultKey());
