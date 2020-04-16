@@ -30,6 +30,8 @@ public class LockChecker {
   private static final String GOING_TO_SLEEP_MSG =
       "Mongock is going to sleep to wait for the lock:  {} ms({} minutes)";
   private static final String EXPIRATION_ARG_ERROR_MSG = "Lock expiration period must be greater than %d ms";
+  public static final String MAX_TRIES_ERROR_TEMPLATE = "MaxTries(%d) reached due to LockPersistenceException: \n\tcurrent lock:  %s\n\tnew lock: %s\n\tacquireLockQuery: %s\n\tdb error detail: %s";
+  public static final String LOCK_HELD_BY_OTHER_PROCESS = "Lock held by other process. Cannot ensure lock.\n\tCurrent try: %d\n\tcurrent lock:  %s\n\tnew lock: %s\n\tacquireLockQuery: %s\n\tdb error detail: %s";
 
   //injections
   private final LockRepository repository;
@@ -95,7 +97,7 @@ public class LockChecker {
     do {
       try {
         logger.info("Mongock trying to acquire the lock");
-        final Date newLockExpiresAt = timeUtils.currentTimePlusMillis(lockAcquiredForMillis);
+        Date newLockExpiresAt = timeUtils.currentTimePlusMillis(lockAcquiredForMillis);
         repository.insertUpdate(new LockEntry(lockKey, LockStatus.LOCK_HELD.name(), owner, newLockExpiresAt));
         logger.info("Mongock acquired the lock until: {}", newLockExpiresAt);
         updateStatus(newLockExpiresAt);
@@ -123,8 +125,8 @@ public class LockChecker {
       if (needsRefreshLock()) {
         try {
           logger.info("Mongock trying to refresh the lock");
-          final Date lockExpiresAtTemp = timeUtils.currentTimePlusMillis(lockAcquiredForMillis);
-          final LockEntry lockEntry = new LockEntry(lockKey, LockStatus.LOCK_HELD.name(), owner, lockExpiresAtTemp);
+          Date lockExpiresAtTemp = timeUtils.currentTimePlusMillis(lockAcquiredForMillis);
+          LockEntry lockEntry = new LockEntry(lockKey, LockStatus.LOCK_HELD.name(), owner, lockExpiresAtTemp);
           repository.updateIfSameOwner(lockEntry);
           updateStatus(lockExpiresAtTemp);
           logger.info("Mongock refreshed the lock until: {}", lockExpiresAtTemp);
@@ -208,23 +210,35 @@ public class LockChecker {
     return this;
   }
 
-  private void handleLockException(boolean acquiringLock, Exception ex) {
+  private void handleLockException(boolean acquiringLock, LockPersistenceException ex) {
 
     this.tries++;
+
+    LockEntry currentLock = repository.findByKey(getDefaultKey());
+
     if (this.tries >= lockMaxTries) {
       updateStatus(null);
-      throw new LockCheckException(String.format("MaxTries(%d) reached : due to exception: %s", lockMaxTries, ex.getMessage()));
-    } else {
-      logger.warn("Error acquiring lock({} try of {} max tries) due to exception: {}", tries, lockMaxTries, ex.getMessage(), ex);
+      throw new LockCheckException(String.format(
+          MAX_TRIES_ERROR_TEMPLATE,
+          lockMaxTries,
+          currentLock != null ? currentLock.toString() : "none",
+          ex.getNewLockEntity(),
+          ex.getAcquireLockQuery(),
+          ex.getDbErrorDetail()));
     }
 
-    final LockEntry currentLock = repository.findByKey(getDefaultKey());
 
     if (currentLock != null && !currentLock.isOwner(owner)) {
-      final Date currentLockExpiresAt = currentLock.getExpiresAt();
-      logger.info("Lock is taken by other process until: {}", currentLockExpiresAt);
+      Date currentLockExpiresAt = currentLock.getExpiresAt();
+      logger.warn("Lock is taken by other process until: {}", currentLockExpiresAt);
       if (!acquiringLock) {
-        throw new LockCheckException("Lock held by other process. Cannot ensure lock: " + ex.getMessage());
+        throw new LockCheckException(String.format(
+            LOCK_HELD_BY_OTHER_PROCESS,
+            this.tries,
+            currentLock.toString(),
+            ex.getNewLockEntity(),
+            ex.getAcquireLockQuery(),
+            ex.getDbErrorDetail()));
       }
       waitForLock(currentLockExpiresAt);
     }
@@ -232,8 +246,8 @@ public class LockChecker {
   }
 
   private void waitForLock(Date expiresAtMillis) {
-    final long diffMillis = expiresAtMillis.getTime() - timeUtils.currentTime().getTime();
-    final long sleepingMillis = (diffMillis > 0 ? diffMillis : 0) + MINIMUM_SLEEP_THREAD;
+    long diffMillis = expiresAtMillis.getTime() - timeUtils.currentTime().getTime();
+    long sleepingMillis = (diffMillis > 0 ? diffMillis : 0) + MINIMUM_SLEEP_THREAD;
     try {
       if (sleepingMillis > lockMaxWaitMillis) {
         throw new LockCheckException(String.format(MAX_WAIT_EXCEEDED_ERROR_MSG, sleepingMillis, lockMaxWaitMillis));

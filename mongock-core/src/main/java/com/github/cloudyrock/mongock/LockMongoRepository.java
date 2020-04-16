@@ -77,14 +77,29 @@ class LockMongoRepository extends MongoRepositoryBase implements LockRepository 
         .deleteMany(Filters.and(Filters.eq(LockEntry.KEY_FIELD, lockKey), Filters.eq(LockEntry.OWNER_FIELD, owner)));
   }
 
+  /**
+   * When onlyIfSameOwner == true, if(and only if) there is an existing lock for the same owner(and key, obviously),
+   * it will update it. Won't insert a new lock. If there is a not-expired-lock for the same key, but not same owner,
+   * will throw an exception.
+   *
+   * When onlyIfSameOwner == false, if there is a lock for the same owner, it will update it with the new values.
+   * If there is no lock for the same key and owner, will insert newLock.
+   * If there is already a not-expired-lock for the same key, which belongs to another owner, it will throw an exception.
+   * This last case can bbe confused, as it will try to insert the lock(looking at the update condition 'acquireLockQuery'),
+   * however, will rely on the key, so Mongo Driver will throw an MongoWriteException. This will be understood as
+   * the lock is held(ex.getError().getCategory() == ErrorCategory.DUPLICATE_KEY)
+   *
+   * @param newLock newLock to be inserted/updated
+   * @param onlyIfSameOwner if true, it requires an existing lock with the same owner
+   */
   private void insertUpdate(LockEntry newLock, boolean onlyIfSameOwner)  {
     boolean lockHeld;
+
+    Bson acquireLockQuery = getAcquireLockQuery(newLock.getKey(), newLock.getOwner(), onlyIfSameOwner);
+    String debErrorDetail = "not db error";
     try {
 
-      final Bson acquireLockQuery =
-          getAcquireLockQuery(newLock.getKey(), newLock.getOwner(), onlyIfSameOwner);
-
-      final UpdateResult result = collection.updateMany(
+      UpdateResult result = collection.updateMany(
           acquireLockQuery,
           new Document().append("$set", newLock.buildFullDBObject()),
           new UpdateOptions().upsert(!onlyIfSameOwner));
@@ -96,20 +111,27 @@ class LockMongoRepository extends MongoRepositoryBase implements LockRepository 
       if (!lockHeld) {
         throw ex;
       }
+      debErrorDetail = ex.getError().toString();
 
     } catch (DuplicateKeyException ex) {
       lockHeld = true;
+      debErrorDetail = ex.getMessage();
     }
 
     if (lockHeld) {
-      throw new LockPersistenceException("Lock is held");
+      throw new LockPersistenceException(
+          acquireLockQuery.toString(),
+          newLock.buildFullDBObject().toString(),
+          debErrorDetail
+      );
     }
   }
 
+
   private Bson getAcquireLockQuery(String lockKey, String owner, boolean onlyIfSameOwner) {
-    final Bson expiresAtCond = Filters.lt(LockEntry.EXPIRES_AT_FIELD, new Date());
+    final Bson alreadyExpiredCond = Filters.lt(LockEntry.EXPIRES_AT_FIELD, new Date());
     final Bson ownerCond = Filters.eq(LockEntry.OWNER_FIELD, owner);
-    final Bson orCond = onlyIfSameOwner ? Filters.or(ownerCond) : Filters.or(expiresAtCond, ownerCond);
+    final Bson orCond = onlyIfSameOwner ? Filters.or(ownerCond) : Filters.or(alreadyExpiredCond, ownerCond);
     return Filters
         .and(Filters.eq(LockEntry.KEY_FIELD, lockKey), Filters.eq(LockEntry.STATUS_FIELD, LockStatus.LOCK_HELD.name()),
             orCond);
