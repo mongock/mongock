@@ -6,8 +6,8 @@ import java.io.Closeable;
 
 public class SpringMongock extends Mongock implements InitializingBean {
 
-  SpringMongock(ChangeEntryRepository changeEntryRepository, Closeable mongoClientCloseable, ChangeService changeService, LockChecker lockChecker) {
-    super(changeEntryRepository, mongoClientCloseable, changeService, lockChecker);
+  SpringMongock(ChangeEntryRepository changeEntryRepository, ChangeService changeService, LockChecker lockChecker) {
+    super(changeEntryRepository, changeService, lockChecker);
   }
 
   /**

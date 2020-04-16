@@ -93,6 +93,8 @@ If you would like to contribute to Mongock project, please read [how to contribu
 * Be able to use Spring Data repository safely with the lock in ChangeSets
 * Allow multiple changeLog packages
 * Custom injections in standalone and Spring(right now only possible in Spring boot via Spring Application Context)
+* Parallel process
+* Multiple databases
 
 ### What's up next
 * Better and more information in changeLog collection
@@ -105,7 +107,6 @@ If you would like to contribute to Mongock project, please read [how to contribu
 * Scheduled migration
 * Alerts
 * Professional support
-* Parallel process
 * More Spring friendly  builders
 * Spring Expression language support in Profiles
 * Be able to use spring properties to replace builder 

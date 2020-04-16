@@ -26,7 +26,7 @@ public class MongockSpringITest extends IndependentDbIntegrationTestBase {
   @Test
   public void shouldExecuteAllChangeSets() {
     // given
-    SpringMongock runner = new SpringMongockBuilder(this.mongoClient, DEFAULT_DATABASE_NAME, MongockTestResource.class.getPackage().getName())
+    SpringMongock runner = new SpringMongockBuilder(new MongoTemplate(this.mongoClient, DEFAULT_DATABASE_NAME), MongockTestResource.class.getPackage().getName())
         .setLockQuickConfig()
         .setSpringEnvironment(Mockito.mock(Environment.class))
         .build();
@@ -49,7 +49,7 @@ public class MongockSpringITest extends IndependentDbIntegrationTestBase {
     // given
     MongoTemplate mongoTemplate = new MongoTemplate(mongoClient, DEFAULT_DATABASE_NAME);
     SpringMongock runner = new SpringMongockBuilder(mongoTemplate, MongockTestResource.class.getPackage().getName())
-        .setLockQuickConfig()
+        .setLockConfig(10,3, 3)
         .setSpringEnvironment(Mockito.mock(Environment.class))
         .build();
 
@@ -78,7 +78,7 @@ public class MongockSpringITest extends IndependentDbIntegrationTestBase {
     metadata.put("long_key", 13L);
     metadata.put("boolean_key", true);
 
-    SpringMongock runner = new SpringMongockBuilder(this.mongoClient, DEFAULT_DATABASE_NAME, MongockTestResource.class.getPackage().getName())
+    SpringMongock runner = new SpringMongockBuilder(new MongoTemplate(this.mongoClient, DEFAULT_DATABASE_NAME), MongockTestResource.class.getPackage().getName())
         .setLockQuickConfig()
         .setSpringEnvironment(Mockito.mock(Environment.class))
         .withMetadata(metadata)

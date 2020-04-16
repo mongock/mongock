@@ -74,7 +74,6 @@ public class MongockTestBase {
 
     Mongock temp = new Mongock(
         changeEntryRepository,
-        mongoClient,
         changeService,
         lockChecker);
 

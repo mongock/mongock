@@ -1,5 +1,6 @@
 package com.github.cloudyrock.mongock;
 
+import com.github.cloudyrock.mongock.decorator.impl.MongockTemplate;
 import com.mongodb.client.MongoClient;
 import org.springframework.core.env.Environment;
 import org.springframework.data.mongodb.core.MongoTemplate;
@@ -30,6 +31,7 @@ public class SpringMongockBuilder extends SpringMongockBuilderBase<SpringMongock
    * @param changeLogsScanPackage package path where the changeLogs are located
    * @see MongoClient
    */
+  @Deprecated
   public SpringMongockBuilder(MongoClient newMongoClient, String databaseName, String changeLogsScanPackage) {
     super(newMongoClient, databaseName, changeLogsScanPackage);
   }
@@ -49,8 +51,9 @@ public class SpringMongockBuilder extends SpringMongockBuilderBase<SpringMongock
 
   @Override
   protected SpringMongock createMongockInstance() {
-    SpringMongock mongock = new SpringMongock(changeEntryRepository, getMongoClientCloseable(), createChangeService(), lockChecker);
+    SpringMongock mongock = new SpringMongock(changeEntryRepository, createChangeService(), lockChecker);
     mongock.addChangeSetDependency(Environment.class, this.getSpringEnvironment());
+    mongock.addChangeSetDependency(MongockTemplate.class, getMongockTemplate());
     mongock.addChangeSetDependency(MongoTemplate.class, createMongoTemplateProxy());
     return mongock;
   }

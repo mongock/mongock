@@ -1,5 +1,7 @@
 package com.github.cloudyrock.mongock;
 
+import com.github.cloudyrock.mongock.decorator.impl.MongockTemplate;
+import com.github.cloudyrock.mongock.decorator.util.MethodInvokerImpl;
 import com.github.cloudyrock.mongock.test.changelogs.MongockTestResource;
 import com.github.cloudyrock.mongock.utils.IndependentDbIntegrationTestBase;
 import com.mongodb.client.MongoDatabase;
@@ -59,7 +61,6 @@ public class SpringBootMongockTestBase extends IndependentDbIntegrationTestBase 
 
     SpringBootMongock temp = new SpringBootMongock(
         changeEntryRepository,
-        mongoClient,
         changeService,
         lockChecker);
 
@@ -67,7 +68,9 @@ public class SpringBootMongockTestBase extends IndependentDbIntegrationTestBase 
     when(appContextMock.getBean(Environment.class)).thenReturn(mock(Environment.class));
     temp.springContext(appContextMock);
     temp.addChangeSetDependency(MongoDatabase.class, mongoDatabase);
-    temp.addChangeSetDependency(MongoTemplate.class, new MongoTemplate(mongoClient, "mongocktest"));
+    MongoTemplate mongoTemplate = new MongoTemplate(mongoClient, "mongocktest");
+    temp.addChangeSetDependency(MongoTemplate.class, mongoTemplate);
+    temp.addChangeSetDependency(MongockTemplate.class, new MongockTemplate(mongoTemplate, new MethodInvokerImpl(lockChecker)));
     temp.setEnabled(true);
     temp.setThrowExceptionIfCannotObtainLock(true);
     runner = spy(temp);

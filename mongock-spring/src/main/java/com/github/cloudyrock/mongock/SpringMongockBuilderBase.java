@@ -1,6 +1,7 @@
 package com.github.cloudyrock.mongock;
 
 import com.github.cloudyrock.mongock.decorator.impl.MongoTemplateDecoratorImpl;
+import com.github.cloudyrock.mongock.decorator.impl.MongockTemplate;
 import com.github.cloudyrock.mongock.decorator.util.MethodInvoker;
 import com.github.cloudyrock.mongock.decorator.util.VoidSupplier;
 import com.mongodb.client.MongoClient;
@@ -43,6 +44,7 @@ abstract class SpringMongockBuilderBase<BUILDER_TYPE extends SpringMongockBuilde
    * @param changeLogsScanPackage package path where the changeLogs are located
    * @see MongoClient
    */
+  @Deprecated
   SpringMongockBuilderBase(MongoClient newMongoClient, String databaseName, String changeLogsScanPackage) {
     super(newMongoClient, databaseName, changeLogsScanPackage);
     this.template = null;
@@ -54,7 +56,6 @@ abstract class SpringMongockBuilderBase<BUILDER_TYPE extends SpringMongockBuilde
    * </p>
    *
    * @param template              MongoTemplate
-   * @param databaseName          database name
    * @param changeLogsScanPackage package path where the changeLogs are located
    * @see MongoClient
    */
@@ -112,6 +113,11 @@ abstract class SpringMongockBuilderBase<BUILDER_TYPE extends SpringMongockBuilde
     return changeService;
   }
 
+  final MongockTemplate getMongockTemplate() {
+    return new MongockTemplate(template, methodInvoker);
+  }
+
+  @Deprecated
   final MongoTemplate createMongoTemplateProxy() {
     MongoTemplateDecoratorImpl.setDefaultMethodInvoker(new MethodInvoker() {
       @Override

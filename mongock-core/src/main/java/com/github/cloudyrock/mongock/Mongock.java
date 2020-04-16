@@ -1,12 +1,9 @@
 package com.github.cloudyrock.mongock;
 
-import com.mongodb.DB;
-import com.mongodb.client.MongoDatabase;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.Closeable;
-import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
@@ -27,7 +24,6 @@ public class Mongock implements Closeable {
   protected final ChangeEntryRepository changeEntryRepository;
   protected final ChangeService changeService;
   protected final LockChecker lockChecker;
-  protected final Closeable mongoClientCloseable;
 
   private boolean throwExceptionIfCannotObtainLock;
   private boolean enabled;
@@ -36,11 +32,9 @@ public class Mongock implements Closeable {
 
   protected Mongock(
       ChangeEntryRepository changeEntryRepository,
-      Closeable mongoClientCloseable,
       ChangeService changeService,
       LockChecker lockChecker) {
     this.changeEntryRepository = changeEntryRepository;
-    this.mongoClientCloseable = mongoClientCloseable;
     this.changeService = changeService;
     this.lockChecker = lockChecker;
   }
@@ -110,10 +104,8 @@ public class Mongock implements Closeable {
    * This will close either the connection Mongock was initiated with or that which was internally created.
    * The `mongoClientCloseable` may be null when using `mongoTemplate` instead of a `mongoClient`.
    */
-  public void close() throws IOException {
-    if (mongoClientCloseable != null) {
-      mongoClientCloseable.close();
-    }
+  public void close() {
+
   }
 
   private void executeMigration() {

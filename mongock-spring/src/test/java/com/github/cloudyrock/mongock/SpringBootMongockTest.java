@@ -18,6 +18,7 @@ import static org.mockito.Mockito.when;
 @RunWith(MockitoJUnitRunner.class)
 public class SpringBootMongockTest extends SpringBootMongockTestBase {
 
+
   @Test
   public void shouldExecuteAllChangeSets() {
     // given
@@ -27,7 +28,7 @@ public class SpringBootMongockTest extends SpringBootMongockTestBase {
     runner.execute();
 
     // then
-    verify(changeEntryRepository, times(11)).save(any(ChangeEntry.class)); // 13 changesets saved to dbchangelog
+    verify(changeEntryRepository, times(12)).save(any(ChangeEntry.class)); // 13 changesets saved to dbchangelog
 
     // dbchangelog collection checking
     long change1 = mongoDatabase.getCollection(CHANGELOG_COLLECTION_NAME).count(new Document()

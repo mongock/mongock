@@ -73,7 +73,6 @@ public class SpringMongockTestBase {
 
     SpringMongock temp = new SpringMongock(
         changeEntryRepository,
-        mongoClient,
         changeService,
         lockChecker);
 

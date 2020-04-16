@@ -33,7 +33,7 @@ public class MongockSpringbootITest extends IndependentDbIntegrationTestBase {
   @Test
   public void shouldExecuteAllChangeSets() {
     // given
-    SpringBootMongock runner = new SpringBootMongockBuilder(this.mongoClient, DEFAULT_DATABASE_NAME, MongockTestResource.class.getPackage().getName())
+    SpringBootMongock runner = new SpringBootMongockBuilder(new MongoTemplate(this.mongoClient, DEFAULT_DATABASE_NAME), MongockTestResource.class.getPackage().getName())
         .setLockQuickConfig()
         .setApplicationContext(getApplicationContext())
         .build();
@@ -101,7 +101,7 @@ public class MongockSpringbootITest extends IndependentDbIntegrationTestBase {
     metadata.put("long_key", 13L);
     metadata.put("boolean_key", true);
 
-    SpringBootMongock runner = new SpringBootMongockBuilder(this.mongoClient, DEFAULT_DATABASE_NAME, MongockTestResource.class.getPackage().getName())
+    SpringBootMongock runner = new SpringBootMongockBuilder(new MongoTemplate(this.mongoClient, DEFAULT_DATABASE_NAME), MongockTestResource.class.getPackage().getName())
         .setLockQuickConfig()
         .withMetadata(metadata)
         .setApplicationContext(getApplicationContext())

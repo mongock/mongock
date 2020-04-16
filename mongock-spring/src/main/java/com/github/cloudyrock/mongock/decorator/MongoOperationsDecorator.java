@@ -3,10 +3,16 @@ package com.github.cloudyrock.mongock.decorator;
 import com.github.cloudyrock.mongock.decorator.impl.BulkOperationsDecoratorImpl;
 import com.github.cloudyrock.mongock.decorator.impl.CloseableIteratorDecoratorImpl;
 import com.github.cloudyrock.mongock.decorator.impl.IndexOperationsDecoratorImpl;
-import com.github.cloudyrock.mongock.decorator.impl.MapReduceWithMapFunctionDecoratorImpl;
+import com.github.cloudyrock.mongock.decorator.impl.SessionScopedDecoratorImpl;
+import com.github.cloudyrock.mongock.decorator.operation.executable.aggregation.impl.ExecutableAggregationDecoratorImpl;
+import com.github.cloudyrock.mongock.decorator.operation.executable.find.impl.ExecutableFindDecoratorImpl;
+import com.github.cloudyrock.mongock.decorator.operation.executable.insert.impl.ExecutableInsertDecoratorImpl;
+import com.github.cloudyrock.mongock.decorator.operation.executable.mapreduce.impl.MapReduceWithMapFunctionDecoratorImpl;
 import com.github.cloudyrock.mongock.decorator.impl.MongoCollectionDecoratorImpl;
 import com.github.cloudyrock.mongock.decorator.impl.MongoOperationsDecoratorImpl;
 import com.github.cloudyrock.mongock.decorator.impl.ScriptOperationsDecoratorImpl;
+import com.github.cloudyrock.mongock.decorator.operation.executable.remove.impl.ExecutableRemoveDecoratorImpl;
+import com.github.cloudyrock.mongock.decorator.operation.executable.update.impl.ExecutableUpdateDecoratorImpl;
 import com.github.cloudyrock.mongock.decorator.util.MethodInvoker;
 import com.mongodb.ClientSessionOptions;
 import com.mongodb.ReadPreference;
@@ -465,36 +471,45 @@ public interface MongoOperationsDecorator extends MongoOperations {
         return getInvoker().invoke(() -> getImpl().findAllAndRemove(query, entityClass, collectionName));
     }
 
+
+
+
+
+
     @Override
     //This relies on passing the monitored instance of mongotemplate(this) to the ExecutableFind
     default <T> ExecutableFind<T> query(Class<T> domainType) {
-        return getInvoker().invoke(() -> getImpl().query(domainType));
+        return new ExecutableFindDecoratorImpl<>(getInvoker().invoke(() -> getImpl().query(domainType)), getInvoker());
     }
 
 
     @Override
     //This relies on passing the monitored instance of mongotemplate(this) to the ExecutableUpdate
     default <T> ExecutableUpdate<T> update(Class<T> domainType) {
-        return getInvoker().invoke(() -> getImpl().update(domainType));
+        return new ExecutableUpdateDecoratorImpl<>(getInvoker().invoke(() -> getImpl().update(domainType)), getInvoker());
     }
 
     @Override
     //This relies on passing the monitored instance of mongotemplate(this) to the ExecutableRemove
     default <T> ExecutableRemove<T> remove(Class<T> domainType) {
-        return getInvoker().invoke(() -> getImpl().remove(domainType));
+        return new ExecutableRemoveDecoratorImpl<>(getInvoker().invoke(() -> getImpl().remove(domainType)), getInvoker());
     }
 
     @Override
     //This relies on passing the monitored instance of mongotemplate(this) to the ExecutableAggregation
     default <T> ExecutableAggregation<T> aggregateAndReturn(Class<T> domainType) {
-        return getInvoker().invoke(() -> getImpl().aggregateAndReturn(domainType));
+        return new ExecutableAggregationDecoratorImpl<>(getInvoker().invoke(() -> getImpl().aggregateAndReturn(domainType)), getInvoker());
     }
 
     @Override
     //This relies on passing the monitored instance of mongotemplate(this) to the ExecutableInsert
     default <T> ExecutableInsert<T> insert(Class<T> domainType) {
-        return getInvoker().invoke(() -> getImpl().insert(domainType));
+        return new ExecutableInsertDecoratorImpl<>(getInvoker().invoke(() -> getImpl().insert(domainType)), getInvoker());
     }
+
+
+
+
 
     @Override
     default Set<String> getCollectionNames() {
@@ -517,7 +532,6 @@ public interface MongoOperationsDecorator extends MongoOperations {
         return getInvoker().invoke(() -> getImpl().findAndReplace(query, replacement, options, entityType, collectionName, resultType));
     }
 
-    //TODO create decorator for MapReduceWithMapFunction
     @Override
     default <T> MapReduceWithMapFunction<T> mapReduce(Class<T> domainType) {
         return getInvoker().invoke(() -> new MapReduceWithMapFunctionDecoratorImpl<>(getImpl().mapReduce(domainType), getInvoker()));
@@ -562,12 +576,12 @@ public interface MongoOperationsDecorator extends MongoOperations {
     //TODO create decorator for sessionScoped
     @Override
     default SessionScoped withSession(ClientSessionOptions sessionOptions) {
-        return getImpl().withSession(sessionOptions);//todo remove this
+        return new SessionScopedDecoratorImpl(getInvoker().invoke(()-> getImpl().withSession(sessionOptions)), getInvoker());//todo remove this
     }
 
     @Override
     default SessionScoped withSession(Supplier<ClientSession> sessionProvider) {
-        return null;
+      return new SessionScopedDecoratorImpl(getInvoker().invoke(()-> getImpl().withSession(sessionProvider)), getInvoker());//todo remove this
     }
 
 
