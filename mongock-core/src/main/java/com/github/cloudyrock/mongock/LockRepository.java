@@ -8,8 +8,11 @@ package com.github.cloudyrock.mongock;
 public interface LockRepository extends Repository{
 
   /**
-   * If there is a lock in the database with the same key, updates it if either is expired or both share the same owner.
-   * If there is no lock with the same key, it's inserted.
+   * If there is already a lock with newLock.key and owner == newLock.owner, it's updated with the newLock's values
+   * If there is a lock that belong to another owner, but it's expired, it's replaced.
+   * If there is no lock for newLock.key, newLock is inserted.
+   * If there is an active lock(not expired) with key== newLock.key but belongs to another owner, it throws an
+   * LockPersistenceException.
    *
    * @param newLock lock to replace the existing one or be inserted.
    * @throws LockPersistenceException if there is a lock in database with same key, but is expired and belong to
@@ -18,7 +21,9 @@ public interface LockRepository extends Repository{
   void insertUpdate(LockEntry newLock) throws LockPersistenceException;
 
   /**
-   * If there is a lock in the database with the same key and owner, updates it.Otherwise throws a LockPersistenceException
+   * If there is a lock in the database with the same key and owner, updates it.
+   * Otherwise throws a LockPersistenceException. This means that will throws a LockPersistenceException
+   * even if there is no Lock whatsoever.
    *
    * @param newLock lock to replace the existing one.
    * @throws LockPersistenceException if there is no lock in the database with the same key and owner or cannot update
