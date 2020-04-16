@@ -90,7 +90,8 @@ public class LockCheckerUTest {
     //given
     long expiresAt = 3000L;
     long waitingTime = 0L;
-    doThrow(new LockPersistenceException("Faked"))
+
+    doThrow(new LockPersistenceException("acquireLockQuery", "newLockEntity", "dbErrorDetail"))
         .doNothing()
         .when(dao).insertUpdate(any(LockEntry.class));
 
@@ -116,7 +117,7 @@ public class LockCheckerUTest {
     checker.setLockMaxTries(1);
     long expiresAt = 3000L;
     long waitingTime = 1000L;
-    doThrow(new LockPersistenceException("Faked"))
+    doThrow(new LockPersistenceException("acquireLockQuery", "newLockEntity", "dbErrorDetail"))
         .doNothing()
         .when(dao).insertUpdate(any(LockEntry.class));
 
@@ -146,7 +147,7 @@ public class LockCheckerUTest {
     //given
     long expiresAt = 3000L;
     long waitingTime = 1000L;
-    doThrow(new LockPersistenceException("Faked"))
+    doThrow(new LockPersistenceException("acquireLockQuery", "newLockEntity", "dbErrorDetail"))
         .doNothing()
         .when(dao).insertUpdate(any(LockEntry.class));
 
@@ -178,7 +179,7 @@ public class LockCheckerUTest {
     //given
     long expiresAt = 3000L;
     long waitingTime = maxWaitMillis + 1;
-    doThrow(new LockPersistenceException("Faked")).when(dao).insertUpdate(any(LockEntry.class));
+    doThrow(new LockPersistenceException("acquireLockQuery", "newLockEntity", "dbErrorDetail")).when(dao).insertUpdate(any(LockEntry.class));
 
     when(dao.findByKey(anyString())).thenReturn(createFakeLockWithOtherOwner(expiresAt));
     final Date newExpirationAt = new Date(100000L);
@@ -209,7 +210,7 @@ public class LockCheckerUTest {
     //given
     long expiresAt = 3000L;
     long waitingTime = 1;
-    doThrow(new LockPersistenceException("Faked")).when(dao).insertUpdate(any(LockEntry.class));
+    doThrow(new LockPersistenceException("acquireLockQuery", "newLockEntity", "dbErrorDetail")).when(dao).insertUpdate(any(LockEntry.class));
 
     when(dao.findByKey(anyString())).thenReturn(createFakeLockWithOtherOwner(expiresAt));
     final Date newExpirationAt = new Date(100000L);
@@ -280,7 +281,7 @@ public class LockCheckerUTest {
     long waitingTime = 1000L;
 
     doNothing().when(dao).insertUpdate(any(LockEntry.class));
-    doThrow(new LockPersistenceException("Faked")).doNothing().when(dao).updateIfSameOwner(any(LockEntry.class));
+    doThrow(new LockPersistenceException("acquireLockQuery", "newLockEntity", "dbErrorDetail")).doNothing().when(dao).updateIfSameOwner(any(LockEntry.class));
 
     when(dao.findByKey(anyString())).thenReturn(createFakeLockWithOtherOwner(expiresAt));
     final Date newExpirationAt = new Date(100000L);
@@ -303,7 +304,7 @@ public class LockCheckerUTest {
     long expiresAt = 3000L;
     long waitingTime = 1000L;
     doNothing().when(dao).insertUpdate(any(LockEntry.class));
-    doThrow(new LockPersistenceException("Faked")).doNothing()
+    doThrow(new LockPersistenceException("acquireLockQuery", "newLockEntity", "dbErrorDetail")).doNothing()
         .when(dao).updateIfSameOwner(any(LockEntry.class));
 
     when(dao.findByKey(anyString())).thenReturn(new LockEntry(
@@ -334,7 +335,7 @@ public class LockCheckerUTest {
     //given
     long expiresAt = 3000L;
     long waitingTime = 1;
-    doThrow(new LockPersistenceException("Faked")).when(dao).updateIfSameOwner(any(LockEntry.class));
+    doThrow(new LockPersistenceException("acquireLockQuery", "newLockEntity", "dbErrorDetail")).when(dao).updateIfSameOwner(any(LockEntry.class));
     when(dao.findByKey(anyString())).thenReturn(createFakeLockWithSameOwner(expiresAt));
     final Date newExpirationAt = new Date(100000L);
     when(timeUtils.currentTimePlusMillis(anyLong())).thenReturn(newExpirationAt);

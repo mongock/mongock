@@ -1,6 +1,7 @@
 package com.github.cloudyrock.mongock;
 
-public class StringUtils {
+public final class StringUtils {
+  private StringUtils() {}
 
   public static boolean hasText(String str) {
     if (str == null || str.isEmpty()) {
