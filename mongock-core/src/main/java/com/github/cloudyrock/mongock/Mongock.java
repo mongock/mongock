@@ -71,10 +71,6 @@ public class Mongock implements Closeable {
     this.enabled = enabled;
   }
 
-  void addChangeSetDependency(Object dependency) {
-    this.dependencies.put(dependency.getClass(), dependency);
-  }
-
   /**
    * This method just forces the type in cases where is needed to override
    * a dependency with a child class

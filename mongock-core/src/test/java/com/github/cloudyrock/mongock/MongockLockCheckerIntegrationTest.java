@@ -203,7 +203,7 @@ class TestMongockBuilder extends MongockBuilderBase<TestMongockBuilder, Mongock>
   protected Mongock createMongockInstance() {
 //    changeService.setChangeLogsBasePackage(changeLogsScanPackage);
     Mongock mongock = new Mongock(changeEntryRepository, getMongoClientCloseable(), changeService, lockChecker);
-    mongock.addChangeSetDependency(mongoDataBase);
+    mongock.addChangeSetDependency(MongoDatabase.class, mongoDataBase);
     mongock.setEnabled(enabled);
     mongock.setThrowExceptionIfCannotObtainLock(throwExceptionIfCannotObtainLock);
     return mongock;

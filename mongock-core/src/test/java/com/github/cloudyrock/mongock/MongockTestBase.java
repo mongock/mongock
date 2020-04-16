@@ -78,7 +78,7 @@ public class MongockTestBase {
         changeService,
         lockChecker);
 
-    temp.addChangeSetDependency(fakeMongoDatabase);
+    temp.addChangeSetDependency(MongoDatabase.class, fakeMongoDatabase);
     temp.setEnabled(true);
     temp.setThrowExceptionIfCannotObtainLock(true);
     runner = spy(temp);

@@ -214,7 +214,7 @@ public abstract class MongockBuilderBase<BUILDER_TYPE extends MongockBuilderBase
     methodInvoker = new MethodInvokerImpl(lockChecker);
     changeEntryRepository = createChangeRepository();
     MONGOCK_TYPE mongock = this.createMongockInstance();
-    mongock.addChangeSetDependency(createMongoDataBaseProxy());
+    mongock.addChangeSetDependency(MongoDatabase.class, createMongoDataBaseProxy());
     mongock.setEnabled(enabled);
     mongock.setThrowExceptionIfCannotObtainLock(throwExceptionIfCannotObtainLock);
     mongock.setMetadata(this.metadata);
