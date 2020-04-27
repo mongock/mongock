@@ -16,6 +16,7 @@ class LockEntry {
   static final String STATUS_FIELD = "status";
   static final String OWNER_FIELD = "owner";
   static final String EXPIRES_AT_FIELD = "expiresAt";
+  static final String EXPIRES_AT_TIME_FIELD = "expiresAtTime";
 
   private final String key;
   private final String status;
@@ -34,7 +35,8 @@ class LockEntry {
     entry.append(KEY_FIELD, this.key)
         .append(STATUS_FIELD, this.status)
         .append(OWNER_FIELD, this.owner)
-        .append(EXPIRES_AT_FIELD, this.expiresAt);
+        .append(EXPIRES_AT_FIELD, this.expiresAt)
+        .append(EXPIRES_AT_TIME_FIELD, this.expiresAt.getTime());
     return entry;
   }
 
