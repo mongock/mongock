@@ -60,7 +60,6 @@ public class MongockTest extends IndependentDbIntegrationTestBase {
 
     Mongock temp = new Mongock(
         changeEntryRepository,
-        mongoClient,
         changeService,
         lockChecker);
 
@@ -192,24 +191,6 @@ public class MongockTest extends IndependentDbIntegrationTestBase {
     // then
     verify(lockChecker).releaseLockDefault();
   }
-
-  @Test
-  public void callMongoClientWhenClosing() throws IOException {
-    //when
-    runner.close();
-
-    //then
-    verify(mongoClient).close();
-  }
-
-//  @Test
-//  public void shouldCallLockRepositoryWhenSetLockCollectionName() {
-//    //when
-//    runner.setCollectionName("LOCK_COLLECTION_NAME");
-//
-//    //then
-//    verify(lockRepository, new Times(1)).setCollectionName("LOCK_COLLECTION_NAME");
-//  }
 
   @Test
   public void shouldInjectProxyToChangeEntry() throws Exception {

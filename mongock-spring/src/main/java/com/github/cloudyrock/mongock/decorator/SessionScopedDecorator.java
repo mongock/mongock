@@ -22,6 +22,7 @@ public interface SessionScopedDecorator extends SessionScoped {
             ClientSession clientSessionDecorator = new ClientSessionDecoratorImpl(clientSession, getInvoker());
             doFinally.accept(clientSessionDecorator);
         };
-        return getInvoker().invoke(()-> getImpl().execute(sessionCallback, consumer));
+        return getInvoker().invoke(()->
+            getImpl().execute(sessionCallback, consumer));
     }
 }

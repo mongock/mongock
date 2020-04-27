@@ -1,3 +1,11 @@
+# 3.3.0-BETA
+### Features
+* Added MongockTemplate
+
+### Bug fixed
+* [LockCheckException MaxTries(3) Reached](https://github.com/cloudyrock/mongock/issues/148)
+__________________________________________________
+
 # 3.2.5
 ### Features
 * [Avoid NullPointerException in Mongock.close](https://github.com/cloudyrock/mongock/issues/141)

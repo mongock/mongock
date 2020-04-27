@@ -1,27 +1,15 @@
 package com.github.cloudyrock.mongock.decorator.impl;
 
+import com.github.cloudyrock.mongock.decorator.util.DecoratorBase;
 import com.github.cloudyrock.mongock.decorator.util.MethodInvoker;
 import com.github.cloudyrock.mongock.decorator.MongoDbFactoryDecorator;
 import org.springframework.data.mongodb.MongoDbFactory;
 
-public class MongoDbFactoryDecoratorImpl implements MongoDbFactoryDecorator {
+@Deprecated
+public class MongoDbFactoryDecoratorImpl extends DecoratorBase<MongoDbFactory> implements MongoDbFactoryDecorator {
 
-  private final MethodInvoker invoker;
-  private final MongoDbFactory impl;
-
-  public MongoDbFactoryDecoratorImpl(MongoDbFactory implementation, MethodInvoker invoker) {
-    this.impl = implementation;
-    this.invoker = invoker;
-  }
-
-  @Override
-  public MongoDbFactory getImpl() {
-    return impl;
-  }
-
-  @Override
-  public MethodInvoker getInvoker() {
-    return invoker;
+  public MongoDbFactoryDecoratorImpl(MongoDbFactory impl, MethodInvoker invoker) {
+    super(impl, invoker);
   }
 
 }
