@@ -5,7 +5,11 @@ import com.mongodb.client.MongoClient;
 import org.springframework.core.env.Environment;
 import org.springframework.data.mongodb.core.MongoTemplate;
 
+import java.util.function.Supplier;
+
 public class SpringMongockBuilder extends SpringMongockBuilderBase<SpringMongockBuilder, SpringMongock> {
+
+
   /**
    * <p>Builder constructor takes db.mongodb.MongoClient, database name and changelog scan package as parameters.
    * </p><p>For more details about MongoClient please see com.mongodb.MongoClient docs
@@ -54,7 +58,7 @@ public class SpringMongockBuilder extends SpringMongockBuilderBase<SpringMongock
     SpringMongock mongock = new SpringMongock(changeEntryRepository, createChangeService(), lockChecker);
     mongock.addChangeSetDependency(Environment.class, this.getSpringEnvironment());
     mongock.addChangeSetDependency(MongockTemplate.class, getMongockTemplate());
-    mongock.addChangeSetDependency(MongoTemplate.class, createMongoTemplateProxy());
+    mongock.setMongoTemplateSupplier(getMongoTemplateProxySupplier());
     return mongock;
   }
 
@@ -63,4 +67,6 @@ public class SpringMongockBuilder extends SpringMongockBuilderBase<SpringMongock
   protected SpringMongockBuilder returnInstance() {
     return this;
   }
+
+
 }

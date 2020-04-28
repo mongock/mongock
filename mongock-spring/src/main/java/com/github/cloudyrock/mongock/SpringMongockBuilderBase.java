@@ -117,27 +117,31 @@ abstract class SpringMongockBuilderBase<BUILDER_TYPE extends SpringMongockBuilde
     return new MongockTemplate(template, methodInvoker);
   }
 
-  @Deprecated
-  final MongoTemplate createMongoTemplateProxy() {
-    MongoTemplateDecoratorImpl.setDefaultMethodInvoker(new MethodInvoker() {
-      @Override
-      public <T> T invoke(Supplier<T> supplier) {
-        lockChecker.acquireLockDefault();
-        return supplier.get();
-      }
 
-      @Override
-      public void invoke(VoidSupplier supplier) {
-        lockChecker.acquireLockDefault();
-        supplier.execute();
+  @Deprecated
+  Supplier<MongoTemplate> getMongoTemplateProxySupplier() {
+    return () -> {
+      MongoTemplateDecoratorImpl.setDefaultMethodInvoker(new MethodInvoker() {
+        @Override
+        public <T> T invoke(Supplier<T> supplier) {
+          lockChecker.acquireLockDefault();
+          return supplier.get();
+        }
+
+        @Override
+        public void invoke(VoidSupplier supplier) {
+          lockChecker.acquireLockDefault();
+          supplier.execute();
+        }
+      });
+      if (template != null) {
+        return new MongoTemplateDecoratorImpl(template.getMongoDbFactory(), template.getConverter(), methodInvoker);
+      } else if (mongoClient != null) {
+        return new MongoTemplateDecoratorImpl(mongoClient, databaseName, methodInvoker);
+      } else {
+        return new MongoTemplateDecoratorImpl(legacyMongoClient, databaseName, methodInvoker);
       }
-    });
-    if (template != null) {
-      return new MongoTemplateDecoratorImpl(template.getMongoDbFactory(), template.getConverter(), methodInvoker);
-    } else if (mongoClient != null) {
-      return new MongoTemplateDecoratorImpl(mongoClient, databaseName, methodInvoker);
-    } else {
-      return new MongoTemplateDecoratorImpl(legacyMongoClient, databaseName, methodInvoker);
-    }
+    };
   }
+
 }
