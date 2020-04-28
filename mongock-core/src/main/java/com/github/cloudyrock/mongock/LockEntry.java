@@ -75,4 +75,14 @@ class LockEntry {
     return this.owner.equals(owner);
   }
 
+
+  @Override
+  public String toString() {
+    return "LockEntry{" +
+        "key='" + key + '\'' +
+        ", status='" + status + '\'' +
+        ", owner='" + owner + '\'' +
+        ", expiresAt=" + expiresAt +
+        '}';
+  }
 }
