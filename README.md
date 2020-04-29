@@ -23,7 +23,7 @@
   * [Sample projects](#sample-projects)
   * [Contributing](#contributing)
   * [Roadmap](#roadmap)
-     * [Version 4.0](#version-4.0)
+     * [Version 4.0](#version-40)
      * [What's up next](#What's-up-next)
   * [Add a dependency](#add-a-dependency)
      * [With Maven](#with-maven)
