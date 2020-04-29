@@ -85,14 +85,14 @@ In [here](https://github.com/cloudyrock/mongock-samples) you can find some sampl
 If you would like to contribute to Mongock project, please read [how to contribute](././community/CONTRIBUTING.md) for details on our collaboration process and standards.
 
 ## Roadmap
-### Version 4.0.0
+### Version 4.0
 * Non-fail-fast changeSets
-* Richer data in changelogCollection
+* More insight in changelogCollection
 * Migration validation
 * Undo operations
 * Be able to use Spring Data repository safely with the lock in ChangeSets
+* Be able to use Custom dependencies safely with the lock in ChangeSets in Spring and standalone runner
 * Allow multiple changeLog packages
-* Custom injections in standalone and Spring(right now only possible in Spring boot via Spring Application Context)
 * Parallel process
 * Multiple databases
 
