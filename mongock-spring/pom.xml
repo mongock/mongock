@@ -23,11 +23,7 @@
       <version>${changock.runner.spring.version}</version>
     </dependency>
 
-    <dependency>
-      <groupId>com.github.cloudyrock.changock</groupId>
-      <artifactId>changock-mongo-springdata-v3-driver</artifactId>
-      <version>${changock.driver.mongo.spring-data.version}</version>
-    </dependency>
+
 
 
     <!-- TEST -->
@@ -50,6 +46,12 @@
       <scope>test</scope>
     </dependency>
 
+    <dependency>
+      <groupId>com.github.cloudyrock.changock</groupId>
+      <artifactId>changock-mongo-springdata-v3-driver</artifactId>
+      <version>${changock.driver.mongo.spring-data.version}</version>
+      <scope>test</scope>
+    </dependency>
 
     <dependency>
       <groupId>org.testcontainers</groupId>

@@ -1,11 +1,9 @@
 package com.github.cloudyrock.mongock.utils;
 
-import com.mongodb.MongoClient;
+import com.mongodb.client.MongoClients;
 import com.mongodb.client.MongoDatabase;
-import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.ClassRule;
-import org.junit.Rule;
 import org.testcontainers.containers.GenericContainer;
 
 public abstract class SharedDbIntegrationTestBase {
@@ -21,7 +19,8 @@ public abstract class SharedDbIntegrationTestBase {
   @BeforeClass
   public static void setUp() {
     System.out.println("Before class");
-    MongoClient mongoClient = new MongoClient(mongo.getContainerIpAddress(), mongo.getFirstMappedPort());
-    db = mongoClient.getDatabase(DEFAULT_DATABASE_NAME);
+    String connectionString = String.format("mongodb://%s:%d", mongo.getContainerIpAddress(), mongo.getFirstMappedPort());
+    db = MongoClients.create(connectionString).getDatabase(DEFAULT_DATABASE_NAME);
+
   }
 }

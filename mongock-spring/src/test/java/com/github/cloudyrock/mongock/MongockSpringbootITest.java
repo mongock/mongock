@@ -2,6 +2,7 @@ package com.github.cloudyrock.mongock;
 
 import com.github.cloudyrock.mongock.test.changelogs.MongockTestResource;
 import com.github.cloudyrock.mongock.utils.IndependentDbIntegrationTestBase;
+import io.changock.driver.mongo.springdata.v3.driver.ChangockSpringDataMongo3Driver;
 import org.bson.Document;
 import org.junit.Assert;
 import org.junit.Test;
@@ -32,7 +33,8 @@ public class MongockSpringbootITest extends IndependentDbIntegrationTestBase {
   @Test
   public void shouldExecuteAllChangeSets() {
     // given
-    MongockApplicationRunner runner = new SpringMongockBuilder(this.mongoTemplate, MongockTestResource.class.getPackage().getName())
+    MongockApplicationRunner runner = new SpringMongockBuilder(MongockTestResource.class.getPackage().getName())
+        .setDriver(buildDriver())
         .setLockQuickConfig()
         .setApplicationContext(getApplicationContext())
         .buildApplicationRunner();
@@ -62,7 +64,8 @@ public class MongockSpringbootITest extends IndependentDbIntegrationTestBase {
     metadata.put("long_key", 13L);
     metadata.put("boolean_key", true);
 
-    MongockApplicationRunner runner = new SpringMongockBuilder(mongoTemplate, MongockTestResource.class.getPackage().getName())
+    MongockApplicationRunner runner = new SpringMongockBuilder(MongockTestResource.class.getPackage().getName())
+        .setDriver(buildDriver())
         .setLockQuickConfig()
         .withMetadata(metadata)
         .setApplicationContext(getApplicationContext())
@@ -85,7 +88,8 @@ public class MongockSpringbootITest extends IndependentDbIntegrationTestBase {
   @Test
   public void shouldTwoExecutedChangeSet_whenRunningTwice_ifRunAlways() {
     // given
-    MongockApplicationRunner runner = new SpringMongockBuilder(this.mongoTemplate, MongockTestResource.class.getPackage().getName())
+    MongockApplicationRunner runner = new SpringMongockBuilder(MongockTestResource.class.getPackage().getName())
+        .setDriver(buildDriver())
         .setLockQuickConfig()
         .setApplicationContext(getApplicationContext())
         .buildApplicationRunner();
@@ -108,7 +112,8 @@ public class MongockSpringbootITest extends IndependentDbIntegrationTestBase {
   @Test
   public void shouldOneExecutedAndOneIgnoredChangeSet_whenRunningTwice_ifNotRunAlways() {
     // given
-    MongockApplicationRunner runner = new SpringMongockBuilder(this.mongoTemplate, MongockTestResource.class.getPackage().getName())
+    MongockApplicationRunner runner = new SpringMongockBuilder(MongockTestResource.class.getPackage().getName())
+        .setDriver(buildDriver())
         .setLockQuickConfig()
         .setApplicationContext(getApplicationContext())
         .buildApplicationRunner();
@@ -130,6 +135,12 @@ public class MongockSpringbootITest extends IndependentDbIntegrationTestBase {
     Assert.assertEquals(2, stateList.size());
     Assert.assertTrue(stateList.contains("EXECUTED"));
     Assert.assertTrue(stateList.contains("IGNORED"));
+  }
+
+  private ChangockSpringDataMongo3Driver buildDriver() {
+    ChangockSpringDataMongo3Driver driver = new ChangockSpringDataMongo3Driver(mongoTemplate);
+    driver.setChangeLogCollectionName(CHANGELOG_COLLECTION_NAME);
+    return driver;
   }
 
 }

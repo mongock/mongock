@@ -1,5 +1,6 @@
 package com.github.cloudyrock.mongock;
 
+import io.changock.driver.api.driver.ConnectionDriver;
 import io.changock.migration.api.exception.ChangockException;
 
 import java.util.HashMap;
@@ -9,6 +10,7 @@ import java.util.Map;
 public abstract class MongockBuilderBase<BUILDER_TYPE extends MongockBuilderBase, MONGOCK_RUNNER extends MongockBase> {
 
   protected final String changeLogsScanPackage;
+  protected ConnectionDriver driver;
   protected long lockAcquiredForMinutes = 24L * 60L;
   protected long maxWaitingForLockMinutes = 3L;
   protected int maxTries = 1;
@@ -40,6 +42,16 @@ public abstract class MongockBuilderBase<BUILDER_TYPE extends MongockBuilderBase
    */
   public BUILDER_TYPE setThrowExceptionIfCannotObtainLock(boolean throwExceptionIfCannotObtainLock) {
     this.throwExceptionIfCannotObtainLock = throwExceptionIfCannotObtainLock;
+    return getInstance();
+  }
+
+  /**
+   * Sets the Changock  ConnectionDriver(MongoDb Driver 3, MongoDb Sync 4, Spring Data 2, Spring Data 3....
+   * @param connectionDriver Changock  ConnectionDriver
+   * @return Mongock builder for fluent interface
+   */
+  public BUILDER_TYPE setDriver(ConnectionDriver connectionDriver) {
+    this.driver = connectionDriver;
     return getInstance();
   }
 

@@ -2,6 +2,7 @@ package com.github.cloudyrock.mongock;
 
 import com.github.cloudyrock.mongock.test.changelogs.MongockTestResource;
 import com.github.cloudyrock.mongock.utils.IndependentDbIntegrationTestBase;
+import io.changock.driver.mongo.springdata.v3.driver.ChangockSpringDataMongo3Driver;
 import org.bson.Document;
 import org.junit.Assert;
 import org.junit.Before;
@@ -36,7 +37,8 @@ public class MongockSpringITest extends IndependentDbIntegrationTestBase {
   public void shouldExecuteAllChangeSets() {
     // given
     setSpringContext();
-    MongockInitializingBeanRunner runner = new SpringMongockBuilder(mongoTemplate, MongockTestResource.class.getPackage().getName())
+    MongockInitializingBeanRunner runner = new SpringMongockBuilder(MongockTestResource.class.getPackage().getName())
+        .setDriver(buildDriver())
         .setLockQuickConfig()
         .setApplicationContext(springContextMock)
         .buildInitializingBeanRunner();
@@ -64,7 +66,8 @@ public class MongockSpringITest extends IndependentDbIntegrationTestBase {
     metadata.put("long_key", 13L);
     metadata.put("boolean_key", true);
     setSpringContext();
-    MongockInitializingBeanRunner runner = new SpringMongockBuilder(mongoTemplate, MongockTestResource.class.getPackage().getName())
+    MongockInitializingBeanRunner runner = new SpringMongockBuilder(MongockTestResource.class.getPackage().getName())
+        .setDriver(buildDriver())
         .setLockQuickConfig()
         .setApplicationContext(springContextMock)
         .withMetadata(metadata)
@@ -95,7 +98,8 @@ public class MongockSpringITest extends IndependentDbIntegrationTestBase {
   @Test
   public void shouldTwoExecutedChangeSet_whenRunningTwice_ifRunAlways() {
     // given
-    MongockInitializingBeanRunner runner = new SpringMongockBuilder(this.mongoTemplate, MongockTestResource.class.getPackage().getName())
+    MongockInitializingBeanRunner runner = new SpringMongockBuilder(MongockTestResource.class.getPackage().getName())
+        .setDriver(buildDriver())
         .setLockQuickConfig()
         .setApplicationContext(springContextMock)
         .buildInitializingBeanRunner();
@@ -118,7 +122,8 @@ public class MongockSpringITest extends IndependentDbIntegrationTestBase {
   @Test
   public void shouldOneExecutedAndOneIgnoredChangeSet_whenRunningTwice_ifNotRunAlways() {
     // given
-    MongockInitializingBeanRunner runner = new SpringMongockBuilder(this.mongoTemplate, MongockTestResource.class.getPackage().getName())
+    MongockInitializingBeanRunner runner = new SpringMongockBuilder(MongockTestResource.class.getPackage().getName())
+        .setDriver(buildDriver())
         .setLockQuickConfig()
         .setApplicationContext(springContextMock)
         .buildInitializingBeanRunner();
@@ -140,5 +145,12 @@ public class MongockSpringITest extends IndependentDbIntegrationTestBase {
     Assert.assertEquals(2, stateList.size());
     Assert.assertTrue(stateList.contains("EXECUTED"));
     Assert.assertTrue(stateList.contains("IGNORED"));
+  }
+
+
+  private ChangockSpringDataMongo3Driver buildDriver() {
+    ChangockSpringDataMongo3Driver driver = new ChangockSpringDataMongo3Driver(mongoTemplate);
+    driver.setChangeLogCollectionName(CHANGELOG_COLLECTION_NAME);
+    return driver;
   }
 }

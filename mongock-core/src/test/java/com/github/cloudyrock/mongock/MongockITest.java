@@ -3,7 +3,7 @@ package com.github.cloudyrock.mongock;
 import com.github.cloudyrock.mongock.test.changelogs.MongockTestResource;
 import com.github.cloudyrock.mongock.test.changelogs.runAlways.RunAlwaysChangeLog;
 import com.github.cloudyrock.mongock.utils.IndependentDbIntegrationTestBase;
-import com.mongodb.client.FindIterable;
+import io.changock.driver.mongo.syncv4.core.driver.ChangockMongoSync4Driver;
 import org.bson.Document;
 import org.junit.Before;
 import org.junit.Test;
@@ -22,14 +22,13 @@ public class MongockITest extends IndependentDbIntegrationTestBase {
 
   @Before
   public void init() {
-
-
   }
 
   @Test
   public void shouldExecuteAllChangeSets() {
     // given
-    Mongock runner = new MongockBuilder(this.mongoClient, DEFAULT_DATABASE_NAME, MongockTestResource.class.getPackage().getName())
+    Mongock runner = new MongockBuilder(MongockTestResource.class.getPackage().getName())
+        .setDriver(getDriver())
         .setLockQuickConfig()
         .build();
 
@@ -43,14 +42,16 @@ public class MongockITest extends IndependentDbIntegrationTestBase {
     // dbchangelog collection checking
     final long change1 = db.getCollection(CHANGELOG_COLLECTION_NAME).countDocuments(new Document()
         .append("changeId", "test1")
-        .append("author", "testuser"));
+        .append("author", "testuser")
+        .append("state", "EXECUTED"));
     assertEquals(1, change1);
   }
 
   @Test
   public void shouldRunTwice_WhenRunAlways() {
     // given
-    Mongock runner = new MongockBuilder(this.mongoClient, DEFAULT_DATABASE_NAME, RunAlwaysChangeLog.class.getPackage().getName())
+    Mongock runner = new MongockBuilder(RunAlwaysChangeLog.class.getPackage().getName())
+        .setDriver(getDriver())
         .setLockQuickConfig()
         .build();
 
@@ -67,10 +68,17 @@ public class MongockITest extends IndependentDbIntegrationTestBase {
         .append("author", "testuser"));
     assertEquals(2, changeSetWithRunAlways);
 
-    final long changeSetWithNoRunAlways = db.getCollection(CHANGELOG_COLLECTION_NAME).countDocuments(new Document()
+    final long changeSetWithNoRunAlwaysExecuted = db.getCollection(CHANGELOG_COLLECTION_NAME).countDocuments(new Document()
         .append("changeId", "noRunAlways")
-        .append("author", "testuser"));
-    assertEquals(1, changeSetWithNoRunAlways);
+        .append("author", "testuser")
+        .append("state", "EXECUTED"));
+    assertEquals(1, changeSetWithNoRunAlwaysExecuted);
+
+    final long changeSetWithNoRunAlwaysIgnored = db.getCollection(CHANGELOG_COLLECTION_NAME).countDocuments(new Document()
+        .append("changeId", "noRunAlways")
+        .append("author", "testuser")
+        .append("state", "IGNORED"));
+    assertEquals(1, changeSetWithNoRunAlwaysIgnored);
   }
 
 
@@ -84,7 +92,8 @@ public class MongockITest extends IndependentDbIntegrationTestBase {
     metadata.put("double_key", 12.12D);
     metadata.put("long_key", 13L);
     metadata.put("boolean_key", true);
-    Mongock runner = new MongockBuilder(this.mongoClient, DEFAULT_DATABASE_NAME, MongockTestResource.class.getPackage().getName())
+    Mongock runner = new MongockBuilder(MongockTestResource.class.getPackage().getName())
+        .setDriver(getDriver())
         .setLockQuickConfig()
         .withMetadata(metadata)
         .build();
@@ -103,5 +112,10 @@ public class MongockITest extends IndependentDbIntegrationTestBase {
 
   }
 
+  private ChangockMongoSync4Driver getDriver() {
+    ChangockMongoSync4Driver driver = new ChangockMongoSync4Driver(db);
+    driver.setChangeLogCollectionName(CHANGELOG_COLLECTION_NAME);
+    return driver;
+  }
 
 }

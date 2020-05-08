@@ -29,19 +29,6 @@
     </dependency>
 
     <dependency>
-      <groupId>com.github.cloudyrock.changock</groupId>
-      <artifactId>changock-mongo-sync-v4-driver</artifactId>
-      <version>${changock.driver.mongo.core.version}</version>
-    </dependency>
-    <!--
-    Careful updating this library. Make sure the decorators are not affected
-    -->
-    <dependency>
-      <groupId>org.mongodb</groupId>
-      <artifactId>mongo-java-driver</artifactId>
-      <version>3.11.0</version><!-- Make sure that decorators are adapted to new systemVersion(see file dependency_upgrade_considerations -->
-    </dependency>
-    <dependency>
       <groupId>org.reflections</groupId>
       <artifactId>reflections</artifactId>
       <version>0.9.9</version>
@@ -60,6 +47,12 @@
     </dependency>
 
     <!-- TEST -->
+    <dependency>
+      <groupId>com.github.cloudyrock.changock</groupId>
+      <artifactId>changock-mongo-sync-v4-driver</artifactId>
+      <version>${changock.driver.mongo.core.version}</version>
+      <scope>test</scope>
+    </dependency>
     <dependency>
       <groupId>junit</groupId>
       <artifactId>junit</artifactId>

@@ -18,6 +18,12 @@
       <artifactId>changock-api</artifactId>
       <version>${changock.api.version}</version>
     </dependency>
+
+    <dependency>
+      <groupId>com.github.cloudyrock.changock</groupId>
+      <artifactId>changock-driver-api</artifactId>
+      <version>${changock.api.version}</version>
+    </dependency>
   </dependencies>
 
 </project>
