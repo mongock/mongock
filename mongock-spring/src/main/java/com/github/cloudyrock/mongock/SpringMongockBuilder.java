@@ -5,7 +5,7 @@ import io.changock.runner.spring.v5.ChangockSpring5Runner;
 import org.springframework.context.ApplicationContext;
 import org.springframework.data.mongodb.core.MongoTemplate;
 
-public class SpringMongockBuilder extends MongockBuilderBase<SpringMongockBuilder, SpringMongock> {
+public class SpringMongockBuilder extends MongockBuilderBase<SpringMongockBuilder, MongockInitializingBeanRunner> {
 
   private ApplicationContext springContext;
   private final MongoTemplate mongoTemplate;
@@ -40,10 +40,10 @@ public class SpringMongockBuilder extends MongockBuilderBase<SpringMongockBuilde
    * @return Mongock runner instance as Spring InitializingBeanRunner
    * @see org.springframework.beans.factory.InitializingBean
    */
-  public SpringMongock buildInitializingBeanRunner() {
+  public MongockInitializingBeanRunner buildInitializingBeanRunner() {
     ChangockSpringDataMongo3Driver driver = buildDriver();
     ChangockSpring5Runner.ChangockSpring5RunnerBuilder builder = getBuilder(driver);
-    return new SpringMongock(builder.buildInitializingBeanRunner());
+    return new MongockInitializingBeanRunner(builder.buildInitializingBeanRunner());
   }
 
   /**
@@ -51,10 +51,10 @@ public class SpringMongockBuilder extends MongockBuilderBase<SpringMongockBuilde
    * @return Mongock runner instance as Spring ApplicationRunner
    * @see org.springframework.boot.ApplicationRunner
    */
-  public SpringBootMongock buildApplicationRunner() {
+  public MongockApplicationRunner buildApplicationRunner() {
     ChangockSpringDataMongo3Driver driver = buildDriver();
     ChangockSpring5Runner.ChangockSpring5RunnerBuilder builder = getBuilder(driver);
-    return new SpringBootMongock(builder.buildApplicationRunner());
+    return new MongockApplicationRunner(builder.buildApplicationRunner());
   }
 
   private ChangockSpring5Runner.ChangockSpring5RunnerBuilder getBuilder(ChangockSpringDataMongo3Driver driver) {

@@ -32,10 +32,10 @@ public class MongockSpringbootITest extends IndependentDbIntegrationTestBase {
   @Test
   public void shouldExecuteAllChangeSets() {
     // given
-    SpringBootMongock runner = new SpringBootMongockBuilder(this.mongoTemplate, MongockTestResource.class.getPackage().getName())
+    MongockApplicationRunner runner = new SpringMongockBuilder(this.mongoTemplate, MongockTestResource.class.getPackage().getName())
         .setLockQuickConfig()
         .setApplicationContext(getApplicationContext())
-        .build();
+        .buildApplicationRunner();
 
 
     // when
@@ -62,11 +62,11 @@ public class MongockSpringbootITest extends IndependentDbIntegrationTestBase {
     metadata.put("long_key", 13L);
     metadata.put("boolean_key", true);
 
-    SpringBootMongock runner = new SpringBootMongockBuilder(mongoTemplate, MongockTestResource.class.getPackage().getName())
+    MongockApplicationRunner runner = new SpringMongockBuilder(mongoTemplate, MongockTestResource.class.getPackage().getName())
         .setLockQuickConfig()
         .withMetadata(metadata)
         .setApplicationContext(getApplicationContext())
-        .build();
+        .buildApplicationRunner();
 
     // when
     runner.execute();
@@ -85,10 +85,10 @@ public class MongockSpringbootITest extends IndependentDbIntegrationTestBase {
   @Test
   public void shouldTwoExecutedChangeSet_whenRunningTwice_ifRunAlways() {
     // given
-    SpringBootMongock runner = new SpringBootMongockBuilder(this.mongoTemplate, MongockTestResource.class.getPackage().getName())
+    MongockApplicationRunner runner = new SpringMongockBuilder(this.mongoTemplate, MongockTestResource.class.getPackage().getName())
         .setLockQuickConfig()
         .setApplicationContext(getApplicationContext())
-        .build();
+        .buildApplicationRunner();
 
 
     // when
@@ -108,10 +108,10 @@ public class MongockSpringbootITest extends IndependentDbIntegrationTestBase {
   @Test
   public void shouldOneExecutedAndOneIgnoredChangeSet_whenRunningTwice_ifNotRunAlways() {
     // given
-    SpringBootMongock runner = new SpringBootMongockBuilder(this.mongoTemplate, MongockTestResource.class.getPackage().getName())
+    MongockApplicationRunner runner = new SpringMongockBuilder(this.mongoTemplate, MongockTestResource.class.getPackage().getName())
         .setLockQuickConfig()
         .setApplicationContext(getApplicationContext())
-        .build();
+        .buildApplicationRunner();
 
 
     // when
