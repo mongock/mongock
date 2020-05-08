@@ -33,7 +33,7 @@ public @interface ChangeSet {
   String id();      // must be set
 
   /**
-   * Sequence that provide correct order for changesets. Sorted alphabetically, ascending.
+   * Sequence that provide correct order for changeSets. Sorted alphabetically, ascending.
    * Obligatory.
    *
    * @return ordering
@@ -41,7 +41,7 @@ public @interface ChangeSet {
   String order();   // must be set
 
   /**
-   * Executes the change set on every mongock's execution, even if it has been run before.
+   * Executes the change set on every Changock's execution, even if it has been run before.
    * Optional (default is false)
    *
    * @return should run always?
@@ -55,5 +55,12 @@ public @interface ChangeSet {
    * @return systemVersion
    */
   String systemVersion() default "0";
+
+  /**
+   * If true, will make the entire migration to break if the changeSet produce an exception or the validation doesn't
+   * success. Migration will continue otherwise.
+   * @return failFast
+   */
+  boolean failFast() default true;
 
 }

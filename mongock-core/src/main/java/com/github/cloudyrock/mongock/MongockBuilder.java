@@ -1,7 +1,7 @@
 package com.github.cloudyrock.mongock;
 
 import com.mongodb.client.MongoDatabase;
-import io.changock.driver.mongo.v3.core.driver.ChangockMongoDriver;
+import io.changock.driver.mongo.syncv4.core.driver.ChangockMongoSync4Driver;
 import io.changock.runner.standalone.StandaloneChangockRunner;
 
 public class MongockBuilder extends MongockBuilderBase<MongockBuilder, Mongock> {
@@ -53,12 +53,12 @@ public class MongockBuilder extends MongockBuilderBase<MongockBuilder, Mongock> 
 
 
   public Mongock build() {
+    ChangockMongoSync4Driver driver = getDriver();
+    return new Mongock(getBuilder(driver).build());
+  }
 
-    ChangockMongoDriver driver = new ChangockMongoDriver(getMongoDatabase())
-        .setChangeLogCollectionName(changeLogCollectionName)
-        .setLockCollectionName(lockCollectionName);
-
-    StandaloneChangockRunner runner = StandaloneChangockRunner.builder()
+  private StandaloneChangockRunner.Builder getBuilder(ChangockMongoSync4Driver driver) {
+    return StandaloneChangockRunner.builder()
         .setDriver(driver)
         .addChangeLogsScanPackage(changeLogsScanPackage)
         .setThrowExceptionIfCannotObtainLock(throwExceptionIfCannotObtainLock)
@@ -67,9 +67,14 @@ public class MongockBuilder extends MongockBuilderBase<MongockBuilder, Mongock> 
         .setStartSystemVersion(startSystemVersion)
         .setEndSystemVersion(endSystemVersion)
         .withMetadata(metadata)
-        .overrideAnnoatationProcessor(new MongockAnnotationProcessor())
-        .build();
-    return new Mongock(runner);
+        .overrideAnnoatationProcessor(new MongockAnnotationProcessor());
+  }
+
+  private ChangockMongoSync4Driver getDriver() {
+    ChangockMongoSync4Driver driver = new ChangockMongoSync4Driver(getMongoDatabase());
+    driver.setChangeLogCollectionName(changeLogCollectionName);
+    driver.setLockCollectionName(lockCollectionName);
+    return driver;
   }
 
   @Override

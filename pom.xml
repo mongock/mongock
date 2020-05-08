@@ -14,16 +14,22 @@
 
   <groupId>com.github.cloudyrock.mongock</groupId>
   <artifactId>mongock</artifactId>
-  <version>4.0.1-SNAPSHOT</version>
+  <version>4.0.0.alpha-SNAPSHOT</version>
   <packaging>pom</packaging>
   <properties>
     <java.version>1.8</java.version>
-    <spring.version>5.0.10.RELEASE</spring.version>
-    <springboot.version>2.0.6.RELEASE</springboot.version>
-    <springboot.data.mongodb.version>2.2.3.RELEASE</springboot.data.mongodb.version>
+<!--    <spring.version>5.0.10.RELEASE</spring.version>-->
+<!--    <springboot.version>2.0.6.RELEASE</springboot.version>-->
+<!--    <springboot.data.mongodb.version>2.2.3.RELEASE</springboot.data.mongodb.version>-->
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
     <maven.javadoc.failOnError>false</maven.javadoc.failOnError>
+    <!-- Changock versions-->
+    <changock.api.version>1.0.1.alpha</changock.api.version>
+    <changock.runner.standalone.version>1.0.1.alpha</changock.runner.standalone.version>
+    <changock.driver.mongo.core.version>1.0.1.alpha</changock.driver.mongo.core.version>
+    <changock.runner.spring.version>1.0.1.alpha</changock.runner.spring.version>
+    <changock.driver.mongo.spring-data.version>1.0.1.alpha</changock.driver.mongo.spring-data.version>
   </properties>
 
   <dependencyManagement>

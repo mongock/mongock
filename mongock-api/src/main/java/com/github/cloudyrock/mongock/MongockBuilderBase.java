@@ -131,8 +131,6 @@ public abstract class MongockBuilderBase<BUILDER_TYPE extends MongockBuilderBase
     return getInstance();
   }
 
-  public abstract MONGOCK_RUNNER build();
-
   protected abstract BUILDER_TYPE getInstance();
 
 }

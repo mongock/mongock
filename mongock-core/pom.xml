@@ -5,13 +5,13 @@
   <parent>
     <artifactId>mongock</artifactId>
     <groupId>com.github.cloudyrock.mongock</groupId>
-    <version>4.0.1-SNAPSHOT</version>
+    <version>4.0.0.alpha-SNAPSHOT</version>
   </parent>
 
   <artifactId>mongock-core</artifactId>
   <properties>
-    <changock.driver.mongo.v3.version>0.0.3-BETA</changock.driver.mongo.v3.version>
-    <changock.runner.standalone.version>0.0.3-BETA</changock.runner.standalone.version>
+    <changock.runner.standalone.version>1.0.0.alpha</changock.runner.standalone.version>
+    <changock.driver.mongo.core.version>1.0.0.alpha</changock.driver.mongo.core.version>
   </properties>
 
   <dependencies>
@@ -30,8 +30,8 @@
 
     <dependency>
       <groupId>com.github.cloudyrock.changock</groupId>
-      <artifactId>changock-mongo-v3-driver</artifactId>
-      <version>${changock.driver.mongo.v3.version}</version>
+      <artifactId>changock-mongo-sync-v4-driver</artifactId>
+      <version>${changock.driver.mongo.core.version}</version>
     </dependency>
     <!--
     Careful updating this library. Make sure the decorators are not affected

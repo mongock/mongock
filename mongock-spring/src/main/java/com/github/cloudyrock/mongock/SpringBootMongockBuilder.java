@@ -1,7 +1,7 @@
 package com.github.cloudyrock.mongock;
 
-import com.mongodb.client.MongoClient;
-import io.changock.driver.mongo.springdata.v2.driver.ChangockSpringDataMongoDriver;
+import io.changock.driver.mongo.springdata.v3.driver.ChangockSpringDataMongo3Driver;
+import io.changock.runner.spring.v5.ChangockSpring5Runner;
 import io.changock.runner.spring.v5.ChangockSpringApplicationRunner;
 import org.springframework.context.ApplicationContext;
 import org.springframework.data.mongodb.core.MongoTemplate;
@@ -14,57 +14,22 @@ public class SpringBootMongockBuilder extends SpringMongockBuilderBase<SpringBoo
   private ApplicationContext springContext;
 
   /**
-   * <p>Builder constructor takes db.mongodb.MongoClient, database name and changelog scan package as parameters.
-   * </p><p>For more details about MongoClient please see com.mongodb.MongoClient docs
-   * </p>
-   *
-   * @param legacyMongoClient           database connection client
-   * @param databaseName          database name
-   * @param changeLogsScanPackage package path where the changelogs are located
-   * @see com.mongodb.MongoClient
-   */
-  @Deprecated
-  public SpringBootMongockBuilder(com.mongodb.MongoClient legacyMongoClient, String databaseName, String changeLogsScanPackage) {
-    super(legacyMongoClient, databaseName, changeLogsScanPackage);
-
-  }
-
-  /**
-   * <p>Builder constructor takes new API com.mongodb.client.MongoClient, database name and changelog scan package as parameters.
-   * </p><p>For more details about MongoClient please see om.mongodb.client.MongoClient docs
-   * </p>
-   *
-   * @param newMongoClient           database connection client
-   * @param databaseName          database name
-   * @param changeLogsScanPackage package path where the changelogs are located
-   * @see MongoClient
-   */
-  @Deprecated
-  public SpringBootMongockBuilder(MongoClient newMongoClient, String databaseName, String changeLogsScanPackage) {
-    super(newMongoClient, databaseName, changeLogsScanPackage);
-  }
-
-  /**
    * <p>Builder constructor takes new API com.mongodb.client.MongoClient, database name and changelog scan package as parameters.
    * </p><p>For more details about MongoClient please see om.mongodb.client.MongoClient docs
    * </p>
    *
    * @param mongoTemplate         mongoTemplate
    * @param changeLogsScanPackage package path where the changelogs are located
-   * @see MongoClient
    */
   public SpringBootMongockBuilder(MongoTemplate mongoTemplate, String changeLogsScanPackage) {
     super(mongoTemplate, changeLogsScanPackage);
 
   }
 
-  @Override
-  protected SpringBootMongockBuilder getInstance() {
-    return this;
-  }
 
   /**
    * Set the Springboot application springContext from which the dependencies will be retrieved
+   *
    * @param context Springboot application springContext
    * @return Mongock builder for fluent interface
    * @see org.springframework.context.ApplicationContext
@@ -76,11 +41,14 @@ public class SpringBootMongockBuilder extends SpringMongockBuilderBase<SpringBoo
 
 
   public SpringBootMongock build() {
-    ChangockSpringDataMongoDriver driver = new ChangockSpringDataMongoDriver(this.mongoTemplate)
-        .setChangeLogCollectionName(changeLogCollectionName)
-        .setLockCollectionName(lockCollectionName);
+    ChangockSpringDataMongo3Driver driver = buildDriver();
+    ChangockSpring5Runner.ChangockSpring5RunnerBuilder builder = getBuilder(driver);
+    return new SpringBootMongock(builder.buildApplicationRunner());
+  }
 
-    ChangockSpringApplicationRunner runner = ChangockSpringApplicationRunner.builder()
+
+  private ChangockSpring5Runner.ChangockSpring5RunnerBuilder getBuilder(ChangockSpringDataMongo3Driver driver) {
+    return ChangockSpring5Runner.builder()
         .setDriver(driver)
         .addChangeLogsScanPackage(changeLogsScanPackage)
         .setThrowExceptionIfCannotObtainLock(throwExceptionIfCannotObtainLock)
@@ -90,10 +58,19 @@ public class SpringBootMongockBuilder extends SpringMongockBuilderBase<SpringBoo
         .setEndSystemVersion(endSystemVersion)
         .withMetadata(metadata)
         .setSpringContext(springContext)
-        .overrideAnnoatationProcessor(new MongockAnnotationProcessor())
-        .buildApplicationRunner();
-    return new SpringBootMongock(runner);
+        .overrideAnnoatationProcessor(new MongockAnnotationProcessor());
+  }
+
+  private ChangockSpringDataMongo3Driver buildDriver() {
+    ChangockSpringDataMongo3Driver driver = new ChangockSpringDataMongo3Driver(this.mongoTemplate);
+    driver.setChangeLogCollectionName(changeLogCollectionName);
+    driver.setLockCollectionName(lockCollectionName);
+    return driver;
   }
 
 
+  @Override
+  protected SpringBootMongockBuilder getInstance() {
+    return this;
+  }
 }

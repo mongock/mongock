@@ -3,17 +3,20 @@ package com.github.cloudyrock.mongock;
 import com.github.cloudyrock.mongock.test.changelogs.MongockTestResource;
 import com.github.cloudyrock.mongock.utils.IndependentDbIntegrationTestBase;
 import org.bson.Document;
+import org.junit.Assert;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import static org.mockito.Mockito.mock;
 
-import org.mockito.Mockito;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.springframework.context.ApplicationContext;
 import org.springframework.core.env.Environment;
 import org.springframework.data.mongodb.core.MongoTemplate;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import static org.junit.Assert.assertEquals;
@@ -25,46 +28,27 @@ public class MongockSpringITest extends IndependentDbIntegrationTestBase {
   private static final String CHANGELOG_COLLECTION_NAME = "mongockChangeLog";
   private ApplicationContext springContextMock;
 
+  @Before
+  public void before() {
+    setSpringContext();
+  }
+
   @Test
   public void shouldExecuteAllChangeSets() {
     // given
     setSpringContext();
-    SpringMongock runner = new SpringMongockBuilder(this.mongoClient, DEFAULT_DATABASE_NAME, MongockTestResource.class.getPackage().getName())
-        .setLockQuickConfig()
-        .setApplicationContext(springContextMock)
-        .build();
-
-    // when
-    runner.execute();
-    runner.execute();
-
-    // then
-
-    // dbchangelog collection checking
-    long change1 = this.mongoClient.getDatabase(DEFAULT_DATABASE_NAME).getCollection(CHANGELOG_COLLECTION_NAME).count(new Document()
-        .append("changeId", "test1")
-        .append("author", "testuser"));
-    assertEquals(1, change1);
-  }
-
-  @Test
-  public void shouldExecuteAllChangeSetsWithMongoTemplate() {
-    // given
-    MongoTemplate mongoTemplate = new MongoTemplate(mongoClient, DEFAULT_DATABASE_NAME);
-    setSpringContext();
     SpringMongock runner = new SpringMongockBuilder(mongoTemplate, MongockTestResource.class.getPackage().getName())
         .setLockQuickConfig()
         .setApplicationContext(springContextMock)
-        .build();
+        .buildInitializingBeanRunner();
 
     // when
-    runner.execute();
     runner.execute();
 
     // then
 
     // dbchangelog collection checking
-    long change1 = mongoTemplate.getCollection(CHANGELOG_COLLECTION_NAME).count(new Document()
+    long change1 = mongoTemplate.getCollection(CHANGELOG_COLLECTION_NAME).countDocuments(new Document()
         .append("changeId", "test1")
         .append("author", "testuser"));
     assertEquals(1, change1);
@@ -81,17 +65,17 @@ public class MongockSpringITest extends IndependentDbIntegrationTestBase {
     metadata.put("long_key", 13L);
     metadata.put("boolean_key", true);
     setSpringContext();
-    SpringMongock runner = new SpringMongockBuilder(this.mongoClient, DEFAULT_DATABASE_NAME, MongockTestResource.class.getPackage().getName())
+    SpringMongock runner = new SpringMongockBuilder(mongoTemplate, MongockTestResource.class.getPackage().getName())
         .setLockQuickConfig()
         .setApplicationContext(springContextMock)
         .withMetadata(metadata)
-        .build();
+        .buildInitializingBeanRunner();
 
     // when
     runner.execute();
 
     // then
-    Map metadataResult = this.mongoClient.getDatabase(DEFAULT_DATABASE_NAME).getCollection(CHANGELOG_COLLECTION_NAME).find().first().get("metadata", Map.class);
+    Map metadataResult = mongoTemplate.getDb().getCollection(CHANGELOG_COLLECTION_NAME).find().first().get("metadata", Map.class);
     assertEquals("string_value", metadataResult.get("string_key"));
     assertEquals(10, metadataResult.get("integer_key"));
     assertEquals(11.11F, (Double) metadataResult.get("float_key"), 0.01);
@@ -109,4 +93,53 @@ public class MongockSpringITest extends IndependentDbIntegrationTestBase {
     when(springContextMock.getBean(Environment.class)).thenReturn(springEnvironmentMock);
   }
 
+  @Test
+  public void shouldTwoExecutedChangeSet_whenRunningTwice_ifRunAlways() {
+    // given
+    SpringBootMongock runner = new SpringBootMongockBuilder(this.mongoTemplate, MongockTestResource.class.getPackage().getName())
+        .setLockQuickConfig()
+        .setApplicationContext(springContextMock)
+        .build();
+
+
+    // when
+    runner.execute();
+    runner.execute();
+
+    // then
+    List<Document> documentList = new ArrayList<>();
+
+    mongoTemplate.getDb().getCollection(CHANGELOG_COLLECTION_NAME)
+        .find(new Document().append("changeSetMethod", "testChangeSetWithAlways").append("state", "EXECUTED"))
+        .forEach(documentList::add);
+    Assert.assertEquals(2, documentList.size());
+
+  }
+
+  @Test
+  public void shouldOneExecutedAndOneIgnoredChangeSet_whenRunningTwice_ifNotRunAlways() {
+    // given
+    SpringBootMongock runner = new SpringBootMongockBuilder(this.mongoTemplate, MongockTestResource.class.getPackage().getName())
+        .setLockQuickConfig()
+        .setApplicationContext(springContextMock)
+        .build();
+
+
+    // when
+    runner.execute();
+    runner.execute();
+
+    // then
+    List<String> stateList = new ArrayList<>();
+
+    mongoTemplate.getDb().getCollection(CHANGELOG_COLLECTION_NAME)
+        .find(new Document()
+            .append("changeLogClass", "com.github.cloudyrock.mongock.test.changelogs.AnotherMongockTestResource")
+            .append("changeSetMethod", "testChangeSet"))
+        .map(document-> document.getString("state"))
+        .forEach(stateList::add);
+    Assert.assertEquals(2, stateList.size());
+    Assert.assertTrue(stateList.contains("EXECUTED"));
+    Assert.assertTrue(stateList.contains("IGNORED"));
+  }
 }
