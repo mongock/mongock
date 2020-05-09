@@ -27,7 +27,7 @@ public class MongockITest extends IndependentDbIntegrationTestBase {
   @Test
   public void shouldExecuteAllChangeSets() {
     // given
-    Mongock runner = new MongockBuilder(MongockTestResource.class.getPackage().getName())
+    MongockStandalone runner = new MongockStandaloneBuilder(MongockTestResource.class.getPackage().getName())
         .setDriver(getDriver())
         .setLockQuickConfig()
         .build();
@@ -50,7 +50,7 @@ public class MongockITest extends IndependentDbIntegrationTestBase {
   @Test
   public void shouldRunTwice_WhenRunAlways() {
     // given
-    Mongock runner = new MongockBuilder(RunAlwaysChangeLog.class.getPackage().getName())
+    MongockStandalone runner = new MongockStandaloneBuilder(RunAlwaysChangeLog.class.getPackage().getName())
         .setDriver(getDriver())
         .setLockQuickConfig()
         .build();
@@ -92,7 +92,7 @@ public class MongockITest extends IndependentDbIntegrationTestBase {
     metadata.put("double_key", 12.12D);
     metadata.put("long_key", 13L);
     metadata.put("boolean_key", true);
-    Mongock runner = new MongockBuilder(MongockTestResource.class.getPackage().getName())
+    MongockStandalone runner = new MongockStandaloneBuilder(MongockTestResource.class.getPackage().getName())
         .setDriver(getDriver())
         .setLockQuickConfig()
         .withMetadata(metadata)

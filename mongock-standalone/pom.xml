@@ -8,7 +8,7 @@
     <version>4.0.1.alpha-SNAPSHOT</version>
   </parent>
 
-  <artifactId>mongock-core</artifactId>
+  <artifactId>mongock-standalone</artifactId>
   <properties>
     <changock.runner.standalone.version>1.0.0.alpha</changock.runner.standalone.version>
     <changock.driver.mongo.core.version>1.0.0.alpha</changock.driver.mongo.core.version>

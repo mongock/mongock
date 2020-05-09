@@ -2,19 +2,19 @@ package com.github.cloudyrock.mongock;
 
 import io.changock.runner.standalone.StandaloneChangockRunner;
 
-public class MongockBuilder extends MongockBuilderBase<MongockBuilder, Mongock> {
+public class MongockStandaloneBuilder extends MongockBuilderBase<MongockStandaloneBuilder, MongockStandalone> {
 
   /**
    * <p>Builder constructor takes the new API changelog scan package as parameter.
    *
    * @param changeLogsScanPackage package path where the changelogs are located
    */
-  public MongockBuilder(String changeLogsScanPackage) {
+  public MongockStandaloneBuilder(String changeLogsScanPackage) {
     super(changeLogsScanPackage);
   }
 
-  public Mongock build() {
-    return new Mongock(getBuilder(driver).build());
+  public MongockStandalone build() {
+    return new MongockStandalone(getBuilder(driver).build());
   }
 
   private StandaloneChangockRunner.Builder getBuilder(MongockConnectionDriver driver) {
@@ -31,7 +31,7 @@ public class MongockBuilder extends MongockBuilderBase<MongockBuilder, Mongock> 
   }
 
   @Override
-  protected MongockBuilder getInstance() {
+  protected MongockStandaloneBuilder getInstance() {
     return this;
   }
 

@@ -7,11 +7,11 @@ import io.changock.runner.standalone.StandaloneChangockRunner;
  *
  * @since 26/07/2014
  */
-public class Mongock implements MongockBase {
+public class MongockStandalone implements MongockBase {
 
   private final StandaloneChangockRunner runner;
 
-  Mongock(StandaloneChangockRunner runner) {
+  MongockStandalone(StandaloneChangockRunner runner) {
     this.runner = runner;
   }
 
