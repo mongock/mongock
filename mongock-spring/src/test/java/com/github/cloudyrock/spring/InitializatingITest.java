@@ -36,7 +36,7 @@ public class InitializatingITest extends IndependentDbIntegrationTestBase {
   public void shouldExecuteAllChangeSets() {
     // given
     setSpringContext();
-    MongockSpring5Runner.MongockInitializingBean runner = MongockSpring5Runner.builder()
+    MongockSpring5.MongockInitializingBeanRunner runner = MongockSpring5.builder()
         .setDriver(buildDriver())
         .addChangeLogsScanPackage(MongockTestResource.class.getPackage().getName())
         .setSpringContext(springContextMock)
@@ -66,7 +66,7 @@ public class InitializatingITest extends IndependentDbIntegrationTestBase {
     metadata.put("long_key", 13L);
     metadata.put("boolean_key", true);
     setSpringContext();
-    MongockSpring5Runner.MongockInitializingBean runner = MongockSpring5Runner.builder()
+    MongockSpring5.MongockInitializingBeanRunner runner = MongockSpring5.builder()
         .setDriver(buildDriver())
         .addChangeLogsScanPackage(MongockTestResource.class.getPackage().getName())
         .setSpringContext(springContextMock)
@@ -99,7 +99,7 @@ public class InitializatingITest extends IndependentDbIntegrationTestBase {
   @Test
   public void shouldTwoExecutedChangeSet_whenRunningTwice_ifRunAlways() {
     // given
-    MongockSpring5Runner.MongockInitializingBean runner = MongockSpring5Runner.builder()
+    MongockSpring5.MongockInitializingBeanRunner runner = MongockSpring5.builder()
         .setDriver(buildDriver())
         .addChangeLogsScanPackage(MongockTestResource.class.getPackage().getName())
         .setSpringContext(springContextMock)
@@ -123,7 +123,7 @@ public class InitializatingITest extends IndependentDbIntegrationTestBase {
   @Test
   public void shouldOneExecutedAndOneIgnoredChangeSet_whenRunningTwice_ifNotRunAlways() {
     // given
-    MongockSpring5Runner.MongockInitializingBean runner = MongockSpring5Runner.builder()
+    MongockSpring5.MongockInitializingBeanRunner runner = MongockSpring5.builder()
         .setDriver(buildDriver())
         .addChangeLogsScanPackage(MongockTestResource.class.getPackage().getName())
         .setSpringContext(springContextMock)

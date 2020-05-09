@@ -33,7 +33,7 @@ public class ApplicationRunnerITest extends IndependentDbIntegrationTestBase {
   @Test
   public void shouldExecuteAllChangeSets() {
     // given
-    MongockSpring5Runner.MongockApplicationRunner runner = MongockSpring5Runner.builder()
+    MongockSpring5.MongockApplicationRunner runner = MongockSpring5.builder()
         .setDriver(buildDriver())
         .addChangeLogsScanPackage(MongockTestResource.class.getPackage().getName())
         .setSpringContext(getApplicationContext())
@@ -64,7 +64,7 @@ public class ApplicationRunnerITest extends IndependentDbIntegrationTestBase {
     metadata.put("long_key", 13L);
     metadata.put("boolean_key", true);
 
-    MongockSpring5Runner.MongockApplicationRunner runner = MongockSpring5Runner.builder()
+    MongockSpring5.MongockApplicationRunner runner = MongockSpring5.builder()
         .setDriver(buildDriver())
         .addChangeLogsScanPackage(MongockTestResource.class.getPackage().getName())
         .setSpringContext(getApplicationContext())
@@ -89,7 +89,7 @@ public class ApplicationRunnerITest extends IndependentDbIntegrationTestBase {
   @Test
   public void shouldTwoExecutedChangeSet_whenRunningTwice_ifRunAlways() {
     // given
-    MongockSpring5Runner.MongockApplicationRunner runner = MongockSpring5Runner.builder()
+    MongockSpring5.MongockApplicationRunner runner = MongockSpring5.builder()
         .setDriver(buildDriver())
         .addChangeLogsScanPackage(MongockTestResource.class.getPackage().getName())
         .setSpringContext(getApplicationContext())
@@ -113,7 +113,7 @@ public class ApplicationRunnerITest extends IndependentDbIntegrationTestBase {
   @Test
   public void shouldOneExecutedAndOneIgnoredChangeSet_whenRunningTwice_ifNotRunAlways() {
     // given
-    MongockSpring5Runner.MongockApplicationRunner runner = MongockSpring5Runner.builder()
+    MongockSpring5.MongockApplicationRunner runner = MongockSpring5.builder()
         .setDriver(buildDriver())
         .addChangeLogsScanPackage(MongockTestResource.class.getPackage().getName())
         .setSpringContext(getApplicationContext())
