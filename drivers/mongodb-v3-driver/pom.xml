@@ -47,12 +47,12 @@
       <scope>test</scope>
     </dependency>
 
-<!--    <dependency>-->
-<!--      <groupId>com.github.cloudyrock.changock</groupId>-->
-<!--      <artifactId>changock-test-runner</artifactId>-->
-<!--      <version>${project.version}</version>-->
-<!--      <scope>test</scope>-->
-<!--    </dependency>-->
+    <dependency>
+      <groupId>com.github.cloudyrock.changock</groupId>
+      <artifactId>changock-test-runner</artifactId>
+      <version>${changock.test-util.version}</version>
+      <scope>test</scope>
+    </dependency>
     <dependency>
       <groupId>junit</groupId>
       <artifactId>junit</artifactId>
