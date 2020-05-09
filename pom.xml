@@ -7,23 +7,31 @@
   <description>MongoDB tool for tracking, managing and applying database schema changes</description>
   <url>https://github.com/cloudyrock/mongock</url>
   <modules>
-    <module>mongock-core</module>
+    <module>mongock-standalone</module>
     <module>mongock-spring</module>
     <module>mongock-api</module>
+    <module>drivers</module>
   </modules>
 
   <groupId>com.github.cloudyrock.mongock</groupId>
   <artifactId>mongock</artifactId>
-  <version>4.0.1-SNAPSHOT</version>
+  <version>4.0.1.alpha-SNAPSHOT</version>
   <packaging>pom</packaging>
   <properties>
     <java.version>1.8</java.version>
-    <spring.version>5.0.10.RELEASE</spring.version>
-    <springboot.version>2.0.6.RELEASE</springboot.version>
-    <springboot.data.mongodb.version>2.2.3.RELEASE</springboot.data.mongodb.version>
+    <maven.compiler.target>1.8</maven.compiler.target>
+    <maven.compiler.source>1.8</maven.compiler.source>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
     <maven.javadoc.failOnError>false</maven.javadoc.failOnError>
+    <!-- Changock versions-->
+    <changock.api.version>1.0.1.alpha</changock.api.version>
+    <changock.driver-core.version>1.0.1.alpha</changock.driver-core.version>
+    <changock.test-util.version>1.0.1.alpha</changock.test-util.version>
+    <changock.runner.standalone.version>1.0.1.alpha</changock.runner.standalone.version>
+    <changock.driver.mongo.core.version>1.0.1.alpha</changock.driver.mongo.core.version>
+    <changock.runner.spring.version>1.0.1.alpha</changock.runner.spring.version>
+    <changock.driver.mongo.spring-data.version>1.0.1.alpha</changock.driver.mongo.spring-data.version>
   </properties>
 
   <dependencyManagement>

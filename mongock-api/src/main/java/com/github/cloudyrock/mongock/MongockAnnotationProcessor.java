@@ -36,7 +36,7 @@ public class MongockAnnotationProcessor extends ChangockAnnotationProcessor {
       return super.getChangeSet(method);
     } catch (Exception ex) {
       ChangeSet ann = method.getAnnotation(ChangeSet.class);
-      return new ChangeSetItem(ann.id(), ann.author(), ann.order(), ann.runAlways(), ann.systemVersion(), method);
+      return new ChangeSetItem(ann.id(), ann.author(), ann.order(), ann.runAlways(), ann.systemVersion(), ann.failFast(), method);
     }
 
   }

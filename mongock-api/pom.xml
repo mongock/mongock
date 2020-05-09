@@ -1,24 +1,27 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0"
-         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <parent>
     <artifactId>mongock</artifactId>
     <groupId>com.github.cloudyrock.mongock</groupId>
-    <version>4.0.1-SNAPSHOT</version>
+    <version>4.0.1.alpha-SNAPSHOT</version>
   </parent>
   <modelVersion>4.0.0</modelVersion>
 
   <artifactId>mongock-api</artifactId>
   <properties>
     <java.version>1.8</java.version>
-    <changock.api.version>0.0.3-SNAPSHOT</changock.api.version>
   </properties>
 
   <dependencies>
     <dependency>
-      <groupId>io.changock</groupId>
+      <groupId>com.github.cloudyrock.changock</groupId>
       <artifactId>changock-api</artifactId>
+      <version>${changock.api.version}</version>
+    </dependency>
+
+    <dependency>
+      <groupId>com.github.cloudyrock.changock</groupId>
+      <artifactId>changock-driver-api</artifactId>
       <version>${changock.api.version}</version>
     </dependency>
   </dependencies>

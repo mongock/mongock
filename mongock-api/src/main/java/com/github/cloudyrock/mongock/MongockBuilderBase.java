@@ -9,6 +9,7 @@ import java.util.Map;
 public abstract class MongockBuilderBase<BUILDER_TYPE extends MongockBuilderBase, MONGOCK_RUNNER extends MongockBase> {
 
   protected final String changeLogsScanPackage;
+  protected MongockConnectionDriver driver;
   protected long lockAcquiredForMinutes = 24L * 60L;
   protected long maxWaitingForLockMinutes = 3L;
   protected int maxTries = 1;
@@ -40,6 +41,16 @@ public abstract class MongockBuilderBase<BUILDER_TYPE extends MongockBuilderBase
    */
   public BUILDER_TYPE setThrowExceptionIfCannotObtainLock(boolean throwExceptionIfCannotObtainLock) {
     this.throwExceptionIfCannotObtainLock = throwExceptionIfCannotObtainLock;
+    return getInstance();
+  }
+
+  /**
+   * Sets the Changock  ConnectionDriver(MongoDb Driver 3, MongoDb Sync 4, Spring Data 2, Spring Data 3....
+   * @param connectionDriver Changock  ConnectionDriver
+   * @return Mongock builder for fluent interface
+   */
+  public BUILDER_TYPE setDriver(MongockConnectionDriver connectionDriver) {
+    this.driver = connectionDriver;
     return getInstance();
   }
 
@@ -130,8 +141,6 @@ public abstract class MongockBuilderBase<BUILDER_TYPE extends MongockBuilderBase
     this.metadata = metadata;
     return getInstance();
   }
-
-  public abstract MONGOCK_RUNNER build();
 
   protected abstract BUILDER_TYPE getInstance();
 
