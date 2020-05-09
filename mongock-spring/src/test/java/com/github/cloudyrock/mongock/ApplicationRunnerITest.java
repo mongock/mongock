@@ -20,7 +20,7 @@ import java.util.Map;
 import static org.junit.Assert.assertEquals;
 
 @RunWith(MockitoJUnitRunner.class)
-public class MongockSpringbootITest extends IndependentDbIntegrationTestBase {
+public class ApplicationRunnerITest extends IndependentDbIntegrationTestBase {
 
   private static final String CHANGELOG_COLLECTION_NAME = "mongockChangeLog";
 
@@ -33,12 +33,12 @@ public class MongockSpringbootITest extends IndependentDbIntegrationTestBase {
   @Test
   public void shouldExecuteAllChangeSets() {
     // given
-    MongockApplicationRunner runner = new SpringMongockBuilder(MongockTestResource.class.getPackage().getName())
+    MongockSpring5Runner.MongockApplicationRunner runner = MongockSpring5Runner.builder()
         .setDriver(buildDriver())
-        .setLockQuickConfig()
-        .setApplicationContext(getApplicationContext())
+        .addChangeLogsScanPackage(MongockTestResource.class.getPackage().getName())
+        .setSpringContext(getApplicationContext())
+        .setDefaultLock()
         .buildApplicationRunner();
-
 
     // when
     runner.execute();
@@ -64,11 +64,12 @@ public class MongockSpringbootITest extends IndependentDbIntegrationTestBase {
     metadata.put("long_key", 13L);
     metadata.put("boolean_key", true);
 
-    MongockApplicationRunner runner = new SpringMongockBuilder(MongockTestResource.class.getPackage().getName())
+    MongockSpring5Runner.MongockApplicationRunner runner = MongockSpring5Runner.builder()
         .setDriver(buildDriver())
-        .setLockQuickConfig()
+        .addChangeLogsScanPackage(MongockTestResource.class.getPackage().getName())
+        .setSpringContext(getApplicationContext())
+        .setDefaultLock()
         .withMetadata(metadata)
-        .setApplicationContext(getApplicationContext())
         .buildApplicationRunner();
 
     // when
@@ -88,12 +89,12 @@ public class MongockSpringbootITest extends IndependentDbIntegrationTestBase {
   @Test
   public void shouldTwoExecutedChangeSet_whenRunningTwice_ifRunAlways() {
     // given
-    MongockApplicationRunner runner = new SpringMongockBuilder(MongockTestResource.class.getPackage().getName())
+    MongockSpring5Runner.MongockApplicationRunner runner = MongockSpring5Runner.builder()
         .setDriver(buildDriver())
-        .setLockQuickConfig()
-        .setApplicationContext(getApplicationContext())
+        .addChangeLogsScanPackage(MongockTestResource.class.getPackage().getName())
+        .setSpringContext(getApplicationContext())
+        .setDefaultLock()
         .buildApplicationRunner();
-
 
     // when
     runner.execute();
@@ -112,10 +113,11 @@ public class MongockSpringbootITest extends IndependentDbIntegrationTestBase {
   @Test
   public void shouldOneExecutedAndOneIgnoredChangeSet_whenRunningTwice_ifNotRunAlways() {
     // given
-    MongockApplicationRunner runner = new SpringMongockBuilder(MongockTestResource.class.getPackage().getName())
+    MongockSpring5Runner.MongockApplicationRunner runner = MongockSpring5Runner.builder()
         .setDriver(buildDriver())
-        .setLockQuickConfig()
-        .setApplicationContext(getApplicationContext())
+        .addChangeLogsScanPackage(MongockTestResource.class.getPackage().getName())
+        .setSpringContext(getApplicationContext())
+        .setDefaultLock()
         .buildApplicationRunner();
 
 
