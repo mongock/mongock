@@ -15,8 +15,6 @@ public abstract class MongockBuilderBase<BUILDER_TYPE extends MongockBuilderBase
   protected int maxTries = 1;
   protected boolean throwExceptionIfCannotObtainLock = false;
   protected boolean enabled = true;
-  protected String changeLogCollectionName = "mongockChangeLog";
-  protected String lockCollectionName = "mongockLock";
   protected String startSystemVersion = "0";
   protected String endSystemVersion = String.valueOf(Integer.MAX_VALUE);
   protected Map<String, Object> metadata = new HashMap<>();
@@ -92,13 +90,6 @@ public abstract class MongockBuilderBase<BUILDER_TYPE extends MongockBuilderBase
     return getInstance();
   }
 
-  public BUILDER_TYPE setChangeLogCollectionName(String changeLogCollectionName) {
-    if(changeLogCollectionName == null || "".equals(changeLogCollectionName)) {
-      throw new ChangockException("invalid changeLog collection name");
-    }
-    this.changeLogCollectionName = changeLogCollectionName;
-    return getInstance();
-  }
 
   /**
    * Set up the start Version for versioned schema changes.
