@@ -1,9 +1,7 @@
 package com.github.cloudyrock.mongock;
 
 import io.changock.runner.core.builder.DriverBuilderConfigurable;
-import io.changock.runner.spring.v5.ChangockSpringApplicationRunner;
 import io.changock.runner.spring.v5.ChangockSpringBuilderBase;
-import io.changock.runner.spring.v5.ChangockSpringInitializingBeanRunner;
 import io.changock.runner.spring.v5.ProfiledChangeLogService;
 import io.changock.runner.spring.v5.SpringMigrationExecutor;
 
@@ -20,7 +18,7 @@ public class MongockSpring5Runner {
 
     public MongockApplicationRunner buildApplicationRunner() {
       return new MongockApplicationRunner(
-          buildExecutorWIthEnvironmentDependency(),
+          buildExecutorWithEnvironmentDependency(),
           buildProfiledChangeLogService(),
           throwExceptionIfCannotObtainLock,
           enabled);
@@ -28,7 +26,7 @@ public class MongockSpring5Runner {
 
     public MongockInitializingBean buildInitializingBeanRunner() {
       return new MongockInitializingBean(
-          buildExecutorWIthEnvironmentDependency(),
+          buildExecutorWithEnvironmentDependency(),
           buildProfiledChangeLogService(),
           throwExceptionIfCannotObtainLock,
           enabled);
@@ -41,14 +39,14 @@ public class MongockSpring5Runner {
 
   }
 
-  public static class MongockApplicationRunner extends ChangockSpringApplicationRunner {
+  public static class MongockApplicationRunner extends ChangockSpringBuilderBase.ChangockSpringApplicationRunner {
 
     protected MongockApplicationRunner(SpringMigrationExecutor executor, ProfiledChangeLogService changeLogService, boolean throwExceptionIfCannotObtainLock, boolean enabled) {
       super(executor, changeLogService, throwExceptionIfCannotObtainLock, enabled);
     }
   }
 
-  public static class MongockInitializingBean extends ChangockSpringInitializingBeanRunner {
+  public static class MongockInitializingBean extends ChangockSpringBuilderBase.ChangockSpringInitializingBeanRunner {
 
     protected MongockInitializingBean(SpringMigrationExecutor executor, ProfiledChangeLogService changeLogService, boolean throwExceptionIfCannotObtainLock, boolean enabled) {
       super(executor, changeLogService, throwExceptionIfCannotObtainLock, enabled);
