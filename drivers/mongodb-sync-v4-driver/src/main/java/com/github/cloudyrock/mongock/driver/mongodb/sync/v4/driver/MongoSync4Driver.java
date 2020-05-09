@@ -8,13 +8,13 @@ import com.github.cloudyrock.mongock.driver.mongodb.sync.v4.repository.MongoChan
 import io.changock.utils.annotation.NotThreadSafe;
 
 @NotThreadSafe
-public class ChangockMongoSync4Driver extends ChangockMongoSync4DriverBase<ChangeEntry> {
+public class MongoSync4Driver extends MongoSync4DriverBase<ChangeEntry> {
 
   private static final ForbiddenParametersMap FORBIDDEN_PARAMETERS_MAP = new ForbiddenParametersMap();
 
   protected MongoChangeEntryRepository<ChangeEntry> changeEntryRepository;
 
-  public ChangockMongoSync4Driver(MongoDatabase mongoDatabase) {
+  public MongoSync4Driver(MongoDatabase mongoDatabase) {
     super(mongoDatabase);
   }
 

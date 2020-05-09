@@ -48,9 +48,9 @@
 
     <!-- TEST -->
     <dependency>
-      <groupId>com.github.cloudyrock.changock</groupId>
-      <artifactId>changock-mongo-sync-v4-driver</artifactId>
-      <version>${changock.driver.mongo.core.version}</version>
+      <groupId>com.github.cloudyrock.mongock</groupId>
+      <artifactId>mongodb-sync-v4-driver</artifactId>
+      <version>${project.version}</version>
       <scope>test</scope>
     </dependency>
     <dependency>

@@ -1,6 +1,5 @@
 package com.github.cloudyrock.mongock;
 
-import io.changock.driver.api.driver.ConnectionDriver;
 import io.changock.runner.spring.v5.ChangockSpring5Runner;
 import org.springframework.context.ApplicationContext;
 
@@ -49,7 +48,7 @@ public class SpringMongockBuilder extends MongockBuilderBase<SpringMongockBuilde
     return new MongockApplicationRunner(getBuilder(driver).buildApplicationRunner());
   }
 
-  private ChangockSpring5Runner.ChangockSpring5RunnerBuilder getBuilder(ConnectionDriver driver) {
+  private ChangockSpring5Runner.ChangockSpring5RunnerBuilder getBuilder(MongockConnectionDriver driver) {
     return ChangockSpring5Runner.builder()
         .setDriver(driver)
         .addChangeLogsScanPackage(changeLogsScanPackage)

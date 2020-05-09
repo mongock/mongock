@@ -1,9 +1,9 @@
 package com.github.cloudyrock.mongock;
 
+import com.github.cloudyrock.mongock.driver.mongodb.sync.v4.driver.MongoSync4Driver;
 import com.github.cloudyrock.mongock.test.changelogs.MongockTestResource;
 import com.github.cloudyrock.mongock.test.changelogs.runAlways.RunAlwaysChangeLog;
 import com.github.cloudyrock.mongock.utils.IndependentDbIntegrationTestBase;
-import io.changock.driver.mongo.syncv4.core.driver.ChangockMongoSync4Driver;
 import org.bson.Document;
 import org.junit.Before;
 import org.junit.Test;
@@ -112,8 +112,8 @@ public class MongockITest extends IndependentDbIntegrationTestBase {
 
   }
 
-  private ChangockMongoSync4Driver getDriver() {
-    ChangockMongoSync4Driver driver = new ChangockMongoSync4Driver(db);
+  private MongoSync4Driver getDriver() {
+    MongoSync4Driver driver = new MongoSync4Driver(db);
     driver.setChangeLogCollectionName(CHANGELOG_COLLECTION_NAME);
     return driver;
   }

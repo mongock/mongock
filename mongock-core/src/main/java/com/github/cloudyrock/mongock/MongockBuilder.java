@@ -1,6 +1,5 @@
 package com.github.cloudyrock.mongock;
 
-import io.changock.driver.api.driver.ConnectionDriver;
 import io.changock.runner.standalone.StandaloneChangockRunner;
 
 public class MongockBuilder extends MongockBuilderBase<MongockBuilder, Mongock> {
@@ -18,7 +17,7 @@ public class MongockBuilder extends MongockBuilderBase<MongockBuilder, Mongock> 
     return new Mongock(getBuilder(driver).build());
   }
 
-  private StandaloneChangockRunner.Builder getBuilder(ConnectionDriver driver) {
+  private StandaloneChangockRunner.Builder getBuilder(MongockConnectionDriver driver) {
     return StandaloneChangockRunner.builder()
         .setDriver(driver)
         .addChangeLogsScanPackage(changeLogsScanPackage)

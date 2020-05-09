@@ -8,14 +8,14 @@ import com.github.cloudyrock.mongock.driver.mongodb.v3.repository.MongoChangeEnt
 import io.changock.utils.annotation.NotThreadSafe;
 
 @NotThreadSafe
-public class ChangockMongoCore3Driver extends ChangockMongoCoreV3DriverBase<ChangeEntry> {
+public class MongoCore3Driver extends MongoCore3DriverBase<ChangeEntry> {
 
   private static final ForbiddenParametersMap FORBIDDEN_PARAMETERS_MAP = new ForbiddenParametersMap();
 
   protected MongoChangeEntryRepository<ChangeEntry> changeEntryRepository;
 
 
-  public ChangockMongoCore3Driver(MongoDatabase mongoDatabase) {
+  public MongoCore3Driver(MongoDatabase mongoDatabase) {
     super(mongoDatabase);
   }
 

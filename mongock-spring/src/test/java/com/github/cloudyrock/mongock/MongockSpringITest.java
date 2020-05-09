@@ -1,15 +1,13 @@
 package com.github.cloudyrock.mongock;
 
+import com.github.cloudyrock.mongock.driver.mongodb.springdata.v3.SpringDataMongo3Driver;
 import com.github.cloudyrock.mongock.test.changelogs.MongockTestResource;
 import com.github.cloudyrock.mongock.utils.IndependentDbIntegrationTestBase;
-import io.changock.driver.mongo.springdata.v3.driver.ChangockSpringDataMongo3Driver;
 import org.bson.Document;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import static org.mockito.Mockito.mock;
-
 import org.mockito.runners.MockitoJUnitRunner;
 import org.springframework.context.ApplicationContext;
 import org.springframework.core.env.Environment;
@@ -20,6 +18,7 @@ import java.util.List;
 import java.util.Map;
 
 import static org.junit.Assert.assertEquals;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -148,8 +147,8 @@ public class MongockSpringITest extends IndependentDbIntegrationTestBase {
   }
 
 
-  private ChangockSpringDataMongo3Driver buildDriver() {
-    ChangockSpringDataMongo3Driver driver = new ChangockSpringDataMongo3Driver(mongoTemplate);
+  private SpringDataMongo3Driver buildDriver() {
+    SpringDataMongo3Driver driver = new SpringDataMongo3Driver(mongoTemplate);
     driver.setChangeLogCollectionName(CHANGELOG_COLLECTION_NAME);
     return driver;
   }

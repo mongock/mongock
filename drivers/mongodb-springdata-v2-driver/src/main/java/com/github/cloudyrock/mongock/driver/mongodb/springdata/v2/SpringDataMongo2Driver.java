@@ -1,6 +1,6 @@
 package com.github.cloudyrock.mongock.driver.mongodb.springdata.v2;
 
-import com.github.cloudyrock.mongock.driver.mongodb.v3.driver.ChangockMongoCore3Driver;
+import com.github.cloudyrock.mongock.driver.mongodb.v3.driver.MongoCore3Driver;
 import io.changock.driver.api.driver.ChangeSetDependency;
 import io.changock.driver.api.driver.ForbiddenParametersMap;
 import io.changock.driver.api.lock.guard.invoker.LockGuardInvokerImpl;
@@ -12,7 +12,7 @@ import org.springframework.data.mongodb.core.MongoTemplate;
 import java.util.Set;
 
 @NotThreadSafe
-public class ChangockSpringDataMongo2Driver extends ChangockMongoCore3Driver {
+public class SpringDataMongo2Driver extends MongoCore3Driver {
 
   private static final ForbiddenParametersMap FORBIDDEN_PARAMETERS_MAP;
 
@@ -23,7 +23,7 @@ public class ChangockSpringDataMongo2Driver extends ChangockMongoCore3Driver {
     FORBIDDEN_PARAMETERS_MAP.put(MongoTemplate.class, MongockTemplate.class);
   }
 
-  public ChangockSpringDataMongo2Driver(MongoTemplate mongoTemplate) {
+  public SpringDataMongo2Driver(MongoTemplate mongoTemplate) {
     super(mongoTemplate.getDb());
     this.mongoTemplate = mongoTemplate;
   }

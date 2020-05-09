@@ -2,7 +2,7 @@ package com.github.cloudyrock.mongock.test.changelogs;
 
 import com.github.cloudyrock.mongock.ChangeLog;
 import com.github.cloudyrock.mongock.ChangeSet;
-import io.changock.driver.mongo.springdata.v3.driver.decorator.impl.MongockTemplate;
+import com.github.cloudyrock.mongock.driver.mongodb.springdata.v3.decorator.impl.MongockTemplate;
 import org.springframework.core.env.Environment;
 
 @ChangeLog(order = "3")

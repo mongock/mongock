@@ -1,8 +1,8 @@
 package com.github.cloudyrock.mongock;
 
+import com.github.cloudyrock.mongock.driver.mongodb.springdata.v3.SpringDataMongo3Driver;
 import com.github.cloudyrock.mongock.test.changelogs.MongockTestResource;
 import com.github.cloudyrock.mongock.utils.IndependentDbIntegrationTestBase;
-import io.changock.driver.mongo.springdata.v3.driver.ChangockSpringDataMongo3Driver;
 import org.bson.Document;
 import org.junit.Assert;
 import org.junit.Test;
@@ -137,8 +137,8 @@ public class MongockSpringbootITest extends IndependentDbIntegrationTestBase {
     Assert.assertTrue(stateList.contains("IGNORED"));
   }
 
-  private ChangockSpringDataMongo3Driver buildDriver() {
-    ChangockSpringDataMongo3Driver driver = new ChangockSpringDataMongo3Driver(mongoTemplate);
+  private SpringDataMongo3Driver buildDriver() {
+    SpringDataMongo3Driver driver = new SpringDataMongo3Driver(mongoTemplate);
     driver.setChangeLogCollectionName(CHANGELOG_COLLECTION_NAME);
     return driver;
   }

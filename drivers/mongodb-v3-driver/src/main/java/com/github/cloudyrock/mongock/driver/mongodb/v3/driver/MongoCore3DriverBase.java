@@ -1,15 +1,16 @@
-package com.github.cloudyrock.mongock.driver.mongodb.sync.v4.driver;
+package com.github.cloudyrock.mongock.driver.mongodb.v3.driver;
 
+import com.github.cloudyrock.mongock.MongockConnectionDriver;
+import com.github.cloudyrock.mongock.driver.mongodb.v3.decorator.impl.MongoDataBaseDecoratorImpl;
+import com.github.cloudyrock.mongock.driver.mongodb.v3.repository.MongoLockRepository;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
 import io.changock.driver.api.driver.ChangeSetDependency;
 import io.changock.driver.api.entry.ChangeEntry;
 import io.changock.driver.api.lock.LockManager;
+import io.changock.driver.api.lock.guard.invoker.LockGuardInvokerImpl;
 import io.changock.driver.core.driver.ConnectionDriverBase;
 import io.changock.driver.core.lock.LockRepository;
-import io.changock.driver.api.lock.guard.invoker.LockGuardInvokerImpl;
-import com.github.cloudyrock.mongock.driver.mongodb.sync.v4.decorator.impl.MongoDataBaseDecoratorImpl;
-import com.github.cloudyrock.mongock.driver.mongodb.sync.v4.repository.MongoLockRepository;
 import io.changock.migration.api.exception.ChangockException;
 import io.changock.utils.annotation.NotThreadSafe;
 import org.bson.Document;
@@ -18,17 +19,18 @@ import java.util.HashSet;
 import java.util.Set;
 
 @NotThreadSafe
-public abstract class ChangockMongoSync4DriverBase<CHANGE_ENTRY extends ChangeEntry> extends ConnectionDriverBase<CHANGE_ENTRY> {
+public abstract class MongoCore3DriverBase<CHANGE_ENTRY extends ChangeEntry>
+    extends ConnectionDriverBase<CHANGE_ENTRY>
+    implements MongockConnectionDriver<CHANGE_ENTRY> {
 
   private static final String DEFAULT_CHANGELOG_COLLECTION_NAME = "changockChangeLog";
-  private final static String DEFAULT_LOCK_COLLECTION_NAME = "changockLock";
-
+  private static final String DEFAULT_LOCK_COLLECTION_NAME = "changockLock";
   protected final MongoDatabase mongoDatabase;
   protected String changeLogCollectionName = DEFAULT_CHANGELOG_COLLECTION_NAME;
   protected String lockCollectionName = DEFAULT_LOCK_COLLECTION_NAME;
   protected MongoLockRepository lockRepository;
 
-  public ChangockMongoSync4DriverBase(MongoDatabase mongoDatabase) {
+  public MongoCore3DriverBase(MongoDatabase mongoDatabase) {
     this.mongoDatabase = mongoDatabase;
   }
 
