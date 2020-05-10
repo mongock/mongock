@@ -12,7 +12,7 @@ import org.springframework.data.mongodb.core.MongoTemplate;
 import java.util.Set;
 
 @NotThreadSafe
-public class SpringDataMongo3Driver extends MongoSync4Driver {
+public class   SpringDataMongo3Driver extends MongoSync4Driver {
 
   private static final ForbiddenParametersMap FORBIDDEN_PARAMETERS_MAP;
 
@@ -26,16 +26,6 @@ public class SpringDataMongo3Driver extends MongoSync4Driver {
   public SpringDataMongo3Driver(MongoTemplate mongoTemplate) {
     super(mongoTemplate.getDb());
     this.mongoTemplate = mongoTemplate;
-  }
-
-  @Override
-  public void setChangeLogCollectionName(String changeLogCollectionName) {
-    super.setChangeLogCollectionName(changeLogCollectionName);
-  }
-
-  @Override
-  public void setLockCollectionName(String lockCollectionName) {
-    super.setLockCollectionName(lockCollectionName);
   }
 
   @Override

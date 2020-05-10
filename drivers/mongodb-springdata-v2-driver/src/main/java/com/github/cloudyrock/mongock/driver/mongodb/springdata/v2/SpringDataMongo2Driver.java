@@ -29,15 +29,6 @@ public class SpringDataMongo2Driver extends MongoCore3Driver {
   }
 
   @Override
-  public void setChangeLogCollectionName(String changeLogCollectionName) {
-    super.setChangeLogCollectionName(changeLogCollectionName);
-  }
-
-  public void setLockCollectionName(String lockCollectionName) {
-    super.setLockCollectionName(lockCollectionName);
-  }
-
-  @Override
   public void runValidation() throws ChangockException {
     super.runValidation();
 
