@@ -5,7 +5,7 @@
 * Spring 5 version must be grater(or equal) than 2.3.0.M2
 * It uses an alpha version of Mongock
 * Official documentation for Mongock V4.0.X has not been released yet
-* It uses a RC for Spring-data
+* It uses a RC for Spring-data, so spring milestone repository is required for maven to retrieve the dependencies
 * It requires a MongoDB instance running
 * Currently does not take into account changeLogs from previous versions. 
 This means it will probably re-run changeLogs from older migrations. 
