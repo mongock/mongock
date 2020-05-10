@@ -18,7 +18,9 @@ lock support. Actually, you would get an error if using MongoTemplate in your ch
 they won't be covered by the lock. **This will be provided in next releases of this version, though**
 * You will see a warn from spring-data like `Automatic index creation will be disabled by default as of Spring Data MongoDB 3.x`.
 For simplicity, we haven't set up the indexes manually(probably we'll need to do it when upgrading this project), but you should probably do.
-
+* There are two ChangeSet and @ChangeLog annotation pairs. One pair implementing in Mongock project and another pair implemented in Changock project
+(this is the core project in which Mongock is based on). Currently there is a bug and Changock annotations are not processed, only Mongock ones. This will bbe
+also fixed in next releases
 
 ## New Builder approach
 Before version 4, Mongock was tightly coupled to MongoDB driver and connection libraries, such as spring-data.
