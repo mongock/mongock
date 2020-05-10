@@ -3,19 +3,29 @@
   <parent>
     <artifactId>mongock</artifactId>
     <groupId>com.github.cloudyrock.mongock</groupId>
-    <version>4.0.1.alpha-SNAPSHOT</version>
+    <version>4.0.2.alpha-SNAPSHOT</version>
   </parent>
   <modelVersion>4.0.0</modelVersion>
 
   <artifactId>mongock-api</artifactId>
   <properties>
     <java.version>1.8</java.version>
+    <maven.compiler.target>1.8</maven.compiler.target>
+    <maven.compiler.source>1.8</maven.compiler.source>
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+    <maven.javadoc.failOnError>false</maven.javadoc.failOnError>
   </properties>
 
   <dependencies>
     <dependency>
       <groupId>com.github.cloudyrock.changock</groupId>
       <artifactId>changock-api</artifactId>
+      <version>${changock.api.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>com.github.cloudyrock.changock</groupId>
+      <artifactId>changock-runner-core</artifactId>
       <version>${changock.api.version}</version>
     </dependency>
 

@@ -5,13 +5,18 @@
   <parent>
     <artifactId>mongock</artifactId>
     <groupId>com.github.cloudyrock.mongock</groupId>
-    <version>4.0.1.alpha-SNAPSHOT</version>
+    <version>4.0.2.alpha-SNAPSHOT</version>
   </parent>
 
   <artifactId>mongock-standalone</artifactId>
+
   <properties>
-    <changock.runner.standalone.version>1.0.0.alpha</changock.runner.standalone.version>
-    <changock.driver.mongo.core.version>1.0.0.alpha</changock.driver.mongo.core.version>
+    <java.version>1.8</java.version>
+    <maven.compiler.target>1.8</maven.compiler.target>
+    <maven.compiler.source>1.8</maven.compiler.source>
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+    <maven.javadoc.failOnError>false</maven.javadoc.failOnError>
   </properties>
 
   <dependencies>
