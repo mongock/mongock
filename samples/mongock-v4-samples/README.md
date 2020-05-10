@@ -1,7 +1,7 @@
 
 # Sample project for Mongock V4.x.x with Spring 5 and Spring-data 3
 
-##Notes
+## Notes
 * Spring 5 version must be grater(or equal) than 2.3.0.M2
 * It uses an alpha version of Mongock
 * Official documentation for Mongock V4.0.X has not been released yet
@@ -20,7 +20,7 @@ they won't be covered by the lock. **This will be provided in next releases of t
 For simplicity, we haven't set up the indexes manually(probably we'll need to do it when upgrading this project), but you should probably do.
 
 
-##New Builder approach
+## New Builder approach
 Before version 4, Mongock was tightly coupled to MongoDB driver and connection libraries, such as spring-data.
 The issues with this approach is that in order to keep evolving Mongock with new features and supporting new versions
 of these libraries, it forces users to upgrade to these libraries, when could not be desired or even possible.
