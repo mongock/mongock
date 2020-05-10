@@ -7,6 +7,8 @@ import org.springframework.data.mongodb.core.index.CompoundIndexes;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.mapping.Field;
 
+import java.time.ZonedDateTime;
+
 @Document(collection = Mongock4Spring5SpringData3App.CLIENTS_COLLECTION_NAME)
 @CompoundIndexes({
     @CompoundIndex(def = "{'name':1, 'deleted':1}", name = "user_name_idx"),
@@ -18,6 +20,9 @@ public class Client {
 
   @Id
   private String id;
+
+  @Field
+  private ZonedDateTime dateTime;
 
   @Field("name")
   private String name;
@@ -38,6 +43,7 @@ public class Client {
   private boolean deleted;
 
   public Client() {
+    this.dateTime = ZonedDateTime.now();
   }
 
   public Client(String name, String email, String phone, String country) {
@@ -45,6 +51,7 @@ public class Client {
   }
 
   public Client(String name, String email, String phone, String country, ActivationModel activation) {
+    this();
     this.name = name;
     this.email = email;
     this.phone = phone;
@@ -89,6 +96,10 @@ public class Client {
     return this;
   }
 
+  public Client setDateTime(ZonedDateTime dateTime) {
+    this.dateTime = dateTime;
+    return this;
+  }
 
   public String getId() {
     return id;
@@ -116,5 +127,9 @@ public class Client {
 
   public boolean isDeleted() {
     return deleted;
+  }
+
+  public ZonedDateTime getDateTime() {
+    return dateTime;
   }
 }

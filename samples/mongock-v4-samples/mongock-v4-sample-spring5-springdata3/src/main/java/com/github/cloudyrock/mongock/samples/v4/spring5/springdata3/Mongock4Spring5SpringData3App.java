@@ -39,12 +39,12 @@ public class Mongock4Spring5SpringData3App {
                                                                           @Value("${mongock.lock.maxWaitingForLockMinutes:3}") long maxWaitingForLockMinutes,
                                                                           @Value("${mongock.lock.maxTries:3}") int maxTries) {
     SpringDataMongo3Driver driver = new SpringDataMongo3Driver(mongoTemplate);
-    driver.setLockSettings(lockAcquiredForMinutes, maxWaitingForLockMinutes, maxTries);//optional
     driver.setChangeLogCollectionName("new_changelog_collection_name");//optional
     driver.setLockCollectionName("new_lock_collection_name");//optional
     return MongockSpring5.builder()
         .setDriver(driver)
         .addChangeLogsScanPackage(ClientChangeLog.class.getPackage().getName())
+        .setLockConfig(lockAcquiredForMinutes, maxWaitingForLockMinutes, maxTries)//optional
         .setSpringContext(springContext)
         .buildApplicationRunner();
   }
@@ -57,12 +57,12 @@ public class Mongock4Spring5SpringData3App {
                                                                                     @Value("${mongock.lock.maxWaitingForLockMinutes:3}") long maxWaitingForLockMinutes,
                                                                                     @Value("${mongock.lock.maxTries:3}") int maxTries) {
     SpringDataMongo3Driver driver = new SpringDataMongo3Driver(mongoTemplate);
-    driver.setLockSettings(lockAcquiredForMinutes, maxWaitingForLockMinutes, maxTries);//optional
     driver.setChangeLogCollectionName("new_changelog_collection_name");//optional
     driver.setLockCollectionName("new_lock_collection_name");//optional
     return MongockSpring5.builder()
         .setDriver(driver)
         .addChangeLogsScanPackage(ClientChangeLog.class.getPackage().getName())
+        .setLockConfig(lockAcquiredForMinutes, maxWaitingForLockMinutes, maxTries)//optional
         .setSpringContext(springContext)
         .buildInitializingBeanRunner();
   }
