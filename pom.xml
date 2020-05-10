@@ -11,6 +11,7 @@
     <module>mongock-spring</module>
     <module>mongock-api</module>
     <module>drivers</module>
+    <module>samples</module>
   </modules>
 
   <groupId>com.github.cloudyrock.mongock</groupId>
