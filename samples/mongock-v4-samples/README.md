@@ -16,6 +16,8 @@ Both provide the same API, so you don't miss anything, but Mongo**ck**Template i
 lock support. Actually, you would get an error if using MongoTemplate in your changeLogs.
 * If you are using spring-data, currently, if you use your own spring repositories in your changeLogs,
 they won't be covered by the lock. **This will be provided in next releases of this version, though**
+* You will see a warn from spring-data like `Automatic index creation will be disabled by default as of Spring Data MongoDB 3.x`.
+For simplicity, we haven't set up the indexes manually(probably we'll need to do it when upgrading this project), but you should probably do.
 
 
 ##New Builder approach
