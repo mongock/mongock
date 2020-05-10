@@ -29,11 +29,11 @@ So a mechanism for supporting older drivers and connection libraries, while keep
 For this reason we have started a new approach for building Mongock. Now you need two things: a runner and a driver.
 * Driver: It's the connection library or MongoDB java driver. It's responsible of everything related to the persistence 
 of the changeLogs, as well as  providing the relevant tools to the changeSets to access to database
-(for example, in case of spring data, providing Mongo**ck**Template, which is a decorator )
+(for example, in case of spring data, providing Mongo**ck**Template, etc.)
 * Runner: It's wrapper of the driver, which is responsible of taking the changeLogs classes, process them and use
 the driver to interact with the database. This is very related with the framework used. Currently there are two options, 
-standalone and spring-5(which also provide two other options ApplicationRunner and InitializingBean). But other options 
-could be added in the future in order to support other Frameworks, such as Micronaut, etc.
+standalone and spring-5(which also provides two other options ApplicationRunner and InitializingBean). But other options 
+could be added in the future in order to support other frameworks, such as Micronaut, etc.
 
 
 
