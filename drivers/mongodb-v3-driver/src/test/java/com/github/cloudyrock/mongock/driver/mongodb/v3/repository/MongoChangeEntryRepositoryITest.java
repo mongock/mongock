@@ -1,6 +1,6 @@
-package com.github.cloudyrock.mongock.driver.mongodb.sync.v4.repository;
+package com.github.cloudyrock.mongock.driver.mongodb.v3.repository;
 
-import com.github.cloudyrock.mongock.driver.mongodb.sync.v4.driver.util.IntegrationTestBase;
+import com.github.cloudyrock.mongock.driver.mongodb.v3.driver.util.IntegrationTestBase;
 import io.changock.driver.api.entry.ChangeEntry;
 import io.changock.driver.api.entry.ChangeState;
 import io.changock.migration.api.exception.ChangockException;
@@ -19,7 +19,7 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
 
-public class MongoChangeEntryRepositoryTest extends IntegrationTestBase {
+public class MongoChangeEntryRepositoryITest extends IntegrationTestBase {
 
   private static final String CHANGE_ENTRY_COLLECTION_NAME = "dbchangelog";
   private MongoChangeEntryRepository<ChangeEntry> repository;
@@ -133,4 +133,5 @@ public class MongoChangeEntryRepositoryTest extends IntegrationTestBase {
     }
     collection.insertOne(existingEntry);
   }
+
 }

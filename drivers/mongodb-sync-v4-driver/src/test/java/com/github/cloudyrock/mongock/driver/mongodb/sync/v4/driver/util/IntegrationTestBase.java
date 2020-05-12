@@ -30,6 +30,7 @@ public class IntegrationTestBase {
     @After
     public void tearDown() {
         collection.deleteMany(new Document());
+        mongoDatabase.drop();
     }
 
     public MongoDatabase getDataBase() {

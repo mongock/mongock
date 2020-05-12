@@ -14,12 +14,17 @@ import io.changock.migration.api.exception.ChangockException;
 import org.bson.Document;
 import org.junit.Before;
 import org.junit.Test;
+import org.mockito.Mockito;
 
 import java.util.Date;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 
 
 public class MongoLockRepositoryITest extends IntegrationTestBase {
@@ -27,16 +32,43 @@ public class MongoLockRepositoryITest extends IntegrationTestBase {
   private static final String LOCK_COLLECTION_NAME = "changockL ock";
   private static final String LOCK_KEY = "LOCK_KEY";
 
-  private LockRepository<Document> repository;
+  private MongoLockRepository repository;
 
 
   @Before
   public void setUp() {
     collection = getDataBase().getCollection(LOCK_COLLECTION_NAME);
-    repository = new MongoLockRepository(collection);
+    repository = Mockito.spy(new MongoLockRepository(collection));
     repository.initialize();
   }
 
+
+
+  @Test
+  public void shouldCreateUniqueIndex_whenEnsureIndex_IfNotCreatedYet() throws ChangockException {
+
+    //then
+    verify(repository, times(1)).createRequiredUniqueIndex();
+    // and not
+    verify(repository, times(0)).dropIndex(any(Document.class));
+  }
+
+  @Test
+  public void shouldNoCreateUniqueIndex_whenEnsureIndex_IfAlreadyCreated() throws ChangockException {
+    // given
+    collection = getDataBase().getCollection(LOCK_COLLECTION_NAME);
+    repository = Mockito.spy(new MongoLockRepository(collection));
+
+    doReturn(true).when(repository).isUniqueIndex(any(Document.class));
+
+    // when
+    repository.initialize();
+
+    //then
+    verify(repository, times(0)).createRequiredUniqueIndex();
+    // and not
+    verify(repository, times(0)).dropIndex(new Document());
+  }
 
 
 

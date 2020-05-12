@@ -1,11 +1,13 @@
 package com.github.cloudyrock.mongock.driver.mongodb.v3.repository;
 
 import com.mongodb.client.MongoCollection;
+import com.mongodb.client.model.Filters;
 import io.changock.driver.api.entry.ChangeEntry;
 import io.changock.driver.api.entry.ChangeState;
 import io.changock.driver.core.entry.ChangeEntryRepository;
 import io.changock.migration.api.exception.ChangockException;
 import org.bson.Document;
+import org.bson.conversions.Bson;
 
 import java.lang.reflect.Field;
 
@@ -43,9 +45,9 @@ public class MongoChangeEntryRepository<CHANGE_ENTRY extends ChangeEntry> extend
   }
 
   @Override
-  public boolean isNewChange(String changeSetId, String author) throws ChangockException {
+  public boolean isAlreadyExecuted(String changeSetId, String author) throws ChangockException {
     Document entry = collection.find(buildSearchQueryDBObject(changeSetId, author)).first();
-    return entry == null || entry.isEmpty();
+    return entry != null && !entry.isEmpty();
   }
 
   @Override
@@ -54,15 +56,22 @@ public class MongoChangeEntryRepository<CHANGE_ENTRY extends ChangeEntry> extend
   }
 
   /**
-   *
+   * Check if a changeSet with given changeSetId and author and
+   * (state == EXECUTED OR state == null OR estate doesn't exists)
    * @param changeSetId changeSetId
    * @param author author
-   * @return search document for changeSetId, author and state==EXECUTED
+   * @return true if a changeSet with given changeSetId and author is already executed, false otherwise
    */
-  protected Document buildSearchQueryDBObject(String changeSetId, String author) {
-    return new Document()
-        .append(KEY_CHANGE_ID, changeSetId)
-        .append(KEY_AUTHOR, author)
-        .append(KEY_STATE, ChangeState.EXECUTED.name());
+  protected Bson buildSearchQueryDBObject(String changeSetId, String author) {
+    Bson executedStateOrNoExisting = Filters.or(
+        Filters.eq(KEY_STATE, ChangeState.EXECUTED.name()),
+        Filters.eq(KEY_STATE, null),
+        Filters.exists(KEY_STATE, false)
+    );
+    return Filters.and(
+        Filters.eq(KEY_CHANGE_ID, changeSetId),
+        Filters.eq(KEY_AUTHOR, author),
+        executedStateOrNoExisting
+    );
   }
 }

@@ -14,7 +14,7 @@ public class IntegrationTestBase {
 
     private static final String MONGO_CONTAINER = "mongo:3.1.5";
     private static final Integer MONGO_PORT = 27017;
-    private static final String DEFAULT_DATABASE_NAME = "test";
+    private static final String DEFAULT_DATABASE_NAME = "test_container";
     private MongoDatabase mongoDatabase;
     protected MongoCollection<Document> collection;
 
@@ -30,6 +30,7 @@ public class IntegrationTestBase {
     @After
     public void tearDown() {
         collection.deleteMany(new Document());
+        mongoDatabase.drop();
     }
 
     public MongoDatabase getDataBase() {
