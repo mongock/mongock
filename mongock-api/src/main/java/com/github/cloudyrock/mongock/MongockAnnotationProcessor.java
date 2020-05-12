@@ -19,7 +19,7 @@ public class MongockAnnotationProcessor extends ChangockAnnotationProcessor {
 
   @Override
   public boolean isChangeSetAnnotated(Method method) {
-    return method.isAnnotationPresent(ChangeSet.class);
+    return super.isChangeSetAnnotated(method) || method.isAnnotationPresent(ChangeSet.class);
   }
 
   @Override

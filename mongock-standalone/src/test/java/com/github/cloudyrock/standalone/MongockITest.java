@@ -3,6 +3,7 @@ package com.github.cloudyrock.standalone;
 import com.github.cloudyrock.mongock.driver.mongodb.sync.v4.driver.MongoSync4Driver;
 import com.github.cloudyrock.standalone.test.changelogs.MongockTestResource;
 import com.github.cloudyrock.standalone.test.changelogs.runAlways.RunAlwaysChangeLog;
+import com.github.cloudyrock.standalone.test.changelogs.withChangockAnnotations.ChangeLogwithChangockAnnotations;
 import com.github.cloudyrock.standalone.utils.IndependentDbIntegrationTestBase;
 import org.bson.Document;
 import org.junit.Before;
@@ -112,6 +113,27 @@ public class MongockITest extends IndependentDbIntegrationTestBase {
     assertEquals(13L, metadataResult.get("long_key"));
     assertEquals(true, metadataResult.get("boolean_key"));
 
+  }
+
+  @Test
+  public void shouldExecuteChangockAnnotations() {
+    // given
+    MongockStandalone.Runner runner = MongockStandalone.builder()
+        .setDriver(getDriver())
+        .addChangeLogsScanPackage(ChangeLogwithChangockAnnotations.class.getPackage().getName())
+        .setDefaultLock()
+        .buildRunner();
+
+
+    // when
+    runner.execute();
+
+    // then
+    final long changeWithChangockAnnotations = db.getCollection(CHANGELOG_COLLECTION_NAME).countDocuments(new Document()
+        .append("changeId", "withChangockAnnotations")
+        .append("author", "testuser")
+        .append("state", "EXECUTED"));
+    assertEquals(1, changeWithChangockAnnotations);
   }
 
   private MongoSync4Driver getDriver() {

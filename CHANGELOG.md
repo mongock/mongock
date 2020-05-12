@@ -6,7 +6,7 @@
 * New builder API: Introduced drivers
 ### Bugs fixed
 * Take older changeSets with no state as executed
-
+* Fixed Changock annotations not processed
 # 3.2.4
 ### Features
 * [New builder support for MongoTemplate](https://github.com/cloudyrock/mongock/issues/127)

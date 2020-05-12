@@ -2,6 +2,7 @@ package com.github.cloudyrock.spring;
 
 import com.github.cloudyrock.mongock.driver.mongodb.springdata.v3.SpringDataMongo3Driver;
 import com.github.cloudyrock.spring.test.changelogs.MongockTestResource;
+import com.github.cloudyrock.spring.test.changelogs.withChangockAnnotations.ChangeLogwithChangockAnnotations;
 import com.github.cloudyrock.spring.utils.IndependentDbIntegrationTestBase;
 import org.bson.Document;
 import org.junit.Assert;
@@ -146,6 +147,27 @@ public class InitializatingITest extends IndependentDbIntegrationTestBase {
     Assert.assertEquals(2, stateList.size());
     Assert.assertTrue(stateList.contains("EXECUTED"));
     Assert.assertTrue(stateList.contains("IGNORED"));
+  }
+
+  @Test
+  public void shouldExecuteChangockAnnotations() {
+    // given
+    MongockSpring5.MongockApplicationRunner runner = MongockSpring5.builder()
+        .setDriver(buildDriver())
+        .addChangeLogsScanPackage(ChangeLogwithChangockAnnotations.class.getPackage().getName())
+        .setSpringContext(springContextMock)
+        .setDefaultLock()
+        .buildApplicationRunner();
+
+    // when
+    runner.execute();
+
+    // then
+    final long changeWithChangockAnnotations = mongoTemplate.getDb().getCollection(CHANGELOG_COLLECTION_NAME).countDocuments(new Document()
+        .append("changeId", "withChangockAnnotations")
+        .append("author", "testuser")
+        .append("state", "EXECUTED"));
+    assertEquals(1, changeWithChangockAnnotations);
   }
 
 
