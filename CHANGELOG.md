@@ -1,4 +1,11 @@
-
+# 4.0.2
+### Features
+* Added support for Mongodb driver sync 4
+* Added support for spring-data 3
+### Breaking changes
+* New builder API: Introduced drivers
+### Bugs fixed
+* Take older changeSets with no state as executed
 
 # 3.2.4
 ### Features
