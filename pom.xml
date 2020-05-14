@@ -195,14 +195,6 @@
     <!-- GPG Signature on release -->
     <profile>
       <id>release-sign-artifacts</id>
-      <modules>
-        <module>mongock-standalone</module>
-        <module>mongock-spring-v5</module>
-        <module>mongock-api</module>
-        <module>drivers</module>
-<!--        <module>samples</module>-->
-        <module>mongock-bom</module>
-      </modules>
       <activation>
         <property>
           <name>performRelease</name>
