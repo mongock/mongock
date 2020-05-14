@@ -9,7 +9,7 @@
   </parent>
   <groupId>com.github.cloudyrock.mongock</groupId>
   <artifactId>mongock-v4-sample-spring5-springdata3</artifactId>
-  <version>2.3.0.M2</version>
+  <version>2.3.1.M2-SNAPSHOT</version>
   <modelVersion>4.0.0</modelVersion>
 
   <!--
@@ -78,9 +78,4 @@
       </plugin>
     </plugins>
   </build>
-
-
-  <scm>
-    <tag>mongock-4.0.2.alpha</tag>
-  </scm>
 </project>
