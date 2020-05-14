@@ -22,7 +22,6 @@
     <dependency>
       <groupId>com.github.cloudyrock.changock</groupId>
       <artifactId>changock-driver-core</artifactId>
-      <version>${changock.driver-core.version}</version>
     </dependency>
     <dependency>
       <groupId>com.github.cloudyrock.mongock</groupId>
@@ -49,14 +48,12 @@
     <dependency>
       <groupId>com.github.cloudyrock.changock</groupId>
       <artifactId>changock-decorator-util</artifactId>
-      <version>${changock.test-util.version}</version>
       <scope>test</scope>
     </dependency>
 
     <dependency>
       <groupId>com.github.cloudyrock.changock</groupId>
       <artifactId>changock-test-runner</artifactId>
-      <version>${changock.test-util.version}</version>
       <scope>test</scope>
     </dependency>
     <dependency>

@@ -26,11 +26,9 @@
       <version>${project.version}</version>
     </dependency>
 
-
     <dependency>
       <groupId>com.github.cloudyrock.changock</groupId>
       <artifactId>changock-standalone-runner</artifactId>
-      <version>${changock.runner.standalone.version}</version>
     </dependency>
 
     <dependency>

@@ -8,7 +8,7 @@
     <version>4.0.2.alpha-SNAPSHOT</version>
   </parent>
 
-  <artifactId>mongock-spring</artifactId>
+  <artifactId>mongock-spring-v5</artifactId>
   <properties>
     <java.version>1.8</java.version>
     <maven.compiler.target>1.8</maven.compiler.target>
@@ -27,7 +27,6 @@
     <dependency>
       <groupId>com.github.cloudyrock.changock</groupId>
       <artifactId>changock-spring-v5-runner</artifactId>
-      <version>${changock.runner.spring.version}</version>
     </dependency>
 
 
@@ -44,12 +43,6 @@
       <groupId>org.mockito</groupId>
       <artifactId>mockito-all</artifactId>
       <version>1.10.19</version>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
-      <groupId>com.github.fakemongo</groupId>
-      <artifactId>fongo</artifactId>
-      <version>2.1.1</version>
       <scope>test</scope>
     </dependency>
 
