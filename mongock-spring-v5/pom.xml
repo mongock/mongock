@@ -29,8 +29,22 @@
       <artifactId>changock-spring-v5-runner</artifactId>
     </dependency>
 
-
-
+    <!-- SPRING -->
+    <dependency>
+      <groupId>org.springframework</groupId>
+      <artifactId>spring-beans</artifactId>
+      <version>${spring.v5.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.springframework</groupId>
+      <artifactId>spring-context</artifactId>
+      <version>${spring.v5.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot</artifactId>
+      <version>${springboot.v2.version}</version>
+    </dependency>
 
     <!-- TEST -->
     <dependency>
