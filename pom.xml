@@ -18,7 +18,6 @@
     <module>mongock-spring-v5</module>
     <module>mongock-api</module>
     <module>drivers</module>
-    <module>samples</module>
     <module>mongock-bom</module>
   </modules>
 
