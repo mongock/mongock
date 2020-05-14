@@ -15,13 +15,13 @@
   <description>Mongock dependency management</description>
 
   <properties>
-    <mongock.driver.spring-data-v2.version>4.0.2</mongock.driver.spring-data-v2.version>
-    <mongock.driver.spring-data-v3.version>4.0.2</mongock.driver.spring-data-v3.version>
-    <mongock.driver.mongodb-v3.version>4.0.2</mongock.driver.mongodb-v3.version>
-    <mongock.driver.mongodb-sync-v4.version>4.0.2</mongock.driver.mongodb-sync-v4.version>
-    <mongock.api.version>4.0.2</mongock.api.version>
-    <mongock.spring-v5.version>4.0.2</mongock.spring-v5.version>
-    <mongock.standalone.version>4.0.2</mongock.standalone.version>
+    <mongock.driver.spring-data-v2.version>4.0.2.alpha</mongock.driver.spring-data-v2.version>
+    <mongock.driver.spring-data-v3.version>4.0.2.alpha</mongock.driver.spring-data-v3.version>
+    <mongock.driver.mongodb-v3.version>4.0.2.alpha</mongock.driver.mongodb-v3.version>
+    <mongock.driver.mongodb-sync-v4.version>4.0.2.alpha</mongock.driver.mongodb-sync-v4.version>
+    <mongock.api.version>4.0.2.alpha</mongock.api.version>
+    <mongock.spring-v5.version>4.0.2.alpha</mongock.spring-v5.version>
+    <mongock.standalone.version>4.0.2.alpha</mongock.standalone.version>
   </properties>
   <dependencyManagement>
     <dependencies>
