@@ -60,7 +60,7 @@
     <!-- TEST -->
     <dependency>
       <groupId>com.github.cloudyrock.changock</groupId>
-      <artifactId>changock-test-util</artifactId>
+      <artifactId>changock-decorator-util</artifactId>
       <version>${changock.test-util.version}</version>
       <scope>test</scope>
     </dependency>
