@@ -12,6 +12,8 @@ script: .infra/mvn_sonar.sh
 branches:
   only:
     - master
+    - v3
+    - v4
 
 cache:
   directories:
