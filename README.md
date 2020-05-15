@@ -17,6 +17,8 @@
 ## LAST NEWS :bangbang::bangbang::collision::collision:
 > **3.2.5 is released with minor bux fixes** 
 
+> **We are working on version 4!!** 
+
 ## Table of contents
 
   * [Why Mongock](#why-mongock)
@@ -85,14 +87,23 @@ In [here](https://github.com/cloudyrock/mongock-samples) you can find some sampl
 If you would like to contribute to Mongock project, please read [how to contribute](././community/CONTRIBUTING.md) for details on our collaboration process and standards.
 
 ## Roadmap
-### Version 4.0.0
-* Non-fail-fast changeSets
-* Richer data in changelogCollection
+### Version 4.0.0 (we are working on it!!)
+```diff
+> Green means already available in last 4.0.X.alpha version
+! Orange means partially available in last 4.0.X.alpha version
+```
+```diff
++ Support for Mongodb driver sync 4
++ Support for Spring data 3
++ Non-fail-fast changeSets
++ Be able to use Spring Data repository safely with the lock in ChangeSets
++ Custom injections in Spring via context covered by Lock meachanism
+! Richer data in changelogCollection
+```
 * Migration validation
 * Undo operations
-* Be able to use Spring Data repository safely with the lock in ChangeSets
 * Allow multiple changeLog packages
-* Custom injections in standalone and Spring(right now only possible in Spring boot via Spring Application Context)
+* Custom injections in Standalone via context covered by Lock meachanism
 
 ### What's up next
 * Better and more information in changeLog collection
