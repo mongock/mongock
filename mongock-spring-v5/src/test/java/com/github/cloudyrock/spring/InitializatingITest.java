@@ -1,6 +1,7 @@
 package com.github.cloudyrock.spring;
 
 import com.github.cloudyrock.mongock.driver.mongodb.springdata.v3.SpringDataMongo3Driver;
+import com.github.cloudyrock.spring.test.changelogs.AnotherMongockTestResource;
 import com.github.cloudyrock.spring.test.changelogs.MongockTestResource;
 import com.github.cloudyrock.spring.test.changelogs.withChangockAnnotations.ChangeLogwithChangockAnnotations;
 import com.github.cloudyrock.spring.utils.IndependentDbIntegrationTestBase;
@@ -140,7 +141,7 @@ public class InitializatingITest extends IndependentDbIntegrationTestBase {
 
     mongoTemplate.getDb().getCollection(CHANGELOG_COLLECTION_NAME)
         .find(new Document()
-            .append("changeLogClass", "AnotherMongockTestResource")
+            .append("changeLogClass", AnotherMongockTestResource.class.getName())
             .append("changeSetMethod", "testChangeSet"))
         .map(document-> document.getString("state"))
         .forEach(stateList::add);
