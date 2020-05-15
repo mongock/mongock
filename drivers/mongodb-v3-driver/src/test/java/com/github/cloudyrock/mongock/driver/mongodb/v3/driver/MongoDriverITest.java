@@ -1,6 +1,7 @@
 package com.github.cloudyrock.mongock.driver.mongodb.v3.driver;
 
 
+import com.github.cloudyrock.mongock.driver.mongodb.v3.driver.util.CallVerifier;
 import com.mongodb.client.FindIterable;
 import com.mongodb.client.MongoCursor;
 import com.mongodb.client.MongoDatabase;
@@ -9,7 +10,7 @@ import com.github.cloudyrock.mongock.driver.mongodb.v3.driver.changelogs.integra
 import com.github.cloudyrock.mongock.driver.mongodb.v3.driver.changelogs.integration.test1.withrunalways.WithRunAlways;
 import com.github.cloudyrock.mongock.driver.mongodb.v3.driver.changelogs.integration.test2.ChangeLogFailure;
 import com.github.cloudyrock.mongock.driver.mongodb.v3.driver.changelogs.integration.test3.ChangeLogEnsureDecorator;
-import com.github.cloudyrock.mongock.driver.mongodb.v3.driver.util.CallVerifier;
+import com.github.cloudyrock.mongock.driver.mongodb.v3.driver.util.CallVerifierImpl;
 import com.github.cloudyrock.mongock.driver.mongodb.v3.driver.util.IntegrationTestBase;
 import io.changock.migration.api.annotations.ChangeSet;
 import io.changock.migration.api.exception.ChangockException;
@@ -197,7 +198,7 @@ public class MongoDriverITest extends IntegrationTestBase {
 
   @Test
   public void shouldPassMongoDatabaseDecoratorToChangeSet() {
-    CallVerifier callVerifier = new CallVerifier();
+    CallVerifierImpl callVerifier = new CallVerifierImpl();
     collection = this.getDataBase().getCollection(CHANGELOG_COLLECTION_NAME);
     TestChangockRunner.builder()
         .setDriver(new MongoCore3Driver(this.getDataBase()))
@@ -205,12 +206,12 @@ public class MongoDriverITest extends IntegrationTestBase {
         .addDependency(CallVerifier.class, callVerifier)
         .build()
         .execute();
-    assertEquals(1, callVerifier.counter);
+    assertEquals(1, callVerifier.getCounter());
   }
 
   @Test
   public void shouldPrioritizeConnectorOverStandardDependencies_WhenThereIsConflict() {
-    CallVerifier callVerifier = new CallVerifier();
+    CallVerifierImpl callVerifier = new CallVerifierImpl();
     collection = this.getDataBase().getCollection(CHANGELOG_COLLECTION_NAME);
     TestChangockRunner.builder()
         .setDriver(new MongoCore3Driver(this.getDataBase()))
@@ -219,7 +220,7 @@ public class MongoDriverITest extends IntegrationTestBase {
         .addDependency(MongoDatabase.class, mock(MongoDatabase.class))// shouldn't use this, the one from the connector instead
         .build()
         .execute();
-    assertEquals(1, callVerifier.counter);
+    assertEquals(1, callVerifier.getCounter());
   }
 
   private void checkMetadata(Map metadataResult) {
