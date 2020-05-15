@@ -6,6 +6,7 @@ import com.github.cloudyrock.mongock.driver.mongodb.sync.v4.driver.changelogs.in
 import com.github.cloudyrock.mongock.driver.mongodb.sync.v4.driver.changelogs.integration.test2.ChangeLogFailure;
 import com.github.cloudyrock.mongock.driver.mongodb.sync.v4.driver.changelogs.integration.test3.ChangeLogEnsureDecorator;
 import com.github.cloudyrock.mongock.driver.mongodb.sync.v4.driver.util.CallVerifier;
+import com.github.cloudyrock.mongock.driver.mongodb.sync.v4.driver.util.CallVerifierImpl;
 import com.github.cloudyrock.mongock.driver.mongodb.sync.v4.driver.util.IntegrationTestBase;
 import com.mongodb.client.FindIterable;
 import com.mongodb.client.MongoCursor;
@@ -30,6 +31,7 @@ import java.util.UUID;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.fail;
 import static org.mockito.Mockito.mock;
 
 public class MongoDriverITest extends IntegrationTestBase {
@@ -197,7 +199,7 @@ public class MongoDriverITest extends IntegrationTestBase {
 
   @Test
   public void shouldPassMongoDatabaseDecoratorToChangeSet() {
-    CallVerifier callVerifier = new CallVerifier();
+    CallVerifierImpl callVerifier = new CallVerifierImpl();
     collection = this.getDataBase().getCollection(CHANGELOG_COLLECTION_NAME);
     TestChangockRunner.builder()
         .setDriver(new MongoSync4Driver(this.getDataBase()))
@@ -205,12 +207,12 @@ public class MongoDriverITest extends IntegrationTestBase {
         .addDependency(CallVerifier.class, callVerifier)
         .build()
         .execute();
-    assertEquals(1, callVerifier.counter);
+    assertEquals(1, callVerifier.getCounter());
   }
 
   @Test
   public void shouldPrioritizeConnectorOverStandardDependencies_WhenThereIsConflict() {
-    CallVerifier callVerifier = new CallVerifier();
+    CallVerifierImpl callVerifier = new CallVerifierImpl();
     collection = this.getDataBase().getCollection(CHANGELOG_COLLECTION_NAME);
     TestChangockRunner.builder()
         .setDriver(new MongoSync4Driver(this.getDataBase()))
@@ -219,7 +221,7 @@ public class MongoDriverITest extends IntegrationTestBase {
         .addDependency(MongoDatabase.class, mock(MongoDatabase.class))// shouldn't use this, the one from the connector instead
         .build()
         .execute();
-    assertEquals(1, callVerifier.counter);
+    assertEquals(1, callVerifier.getCounter());
   }
 
   private void checkMetadata(Map metadataResult) {

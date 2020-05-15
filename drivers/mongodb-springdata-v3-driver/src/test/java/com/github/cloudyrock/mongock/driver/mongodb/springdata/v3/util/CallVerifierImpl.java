@@ -1,4 +1,5 @@
 package com.github.cloudyrock.mongock.driver.mongodb.springdata.v3.util;
 
-public interface CallVerifier {
+public class CallVerifier {
+    public int counter = 0;
 }
