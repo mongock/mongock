@@ -7,6 +7,7 @@ import com.github.cloudyrock.mongock.driver.mongodb.springdata.v3.integration.te
 import com.github.cloudyrock.mongock.driver.mongodb.springdata.v3.integration.test3.ChangeLogEnsureDecorator;
 import com.github.cloudyrock.mongock.driver.mongodb.springdata.v3.integration.test4.ChangeLogWithMongoTemplate;
 import com.github.cloudyrock.mongock.driver.mongodb.springdata.v3.util.CallVerifier;
+import com.github.cloudyrock.mongock.driver.mongodb.springdata.v3.util.CallVerifierImpl;
 import com.github.cloudyrock.mongock.driver.mongodb.springdata.v3.util.IntegrationTestBase;
 import io.changock.migration.api.exception.ChangockException;
 import io.changock.runner.standalone.TestChangockRunner;
@@ -120,7 +121,7 @@ public class MongoDriverITest extends IntegrationTestBase {
 
   @Test
   public void shouldPassDecoratorsToChangeSet() {
-    CallVerifier callVerifier = new CallVerifier();
+    CallVerifierImpl callVerifier = new CallVerifierImpl();
     collection = this.getDataBase().getCollection(CHANGELOG_COLLECTION_NAME);
     TestChangockRunner runner = TestChangockRunner.builder()
         .setDriver(new SpringDataMongo3Driver(this.getMongoTemplate()))
@@ -129,22 +130,21 @@ public class MongoDriverITest extends IntegrationTestBase {
         .build();
 
     runner.execute();
-    assertEquals(2, callVerifier.counter);
+    assertEquals(2, callVerifier.getCounter());
   }
 
   @Test
   public void shouldPrioritizeConnectorOverStandardDependencies_WhenThereIsConflict() {
-    CallVerifier callVerifier = new CallVerifier();
+    CallVerifierImpl callVerifier = new CallVerifierImpl();
     collection = this.getDataBase().getCollection(CHANGELOG_COLLECTION_NAME);
     TestChangockRunner runner = TestChangockRunner.builder()
         .setDriver(new SpringDataMongo3Driver(this.getMongoTemplate()))
         .addChangeLogsScanPackage(ChangeLogEnsureDecorator.class.getPackage().getName())
         .addDependency(CallVerifier.class, callVerifier)
-        .addDependency(MongoTemplate.class, mock(MongoTemplate.class))// shouldn't use this, the one from the connector instead
         .build();
 
     runner.execute();
-    assertEquals(2, callVerifier.counter);
+    assertEquals(2, callVerifier.getCounter());
   }
 
   @Test
