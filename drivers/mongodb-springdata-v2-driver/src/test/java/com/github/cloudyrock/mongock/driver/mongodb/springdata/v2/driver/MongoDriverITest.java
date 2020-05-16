@@ -24,6 +24,7 @@ import java.util.Map;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.fail;
 import static org.mockito.Mockito.mock;
 
 public class MongoDriverITest extends IntegrationTestBase {
@@ -41,7 +42,6 @@ public class MongoDriverITest extends IntegrationTestBase {
   private static final String KEY_METADATA = "metadata";
   @Rule
   public ExpectedException exceptionRule = ExpectedException.none();
-
 
   @Test
   public void shouldRunAllChangeLogsSuccessfully() {
