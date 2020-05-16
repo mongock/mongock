@@ -104,6 +104,7 @@ If you would like to contribute to Mongock project, please read [how to contribu
 * Undo operations
 * Allow multiple changeLog packages
 * Custom injections in Standalone via context covered by Lock meachanism
+* Re-branded documentation supporting several Mongock(and mongodb driver) version
 
 ### What's up next
 * Better and more information in changeLog collection
