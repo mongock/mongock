@@ -19,7 +19,7 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
 
-public class MongoChangeEntryRepositoryTest extends IntegrationTestBase {
+public class MongoChangeEntryRepositoryITest extends IntegrationTestBase {
 
   private static final String CHANGE_ENTRY_COLLECTION_NAME = "dbchangelog";
   private MongoChangeEntryRepository<ChangeEntry> repository;

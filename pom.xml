@@ -159,8 +159,29 @@
         <version>3.0.0-M4</version>
         <configuration>
           <skipTests>false</skipTests>
+          <excludes>
+            <exclude>**/*ITest.java</exclude>
+          </excludes>
         </configuration>
+        <executions>
+          <execution>
+            <id>integration-test</id>
+            <goals>
+              <goal>test</goal>
+            </goals>
+            <phase>integration-test</phase>
+            <configuration>
+              <excludes>
+                <exclude>none</exclude>
+              </excludes>
+              <includes>
+                <include>**/*ITest.java</include>
+              </includes>
+            </configuration>
+          </execution>
+        </executions>
       </plugin>
+
     </plugins>
   </build>
 
