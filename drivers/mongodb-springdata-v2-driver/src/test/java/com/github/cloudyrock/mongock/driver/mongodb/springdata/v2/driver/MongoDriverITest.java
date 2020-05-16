@@ -44,11 +44,6 @@ public class MongoDriverITest extends IntegrationTestBase {
   public ExpectedException exceptionRule = ExpectedException.none();
 
   @Test
-  public void shouldFail() {
-    fail();
-  }
-
-  @Test
   public void shouldRunAllChangeLogsSuccessfully() {
     collection = this.getDataBase().getCollection(CHANGELOG_COLLECTION_NAME);
     runChanges(new SpringDataMongo2Driver(getMongoTemplate()), CHANGELOG_COLLECTION_NAME);
