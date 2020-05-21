@@ -23,8 +23,8 @@ public abstract class MongoSync4DriverBase<CHANGE_ENTRY extends ChangeEntry>
     extends ConnectionDriverBase<CHANGE_ENTRY>
     implements MongockConnectionDriver<CHANGE_ENTRY> {
 
-  private static final String DEFAULT_CHANGELOG_COLLECTION_NAME = "changockChangeLog";
-  private final static String DEFAULT_LOCK_COLLECTION_NAME = "changockLock";
+  private static final String DEFAULT_CHANGELOG_COLLECTION_NAME = "mongockChangeLog";
+  private static final String DEFAULT_LOCK_COLLECTION_NAME = "mongockLock";
 
   protected final MongoDatabase mongoDatabase;
   protected String changeLogCollectionName = DEFAULT_CHANGELOG_COLLECTION_NAME;
