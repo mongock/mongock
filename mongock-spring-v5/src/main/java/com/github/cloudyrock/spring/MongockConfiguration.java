@@ -10,15 +10,34 @@ import org.springframework.context.annotation.Configuration;
 @ConfigurationProperties("spring.mongock")
 @ConditionalOnProperty(value = "spring.mongock.changeLogsScanPackage")
 public class MongockConfiguration extends ChangockSpring5Configuration {
-  private static final String DEFAULT_CHANGELOG_COLLECTION_NAME = "changockChangeLog";
-  private final static String DEFAULT_LOCK_COLLECTION_NAME = "changockLock";
-  /**
-   *
-   */
-  private String changeLogCollectionName;
+
+  public final static String DEFAULT_CHANGELOG_COLLECTION_NAME = "mongockChangeLog";
+  public final static String DEFAULT_LOCK_COLLECTION_NAME = "mongockLock";
 
   /**
-   *
+   * Collection name for changeLogs history
    */
-  private String lockCollectionName;
+  private String changeLogCollectionName = DEFAULT_CHANGELOG_COLLECTION_NAME;
+
+  /**
+   * Collection name for locking mechanism
+   */
+  private String lockCollectionName = DEFAULT_LOCK_COLLECTION_NAME;
+
+
+  public String getChangeLogCollectionName() {
+    return changeLogCollectionName;
+  }
+
+  public void setChangeLogCollectionName(String changeLogCollectionName) {
+    this.changeLogCollectionName = changeLogCollectionName;
+  }
+
+  public String getLockCollectionName() {
+    return lockCollectionName;
+  }
+
+  public void setLockCollectionName(String lockCollectionName) {
+    this.lockCollectionName = lockCollectionName;
+  }
 }

@@ -89,6 +89,7 @@ public class ApplicationRunnerITest extends IndependentDbIntegrationTestBase {
   }
 
   @Test
+  @SuppressWarnings("unchecked")
   public void shouldTwoExecutedChangeSet_whenRunningTwice_ifRunAlways() {
     // given
     MongockSpring5.MongockApplicationRunner runner = MongockSpring5.builder()
@@ -105,14 +106,18 @@ public class ApplicationRunnerITest extends IndependentDbIntegrationTestBase {
     // then
     List<Document> documentList = new ArrayList<>();
 
-    mongoTemplate.getDb().getCollection(CHANGELOG_COLLECTION_NAME)
+    ((Iterable)mongoTemplate.getDb().getCollection(CHANGELOG_COLLECTION_NAME)
         .find(new Document().append("changeSetMethod", "testChangeSetWithAlways").append("state", "EXECUTED"))
-        .forEach(documentList::add);
+    ).forEach(document -> documentList.add((Document) document));
+
+
+//        .forEach(documentList::add);
     Assert.assertEquals(2, documentList.size());
 
   }
 
   @Test
+  @SuppressWarnings("unchecked")
   public void shouldOneExecutedAndOneIgnoredChangeSet_whenRunningTwice_ifNotRunAlways() {
     // given
     MongockSpring5.MongockApplicationRunner runner = MongockSpring5.builder()
@@ -129,12 +134,12 @@ public class ApplicationRunnerITest extends IndependentDbIntegrationTestBase {
 
     // then
     List<String> stateList = new ArrayList<>();
-    mongoTemplate.getDb().getCollection(CHANGELOG_COLLECTION_NAME)
+    ((Iterable)mongoTemplate.getDb().getCollection(CHANGELOG_COLLECTION_NAME)
         .find(new Document()
             .append("changeLogClass", AnotherMongockTestResource.class.getName())
             .append("changeSetMethod", "testChangeSet"))
         .map(document -> document.getString("state"))
-        .forEach(stateList::add);
+    ).forEach(state -> stateList.add((String)state));
     Assert.assertEquals(2, stateList.size());
     Assert.assertTrue(stateList.contains("EXECUTED"));
     Assert.assertTrue(stateList.contains("IGNORED"));
