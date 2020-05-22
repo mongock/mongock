@@ -87,7 +87,8 @@ In [here](https://github.com/cloudyrock/mongock-samples) you can find some sampl
 If you would like to contribute to Mongock project, please read [how to contribute](././community/CONTRIBUTING.md) for details on our collaboration process and standards.
 
 ## Roadmap
-### Version 4.0.0 (we are working on it!!)
+### Version 4.0.0
+**we are working on it!!**
 ```diff
 > Green means already available in last 4.0.X.alpha version
 ! Orange means partially available in last 4.0.X.alpha version
@@ -105,6 +106,7 @@ If you would like to contribute to Mongock project, please read [how to contribu
 * Allow multiple changeLog packages
 * Custom injections in Standalone via context covered by Lock meachanism
 * Re-branded documentation supporting several Mongock(and mongodb driver) version
+* Migration for Mongobee
 
 ### What's up next
 * Better and more information in changeLog collection
