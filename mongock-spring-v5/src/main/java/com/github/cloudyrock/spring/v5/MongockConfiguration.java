@@ -1,4 +1,4 @@
-package com.github.cloudyrock.spring;
+package com.github.cloudyrock.spring.v5;
 
 import io.changock.runner.spring.v5.config.ChangockSpring5Configuration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;

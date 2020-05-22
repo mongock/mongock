@@ -1,10 +1,11 @@
-package com.github.cloudyrock.spring;
+package com.github.cloudyrock.spring.v5.integrationtests;
 
 import com.github.cloudyrock.mongock.driver.mongodb.springdata.v3.SpringDataMongo3Driver;
-import com.github.cloudyrock.spring.test.changelogs.AnotherMongockTestResource;
-import com.github.cloudyrock.spring.test.changelogs.MongockTestResource;
-import com.github.cloudyrock.spring.test.changelogs.withChangockAnnotations.ChangeLogwithChangockAnnotations;
-import com.github.cloudyrock.spring.utils.IndependentDbIntegrationTestBase;
+import com.github.cloudyrock.spring.v5.MongockSpring5;
+import com.github.cloudyrock.spring.v5.integrationtests.test.changelogs.AnotherMongockTestResource;
+import com.github.cloudyrock.spring.v5.integrationtests.test.changelogs.MongockTestResource;
+import com.github.cloudyrock.spring.v5.integrationtests.test.changelogs.withChangockAnnotations.ChangeLogwithChangockAnnotations;
+import com.github.cloudyrock.spring.v5.integrationtests.utils.IndependentDbIntegrationTestBase;
 import org.bson.Document;
 import org.junit.Assert;
 import org.junit.Test;
@@ -21,10 +22,24 @@ import java.util.Map;
 
 import static org.junit.Assert.assertEquals;
 
+
+
+//TODO move to JUnit 5 and add parameterized tests for different versions of MongoDb
+// https://github.com/testcontainers/testcontainers-java/issues/1387
+// - 3.x With no transactions
+// - 4.0.X With transactions in replica sets
+// - 4.2.X with transactions in sharded collections
+
+// TODO add proper spring integration tests
+
+
+
+
 @RunWith(MockitoJUnitRunner.class)
 public class ApplicationRunnerITest extends IndependentDbIntegrationTestBase {
 
   private static final String CHANGELOG_COLLECTION_NAME = "mongockChangeLog";
+  private static final String TEST_RESOURCE_CLASSPATH = MongockTestResource.class.getPackage().getName();
 
   private ApplicationContext getApplicationContext() {
     ApplicationContext context = Mockito.mock(ApplicationContext.class);
@@ -33,25 +48,29 @@ public class ApplicationRunnerITest extends IndependentDbIntegrationTestBase {
   }
 
   @Test
-  public void shouldExecuteAllChangeSets() {
+  public void shouldBuildInitializingBeanRunner() {
     // given
-    MongockSpring5.MongockApplicationRunner runner = MongockSpring5.builder()
-        .setDriver(buildDriver())
-        .addChangeLogsScanPackage(MongockTestResource.class.getPackage().getName())
-        .setSpringContext(getApplicationContext())
-        .setDefaultLock()
-        .buildApplicationRunner();
+    assertEquals(
+        MongockSpring5.MongockApplicationRunner.class,
+        getBasicBuilder(TEST_RESOURCE_CLASSPATH).buildApplicationRunner().getClass());
+  }
 
-    // when
-    runner.execute();
+  @Test
+  public void shouldBuildApplicationRunner() {
+    // given
+    assertEquals(
+        MongockSpring5.MongockInitializingBeanRunner.class,
+        getBasicBuilder(TEST_RESOURCE_CLASSPATH).buildInitializingBeanRunner().getClass());
+  }
 
-    // then
+  @Test
+  public void shouldExecuteAllChangeSets() {
+    // given, then
+    getBasicBuilder(TEST_RESOURCE_CLASSPATH).buildApplicationRunner().execute();
 
-    // dbchangelog collection checking
+    // db changelog collection checking
     long change1 = this.mongoTemplate.getDb().getCollection(CHANGELOG_COLLECTION_NAME)
-        .countDocuments(new Document()
-            .append("changeId", "test1")
-            .append("author", "testuser"));
+        .countDocuments(new Document().append("changeId", "test1").append("author", "testuser"));
     assertEquals(1, change1);
   }
 
@@ -66,16 +85,11 @@ public class ApplicationRunnerITest extends IndependentDbIntegrationTestBase {
     metadata.put("long_key", 13L);
     metadata.put("boolean_key", true);
 
-    MongockSpring5.MongockApplicationRunner runner = MongockSpring5.builder()
-        .setDriver(buildDriver())
-        .addChangeLogsScanPackage(MongockTestResource.class.getPackage().getName())
-        .setSpringContext(getApplicationContext())
-        .setDefaultLock()
+    // then
+    getBasicBuilder(TEST_RESOURCE_CLASSPATH)
         .withMetadata(metadata)
-        .buildApplicationRunner();
-
-    // when
-    runner.execute();
+        .buildApplicationRunner()
+        .execute();
 
     // then
     Map metadataResult = mongoTemplate.getDb().getCollection(CHANGELOG_COLLECTION_NAME).find().first().get("metadata", Map.class);
@@ -89,15 +103,9 @@ public class ApplicationRunnerITest extends IndependentDbIntegrationTestBase {
   }
 
   @Test
-  @SuppressWarnings("unchecked")
   public void shouldTwoExecutedChangeSet_whenRunningTwice_ifRunAlways() {
     // given
-    MongockSpring5.MongockApplicationRunner runner = MongockSpring5.builder()
-        .setDriver(buildDriver())
-        .addChangeLogsScanPackage(MongockTestResource.class.getPackage().getName())
-        .setSpringContext(getApplicationContext())
-        .setDefaultLock()
-        .buildApplicationRunner();
+    MongockSpring5.MongockApplicationRunner runner = getBasicBuilder(TEST_RESOURCE_CLASSPATH).buildApplicationRunner();
 
     // when
     runner.execute();
@@ -106,25 +114,18 @@ public class ApplicationRunnerITest extends IndependentDbIntegrationTestBase {
     // then
     List<Document> documentList = new ArrayList<>();
 
-    ((Iterable)mongoTemplate.getDb().getCollection(CHANGELOG_COLLECTION_NAME)
+    mongoTemplate.getDb().getCollection(CHANGELOG_COLLECTION_NAME)
         .find(new Document().append("changeSetMethod", "testChangeSetWithAlways").append("state", "EXECUTED"))
-    ).forEach(document -> documentList.add((Document) document));
+        .forEach(documentList::add);
 
-
-//        .forEach(documentList::add);
     Assert.assertEquals(2, documentList.size());
 
   }
 
   @Test
-  @SuppressWarnings("unchecked")
   public void shouldOneExecutedAndOneIgnoredChangeSet_whenRunningTwice_ifNotRunAlways() {
     // given
-    MongockSpring5.MongockApplicationRunner runner = MongockSpring5.builder()
-        .setDriver(buildDriver())
-        .addChangeLogsScanPackage(MongockTestResource.class.getPackage().getName())
-        .setSpringContext(getApplicationContext())
-        .setDefaultLock()
+    MongockSpring5.MongockApplicationRunner runner = getBasicBuilder(TEST_RESOURCE_CLASSPATH)
         .buildApplicationRunner();
 
 
@@ -134,12 +135,12 @@ public class ApplicationRunnerITest extends IndependentDbIntegrationTestBase {
 
     // then
     List<String> stateList = new ArrayList<>();
-    ((Iterable)mongoTemplate.getDb().getCollection(CHANGELOG_COLLECTION_NAME)
+    mongoTemplate.getDb().getCollection(CHANGELOG_COLLECTION_NAME)
         .find(new Document()
             .append("changeLogClass", AnotherMongockTestResource.class.getName())
             .append("changeSetMethod", "testChangeSet"))
         .map(document -> document.getString("state"))
-    ).forEach(state -> stateList.add((String)state));
+    .forEach(stateList::add);
     Assert.assertEquals(2, stateList.size());
     Assert.assertTrue(stateList.contains("EXECUTED"));
     Assert.assertTrue(stateList.contains("IGNORED"));
@@ -147,16 +148,8 @@ public class ApplicationRunnerITest extends IndependentDbIntegrationTestBase {
 
   @Test
   public void shouldExecuteChangockAnnotations() {
-    // given
-    MongockSpring5.MongockApplicationRunner runner = MongockSpring5.builder()
-        .setDriver(buildDriver())
-        .addChangeLogsScanPackage(ChangeLogwithChangockAnnotations.class.getPackage().getName())
-        .setSpringContext(getApplicationContext())
-        .setDefaultLock()
-        .buildApplicationRunner();
-
-    // when
-    runner.execute();
+    // given, then
+    getBasicBuilder(ChangeLogwithChangockAnnotations.class.getPackage().getName()).buildApplicationRunner().execute();
 
     // then
     final long changeWithChangockAnnotations = mongoTemplate.getDb().getCollection(CHANGELOG_COLLECTION_NAME).countDocuments(new Document()
@@ -170,6 +163,16 @@ public class ApplicationRunnerITest extends IndependentDbIntegrationTestBase {
     SpringDataMongo3Driver driver = new SpringDataMongo3Driver(mongoTemplate);
     driver.setChangeLogCollectionName(CHANGELOG_COLLECTION_NAME);
     return driver;
+  }
+
+
+
+  private MongockSpring5.Builder getBasicBuilder(String packagePath) {
+    return MongockSpring5.builder()
+        .setDriver(buildDriver())
+        .addChangeLogsScanPackage(packagePath)
+        .setSpringContext(getApplicationContext())
+        .setDefaultLock();
   }
 
 }

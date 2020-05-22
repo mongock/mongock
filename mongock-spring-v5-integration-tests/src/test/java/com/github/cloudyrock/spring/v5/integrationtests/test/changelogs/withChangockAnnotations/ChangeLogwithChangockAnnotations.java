@@ -1,4 +1,4 @@
-package com.github.cloudyrock.spring.test.changelogs.withChangockAnnotations;
+package com.github.cloudyrock.spring.v5.integrationtests.test.changelogs.withChangockAnnotations;
 
 import io.changock.migration.api.annotations.ChangeLog;
 import io.changock.migration.api.annotations.ChangeSet;

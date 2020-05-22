@@ -1,4 +1,4 @@
-package com.github.cloudyrock.spring.resources;
+package com.github.cloudyrock.spring.v5.integrationtests.resources;
 
 import org.springframework.core.env.Environment;
 import org.springframework.core.env.Profiles;

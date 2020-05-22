@@ -1,4 +1,4 @@
-package com.github.cloudyrock.spring;
+package com.github.cloudyrock.spring.v5;
 
 import com.github.cloudyrock.mongock.MongockAnnotationProcessor;
 import com.github.cloudyrock.mongock.MongockConnectionDriver;

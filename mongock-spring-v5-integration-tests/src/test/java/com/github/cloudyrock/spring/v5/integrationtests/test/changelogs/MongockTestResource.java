@@ -1,4 +1,4 @@
-package com.github.cloudyrock.spring.test.changelogs;
+package com.github.cloudyrock.spring.v5.integrationtests.test.changelogs;
 
 import com.github.cloudyrock.mongock.ChangeLog;
 import com.github.cloudyrock.mongock.ChangeSet;

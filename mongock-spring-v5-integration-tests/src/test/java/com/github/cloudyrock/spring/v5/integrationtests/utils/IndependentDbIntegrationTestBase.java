@@ -1,4 +1,4 @@
-package com.github.cloudyrock.spring.utils;
+package com.github.cloudyrock.spring.v5.integrationtests.utils;
 
 import com.mongodb.client.MongoClient;
 import com.mongodb.client.MongoClients;
@@ -9,7 +9,7 @@ import org.testcontainers.containers.GenericContainer;
 
 public abstract class IndependentDbIntegrationTestBase {
 
-  protected static final String MONGO_CONTAINER = "mongo:3.1.5";
+  protected static final String MONGO_CONTAINER = "mongo:4.2.0";
   protected static final Integer MONGO_PORT = 27017;
   protected static final String DEFAULT_DATABASE_NAME = "mongocktest";
 

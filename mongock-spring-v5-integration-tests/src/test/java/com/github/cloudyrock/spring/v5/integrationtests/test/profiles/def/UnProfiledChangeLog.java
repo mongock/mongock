@@ -1,4 +1,4 @@
-package com.github.cloudyrock.spring.test.profiles.def;
+package com.github.cloudyrock.spring.v5.integrationtests.test.profiles.def;
 
 import com.github.cloudyrock.mongock.ChangeLog;
 import com.github.cloudyrock.mongock.ChangeSet;

@@ -1,4 +1,4 @@
-package com.github.cloudyrock.spring;
+package com.github.cloudyrock.spring.v5;
 
 import com.github.cloudyrock.mongock.MongockConnectionDriver;
 import com.github.cloudyrock.mongock.driver.mongodb.springdata.v2.SpringDataMongo2Driver;
@@ -42,21 +42,20 @@ public class MongockContext {
         .setLockConfig(mongockConfiguration.getLockAcquiredForMinutes(), mongockConfiguration.getMaxWaitingForLockMinutes(), mongockConfiguration.getMaxTries())//optional
         .setSpringContext(springContext)
         .buildInitializingBeanRunner();
-
   }
 
 
   private MongockConnectionDriver getDriver(MongoTemplate mongoTemplate, MongockConfiguration mongockConfiguration) {
     try {
       SpringDataMongo3Driver driver = new SpringDataMongo3Driver(mongoTemplate);
-      driver.setChangeLogCollectionName(mongockConfiguration.getChangeLogCollectionName());//optional
-      driver.setLockCollectionName(mongockConfiguration.getLockCollectionName());//optional
+      driver.setChangeLogCollectionName(mongockConfiguration.getChangeLogCollectionName());
+      driver.setLockCollectionName(mongockConfiguration.getLockCollectionName());
       return driver;
     } catch (NoClassDefFoundError driver3NotFoundError) {
       try {
         SpringDataMongo2Driver driver = new SpringDataMongo2Driver(mongoTemplate);
-        driver.setChangeLogCollectionName(mongockConfiguration.getChangeLogCollectionName());//optional
-        driver.setLockCollectionName(mongockConfiguration.getLockCollectionName());//optional
+        driver.setChangeLogCollectionName(mongockConfiguration.getChangeLogCollectionName());
+        driver.setLockCollectionName(mongockConfiguration.getLockCollectionName());
         return driver;
       } catch (NoClassDefFoundError driver2NotFoundError) {
         throw new ChangockException("\n\n" + DRIVER_NOT_FOUND_ERROR + "\n\n");
@@ -66,8 +65,8 @@ public class MongockContext {
 
   private final static String DRIVER_NOT_FOUND_ERROR = "MONGOCK DRIVER HAS NOT BEEN IMPORTED" +
       "\n====================================" +
-      "\nSOLUTION: You need to import one of these artifacts" +
-      "\n\tartifact 'mongodb-springdata-v3-driver' for springdata 3" +
-      "\n\tartifact 'mongodb-springdata-v2-driver' for springdata 2";
+      "\n\tSOLUTION: You need to import one of these artifacts" +
+      "\n\t- 'mongodb-springdata-v3-driver' for springdata 3" +
+      "\n\t- 'mongodb-springdata-v2-driver' for springdata 2";
 
 }
