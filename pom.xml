@@ -20,7 +20,6 @@
     <module>mongock-api</module>
     <module>drivers</module>
     <module>mongock-bom</module>
-    <module>mongock-spring-v5-integration-tests</module>
   </modules>
 
   <groupId>com.github.cloudyrock.mongock</groupId>
