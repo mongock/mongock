@@ -17,14 +17,6 @@
     <maven.javadoc.failOnError>false</maven.javadoc.failOnError>
   </properties>
 
-  <repositories>
-    <repository>
-      <id>repository.spring.milestone</id>
-      <name>Spring Milestone Repository</name>
-      <url>https://repo.spring.io/milestone</url>
-    </repository>
-  </repositories>
-
 
   <dependencies>
     <dependency>
