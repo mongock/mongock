@@ -17,19 +17,6 @@
     <maven.javadoc.failOnError>false</maven.javadoc.failOnError>
   </properties>
 
-
-  <dependencyManagement>
-    <dependencies>
-      <dependency>
-        <groupId>org.springframework.boot</groupId>
-        <artifactId>spring-boot-dependencies</artifactId>
-        <version>2.3.0.RELEASE</version>
-        <type>pom</type>
-        <scope>import</scope>
-      </dependency>
-    </dependencies>
-  </dependencyManagement>
-
   <dependencies>
     <dependency>
       <groupId>com.github.cloudyrock.changock</groupId>
@@ -50,6 +37,7 @@
     <dependency>
       <groupId>org.springframework.data</groupId>
       <artifactId>spring-data-mongodb</artifactId>
+      <version>${mongodb.spring-data.v3.version}</version>
     </dependency>
 
     <dependency>
