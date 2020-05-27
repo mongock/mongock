@@ -4,8 +4,6 @@ import com.github.cloudyrock.mongock.MongockConnectionDriver;
 import com.github.cloudyrock.mongock.driver.mongodb.springdata.v2.SpringDataMongo2Driver;
 import com.github.cloudyrock.mongock.driver.mongodb.springdata.v3.SpringDataMongo3Driver;
 import io.changock.migration.api.exception.ChangockException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
@@ -22,15 +20,7 @@ public class MongockContext {
   public MongockSpring5.MongockApplicationRunner mongockApplicationRunner(ApplicationContext springContext,
                                                                           MongoTemplate mongoTemplate,
                                                                           MongockConfiguration mongockConfiguration) {
-    if(StringUtils.isEmpty(mongockConfiguration.getChangeLogsScanPackage())) {
-      throw new ChangockException("\n\nMongock: You need to specify property: spring.mongock.changeLogsScanPackage\n\n");
-    }
-    return MongockSpring5.builder()
-        .setDriver(getDriver(mongoTemplate, mongockConfiguration))
-        .addChangeLogsScanPackage(mongockConfiguration.getChangeLogsScanPackage())
-        .setSpringContext(springContext)
-        .setLockConfig(mongockConfiguration.getLockAcquiredForMinutes(), mongockConfiguration.getMaxWaitingForLockMinutes(), mongockConfiguration.getMaxTries())//optional
-        .buildApplicationRunner();
+    return builder(springContext, mongoTemplate, mongockConfiguration).buildApplicationRunner();
 
 
   }
@@ -40,15 +30,19 @@ public class MongockContext {
   public MongockSpring5.MongockInitializingBeanRunner mongockInitializingBeanRunner(ApplicationContext springContext,
                                                                                     MongoTemplate mongoTemplate,
                                                                                     MongockConfiguration mongockConfiguration) {
-    if(StringUtils.isEmpty(mongockConfiguration.getChangeLogsScanPackage())) {
+
+    return builder(springContext, mongoTemplate, mongockConfiguration).buildInitializingBeanRunner();
+  }
+
+
+  private MongockSpring5.Builder builder(ApplicationContext springContext, MongoTemplate mongoTemplate, MongockConfiguration mongockConfiguration) {
+    if (StringUtils.isEmpty(mongockConfiguration.getChangeLogsScanPackage())) {
       throw new ChangockException("\n\nMongock: You need to specify property: spring.mongock.changeLogsScanPackage\n\n");
     }
     return MongockSpring5.builder()
         .setDriver(getDriver(mongoTemplate, mongockConfiguration))
-        .addChangeLogsScanPackage(mongockConfiguration.getChangeLogsScanPackage())
-        .setLockConfig(mongockConfiguration.getLockAcquiredForMinutes(), mongockConfiguration.getMaxWaitingForLockMinutes(), mongockConfiguration.getMaxTries())//optional
-        .setSpringContext(springContext)
-        .buildInitializingBeanRunner();
+        .setConfig(mongockConfiguration)
+        .setSpringContext(springContext);
   }
 
 
