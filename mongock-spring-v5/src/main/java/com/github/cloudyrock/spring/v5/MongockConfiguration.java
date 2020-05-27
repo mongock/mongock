@@ -8,7 +8,6 @@ import org.springframework.context.annotation.Configuration;
 
 @Configuration
 @ConfigurationProperties("spring.mongock")
-@ConditionalOnProperty(value = "spring.mongock.changeLogsScanPackage")
 public class MongockConfiguration extends ChangockSpring5Configuration {
 
   public final static String DEFAULT_CHANGELOG_COLLECTION_NAME = "mongockChangeLog";
