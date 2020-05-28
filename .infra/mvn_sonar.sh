@@ -1,6 +1,6 @@
 
 #!/bin/bash
- printf "___________________________________________________________________Branch:\t\t\t $TRAVIS_BRANCH\n"
+printf "___________________________________________________________________Branch:\t\t\t $TRAVIS_BRANCH\n"
 printf "____________________________________________________________________Pull request key:\t\t $TRAVIS_PULL_REQUEST\n"
 printf "____________________________________________________________________Pull request branch:\t $TRAVIS_PULL_REQUEST_BRANCH\n"
 printf "____________________________________________________________________Encrypted variables:\t $TRAVIS_SECURE_ENV_VARS\n"

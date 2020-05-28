@@ -80,3 +80,5 @@ Vagrantfile
 #Ignoring OSX files
 **/.DS_Store
 .DS_Store
+
+**/tree

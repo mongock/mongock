@@ -1,4 +1,14 @@
-
+# 4.0.3
+### Features
+* Added support for Mongodb driver sync 4
+* Added support for spring-data 3
+* Added @EnableMongock with minimal configuration
+### Breaking changes
+* New builder API: Introduced drivers
+### Bugs fixed
+* Take older changeSets with no state as executed
+* Fixed Changock annotations not processed
+__________________________________________________
 
 # 3.2.4
 ### Features
