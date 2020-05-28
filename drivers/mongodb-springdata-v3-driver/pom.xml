@@ -3,7 +3,7 @@
   <parent>
     <artifactId>drivers</artifactId>
     <groupId>com.github.cloudyrock.mongock</groupId>
-    <version>4.0.3.alpha-SNAPSHOT</version>
+    <version>4.0.4.alpha-SNAPSHOT</version>
   </parent>
   <modelVersion>4.0.0</modelVersion>
 
@@ -16,15 +16,6 @@
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
     <maven.javadoc.failOnError>false</maven.javadoc.failOnError>
   </properties>
-
-  <repositories>
-    <repository>
-      <id>repository.spring.milestone</id>
-      <name>Spring Milestone Repository</name>
-      <url>https://repo.spring.io/milestone</url>
-    </repository>
-  </repositories>
-
 
   <dependencies>
     <dependency>

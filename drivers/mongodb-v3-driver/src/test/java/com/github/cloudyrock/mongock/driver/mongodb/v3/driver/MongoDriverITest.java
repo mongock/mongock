@@ -51,49 +51,49 @@ public class MongoDriverITest extends IntegrationTestBase {
   @Test
   public void shouldRunAllChangeLogsSuccessfully() {
     collection = this.getDataBase().getCollection(CHANGELOG_COLLECTION_NAME);
-    runChanges(new MongoCore3Driver(this.getDataBase()), ChangeLogSuccess.class, CHANGELOG_COLLECTION_NAME, Collections.emptyList());
+    runChanges(getDriver(), ChangeLogSuccess.class, CHANGELOG_COLLECTION_NAME, Collections.emptyList());
   }
 
   @Test
   public void shouldRegisterChangeSetAsIgnored_WhenAlreadyExecuted_IfNotRunAlways() throws NoSuchMethodException {
     collection = this.getDataBase().getCollection(CHANGELOG_COLLECTION_NAME);
     collection.insertOne(getChangeEntryDocument(ChangeLogSuccess.class.getMethod("method_0"), ChangeState.EXECUTED));
-    runChanges( new MongoCore3Driver(this.getDataBase()),ChangeLogSuccess.class, CHANGELOG_COLLECTION_NAME, Collections.singletonList("method_0"));
+    runChanges( getDriver(),ChangeLogSuccess.class, CHANGELOG_COLLECTION_NAME, Collections.singletonList("method_0"));
   }
 
   @Test
   public void shouldRegisterChangeSetAsExecuted_WhenAlreadyExecuted_IfRunAlways() throws NoSuchMethodException {
     collection = this.getDataBase().getCollection(CHANGELOG_COLLECTION_NAME);
     collection.insertOne(getChangeEntryDocument(WithRunAlways.class.getMethod("method_0"), ChangeState.EXECUTED));
-    runChanges(new MongoCore3Driver(this.getDataBase()), WithRunAlways.class, CHANGELOG_COLLECTION_NAME);
+    runChanges(getDriver(), WithRunAlways.class, CHANGELOG_COLLECTION_NAME);
   }
 
   @Test
   public void shouldRegisterChangeSetAsExecuted_WhenAlreadyIgnored_IfNotRunAlways() throws NoSuchMethodException {
     collection = this.getDataBase().getCollection(CHANGELOG_COLLECTION_NAME);
     collection.insertOne(getChangeEntryDocument(ChangeLogSuccess.class.getMethod("method_0"), ChangeState.IGNORED));
-    runChanges(new MongoCore3Driver(this.getDataBase()), ChangeLogSuccess.class, CHANGELOG_COLLECTION_NAME);
+    runChanges(getDriver(), ChangeLogSuccess.class, CHANGELOG_COLLECTION_NAME);
   }
 
   @Test
   public void shouldRegisterChangeSetAsExecuted_WhenAlreadyIgnored_IfRunAlways() throws NoSuchMethodException {
     collection = this.getDataBase().getCollection(CHANGELOG_COLLECTION_NAME);
     collection.insertOne(getChangeEntryDocument(WithRunAlways.class.getMethod("method_0"), ChangeState.IGNORED));
-    runChanges(new MongoCore3Driver(this.getDataBase()), WithRunAlways.class, CHANGELOG_COLLECTION_NAME);
+    runChanges(getDriver(), WithRunAlways.class, CHANGELOG_COLLECTION_NAME);
   }
 
   @Test
   public void shouldRegisterChangeSetAsExecuted_WhenAlreadyFailed_IfNotRunAlways() throws NoSuchMethodException {
     collection = this.getDataBase().getCollection(CHANGELOG_COLLECTION_NAME);
     collection.insertOne(getChangeEntryDocument(ChangeLogSuccess.class.getMethod("method_0"), ChangeState.FAILED));
-    runChanges(new MongoCore3Driver(this.getDataBase()), ChangeLogSuccess.class, CHANGELOG_COLLECTION_NAME);
+    runChanges(getDriver(), ChangeLogSuccess.class, CHANGELOG_COLLECTION_NAME);
   }
 
   @Test
   public void shouldRegisterChangeSetAsExecuted_WhenAlreadyFailed_IfRunAlways() throws NoSuchMethodException {
     collection = this.getDataBase().getCollection(CHANGELOG_COLLECTION_NAME);
     collection.insertOne(getChangeEntryDocument(WithRunAlways.class.getMethod("method_0"), ChangeState.FAILED));
-    runChanges(new MongoCore3Driver(this.getDataBase()), WithRunAlways.class, CHANGELOG_COLLECTION_NAME);
+    runChanges(getDriver(), WithRunAlways.class, CHANGELOG_COLLECTION_NAME);
   }
 
 
@@ -188,7 +188,7 @@ public class MongoDriverITest extends IntegrationTestBase {
   public void shouldFail_WhenRunningChangeLog_IfChangeSetIdDuplicated() {
     collection = this.getDataBase().getCollection(CHANGELOG_COLLECTION_NAME);
     TestChangockRunner runner = TestChangockRunner.builder()
-        .setDriver(new MongoCore3Driver(this.getDataBase()))
+        .setDriver(getDriver())
         .addChangeLogsScanPackage(ChangeLogFailure.class.getPackage().getName())
         .build();
     exceptionRule.expect(ChangockException.class);
@@ -201,7 +201,7 @@ public class MongoDriverITest extends IntegrationTestBase {
     CallVerifierImpl callVerifier = new CallVerifierImpl();
     collection = this.getDataBase().getCollection(CHANGELOG_COLLECTION_NAME);
     TestChangockRunner.builder()
-        .setDriver(new MongoCore3Driver(this.getDataBase()))
+        .setDriver(getDriver())
         .addChangeLogsScanPackage(ChangeLogEnsureDecorator.class.getPackage().getName())
         .addDependency(CallVerifier.class, callVerifier)
         .build()
@@ -214,7 +214,7 @@ public class MongoDriverITest extends IntegrationTestBase {
     CallVerifierImpl callVerifier = new CallVerifierImpl();
     collection = this.getDataBase().getCollection(CHANGELOG_COLLECTION_NAME);
     TestChangockRunner.builder()
-        .setDriver(new MongoCore3Driver(this.getDataBase()))
+        .setDriver(getDriver())
         .addChangeLogsScanPackage(ChangeLogEnsureDecorator.class.getPackage().getName())
         .addDependency(CallVerifier.class, callVerifier)
         .addDependency(MongoDatabase.class, mock(MongoDatabase.class))// shouldn't use this, the one from the connector instead
@@ -230,5 +230,12 @@ public class MongoDriverITest extends IntegrationTestBase {
     assertEquals(12.12D, (Double) metadataResult.get("double_key"), 0.01);
     assertEquals(13L, metadataResult.get("long_key"));
     assertEquals(true, metadataResult.get("boolean_key"));
+  }
+
+  @NotNull
+  private MongoCore3Driver getDriver() {
+    MongoCore3Driver driver = new MongoCore3Driver(this.getDataBase());
+    driver.setChangeLogCollectionName(CHANGELOG_COLLECTION_NAME);
+    return driver;
   }
 }

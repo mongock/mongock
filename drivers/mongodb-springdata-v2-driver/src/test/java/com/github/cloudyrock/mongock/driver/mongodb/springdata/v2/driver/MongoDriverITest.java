@@ -46,7 +46,7 @@ public class MongoDriverITest extends IntegrationTestBase {
   @Test
   public void shouldRunAllChangeLogsSuccessfully() {
     collection = this.getDataBase().getCollection(CHANGELOG_COLLECTION_NAME);
-    runChanges(new SpringDataMongo2Driver(getMongoTemplate()), CHANGELOG_COLLECTION_NAME);
+    runChanges(getDriver(), CHANGELOG_COLLECTION_NAME);
   }
 
   @NotNull
@@ -111,7 +111,7 @@ public class MongoDriverITest extends IntegrationTestBase {
   public void shouldFail_WhenRunningChangeLog_IfChangeSetIdDuplicated() {
     collection = this.getDataBase().getCollection(CHANGELOG_COLLECTION_NAME);
     TestChangockRunner runner = TestChangockRunner.builder()
-        .setDriver(new SpringDataMongo2Driver(this.getMongoTemplate()))
+        .setDriver(getDriver())
         .addChangeLogsScanPackage(ChangeLogFailure.class.getPackage().getName())
         .build();
     exceptionRule.expect(ChangockException.class);
@@ -124,7 +124,7 @@ public class MongoDriverITest extends IntegrationTestBase {
     CallVerifierImpl callVerifier = new CallVerifierImpl();
     collection = this.getDataBase().getCollection(CHANGELOG_COLLECTION_NAME);
     TestChangockRunner runner = TestChangockRunner.builder()
-        .setDriver(new SpringDataMongo2Driver(this.getMongoTemplate()))
+        .setDriver(getDriver())
         .addChangeLogsScanPackage(ChangeLogEnsureDecorator.class.getPackage().getName())
         .addDependency(CallVerifier.class, callVerifier)
         .build();
@@ -138,7 +138,7 @@ public class MongoDriverITest extends IntegrationTestBase {
     CallVerifierImpl callVerifier = new CallVerifierImpl();
     collection = this.getDataBase().getCollection(CHANGELOG_COLLECTION_NAME);
     TestChangockRunner runner = TestChangockRunner.builder()
-        .setDriver(new SpringDataMongo2Driver(this.getMongoTemplate()))
+        .setDriver(getDriver())
         .addChangeLogsScanPackage(ChangeLogEnsureDecorator.class.getPackage().getName())
         .addDependency(CallVerifier.class, callVerifier)
         .build();
@@ -151,7 +151,7 @@ public class MongoDriverITest extends IntegrationTestBase {
   public void shouldFail_whenRunningChangeSet_ifMongoTemplateParameter() {
     collection = this.getDataBase().getCollection(CHANGELOG_COLLECTION_NAME);
     TestChangockRunner runner = TestChangockRunner.builder()
-        .setDriver(new SpringDataMongo2Driver(this.getMongoTemplate()))
+        .setDriver(getDriver())
         .addChangeLogsScanPackage(ChangeLogWithMongoTemplate.class.getPackage().getName())
         .addDependency(MongoTemplate.class, mock(MongoTemplate.class))// shouldn't use this, the one from the connector instead
         .build();
@@ -168,6 +168,14 @@ public class MongoDriverITest extends IntegrationTestBase {
     assertEquals(12.12D, (Double) metadataResult.get("double_key"), 0.01);
     assertEquals(13L, metadataResult.get("long_key"));
     assertEquals(true, metadataResult.get("boolean_key"));
+  }
+
+
+  @NotNull
+  private SpringDataMongo2Driver getDriver() {
+    SpringDataMongo2Driver driver =  new SpringDataMongo2Driver(getMongoTemplate());
+    driver.setChangeLogCollectionName(CHANGELOG_COLLECTION_NAME);
+    return driver;
   }
 
 }

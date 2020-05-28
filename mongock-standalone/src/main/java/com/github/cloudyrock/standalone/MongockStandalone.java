@@ -4,6 +4,7 @@ import com.github.cloudyrock.mongock.MongockAnnotationProcessor;
 import com.github.cloudyrock.mongock.MongockConnectionDriver;
 import io.changock.runner.core.ChangeLogService;
 import io.changock.runner.core.MigrationExecutor;
+import io.changock.runner.core.builder.ChangockConfiguration;
 import io.changock.runner.core.builder.DriverBuilderConfigurable;
 import io.changock.runner.core.builder.RunnerBuilderBase;
 import io.changock.runner.standalone.ChangockStandalone;
@@ -16,12 +17,12 @@ import io.changock.runner.standalone.ChangockStandalone;
 public class MongockStandalone {
 
 
-  public static DriverBuilderConfigurable<Builder, MongockConnectionDriver> builder() {
+  public static DriverBuilderConfigurable<Builder, MongockConnectionDriver, ChangockConfiguration> builder() {
     return new Builder();
   }
 
 
-  public static class Builder extends RunnerBuilderBase<Builder, MongockConnectionDriver> {
+  public static class Builder extends RunnerBuilderBase<Builder, MongockConnectionDriver, ChangockConfiguration> {
 
     private Builder() {
       this.overrideAnnoatationProcessor(new MongockAnnotationProcessor());

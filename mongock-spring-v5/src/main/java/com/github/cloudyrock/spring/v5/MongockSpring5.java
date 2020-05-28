@@ -1,4 +1,4 @@
-package com.github.cloudyrock.spring;
+package com.github.cloudyrock.spring.v5;
 
 import com.github.cloudyrock.mongock.MongockAnnotationProcessor;
 import com.github.cloudyrock.mongock.MongockConnectionDriver;
@@ -8,11 +8,11 @@ import io.changock.runner.spring.v5.core.ProfiledChangeLogService;
 import io.changock.runner.spring.v5.core.SpringMigrationExecutor;
 
 public class MongockSpring5 {
-  public static DriverBuilderConfigurable<Builder, MongockConnectionDriver> builder() {
+  public static DriverBuilderConfigurable<Builder, MongockConnectionDriver, MongockConfiguration> builder() {
     return new Builder();
   }
 
-  public static class Builder extends ChangockSpringBuilderBase<Builder, MongockConnectionDriver> {
+  public static class Builder extends ChangockSpringBuilderBase<Builder, MongockConnectionDriver, MongockConfiguration> {
 
     private Builder() {
       overrideAnnoatationProcessor(new MongockAnnotationProcessor());
