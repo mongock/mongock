@@ -51,14 +51,14 @@ public class MongoDriverITest extends IntegrationTestBase {
   @Test
   public void shouldRunAllChangeLogsSuccessfully() {
     collection = this.getDataBase().getCollection(CHANGELOG_COLLECTION_NAME);
-    runChanges(getDriver(), ChangeLogSuccess.class, CHANGELOG_COLLECTION_NAME, Collections.emptyList());
+    runChanges(getDriver(), ChangeLogSuccess.class, CHANGELOG_COLLECTION_NAME, Collections.emptyList(), false);
   }
 
   @Test
   public void shouldRegisterChangeSetAsIgnored_WhenAlreadyExecuted_IfNotRunAlways() throws NoSuchMethodException {
     collection = this.getDataBase().getCollection(CHANGELOG_COLLECTION_NAME);
     collection.insertOne(getChangeEntryDocument(ChangeLogSuccess.class.getMethod("method_0"), ChangeState.EXECUTED));
-    runChanges( getDriver(),ChangeLogSuccess.class, CHANGELOG_COLLECTION_NAME, Collections.singletonList("method_0"));
+    runChanges( getDriver(),ChangeLogSuccess.class, CHANGELOG_COLLECTION_NAME, Collections.singletonList("method_0"), false);
   }
 
   @Test
@@ -103,7 +103,7 @@ public class MongoDriverITest extends IntegrationTestBase {
     collection = this.getDataBase().getCollection(newChangeLogCollectionName);
     MongoCore3Driver driver = new MongoCore3Driver(this.getDataBase());
     driver.setChangeLogCollectionName(newChangeLogCollectionName);
-    runChanges(driver, ChangeLogSuccess.class, newChangeLogCollectionName, Collections.emptyList());
+    runChanges(driver, ChangeLogSuccess.class, newChangeLogCollectionName, Collections.emptyList(), false);
   }
 
   private Document getChangeEntryDocument(Method method, ChangeState state) {
@@ -121,9 +121,12 @@ public class MongoDriverITest extends IntegrationTestBase {
   }
 
   private void runChanges(MongoCore3Driver driver, Class changeLogClass, String changeLogCollectionName) {
-    runChanges(driver, changeLogClass, changeLogCollectionName, Collections.emptyList());
+    runChanges(driver, changeLogClass, changeLogCollectionName, Collections.emptyList(), false);
   }
-  private void runChanges(MongoCore3Driver driver, Class changeLogClass, String chageLogCollectionName, Collection<String> ignoredChangeIds) {
+
+
+
+  private void runChanges(MongoCore3Driver driver, Class changeLogClass, String chageLogCollectionName, Collection<String> ignoredChangeIds, boolean trackIgnored) {
     Map<String, Object> metadata = getStringObjectMap();
 
     String executionId = UUID.randomUUID().toString();
@@ -150,24 +153,27 @@ public class MongoDriverITest extends IntegrationTestBase {
           .append(KEY_EXECUTION_ID, executionId)
           .append(KEY_AUTHOR, "testuser")
           .append(KEY_CHANGE_ID, "method_" + i)).first();
-      String executionIdChange = change.get(KEY_EXECUTION_ID, String.class);
-      String changeId = change.get(KEY_CHANGE_ID, String.class);
-      String author = change.get(KEY_AUTHOR, String.class);
-      String state = change.get(KEY_STATE, String.class);
-      Date timestamp = change.get(KEY_TIMESTAMP, Date.class);
-      String changeLogClassInstance = change.get(KEY_CHANGE_LOG_CLASS, String.class);
-      String changeSetMethod = change.get(KEY_CHANGE_SET_METHOD, String.class);
-      Long executionMillis = change.get(KEY_EXECUTION_MILLIS, Long.class);
-      Map metadataResult = change.get(KEY_METADATA, Map.class);
-      assertNotNull(executionIdChange);
-      assertEquals("method_" + i, changeId);
-      assertEquals("testuser", author);
-      assertEquals((ignoredChangeIds.contains(changeId) ? ChangeState.IGNORED : ChangeState.EXECUTED).name(), state);
-      assertNotNull(timestamp);
-      assertEquals(changeLogClass.getName(), changeLogClassInstance);
-      assertEquals("method_" + i, changeSetMethod);
-      assertNotNull(executionMillis);
-      checkMetadata(metadataResult);
+      if(trackIgnored || !ignoredChangeIds.contains("method_" + i)) {
+
+        String executionIdChange = change.get(KEY_EXECUTION_ID, String.class);
+        String changeId = change.get(KEY_CHANGE_ID, String.class);
+        String author = change.get(KEY_AUTHOR, String.class);
+        String state = change.get(KEY_STATE, String.class);
+        Date timestamp = change.get(KEY_TIMESTAMP, Date.class);
+        String changeLogClassInstance = change.get(KEY_CHANGE_LOG_CLASS, String.class);
+        String changeSetMethod = change.get(KEY_CHANGE_SET_METHOD, String.class);
+        Long executionMillis = change.get(KEY_EXECUTION_MILLIS, Long.class);
+        Map metadataResult = change.get(KEY_METADATA, Map.class);
+        assertNotNull(executionIdChange);
+        assertEquals("method_" + i, changeId);
+        assertEquals("testuser", author);
+        assertEquals((ignoredChangeIds.contains(changeId) ? ChangeState.IGNORED : ChangeState.EXECUTED).name(), state);
+        assertNotNull(timestamp);
+        assertEquals(changeLogClass.getName(), changeLogClassInstance);
+        assertEquals("method_" + i, changeSetMethod);
+        assertNotNull(executionMillis);
+        checkMetadata(metadataResult);
+      }
 
     }
   }

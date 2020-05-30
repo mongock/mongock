@@ -5,6 +5,7 @@ import com.github.cloudyrock.standalone.test.changelogs.MongockTestResource;
 import com.github.cloudyrock.standalone.test.changelogs.runAlways.RunAlwaysChangeLog;
 import com.github.cloudyrock.standalone.test.changelogs.withChangockAnnotations.ChangeLogwithChangockAnnotations;
 import com.github.cloudyrock.standalone.utils.IndependentDbIntegrationTestBase;
+import io.changock.driver.api.entry.ChangeState;
 import org.bson.Document;
 import org.junit.Before;
 import org.junit.Test;
@@ -65,22 +66,20 @@ public class MongockITest extends IndependentDbIntegrationTestBase {
     // then
 
     // dbchangelog collection checking
-    final long changeSetWithRunAlways = db.getCollection(CHANGELOG_COLLECTION_NAME).countDocuments(new Document()
+    long changeSetWithRunAlways = db.getCollection(CHANGELOG_COLLECTION_NAME).countDocuments(new Document()
         .append("changeId", "runAlways")
         .append("author", "testuser"));
     assertEquals(2, changeSetWithRunAlways);
 
-    final long changeSetWithNoRunAlwaysExecuted = db.getCollection(CHANGELOG_COLLECTION_NAME).countDocuments(new Document()
+    long changeSetWithNoRunAlwaysExecuted = db.getCollection(CHANGELOG_COLLECTION_NAME).countDocuments(new Document()
         .append("changeId", "noRunAlways")
-        .append("author", "testuser")
-        .append("state", "EXECUTED"));
+        .append("author", "testuser"));
     assertEquals(1, changeSetWithNoRunAlwaysExecuted);
 
-    final long changeSetWithNoRunAlwaysIgnored = db.getCollection(CHANGELOG_COLLECTION_NAME).countDocuments(new Document()
+    changeSetWithNoRunAlwaysExecuted = db.getCollection(CHANGELOG_COLLECTION_NAME).countDocuments(new Document()
         .append("changeId", "noRunAlways")
-        .append("author", "testuser")
-        .append("state", "IGNORED"));
-    assertEquals(1, changeSetWithNoRunAlwaysIgnored);
+        .append("author", "testuser"));
+    assertEquals(1, changeSetWithNoRunAlwaysExecuted);
   }
 
 
