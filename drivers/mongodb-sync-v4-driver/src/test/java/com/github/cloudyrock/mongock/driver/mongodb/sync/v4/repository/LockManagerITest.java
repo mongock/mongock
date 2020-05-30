@@ -27,7 +27,7 @@ public class LockManagerITest extends IntegrationTestBase {
     private static final int lockMaxTries = 3;
 
     private LockManager lockManager;
-    private MongoLockRepository repository;
+    private MongoSync4LockRepository repository;
 
     @Before
     public void before() {
@@ -37,7 +37,7 @@ public class LockManagerITest extends IntegrationTestBase {
     @Before
     public void setUp() {
         collection = getDataBase().getCollection(LOCK_COLLECTION_NAME);
-        repository = new MongoLockRepository(collection);
+        repository = new MongoSync4LockRepository(collection);
         repository.initialize();
         TimeService timeUtils = new TimeService();
         lockManager = new DefaultLockManager(repository, timeUtils)

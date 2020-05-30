@@ -1,4 +1,4 @@
-package com.github.cloudyrock.mongock.driver.mongodb.sync.v4.repository;
+package com.github.cloudyrock.mongock.driver.mongodb.v3.repository;
 
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.model.IndexOptions;
@@ -13,7 +13,7 @@ import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
 
-public abstract class MongoRepositoryBase<DOMAIN_CLASS> implements Repository<DOMAIN_CLASS, Document> {
+public abstract class Mongo3RepositoryBase<DOMAIN_CLASS> implements Repository<DOMAIN_CLASS, Document> {
 
   private static final Logger logger = LoggerFactory.getLogger("MongoRepository");
 
@@ -22,7 +22,7 @@ public abstract class MongoRepositoryBase<DOMAIN_CLASS> implements Repository<DO
   private boolean ensuredCollectionIndex = false;
   protected MongoCollection<Document> collection;
 
-  public MongoRepositoryBase(MongoCollection<Document> collection, String[] uniqueFields) {
+  public Mongo3RepositoryBase(MongoCollection<Document> collection, String[] uniqueFields) {
     this.collection = collection;
     this.fullCollectionName = collection.getNamespace().getDatabaseName() + "." + collection.getNamespace().getCollectionName();
     this.uniqueFields = uniqueFields;

@@ -22,12 +22,12 @@ import static org.mockito.Mockito.verify;
 public class MongoChangeEntryRepositoryITest extends IntegrationTestBase {
 
   private static final String CHANGE_ENTRY_COLLECTION_NAME = "dbchangelog";
-  private MongoChangeEntryRepository<ChangeEntry> repository;
+  private MongoSync4ChangeEntryRepository<ChangeEntry> repository;
 
   @Before
   public void setUp() {
     collection = getDataBase().getCollection(CHANGE_ENTRY_COLLECTION_NAME);
-    repository = Mockito.spy(new MongoChangeEntryRepository<>(collection));
+    repository = Mockito.spy(new MongoSync4ChangeEntryRepository<>(collection));
     repository.initialize();
   }
 
@@ -44,7 +44,7 @@ public class MongoChangeEntryRepositoryITest extends IntegrationTestBase {
   public void shouldNoCreateUniqueIndex_whenEnsureIndex_IfAlreadyCreated() throws ChangockException {
     // given
     collection = getDataBase().getCollection(CHANGE_ENTRY_COLLECTION_NAME);
-    repository = Mockito.spy(new MongoChangeEntryRepository(collection));
+    repository = Mockito.spy(new MongoSync4ChangeEntryRepository(collection));
 
     doReturn(true).when(repository).isUniqueIndex(any(Document.class));
 

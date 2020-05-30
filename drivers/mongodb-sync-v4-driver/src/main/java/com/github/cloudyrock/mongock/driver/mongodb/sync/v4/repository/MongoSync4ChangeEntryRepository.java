@@ -1,4 +1,4 @@
-package com.github.cloudyrock.mongock.driver.mongodb.v3.repository;
+package com.github.cloudyrock.mongock.driver.mongodb.sync.v4.repository;
 
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.model.Filters;
@@ -11,7 +11,7 @@ import org.bson.conversions.Bson;
 
 import java.lang.reflect.Field;
 
-public class MongoChangeEntryRepository<CHANGE_ENTRY extends ChangeEntry> extends MongoRepositoryBase<CHANGE_ENTRY> implements ChangeEntryRepository<CHANGE_ENTRY, Document> {
+public class MongoSync4ChangeEntryRepository<CHANGE_ENTRY extends ChangeEntry> extends MongoSync4RepositoryBase<CHANGE_ENTRY> implements ChangeEntryRepository<CHANGE_ENTRY, Document> {
 
   private static String KEY_EXECUTION_ID;
   private static String KEY_CHANGE_ID;
@@ -40,7 +40,7 @@ public class MongoChangeEntryRepository<CHANGE_ENTRY extends ChangeEntry> extend
     }
   }
 
-  public MongoChangeEntryRepository(MongoCollection<Document> collection) {
+  public MongoSync4ChangeEntryRepository(MongoCollection<Document> collection) {
     super(collection, new String[]{KEY_EXECUTION_ID, KEY_AUTHOR, KEY_CHANGE_ID});
   }
 
@@ -54,6 +54,7 @@ public class MongoChangeEntryRepository<CHANGE_ENTRY extends ChangeEntry> extend
   public void save(CHANGE_ENTRY changeEntry) throws ChangockException {
     collection.insertOne(toEntity(changeEntry));
   }
+
 
   /**
    * Check if a changeSet with given changeSetId and author and

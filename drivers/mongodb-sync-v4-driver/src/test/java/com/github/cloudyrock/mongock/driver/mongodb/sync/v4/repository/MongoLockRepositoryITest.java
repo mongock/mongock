@@ -7,7 +7,6 @@ import com.mongodb.client.FindIterable;
 import com.mongodb.client.model.UpdateOptions;
 import io.changock.driver.core.lock.LockEntry;
 import io.changock.driver.core.lock.LockPersistenceException;
-import io.changock.driver.core.lock.LockRepository;
 import io.changock.driver.core.lock.LockStatus;
 import com.github.cloudyrock.mongock.driver.mongodb.sync.v4.driver.util.IntegrationTestBase;
 import io.changock.migration.api.exception.ChangockException;
@@ -32,13 +31,13 @@ public class MongoLockRepositoryITest extends IntegrationTestBase {
   private static final String LOCK_COLLECTION_NAME = "changockL ock";
   private static final String LOCK_KEY = "LOCK_KEY";
 
-  private MongoLockRepository repository;
+  private MongoSync4LockRepository repository;
 
 
   @Before
   public void setUp() {
     collection = getDataBase().getCollection(LOCK_COLLECTION_NAME);
-    repository = Mockito.spy(new MongoLockRepository(collection));
+    repository = Mockito.spy(new MongoSync4LockRepository(collection));
     repository.initialize();
   }
 
@@ -57,7 +56,7 @@ public class MongoLockRepositoryITest extends IntegrationTestBase {
   public void shouldNoCreateUniqueIndex_whenEnsureIndex_IfAlreadyCreated() throws ChangockException {
     // given
     collection = getDataBase().getCollection(LOCK_COLLECTION_NAME);
-    repository = Mockito.spy(new MongoLockRepository(collection));
+    repository = Mockito.spy(new MongoSync4LockRepository(collection));
 
     doReturn(true).when(repository).isUniqueIndex(any(Document.class));
 

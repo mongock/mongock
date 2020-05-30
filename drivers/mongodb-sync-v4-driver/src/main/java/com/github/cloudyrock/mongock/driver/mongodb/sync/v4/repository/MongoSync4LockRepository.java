@@ -1,4 +1,4 @@
-package com.github.cloudyrock.mongock.driver.mongodb.v3.repository;
+package com.github.cloudyrock.mongock.driver.mongodb.sync.v4.repository;
 
 import com.mongodb.DuplicateKeyException;
 import com.mongodb.ErrorCategory;
@@ -16,14 +16,14 @@ import org.bson.conversions.Bson;
 
 import java.util.Date;
 
-public class MongoLockRepository extends MongoRepositoryBase<LockEntry> implements LockRepository<Document> {
+public class MongoSync4LockRepository extends MongoSync4RepositoryBase<LockEntry> implements LockRepository<Document> {
 
   private static final String KEY_FIELD = "key";
   private static final String STATUS_FIELD = "status";
   private static final String OWNER_FIELD = "owner";
   private static final String EXPIRES_AT_FIELD = "expiresAt";
 
-  public MongoLockRepository(MongoCollection<Document> collection) {
+  public MongoSync4LockRepository(MongoCollection<Document> collection) {
     super(collection, new String[]{KEY_FIELD});
   }
   /**
