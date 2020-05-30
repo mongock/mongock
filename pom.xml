@@ -23,7 +23,7 @@
 
   <groupId>com.github.cloudyrock.mongock</groupId>
   <artifactId>mongock</artifactId>
-  <version>4.0.4.alpha-SNAPSHOT</version>
+  <version>4.0.4.alpha</version>
   <packaging>pom</packaging>
   <properties>
     <java.version>1.8</java.version>
@@ -46,7 +46,7 @@
     <connection>scm:git:git@github.com:cloudyrock/mongock.git</connection>
     <developerConnection>scm:git:git@github.com:cloudyrock/mongock.git</developerConnection>
     <url>https://github.com/cloudyrock/mongock</url>
-    <tag>mongock-1.13</tag>
+    <tag>mongock-4.0.4.alpha</tag>
   </scm>
   <developers>
     <developer>
