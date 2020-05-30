@@ -22,7 +22,7 @@ public class MongoCore3Driver extends MongoCore3DriverBase<ChangeEntry> {
   @Override
   public ChangeEntryService<ChangeEntry> getChangeEntryService() {
     if (changeEntryRepository == null) {
-      this.changeEntryRepository = new Mongo3ChangeEntryRepository<>(mongoDatabase.getCollection(changeLogCollectionName));
+      this.changeEntryRepository = new Mongo3ChangeEntryRepository<>(mongoDatabase.getCollection(changeLogCollectionName), indexCreation);
     }
     return changeEntryRepository;
   }

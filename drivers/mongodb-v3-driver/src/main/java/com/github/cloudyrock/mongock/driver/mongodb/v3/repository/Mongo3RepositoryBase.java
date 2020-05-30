@@ -2,13 +2,15 @@ package com.github.cloudyrock.mongock.driver.mongodb.v3.repository;
 
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.model.IndexOptions;
-import io.changock.utils.field.FieldInstance;
 import io.changock.driver.core.common.Repository;
+import io.changock.migration.api.exception.ChangockException;
+import io.changock.utils.field.FieldInstance;
 import org.bson.Document;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.List;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
@@ -17,34 +19,60 @@ public abstract class Mongo3RepositoryBase<DOMAIN_CLASS> implements Repository<D
 
   private static final Logger logger = LoggerFactory.getLogger("MongoRepository");
 
+  private final static int INDEX_ENSURE_MAX_TRIES = 3;
+
   private final String[] uniqueFields;
   private final String fullCollectionName;
+  private final boolean indexCreation;
   private boolean ensuredCollectionIndex = false;
   protected MongoCollection<Document> collection;
 
-  public Mongo3RepositoryBase(MongoCollection<Document> collection, String[] uniqueFields) {
+  public Mongo3RepositoryBase(MongoCollection<Document> collection, String[] uniqueFields, boolean indexCreation) {
     this.collection = collection;
     this.fullCollectionName = collection.getNamespace().getDatabaseName() + "." + collection.getNamespace().getCollectionName();
     this.uniqueFields = uniqueFields;
+    this.indexCreation = indexCreation;
   }
 
   @Override
   public synchronized void initialize() {
     if (!this.ensuredCollectionIndex) {
-      cleanResidualUniqueKeys();
-      if (isIndexCreationRequired()) {
-        createRequiredUniqueIndex();
-      }
+      ensureIndex(INDEX_ENSURE_MAX_TRIES);
       this.ensuredCollectionIndex = true;
     }
   }
 
+  private void ensureIndex(int tryCounter) {
+    if (tryCounter <= 0) {
+      throw new ChangockException("Max tries " + INDEX_ENSURE_MAX_TRIES + " index  creation");
+    }
+    if (!isIndexFine()) {
+      if (!indexCreation) {
+        throw new ChangockException("Index creation not allowed, but not created or wrongly created for collection " + collection.getNamespace().getCollectionName());
+      }
+      cleanResidualUniqueKeys();
+      if (!isRequiredIndexCreated()) {
+        createRequiredUniqueIndex();
+      }
+      ensureIndex(--tryCounter);
+    }
+  }
+
+  protected boolean isIndexFine() {
+    return getResidualKeys().isEmpty() && isRequiredIndexCreated();
+  }
+
   protected void cleanResidualUniqueKeys() {
     logger.debug("Removing residual uniqueKeys for collection [{}]", getCollectionName());
-    StreamSupport.stream(collection.listIndexes().spliterator(), false)
-        .filter(this::doesNeedToBeRemoved)
+    getResidualKeys().stream()
         .peek(index -> logger.debug("Removed residual uniqueKey [{}] for collection [{}]", index.toString(), getCollectionName()))
         .forEach(this::dropIndex);
+  }
+
+  private List<Document> getResidualKeys() {
+    return StreamSupport.stream(collection.listIndexes().spliterator(), false)
+        .filter(this::doesNeedToBeRemoved)
+        .collect(Collectors.toList());
   }
 
   protected boolean doesNeedToBeRemoved(Document index) {
@@ -55,8 +83,8 @@ public abstract class Mongo3RepositoryBase<DOMAIN_CLASS> implements Repository<D
     return (((Document) index.get("key")).getInteger("_id", 0) == 1);
   }
 
-  protected boolean isIndexCreationRequired() {
-    return StreamSupport.stream(collection.listIndexes().spliterator(), false).noneMatch(this::isRightIndex);
+  protected boolean isRequiredIndexCreated() {
+    return StreamSupport.stream(collection.listIndexes().spliterator(), false).anyMatch(this::isRightIndex);
   }
 
   protected void createRequiredUniqueIndex() {

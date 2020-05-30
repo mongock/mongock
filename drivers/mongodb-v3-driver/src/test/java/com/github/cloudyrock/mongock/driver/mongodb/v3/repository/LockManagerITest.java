@@ -37,7 +37,7 @@ public class LockManagerITest extends IntegrationTestBase {
     @Before
     public void setUp() {
         collection = getDataBase().getCollection(LOCK_COLLECTION_NAME);
-        repository = new Mongo3LockRepository(collection);
+        repository = new Mongo3LockRepository(collection, true);
         repository.initialize();
         TimeService timeUtils = new TimeService();
         lockManager = new DefaultLockManager(repository, timeUtils)

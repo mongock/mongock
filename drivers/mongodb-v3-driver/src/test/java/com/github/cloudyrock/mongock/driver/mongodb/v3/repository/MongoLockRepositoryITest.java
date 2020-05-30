@@ -37,7 +37,7 @@ public class MongoLockRepositoryITest extends IntegrationTestBase {
   @Before
   public void setUp() {
     collection = getDataBase().getCollection(LOCK_COLLECTION_NAME);
-    repository = Mockito.spy(new Mongo3LockRepository(collection));
+    repository = Mockito.spy(new Mongo3LockRepository(collection, true));
     repository.initialize();
   }
 
@@ -55,7 +55,7 @@ public class MongoLockRepositoryITest extends IntegrationTestBase {
   public void shouldNoCreateUniqueIndex_whenEnsureIndex_IfAlreadyCreated() throws ChangockException {
     // given
     collection = getDataBase().getCollection(LOCK_COLLECTION_NAME);
-    repository = Mockito.spy(new Mongo3LockRepository(collection));
+    repository = Mockito.spy(new Mongo3LockRepository(collection, true));
 
     doReturn(true).when(repository).isUniqueIndex(any(Document.class));
 

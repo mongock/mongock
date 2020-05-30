@@ -20,8 +20,8 @@ public class Mongo3ChangeEntryRepository<CHANGE_ENTRY extends ChangeEntry> exten
 
   static {
     try {
-       Field field = ChangeEntry.class.getDeclaredField("executionId");
-       field.setAccessible(true);
+      Field field = ChangeEntry.class.getDeclaredField("executionId");
+      field.setAccessible(true);
       KEY_EXECUTION_ID = field.getAnnotation(io.changock.utils.field.Field.class).value();
 
       field = ChangeEntry.class.getDeclaredField("changeId");
@@ -40,8 +40,8 @@ public class Mongo3ChangeEntryRepository<CHANGE_ENTRY extends ChangeEntry> exten
     }
   }
 
-  public Mongo3ChangeEntryRepository(MongoCollection<Document> collection) {
-    super(collection, new String[]{KEY_EXECUTION_ID, KEY_AUTHOR, KEY_CHANGE_ID});
+  public Mongo3ChangeEntryRepository(MongoCollection<Document> collection, boolean indexCreation) {
+    super(collection, new String[]{KEY_EXECUTION_ID, KEY_AUTHOR, KEY_CHANGE_ID}, indexCreation);
   }
 
   @Override
@@ -58,8 +58,9 @@ public class Mongo3ChangeEntryRepository<CHANGE_ENTRY extends ChangeEntry> exten
   /**
    * Check if a changeSet with given changeSetId and author and
    * (state == EXECUTED OR state == null OR estate doesn't exists)
+   *
    * @param changeSetId changeSetId
-   * @param author author
+   * @param author      author
    * @return true if a changeSet with given changeSetId and author is already executed, false otherwise
    */
   protected Bson buildSearchQueryDBObject(String changeSetId, String author) {
