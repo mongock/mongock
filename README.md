@@ -2,7 +2,7 @@
     <img src="https://raw.githubusercontent.com/cloudyrock/mongock/master/misc/logo-new.png" width="100%" />
 </p>
 
-<h3 align="center" style="color:grey">
+<h3 align="center" style="vertical-align: top;">
 MongoDB version control tool for Java
 </h4>
 <br />
