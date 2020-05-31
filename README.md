@@ -6,6 +6,7 @@
 MongoDB version control tool for Java
 </h4>
 <br />
+<p align="center" >
 
 [![Maven Central](https://maven-badges.herokuapp.com/maven-central/com.github.cloudyrock.mongock/mongock/badge.png)](https://search.maven.org/artifact/com.github.cloudyrock.mongock/mongock)
 ![Build](https://github.com/cloudyrock/mongock/workflows/Build/badge.svg)
@@ -13,6 +14,7 @@ MongoDB version control tool for Java
 [![Vulnerabilities](https://sonarcloud.io/api/project_badges/measure?project=com.github.cloudyrock.mongock&metric=vulnerabilities)](https://sonarcloud.io/component_measures?id=com.github.cloudyrock.mongock&metric=vulnerabilities)
 [![Hex.pm](https://img.shields.io/hexpm/l/plug.svg)](https://github.com/dieppa/mongock/blob/master/LICENSE)
 
+</p>
 
 **Mongock** is a java MongoDB tool for tracking, managing and applying database schema changes accross all your environments based on a coding approach.  
 
