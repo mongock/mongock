@@ -1,8 +1,8 @@
-<p align="center">
+<p align="center" >
     <img src="https://raw.githubusercontent.com/cloudyrock/mongock/master/misc/logo-new.png" width="100%" />
 </p>
 
-<h4 align="center">
+<h3 align="center" style="color:grey">
 MongoDB version control tool for Java
 </h4>
 <br />
