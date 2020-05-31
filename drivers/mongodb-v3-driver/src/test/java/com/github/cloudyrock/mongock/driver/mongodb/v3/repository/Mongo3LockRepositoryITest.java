@@ -12,7 +12,7 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
 
-public class Mongo3LockRepositoryITest extends Mongo3LockRepositoryITestBase {
+public class Mongo3LockRepositoryITest extends MongoLockRepositoryITestBase {
 
   private static final String LOCK_COLLECTION_NAME = "changockLock";
 

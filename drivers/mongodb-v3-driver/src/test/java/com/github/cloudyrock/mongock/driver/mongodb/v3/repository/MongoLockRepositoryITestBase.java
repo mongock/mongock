@@ -27,7 +27,7 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
 
-public abstract class Mongo3LockRepositoryITestBase extends IntegrationTestBase {
+public abstract class MongoLockRepositoryITestBase extends IntegrationTestBase {
 
   private static final String LOCK_COLLECTION_NAME = "changockLock";
   private static final String LOCK_KEY = "LOCK_KEY";
@@ -236,7 +236,6 @@ public abstract class Mongo3LockRepositoryITestBase extends IntegrationTestBase 
     // when
     repository.insertUpdate(new LockEntry(LOCK_KEY, LockStatus.LOCK_HELD.name(), "process2", new Date(currentMillis)));
   }
-
 
   protected abstract void initializeRepository() ;
 }
