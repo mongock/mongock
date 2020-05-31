@@ -1,17 +1,17 @@
-package com.github.cloudyrock.mongock.driver.mongodb.sync.v4.driver;
+package com.github.cloudyrock.mongock.driver.mongodb.v3.driver;
 
 
-import com.github.cloudyrock.mongock.driver.mongodb.sync.v4.driver.changelogs.integration.test1.withnorunalways.ChangeLogSuccess;
-import com.github.cloudyrock.mongock.driver.mongodb.sync.v4.driver.changelogs.integration.test1.withrunalways.WithRunAlways;
-import com.github.cloudyrock.mongock.driver.mongodb.sync.v4.driver.changelogs.integration.test2.ChangeLogFailure;
-import com.github.cloudyrock.mongock.driver.mongodb.sync.v4.driver.changelogs.integration.test3.ChangeLogEnsureDecorator;
-import com.github.cloudyrock.mongock.driver.mongodb.sync.v4.driver.util.CallVerifier;
-import com.github.cloudyrock.mongock.driver.mongodb.sync.v4.driver.util.CallVerifierImpl;
-import com.github.cloudyrock.mongock.driver.mongodb.sync.v4.driver.util.IntegrationTestBase;
+import com.github.cloudyrock.mongock.driver.mongodb.v3.driver.util.CallVerifier;
 import com.mongodb.client.FindIterable;
 import com.mongodb.client.MongoCursor;
 import com.mongodb.client.MongoDatabase;
 import io.changock.driver.api.entry.ChangeState;
+import com.github.cloudyrock.mongock.driver.mongodb.v3.driver.changelogs.integration.test1.withnorunalways.ChangeLogSuccess;
+import com.github.cloudyrock.mongock.driver.mongodb.v3.driver.changelogs.integration.test1.withrunalways.WithRunAlways;
+import com.github.cloudyrock.mongock.driver.mongodb.v3.driver.changelogs.integration.test2.ChangeLogFailure;
+import com.github.cloudyrock.mongock.driver.mongodb.v3.driver.changelogs.integration.test3.ChangeLogEnsureDecorator;
+import com.github.cloudyrock.mongock.driver.mongodb.v3.driver.util.CallVerifierImpl;
+import com.github.cloudyrock.mongock.driver.mongodb.v3.driver.util.IntegrationTestBase;
 import io.changock.migration.api.annotations.ChangeSet;
 import io.changock.migration.api.exception.ChangockException;
 import io.changock.runner.standalone.TestChangockRunner;
@@ -22,21 +22,18 @@ import org.junit.Test;
 import org.junit.rules.ExpectedException;
 
 import java.lang.reflect.Method;
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.fail;
 import static org.mockito.Mockito.mock;
 
-public class MongoDriverITest extends IntegrationTestBase {
+public class Mongo3DriverITest extends IntegrationTestBase {
 
   private static final String CHANGELOG_COLLECTION_NAME = "changockChangeLog";
   private static final String KEY_EXECUTION_ID = "executionId";
@@ -57,13 +54,11 @@ public class MongoDriverITest extends IntegrationTestBase {
     runChanges(getDriver(), ChangeLogSuccess.class, CHANGELOG_COLLECTION_NAME, Collections.emptyList(), false);
   }
 
-
-
   @Test
-  public void shouldNotTrackChangeSetAsIgnored_WhenAlreadyExecuted_IfNotRunAlways() throws NoSuchMethodException {
+  public void shouldRegisterChangeSetAsIgnored_WhenAlreadyExecuted_IfNotRunAlways() throws NoSuchMethodException {
     collection = this.getDataBase().getCollection(CHANGELOG_COLLECTION_NAME);
     collection.insertOne(getChangeEntryDocument(ChangeLogSuccess.class.getMethod("method_0"), ChangeState.EXECUTED));
-    runChanges(getDriver(),ChangeLogSuccess.class, CHANGELOG_COLLECTION_NAME, Collections.singletonList("method_0"), false);
+    runChanges( getDriver(),ChangeLogSuccess.class, CHANGELOG_COLLECTION_NAME, Collections.singletonList("method_0"), false);
   }
 
   @Test
@@ -106,7 +101,7 @@ public class MongoDriverITest extends IntegrationTestBase {
   public void shouldUseDifferentChangeLogCollectionName_whenSettingChangeLogCollectionName() {
     String newChangeLogCollectionName = "newChangeLogCollectionName";
     collection = this.getDataBase().getCollection(newChangeLogCollectionName);
-    MongoSync4Driver driver = new MongoSync4Driver(this.getDataBase());
+    MongoCore3Driver driver = new MongoCore3Driver(this.getDataBase());
     driver.setChangeLogCollectionName(newChangeLogCollectionName);
     runChanges(driver, ChangeLogSuccess.class, newChangeLogCollectionName, Collections.emptyList(), false);
   }
@@ -125,10 +120,13 @@ public class MongoDriverITest extends IntegrationTestBase {
         .append(KEY_METADATA, getStringObjectMap());
   }
 
-  private void runChanges(MongoSync4Driver driver, Class changeLogClass, String changeLogCollectionName) {
+  private void runChanges(MongoCore3Driver driver, Class changeLogClass, String changeLogCollectionName) {
     runChanges(driver, changeLogClass, changeLogCollectionName, Collections.emptyList(), false);
   }
-  private void runChanges(MongoSync4Driver driver, Class changeLogClass, String chageLogCollectionName, Collection<String> ignoredChangeIds, boolean trackIgnored) {
+
+
+
+  private void runChanges(MongoCore3Driver driver, Class changeLogClass, String chageLogCollectionName, Collection<String> ignoredChangeIds, boolean trackIgnored) {
     Map<String, Object> metadata = getStringObjectMap();
 
     String executionId = UUID.randomUUID().toString();
@@ -142,13 +140,12 @@ public class MongoDriverITest extends IntegrationTestBase {
 
     collection = this.getDataBase().getCollection(chageLogCollectionName);
 
-    FindIterable<Document> documents = collection.find(new Document());
-//        .append(KEY_EXECUTION_ID, executionId));
+    FindIterable<Document> documents = collection.find(new Document()
+        .append(KEY_EXECUTION_ID, executionId));
     MongoCursor<Document> iterator = documents.iterator();
-    List<Document> documentList = new ArrayList<>();
     while (iterator.hasNext()) {
       Document next = iterator.next();
-      documentList.add(next);
+      System.out.println(next);
     }
 
     for (int i = 0; i < 5; i++) {
@@ -157,6 +154,7 @@ public class MongoDriverITest extends IntegrationTestBase {
           .append(KEY_AUTHOR, "testuser")
           .append(KEY_CHANGE_ID, "method_" + i)).first();
       if(trackIgnored || !ignoredChangeIds.contains("method_" + i)) {
+
         String executionIdChange = change.get(KEY_EXECUTION_ID, String.class);
         String changeId = change.get(KEY_CHANGE_ID, String.class);
         String author = change.get(KEY_AUTHOR, String.class);
@@ -176,6 +174,7 @@ public class MongoDriverITest extends IntegrationTestBase {
         assertNotNull(executionMillis);
         checkMetadata(metadataResult);
       }
+
     }
   }
 
@@ -240,8 +239,8 @@ public class MongoDriverITest extends IntegrationTestBase {
   }
 
   @NotNull
-  private MongoSync4Driver getDriver() {
-    MongoSync4Driver driver = new MongoSync4Driver(this.getDataBase());
+  private MongoCore3Driver getDriver() {
+    MongoCore3Driver driver = new MongoCore3Driver(this.getDataBase());
     driver.setChangeLogCollectionName(CHANGELOG_COLLECTION_NAME);
     return driver;
   }

@@ -20,7 +20,7 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 
 
-public class LockManagerITest extends IntegrationTestBase {
+public class Mongo3LockManagerITest extends IntegrationTestBase {
     private static final String LOCK_COLLECTION_NAME = "changockLock";
     private static final long lockActiveMillis = 5 * 60 * 1000;
     private static final long maxWaitMillis = 5 * 60 * 1000;

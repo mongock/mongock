@@ -26,7 +26,7 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
 
-public class MongoLockRepositoryITest extends IntegrationTestBase {
+public class MongoSync4LockRepositoryITest extends IntegrationTestBase {
 
   private static final String LOCK_COLLECTION_NAME = "changockL ock";
   private static final String LOCK_KEY = "LOCK_KEY";
