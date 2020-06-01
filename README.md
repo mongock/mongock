@@ -103,32 +103,32 @@ If you would like to contribute to Mongock project, please read [how to contribu
 + Non-fail-fast changeSets
 + Be able to use Spring Data repository safely with the lock in ChangeSets
 + Custom injections in Spring via context covered by Lock meachanism
++ Spring integration via @EnableMongock annotation
 ! Richer data in changelogCollection
 ```
+* Transaction support
 * Migration validation
-* Undo operations
+* Migration recovery
+* Undo migrations
 * Allow multiple changeLog packages
-* Custom injections in Standalone via context covered by Lock meachanism
+* Custom injections in Standalone covered by Lock meachanism
 * Re-branded documentation supporting several Mongock(and mongodb driver) version
-* Migration for Mongobee
+* Migration from Mongobee
 
 ### What's up next
 * Better and more information in changeLog collection
 * Spring Rest endpoint to retrieve migration data
 * Spring Html endpoint to retrieve migration report
-* ChangeSet validation
-* Mongo transactions
-* RollBacks
-* Migration validation
 * Scheduled migration
 * Alerts
 * Professional support
 * Parallel process
-* More Spring friendly  builders
 * Spring Expression language support in Profiles
 * Be able to use spring properties to replace builder 
 * Reactive support
-* Json schema validation
+* Json migration
+* Dry run
+* Centralized server
 * Command cli
 * Other NoSql support
 * UI 
