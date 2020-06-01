@@ -17,8 +17,7 @@ import java.util.stream.StreamSupport;
 
 public abstract class Mongo3RepositoryBase<DOMAIN_CLASS> implements Repository<DOMAIN_CLASS, Document> {
 
-  private static final Logger logger = LoggerFactory.getLogger("MongoRepository");
-
+  private final static Logger logger = LoggerFactory.getLogger(Mongo3RepositoryBase.class);
   private final static int INDEX_ENSURE_MAX_TRIES = 3;
 
   private final String[] uniqueFields;

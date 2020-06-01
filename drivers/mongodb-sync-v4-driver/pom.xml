@@ -74,6 +74,15 @@
       <version>1.12.4</version>
       <scope>test</scope>
     </dependency>
+
+    <dependency>
+      <groupId>com.github.cloudyrock.mongock</groupId>
+      <artifactId>mongodb-driver-test-template</artifactId>
+      <classifier>tests</classifier>
+      <type>test-jar</type>
+      <version>${project.version}</version>
+      <scope>test</scope>
+    </dependency>
   </dependencies>
 
 </project>

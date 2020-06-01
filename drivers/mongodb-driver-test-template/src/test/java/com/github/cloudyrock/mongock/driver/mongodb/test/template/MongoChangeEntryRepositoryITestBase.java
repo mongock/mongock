@@ -2,49 +2,40 @@ package com.github.cloudyrock.mongock.driver.mongodb.test.template;
 
 import com.github.cloudyrock.mongock.driver.mongodb.test.template.util.IntegrationTestBase;
 import com.mongodb.client.model.IndexOptions;
-import io.changock.driver.api.entry.ChangeEntry;
 import io.changock.driver.api.entry.ChangeState;
 import io.changock.driver.core.entry.ChangeEntryRepository;
 import io.changock.migration.api.exception.ChangockException;
 import org.bson.Document;
-import org.junit.*;
-import org.junit.Before;
+import org.junit.Assert;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
 
 import java.time.Instant;
 import java.util.Date;
+import java.util.regex.Matcher;
 
 
 public abstract class MongoChangeEntryRepositoryITestBase extends IntegrationTestBase {
 
-  private static final String CHANGE_ENTRY_COLLECTION_NAME = "dbchangelog";
   protected ChangeEntryRepository repository;
 
   @Rule
   public ExpectedException exceptionRule = ExpectedException.none();
 
-  @Before
-  public void setUp() {
-    collection = getDataBase().getCollection(CHANGE_ENTRY_COLLECTION_NAME);
-  }
-
   @Test
   public void shouldThrowException_WhenNoIndexCreation_IfIndexNoPreviouslyCreated() throws ChangockException {
     exceptionRule.expect(ChangockException.class);
-    exceptionRule.expectMessage("Index creation not allowed, but not created or wrongly created for collection dbchangelog");
+    exceptionRule.expectMessage("Index creation not allowed, but not created or wrongly created for collection");
     initializeRepository(false);
   }
 
 
   @Test
   public void shouldBeOk_WhenNoIndexCreation_IfIndexAlreadyCreated() throws ChangockException {
-    collection.createIndex(getIndexDocument(new String[]{"executionId", "author", "changeId"}), new IndexOptions().unique(true));
+    getAdapter().createIndex(getIndexDocument(new String[]{"executionId", "author", "changeId"}), new IndexOptions().unique(true));
     initializeRepository(false);
   }
-
-
 
   @Test
   public void shouldReturnFalse_whenHasNotBeenExecuted_IfThereIsWithSameIdAndAuthorAndStateNull() {
@@ -54,7 +45,7 @@ public abstract class MongoChangeEntryRepositoryITestBase extends IntegrationTes
     String executionId = "executionId";
     createAndInsertChangeEntry(true, null, changeId, author, executionId);
     Assert.assertEquals("pre-requisite: changeEntry should be added", 1,
-        collection.countDocuments(new Document().append("changeId", changeId).append("author", author)));
+        getAdapter().countDocuments(new Document().append("changeId", changeId).append("author", author)));
 
     Assert.assertTrue(repository.isAlreadyExecuted(changeId, author));
   }
@@ -67,7 +58,7 @@ public abstract class MongoChangeEntryRepositoryITestBase extends IntegrationTes
     String executionId = "executionId";
     createAndInsertChangeEntry(false, null, changeId, author, executionId);
     Assert.assertEquals("pre-requisite: changeEntry should be added", 1,
-        collection.countDocuments(new Document().append("changeId", changeId).append("author", author)));
+        getAdapter().countDocuments(new Document().append("changeId", changeId).append("author", author)));
 
     Assert.assertTrue(repository.isAlreadyExecuted(changeId, author));
   }
@@ -81,7 +72,7 @@ public abstract class MongoChangeEntryRepositoryITestBase extends IntegrationTes
     String executionId = "executionId";
     createAndInsertChangeEntry(true, ChangeState.EXECUTED.toString(), changeId, author, executionId);
     Assert.assertEquals("pre-requisite: changeEntry should be added", 1,
-        collection.countDocuments(new Document().append("changeId", changeId).append("author", author)));
+        getAdapter().countDocuments(new Document().append("changeId", changeId).append("author", author)));
 
     Assert.assertTrue(repository.isAlreadyExecuted(changeId, author));
   }
@@ -94,7 +85,7 @@ public abstract class MongoChangeEntryRepositoryITestBase extends IntegrationTes
     String executionId = "executionId";
     createAndInsertChangeEntry(true, ChangeState.IGNORED.toString(), changeId, author, executionId);
     Assert.assertEquals("pre-requisite: changeEntry should be added", 1,
-        collection.countDocuments(new Document().append("changeId", changeId).append("author", author)));
+        getAdapter().countDocuments(new Document().append("changeId", changeId).append("author", author)));
 
     Assert.assertFalse(repository.isAlreadyExecuted(changeId, author));
   }
@@ -107,7 +98,7 @@ public abstract class MongoChangeEntryRepositoryITestBase extends IntegrationTes
     String executionId = "executionId";
     createAndInsertChangeEntry(true, ChangeState.FAILED.toString(), changeId, author, executionId);
     Assert.assertEquals("pre-requisite: changeEntry should be added", 1,
-        collection.countDocuments(new Document().append("changeId", changeId).append("author", author)));
+        getAdapter().countDocuments(new Document().append("changeId", changeId).append("author", author)));
 
     Assert.assertFalse(repository.isAlreadyExecuted(changeId, author));
   }
@@ -126,7 +117,7 @@ public abstract class MongoChangeEntryRepositoryITestBase extends IntegrationTes
     if (withState) {
       existingEntry = existingEntry.append("state", state);
     }
-    collection.insertOne(existingEntry);
+    getAdapter().insertOne(existingEntry);
   }
 
   protected abstract void initializeRepository(boolean indexCreation);

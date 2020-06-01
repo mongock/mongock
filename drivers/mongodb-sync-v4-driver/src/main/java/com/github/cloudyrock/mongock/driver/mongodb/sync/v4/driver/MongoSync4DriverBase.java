@@ -64,7 +64,7 @@ public abstract class MongoSync4DriverBase<CHANGE_ENTRY extends ChangeEntry>
   protected LockRepository getLockRepository() {
     if (lockRepository == null) {
       MongoCollection<Document> collection = mongoDatabase.getCollection(lockCollectionName);
-      this.lockRepository = new MongoSync4LockRepository(collection);
+      this.lockRepository = new MongoSync4LockRepository(collection, indexCreation);
     }
     return lockRepository;
   }

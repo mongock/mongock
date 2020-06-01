@@ -2,6 +2,8 @@ package com.github.cloudyrock.mongock.driver.mongodb.v3.repository;
 
 
 import com.github.cloudyrock.mongock.driver.mongodb.test.template.MongoLockRepositoryITestBase;
+import com.github.cloudyrock.mongock.driver.mongodb.test.template.util.MongoDbDriverTestAdapter;
+import com.github.cloudyrock.mongock.driver.mongodb.v3.MongoDb3DriverTestAdapterImpl;
 import io.changock.migration.api.exception.ChangockException;
 import org.bson.Document;
 import org.junit.Test;
@@ -32,8 +34,7 @@ public class Mongo3LockRepositoryITest extends MongoLockRepositoryITestBase {
   public void shouldNoCreateUniqueIndex_whenEnsureIndex_IfAlreadyCreated() throws ChangockException {
     initializeRepository();
     // given
-    collection = getDataBase().getCollection(LOCK_COLLECTION_NAME);
-    repository = Mockito.spy(new Mongo3LockRepository(collection, true));
+    repository = Mockito.spy(new Mongo3LockRepository(getDataBase().getCollection(LOCK_COLLECTION_NAME), true));
 
     doReturn(true).when((Mongo3LockRepository)repository).isUniqueIndex(any(Document.class));
 
@@ -48,7 +49,12 @@ public class Mongo3LockRepositoryITest extends MongoLockRepositoryITestBase {
 
   @Override
   protected void initializeRepository() {
-    repository = Mockito.spy(new Mongo3LockRepository(collection, true));
+    repository = Mockito.spy(new Mongo3LockRepository(getDataBase().getCollection(LOCK_COLLECTION_NAME), true));
     repository.initialize();
+  }
+
+  @Override
+  protected MongoDbDriverTestAdapter getAdapter(String collectionName) {
+    return new MongoDb3DriverTestAdapterImpl(getDataBase().getCollection(collectionName));
   }
 }

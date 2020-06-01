@@ -29,24 +29,20 @@ public abstract class MongoLockRepositoryITestBase extends IntegrationTestBase {
 
   protected LockRepository<Document> repository;
 
-  @Before
-  public void setUp() {
-    collection = getDataBase().getCollection(LOCK_COLLECTION_NAME);
-  }
 
   @Test
   public void ensureKeyUniqueness() {
     initializeRepository();
     //inserting lock with key1: fine
-    getDataBase().getCollection(LOCK_COLLECTION_NAME)
+    getAdapter(LOCK_COLLECTION_NAME)
         .insertOne(repository.toEntity(new LockEntry("KEY1", "STATUS1", "process1", new Date(System.currentTimeMillis() - 60000))));
     //inserting lock with key2: fine
-    getDataBase().getCollection(LOCK_COLLECTION_NAME)
+    getAdapter(LOCK_COLLECTION_NAME)
         .insertOne(repository.toEntity(new LockEntry("KEY2", "STATUS1", "process1", new Date(System.currentTimeMillis() - 60000))));
 
     try {
       //inserting lock with key1 again: Exception
-      getDataBase().getCollection(LOCK_COLLECTION_NAME)
+      getAdapter(LOCK_COLLECTION_NAME)
           .insertOne(repository.toEntity(new LockEntry("KEY1", "STATUS2", "process2", new Date(System.currentTimeMillis() - 60000))));
 
     } catch (MongoWriteException ex) {

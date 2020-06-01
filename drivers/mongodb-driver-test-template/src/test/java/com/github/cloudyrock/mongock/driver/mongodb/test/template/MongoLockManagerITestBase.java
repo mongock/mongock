@@ -31,13 +31,7 @@ public abstract class MongoLockManagerITestBase extends IntegrationTestBase {
   protected LockRepository<Document> repository;
 
   @Before
-  public void before() {
-    collection = this.getDataBase().getCollection(LOCK_COLLECTION_NAME);
-  }
-
-  @Before
   public void setUp() {
-    collection = getDataBase().getCollection(LOCK_COLLECTION_NAME);
     initializeRepository();
     TimeService timeUtils = new TimeService();
     lockManager = new DefaultLockManager(repository, timeUtils)
@@ -48,7 +42,7 @@ public abstract class MongoLockManagerITestBase extends IntegrationTestBase {
 
   @After
   public void tearDown() {
-    collection.deleteMany(new Document());
+    getDataBase().getCollection(LOCK_COLLECTION_NAME).deleteMany(new Document());
   }
 
 
