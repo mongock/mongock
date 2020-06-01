@@ -1,4 +1,4 @@
-package com.github.cloudyrock.mongock.driver.mongodb.v3.driver.util;
+package com.github.cloudyrock.mongock.driver.mongodb.test.template.util;
 
 public class CallVerifierImpl implements CallVerifier{
     private int counter = 0;

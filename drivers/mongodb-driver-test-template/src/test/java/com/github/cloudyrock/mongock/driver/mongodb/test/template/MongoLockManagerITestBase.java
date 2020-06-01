@@ -1,6 +1,6 @@
-package com.github.cloudyrock.mongock.driver.mongodb.v3.repository;
+package com.github.cloudyrock.mongock.driver.mongodb.test.template;
 
-import com.github.cloudyrock.mongock.driver.mongodb.v3.driver.util.IntegrationTestBase;
+import com.github.cloudyrock.mongock.driver.mongodb.test.template.util.IntegrationTestBase;
 import com.mongodb.client.FindIterable;
 import com.mongodb.client.model.UpdateOptions;
 import io.changock.driver.api.lock.LockCheckException;

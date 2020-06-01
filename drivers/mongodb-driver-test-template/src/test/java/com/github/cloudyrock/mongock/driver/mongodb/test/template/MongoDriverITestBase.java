@@ -1,14 +1,14 @@
-package com.github.cloudyrock.mongock.driver.mongodb.v3.driver;
+package com.github.cloudyrock.mongock.driver.mongodb.test.template;
 
 
 import com.github.cloudyrock.mongock.MongockConnectionDriver;
-import com.github.cloudyrock.mongock.driver.mongodb.v3.driver.changelogs.integration.test1.withnorunalways.ChangeLogSuccess;
-import com.github.cloudyrock.mongock.driver.mongodb.v3.driver.changelogs.integration.test1.withrunalways.WithRunAlways;
-import com.github.cloudyrock.mongock.driver.mongodb.v3.driver.changelogs.integration.test2.ChangeLogFailure;
-import com.github.cloudyrock.mongock.driver.mongodb.v3.driver.changelogs.integration.test3.ChangeLogEnsureDecorator;
-import com.github.cloudyrock.mongock.driver.mongodb.v3.driver.util.CallVerifier;
-import com.github.cloudyrock.mongock.driver.mongodb.v3.driver.util.CallVerifierImpl;
-import com.github.cloudyrock.mongock.driver.mongodb.v3.driver.util.IntegrationTestBase;
+import com.github.cloudyrock.mongock.driver.mongodb.test.template.integration.test1.withnorunalways.ChangeLogSuccess;
+import com.github.cloudyrock.mongock.driver.mongodb.test.template.integration.test1.withrunalways.WithRunAlways;
+import com.github.cloudyrock.mongock.driver.mongodb.test.template.integration.test2.ChangeLogFailure;
+import com.github.cloudyrock.mongock.driver.mongodb.test.template.integration.test3.ChangeLogEnsureDecorator;
+import com.github.cloudyrock.mongock.driver.mongodb.test.template.util.CallVerifier;
+import com.github.cloudyrock.mongock.driver.mongodb.test.template.util.CallVerifierImpl;
+import com.github.cloudyrock.mongock.driver.mongodb.test.template.util.IntegrationTestBase;
 import com.mongodb.client.FindIterable;
 import com.mongodb.client.MongoCursor;
 import com.mongodb.client.MongoDatabase;
@@ -98,12 +98,11 @@ public abstract class MongoDriverITestBase extends IntegrationTestBase {
     runChanges(getDriver(), WithRunAlways.class, CHANGELOG_COLLECTION_NAME);
   }
 
-
   @Test
   public void shouldUseDifferentChangeLogCollectionName_whenSettingChangeLogCollectionName() {
     String newChangeLogCollectionName = "newChangeLogCollectionName";
     collection = this.getDataBase().getCollection(newChangeLogCollectionName);
-    MongoCore3Driver driver = new MongoCore3Driver(this.getDataBase());
+    MongockConnectionDriver driver = getDriver();
     driver.setChangeLogCollectionName(newChangeLogCollectionName);
     runChanges(driver, ChangeLogSuccess.class, newChangeLogCollectionName, Collections.emptyList(), false);
   }

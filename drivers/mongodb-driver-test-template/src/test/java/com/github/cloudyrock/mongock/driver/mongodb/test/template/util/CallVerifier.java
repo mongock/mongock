@@ -1,4 +1,4 @@
-package com.github.cloudyrock.mongock.driver.mongodb.v3.driver.util;
+package com.github.cloudyrock.mongock.driver.mongodb.test.template.util;
 
 public interface CallVerifier {
 

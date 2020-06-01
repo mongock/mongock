@@ -1,32 +1,26 @@
-package com.github.cloudyrock.mongock.driver.mongodb.v3.repository;
+package com.github.cloudyrock.mongock.driver.mongodb.test.template;
 
-import com.github.cloudyrock.mongock.driver.mongodb.v3.driver.util.IntegrationTestBase;
+import com.github.cloudyrock.mongock.driver.mongodb.test.template.util.IntegrationTestBase;
 import com.mongodb.client.model.IndexOptions;
 import io.changock.driver.api.entry.ChangeEntry;
 import io.changock.driver.api.entry.ChangeState;
 import io.changock.driver.core.entry.ChangeEntryRepository;
 import io.changock.migration.api.exception.ChangockException;
 import org.bson.Document;
-import org.junit.Assert;
+import org.junit.*;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
-import org.mockito.Mockito;
 
 import java.time.Instant;
 import java.util.Date;
-
-import static org.mockito.Matchers.any;
-import static org.mockito.Mockito.doReturn;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
 
 
 public abstract class MongoChangeEntryRepositoryITestBase extends IntegrationTestBase {
 
   private static final String CHANGE_ENTRY_COLLECTION_NAME = "dbchangelog";
-  protected ChangeEntryRepository<ChangeEntry, Document> repository;
+  protected ChangeEntryRepository repository;
 
   @Rule
   public ExpectedException exceptionRule = ExpectedException.none();

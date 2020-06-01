@@ -1,7 +1,7 @@
-package com.github.cloudyrock.mongock.driver.mongodb.v3.repository;
+package com.github.cloudyrock.mongock.driver.mongodb.test.template;
 
 
-import com.github.cloudyrock.mongock.driver.mongodb.v3.driver.util.IntegrationTestBase;
+import com.github.cloudyrock.mongock.driver.mongodb.test.template.util.IntegrationTestBase;
 import com.mongodb.ErrorCategory;
 import com.mongodb.MongoWriteException;
 import com.mongodb.client.FindIterable;
@@ -14,17 +14,12 @@ import io.changock.migration.api.exception.ChangockException;
 import org.bson.Document;
 import org.junit.Before;
 import org.junit.Test;
-import org.mockito.Mockito;
 
 import java.util.Date;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.doReturn;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
 
 
 public abstract class MongoLockRepositoryITestBase extends IntegrationTestBase {

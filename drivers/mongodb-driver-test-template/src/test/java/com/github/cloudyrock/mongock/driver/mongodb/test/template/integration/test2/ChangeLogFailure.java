@@ -1,4 +1,4 @@
-package com.github.cloudyrock.mongock.driver.mongodb.v3.driver.changelogs.integration.test2;
+package com.github.cloudyrock.mongock.driver.mongodb.test.template.integration.test2;
 
 import com.mongodb.client.MongoDatabase;
 import io.changock.migration.api.annotations.ChangeLog;

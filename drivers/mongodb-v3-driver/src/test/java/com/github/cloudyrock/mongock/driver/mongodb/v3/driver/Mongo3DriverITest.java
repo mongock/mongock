@@ -1,6 +1,8 @@
 package com.github.cloudyrock.mongock.driver.mongodb.v3.driver;
 
 
+import com.github.cloudyrock.mongock.driver.mongodb.test.template.MongoDriverITestBase;
+
 public class Mongo3DriverITest extends MongoDriverITestBase {
 
   @Override

@@ -29,18 +29,25 @@ public abstract class MongoSync4DriverBase<CHANGE_ENTRY extends ChangeEntry>
   protected final MongoDatabase mongoDatabase;
   protected String changeLogCollectionName = DEFAULT_CHANGELOG_COLLECTION_NAME;
   protected String lockCollectionName = DEFAULT_LOCK_COLLECTION_NAME;
+  protected boolean indexCreation = true;
   protected MongoSync4LockRepository lockRepository;
 
   public MongoSync4DriverBase(MongoDatabase mongoDatabase) {
     this.mongoDatabase = mongoDatabase;
   }
 
+  @Override
   public void setChangeLogCollectionName(String changeLogCollectionName) {
     this.changeLogCollectionName = changeLogCollectionName;
   }
-
+  @Override
   public void setLockCollectionName(String lockCollectionName) {
     this.lockCollectionName = lockCollectionName;
+  }
+
+  @Override
+  public void setIndexCreation(boolean indexCreation) {
+    this.indexCreation = indexCreation;
   }
 
   @Override

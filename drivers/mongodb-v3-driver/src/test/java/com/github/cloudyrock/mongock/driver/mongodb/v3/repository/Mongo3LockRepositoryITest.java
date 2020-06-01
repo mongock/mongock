@@ -1,6 +1,7 @@
 package com.github.cloudyrock.mongock.driver.mongodb.v3.repository;
 
 
+import com.github.cloudyrock.mongock.driver.mongodb.test.template.MongoLockRepositoryITestBase;
 import io.changock.migration.api.exception.ChangockException;
 import org.bson.Document;
 import org.junit.Test;

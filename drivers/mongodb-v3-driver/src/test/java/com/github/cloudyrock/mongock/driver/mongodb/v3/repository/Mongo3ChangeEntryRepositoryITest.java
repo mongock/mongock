@@ -1,5 +1,6 @@
 package com.github.cloudyrock.mongock.driver.mongodb.v3.repository;
 
+import com.github.cloudyrock.mongock.driver.mongodb.test.template.MongoChangeEntryRepositoryITestBase;
 import io.changock.migration.api.exception.ChangockException;
 import org.bson.Document;
 import org.junit.Before;
@@ -33,7 +34,6 @@ public class Mongo3ChangeEntryRepositoryITest extends MongoChangeEntryRepository
   }
 
   @Test
-  @SuppressWarnings("unchecked")
   public void shouldNoCreateUniqueIndex_whenEnsureIndex_IfAlreadyCreated() throws ChangockException {
     initializeRepository(true);
     // given

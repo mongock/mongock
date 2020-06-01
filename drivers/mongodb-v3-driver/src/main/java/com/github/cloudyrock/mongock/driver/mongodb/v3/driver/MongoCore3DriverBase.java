@@ -35,14 +35,17 @@ public abstract class MongoCore3DriverBase<CHANGE_ENTRY extends ChangeEntry>
     this.mongoDatabase = mongoDatabase;
   }
 
+  @Override
   public void setChangeLogCollectionName(String changeLogCollectionName) {
     this.changeLogCollectionName = changeLogCollectionName;
   }
 
+  @Override
   public void setLockCollectionName(String lockCollectionName) {
     this.lockCollectionName = lockCollectionName;
   }
 
+  @Override
   public void setIndexCreation(boolean indexCreation) {
     this.indexCreation = indexCreation;
   }
