@@ -47,21 +47,21 @@ public class MongockContext {
 
 
   private MongockConnectionDriver getDriver(MongoTemplate mongoTemplate, MongockConfiguration mongockConfiguration) {
+    MongockConnectionDriver driver;
     try {
-      SpringDataMongo3Driver driver = new SpringDataMongo3Driver(mongoTemplate);
-      driver.setChangeLogCollectionName(mongockConfiguration.getChangeLogCollectionName());
-      driver.setLockCollectionName(mongockConfiguration.getLockCollectionName());
-      return driver;
+      driver = new SpringDataMongo3Driver(mongoTemplate);
     } catch (NoClassDefFoundError driver3NotFoundError) {
       try {
-        SpringDataMongo2Driver driver = new SpringDataMongo2Driver(mongoTemplate);
-        driver.setChangeLogCollectionName(mongockConfiguration.getChangeLogCollectionName());
-        driver.setLockCollectionName(mongockConfiguration.getLockCollectionName());
+        driver = new SpringDataMongo2Driver(mongoTemplate);
         return driver;
       } catch (NoClassDefFoundError driver2NotFoundError) {
         throw new ChangockException("\n\n" + DRIVER_NOT_FOUND_ERROR + "\n\n");
       }
     }
+    driver.setChangeLogCollectionName(mongockConfiguration.getChangeLogCollectionName());
+    driver.setLockCollectionName(mongockConfiguration.getLockCollectionName());
+    driver.setIndexCreation(mongockConfiguration.isIndexCreation());
+    return driver;
   }
 
   private final static String DRIVER_NOT_FOUND_ERROR = "MONGOCK DRIVER HAS NOT BEEN IMPORTED" +

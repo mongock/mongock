@@ -22,6 +22,12 @@ public class MongockConfiguration extends ChangockSpringConfiguration {
    */
   private String lockCollectionName = DEFAULT_LOCK_COLLECTION_NAME;
 
+  /**
+   * If false, Mongock won't create the necessary index. However it will check that they are already
+   * created, failing otherwise. Default true
+   */
+  private boolean indexCreation = true;
+
 
   public String getChangeLogCollectionName() {
     return changeLogCollectionName;
@@ -37,5 +43,13 @@ public class MongockConfiguration extends ChangockSpringConfiguration {
 
   public void setLockCollectionName(String lockCollectionName) {
     this.lockCollectionName = lockCollectionName;
+  }
+
+  public boolean isIndexCreation() {
+    return indexCreation;
+  }
+
+  public void setIndexCreation(boolean indexCreation) {
+    this.indexCreation = indexCreation;
   }
 }
