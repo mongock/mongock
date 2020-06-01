@@ -2,7 +2,7 @@ package com.github.cloudyrock.mongock.driver.mongodb.v3.driver;
 
 import com.github.cloudyrock.mongock.MongockConnectionDriver;
 import com.github.cloudyrock.mongock.driver.mongodb.v3.decorator.impl.MongoDataBaseDecoratorImpl;
-import com.github.cloudyrock.mongock.driver.mongodb.v3.repository.MongoLockRepository;
+import com.github.cloudyrock.mongock.driver.mongodb.v3.repository.Mongo3LockRepository;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
 import io.changock.driver.api.driver.ChangeSetDependency;
@@ -28,18 +28,26 @@ public abstract class MongoCore3DriverBase<CHANGE_ENTRY extends ChangeEntry>
   protected final MongoDatabase mongoDatabase;
   protected String changeLogCollectionName = DEFAULT_CHANGELOG_COLLECTION_NAME;
   protected String lockCollectionName = DEFAULT_LOCK_COLLECTION_NAME;
-  protected MongoLockRepository lockRepository;
+  protected boolean indexCreation = true;
+  protected Mongo3LockRepository lockRepository;
 
   public MongoCore3DriverBase(MongoDatabase mongoDatabase) {
     this.mongoDatabase = mongoDatabase;
   }
 
+  @Override
   public void setChangeLogCollectionName(String changeLogCollectionName) {
     this.changeLogCollectionName = changeLogCollectionName;
   }
 
+  @Override
   public void setLockCollectionName(String lockCollectionName) {
     this.lockCollectionName = lockCollectionName;
+  }
+
+  @Override
+  public void setIndexCreation(boolean indexCreation) {
+    this.indexCreation = indexCreation;
   }
 
   @Override
@@ -56,7 +64,7 @@ public abstract class MongoCore3DriverBase<CHANGE_ENTRY extends ChangeEntry>
   protected LockRepository getLockRepository() {
     if (lockRepository == null) {
       MongoCollection<Document> collection = mongoDatabase.getCollection(lockCollectionName);
-      this.lockRepository = new MongoLockRepository(collection);
+      this.lockRepository = new Mongo3LockRepository(collection, indexCreation);
     }
     return lockRepository;
   }

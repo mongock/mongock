@@ -3,7 +3,7 @@
   <parent>
     <artifactId>mongock</artifactId>
     <groupId>com.github.cloudyrock.mongock</groupId>
-    <version>4.0.5.alpha-SNAPSHOT</version>
+    <version>4.0.6.alpha-SNAPSHOT</version>
   </parent>
   <modelVersion>4.0.0</modelVersion>
 
@@ -14,6 +14,7 @@
     <module>mongodb-sync-v4-driver</module>
     <module>mongodb-springdata-v2-driver</module>
     <module>mongodb-springdata-v3-driver</module>
+    <module>mongodb-driver-test-template</module>
   </modules>
 
 
