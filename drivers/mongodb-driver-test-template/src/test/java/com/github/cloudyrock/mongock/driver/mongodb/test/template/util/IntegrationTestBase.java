@@ -1,5 +1,6 @@
 package com.github.cloudyrock.mongock.driver.mongodb.test.template.util;
 
+import com.mongodb.client.MongoClient;
 import com.mongodb.client.MongoClients;
 import com.mongodb.client.MongoDatabase;
 import org.bson.Document;
@@ -16,14 +17,16 @@ public abstract class IntegrationTestBase {
   private static final String DEFAULT_DATABASE_NAME = "test_container";
   protected static final String CHANGELOG_COLLECTION_NAME = "changockChangeLog";
   private MongoDatabase mongoDatabase;
+  private MongoClient mongoClient;
 
   @ClassRule
   public static GenericContainer mongo = new GenericContainer(MONGO_CONTAINER).withExposedPorts(MONGO_PORT);
 
   @Before
   public final void setUpParent() {
-    mongoDatabase = MongoClients.create(String.format("mongodb://%s:%d", mongo.getContainerIpAddress(), mongo.getFirstMappedPort()))
-        .getDatabase(DEFAULT_DATABASE_NAME);
+    mongoClient = MongoClients.create(String.format("mongodb://%s:%d", mongo.getContainerIpAddress(), mongo.getFirstMappedPort()));
+    mongoDatabase = mongoClient.getDatabase(DEFAULT_DATABASE_NAME);
+
   }
 
   @After
@@ -34,6 +37,10 @@ public abstract class IntegrationTestBase {
 
   protected MongoDatabase getDataBase() {
     return mongoDatabase;
+  }
+
+  protected MongoClient getMongoClient() {
+    return mongoClient;
   }
 
   protected MongoDbDriverTestAdapter getAdapter() {
