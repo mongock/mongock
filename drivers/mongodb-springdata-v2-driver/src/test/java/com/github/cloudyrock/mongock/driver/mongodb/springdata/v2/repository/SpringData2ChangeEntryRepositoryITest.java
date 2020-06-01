@@ -1,8 +1,8 @@
 package com.github.cloudyrock.mongock.driver.mongodb.springdata.v2.repository;
 
-import com.github.cloudyrock.mongock.driver.mongodb.sync.v4.repository.MongoSync4ChangeEntryRepositoryITest;
 
+import com.github.cloudyrock.mongock.driver.mongodb.v3.repository.Mongo3ChangeEntryRepositoryITest;
 
-public class SpringData3ChangeEntryRepositoryITest extends MongoSync4ChangeEntryRepositoryITest {
+public class SpringData2ChangeEntryRepositoryITest extends Mongo3ChangeEntryRepositoryITest {
 
 }

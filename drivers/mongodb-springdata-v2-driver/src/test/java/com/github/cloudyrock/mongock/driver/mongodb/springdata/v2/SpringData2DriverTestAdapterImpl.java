@@ -1,15 +1,15 @@
-package com.github.cloudyrock.mongock.driver.mongodb.springdata.v3;
+package com.github.cloudyrock.mongock.driver.mongodb.springdata.v2;
 
 import com.github.cloudyrock.mongock.driver.mongodb.test.template.util.MongoDbDriverTestAdapter;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.model.IndexOptions;
 import org.bson.Document;
 
-public class SpringData3DriverTestAdapterImpl implements MongoDbDriverTestAdapter {
+public class SpringData2DriverTestAdapterImpl implements MongoDbDriverTestAdapter {
 
   private final MongoCollection<Document> collection;
 
-  public SpringData3DriverTestAdapterImpl(MongoCollection<Document> collection) {
+  public SpringData2DriverTestAdapterImpl(MongoCollection<Document> collection) {
     this.collection = collection;
   }
 

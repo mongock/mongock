@@ -1,8 +1,8 @@
-package com.github.cloudyrock.mongock.driver.mongodb.springdata.v3;
+package com.github.cloudyrock.mongock.driver.mongodb.springdata.v3.driver;
 
 
 import com.github.cloudyrock.mongock.driver.mongodb.springdata.v3.SpringDataMongo3Driver;
-import com.github.cloudyrock.mongock.driver.mongodb.springdata.v3.driver.SpringData3DriverTestAdapterImpl;
+import com.github.cloudyrock.mongock.driver.mongodb.springdata.v3.SpringData3DriverTestAdapterImpl;
 import com.github.cloudyrock.mongock.driver.mongodb.test.template.MongoDriverITestBase;
 import com.github.cloudyrock.mongock.driver.mongodb.test.template.util.MongoDbDriverTestAdapter;
 import org.springframework.data.mongodb.core.MongoTemplate;
