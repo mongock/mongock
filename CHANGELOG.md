@@ -1,8 +1,9 @@
-# 4.0.3
+# 4.0.4
 ### Features
 * Added support for Mongodb driver sync 4
 * Added support for spring-data 3
 * Added @EnableMongock with minimal configuration
+* IndexCreation: Possibility to release Mongock from crating indexes(it will still check they are created)
 ### Breaking changes
 * New builder API: Introduced drivers
 ### Bugs fixed
