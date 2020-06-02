@@ -10,8 +10,13 @@
   <parent>
     <groupId>com.github.cloudyrock.changock</groupId>
     <artifactId>changock-bom</artifactId>
-    <version>1.0.9.alpha</version>
+    <version>1.0.10.alpha-SNAPSHOT</version>
   </parent>
+
+  <groupId>com.github.cloudyrock.mongock</groupId>
+  <artifactId>mongock</artifactId>
+  <version>4.0.6.alpha-SNAPSHOT</version>
+  <packaging>pom</packaging>
 
   <modules>
     <module>mongock-standalone</module>
@@ -21,10 +26,7 @@
     <module>mongock-bom</module>
   </modules>
 
-  <groupId>com.github.cloudyrock.mongock</groupId>
-  <artifactId>mongock</artifactId>
-  <version>4.0.6.alpha-SNAPSHOT</version>
-  <packaging>pom</packaging>
+
   <properties>
     <java.version>1.8</java.version>
     <maven.compiler.target>1.8</maven.compiler.target>

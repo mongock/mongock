@@ -59,42 +59,42 @@ public abstract class MongoDriverITestBase extends IntegrationTestBase {
 
   @Test
   public void shouldRegisterChangeSetAsIgnored_WhenAlreadyExecuted_IfNotRunAlways() throws NoSuchMethodException {
-    MongoDbDriverTestAdapter adapter = getAdapter();
+    MongoDbDriverTestAdapter adapter = getDefaultAdapter();
     adapter.insertOne(getChangeEntryDocument(ChangeLogSuccess.class.getMethod("method_0"), ChangeState.EXECUTED));
     runChanges( getDriver(),ChangeLogSuccess.class, CHANGELOG_COLLECTION_NAME, Collections.singletonList("method_0"), false);
   }
 
   @Test
   public void shouldRegisterChangeSetAsExecuted_WhenAlreadyExecuted_IfRunAlways() throws NoSuchMethodException {
-    MongoDbDriverTestAdapter adapter = getAdapter();
+    MongoDbDriverTestAdapter adapter = getDefaultAdapter();
     adapter.insertOne(getChangeEntryDocument(WithRunAlways.class.getMethod("method_0"), ChangeState.EXECUTED));
     runChanges(getDriver(), WithRunAlways.class, CHANGELOG_COLLECTION_NAME);
   }
 
   @Test
   public void shouldRegisterChangeSetAsExecuted_WhenAlreadyIgnored_IfNotRunAlways() throws NoSuchMethodException {
-    MongoDbDriverTestAdapter adapter = getAdapter();
+    MongoDbDriverTestAdapter adapter = getDefaultAdapter();
     adapter.insertOne(getChangeEntryDocument(ChangeLogSuccess.class.getMethod("method_0"), ChangeState.IGNORED));
     runChanges(getDriver(), ChangeLogSuccess.class, CHANGELOG_COLLECTION_NAME);
   }
 
   @Test
   public void shouldRegisterChangeSetAsExecuted_WhenAlreadyIgnored_IfRunAlways() throws NoSuchMethodException {
-    MongoDbDriverTestAdapter adapter = getAdapter();
+    MongoDbDriverTestAdapter adapter = getDefaultAdapter();
     adapter.insertOne(getChangeEntryDocument(WithRunAlways.class.getMethod("method_0"), ChangeState.IGNORED));
     runChanges(getDriver(), WithRunAlways.class, CHANGELOG_COLLECTION_NAME);
   }
 
   @Test
   public void shouldRegisterChangeSetAsExecuted_WhenAlreadyFailed_IfNotRunAlways() throws NoSuchMethodException {
-    MongoDbDriverTestAdapter adapter = getAdapter();
+    MongoDbDriverTestAdapter adapter = getDefaultAdapter();
     adapter.insertOne(getChangeEntryDocument(ChangeLogSuccess.class.getMethod("method_0"), ChangeState.FAILED));
     runChanges(getDriver(), ChangeLogSuccess.class, CHANGELOG_COLLECTION_NAME);
   }
 
   @Test
   public void shouldRegisterChangeSetAsExecuted_WhenAlreadyFailed_IfRunAlways() throws NoSuchMethodException {
-    MongoDbDriverTestAdapter adapter = getAdapter();
+    MongoDbDriverTestAdapter adapter = getDefaultAdapter();
     adapter.insertOne(getChangeEntryDocument(WithRunAlways.class.getMethod("method_0"), ChangeState.FAILED));
     runChanges(getDriver(), WithRunAlways.class, CHANGELOG_COLLECTION_NAME);
   }
@@ -124,7 +124,6 @@ public abstract class MongoDriverITestBase extends IntegrationTestBase {
 
   @Test
   public void shouldFail_WhenRunningChangeLog_IfChangeSetIdDuplicated() {
-    MongoDbDriverTestAdapter adapter = getAdapter();
     TestChangockRunner runner = TestChangockRunner.builder()
         .setDriver(getDriver())
         .addChangeLogsScanPackage(ChangeLogFailure.class.getPackage().getName())
@@ -137,7 +136,6 @@ public abstract class MongoDriverITestBase extends IntegrationTestBase {
   @Test
   public void shouldPassMongoDatabaseDecoratorToChangeSet() {
     CallVerifierImpl callVerifier = new CallVerifierImpl();
-    MongoDbDriverTestAdapter adapter = getAdapter();
     TestChangockRunner.builder()
         .setDriver(getDriver())
         .addChangeLogsScanPackage(ChangeLogEnsureDecorator.class.getPackage().getName())
@@ -150,7 +148,6 @@ public abstract class MongoDriverITestBase extends IntegrationTestBase {
   @Test
   public void shouldPrioritizeConnectorOverStandardDependencies_WhenThereIsConflict() {
     CallVerifierImpl callVerifier = new CallVerifierImpl();
-    MongoDbDriverTestAdapter adapter = getAdapter();
     TestChangockRunner.builder()
         .setDriver(getDriver())
         .addChangeLogsScanPackage(ChangeLogEnsureDecorator.class.getPackage().getName())
@@ -160,6 +157,43 @@ public abstract class MongoDriverITestBase extends IntegrationTestBase {
         .execute();
     assertEquals(1, callVerifier.getCounter());
   }
+
+  @Test
+  public void shouldThrowException_WhenNotIndexCreation_IfNotCreatedBefore() {
+    // given
+    MongockConnectionDriver driver = getDriver();
+    driver.setIndexCreation(false);
+
+    //then
+    exceptionRule.expect(ChangockException.class);
+    exceptionRule.expectMessage("Index creation not allowed, but not created or wrongly created");
+
+    //when
+    TestChangockRunner.builder()
+        .setDriver(driver)
+        .addChangeLogsScanPackage(ChangeLogSuccess.class.getPackage().getName())
+        .build()
+        .execute();
+  }
+
+  @Test
+  public void shouldBeOk_WhenNotIndexCreation_IfCreatedBefore() {
+    // given
+    MongockConnectionDriver driver = getDriver();
+    driver.setIndexCreation(false);
+    getAdapter(CHANGELOG_COLLECTION_NAME).createUniqueIndex("executionId", "author", "changeId");
+    driver.setLockCollectionName(LOCK_COLLECTION_NAME);
+    getAdapter(LOCK_COLLECTION_NAME).createUniqueIndex("key");
+
+    //when
+    TestChangockRunner.builder()
+        .setDriver(driver)
+        .addChangeLogsScanPackage(ChangeLogSuccess.class.getPackage().getName())
+        .build()
+        .execute();
+  }
+
+
 
   private void runChanges(MongockConnectionDriver driver, Class changeLogClass, String changeLogCollectionName) {
     runChanges(driver, changeLogClass, changeLogCollectionName, Collections.emptyList(), false);
