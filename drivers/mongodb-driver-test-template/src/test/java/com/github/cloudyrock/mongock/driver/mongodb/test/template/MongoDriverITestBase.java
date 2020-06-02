@@ -194,6 +194,50 @@ public abstract class MongoDriverITestBase extends IntegrationTestBase {
   }
 
 
+  @Test
+  public void shouldThrowException_WhenNotIndexCreation_IfWrongLockIndexCreated() {
+    // given
+    MongockConnectionDriver driver = getDriver();
+    driver.setIndexCreation(false);
+    getAdapter(CHANGELOG_COLLECTION_NAME).createUniqueIndex("executionId", "author", "changeId");
+    driver.setLockCollectionName(LOCK_COLLECTION_NAME);
+    getAdapter(LOCK_COLLECTION_NAME).createUniqueIndex("keywrong");
+
+    //then
+    exceptionRule.expect(ChangockException.class);
+    exceptionRule.expectMessage("Index creation not allowed, but not created or wrongly created");
+
+    //when
+    TestChangockRunner.builder()
+        .setDriver(driver)
+        .addChangeLogsScanPackage(ChangeLogSuccess.class.getPackage().getName())
+        .build()
+        .execute();
+  }
+
+  @Test
+  public void shouldThrowException_WhenNotIndexCreation_IfChangeLogIndexPartiallyCreated() {
+    // given
+    MongockConnectionDriver driver = getDriver();
+    driver.setIndexCreation(false);
+    getAdapter(CHANGELOG_COLLECTION_NAME).createUniqueIndex("executionId_wrong", "author", "changeId");
+    driver.setLockCollectionName(LOCK_COLLECTION_NAME);
+    getAdapter(LOCK_COLLECTION_NAME).createUniqueIndex("key");
+
+    //then
+    exceptionRule.expect(ChangockException.class);
+    exceptionRule.expectMessage("Index creation not allowed, but not created or wrongly created");
+
+    //when
+    TestChangockRunner.builder()
+        .setDriver(driver)
+        .addChangeLogsScanPackage(ChangeLogSuccess.class.getPackage().getName())
+        .build()
+        .execute();
+  }
+
+
+
 
   private void runChanges(MongockConnectionDriver driver, Class changeLogClass, String changeLogCollectionName) {
     runChanges(driver, changeLogClass, changeLogCollectionName, Collections.emptyList(), false);
