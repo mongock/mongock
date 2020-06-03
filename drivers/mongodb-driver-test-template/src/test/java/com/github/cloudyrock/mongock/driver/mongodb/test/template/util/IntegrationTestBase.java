@@ -16,6 +16,7 @@ public abstract class IntegrationTestBase {
   private static final Integer MONGO_PORT = 27017;
   private static final String DEFAULT_DATABASE_NAME = "test_container";
   protected static final String CHANGELOG_COLLECTION_NAME = "changockChangeLog";
+  protected static final String LOCK_COLLECTION_NAME = "changockLock";
   private MongoDatabase mongoDatabase;
   private MongoClient mongoClient;
 
@@ -32,6 +33,7 @@ public abstract class IntegrationTestBase {
   @After
   public void tearDown() {
     getDataBase().getCollection(CHANGELOG_COLLECTION_NAME).deleteMany(new Document());
+    getDataBase().getCollection(LOCK_COLLECTION_NAME).deleteMany(new Document());
     mongoDatabase.drop();
   }
 
@@ -43,7 +45,7 @@ public abstract class IntegrationTestBase {
     return mongoClient;
   }
 
-  protected MongoDbDriverTestAdapter getAdapter() {
+  protected MongoDbDriverTestAdapter getDefaultAdapter() {
     return getAdapter(CHANGELOG_COLLECTION_NAME);
   }
 

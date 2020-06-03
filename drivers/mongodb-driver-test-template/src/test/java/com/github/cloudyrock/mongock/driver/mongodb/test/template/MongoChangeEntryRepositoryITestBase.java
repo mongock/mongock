@@ -13,7 +13,6 @@ import org.junit.rules.ExpectedException;
 
 import java.time.Instant;
 import java.util.Date;
-import java.util.regex.Matcher;
 
 
 public abstract class MongoChangeEntryRepositoryITestBase extends IntegrationTestBase {
@@ -33,7 +32,7 @@ public abstract class MongoChangeEntryRepositoryITestBase extends IntegrationTes
 
   @Test
   public void shouldBeOk_WhenNoIndexCreation_IfIndexAlreadyCreated() throws ChangockException {
-    getAdapter().createIndex(getIndexDocument(new String[]{"executionId", "author", "changeId"}), new IndexOptions().unique(true));
+    getDefaultAdapter().createIndex(getIndexDocument(new String[]{"executionId", "author", "changeId"}), new IndexOptions().unique(true));
     initializeRepository(false);
   }
 
@@ -45,7 +44,7 @@ public abstract class MongoChangeEntryRepositoryITestBase extends IntegrationTes
     String executionId = "executionId";
     createAndInsertChangeEntry(true, null, changeId, author, executionId);
     Assert.assertEquals("pre-requisite: changeEntry should be added", 1,
-        getAdapter().countDocuments(new Document().append("changeId", changeId).append("author", author)));
+        getDefaultAdapter().countDocuments(new Document().append("changeId", changeId).append("author", author)));
 
     Assert.assertTrue(repository.isAlreadyExecuted(changeId, author));
   }
@@ -58,7 +57,7 @@ public abstract class MongoChangeEntryRepositoryITestBase extends IntegrationTes
     String executionId = "executionId";
     createAndInsertChangeEntry(false, null, changeId, author, executionId);
     Assert.assertEquals("pre-requisite: changeEntry should be added", 1,
-        getAdapter().countDocuments(new Document().append("changeId", changeId).append("author", author)));
+        getDefaultAdapter().countDocuments(new Document().append("changeId", changeId).append("author", author)));
 
     Assert.assertTrue(repository.isAlreadyExecuted(changeId, author));
   }
@@ -72,7 +71,7 @@ public abstract class MongoChangeEntryRepositoryITestBase extends IntegrationTes
     String executionId = "executionId";
     createAndInsertChangeEntry(true, ChangeState.EXECUTED.toString(), changeId, author, executionId);
     Assert.assertEquals("pre-requisite: changeEntry should be added", 1,
-        getAdapter().countDocuments(new Document().append("changeId", changeId).append("author", author)));
+        getDefaultAdapter().countDocuments(new Document().append("changeId", changeId).append("author", author)));
 
     Assert.assertTrue(repository.isAlreadyExecuted(changeId, author));
   }
@@ -85,7 +84,7 @@ public abstract class MongoChangeEntryRepositoryITestBase extends IntegrationTes
     String executionId = "executionId";
     createAndInsertChangeEntry(true, ChangeState.IGNORED.toString(), changeId, author, executionId);
     Assert.assertEquals("pre-requisite: changeEntry should be added", 1,
-        getAdapter().countDocuments(new Document().append("changeId", changeId).append("author", author)));
+        getDefaultAdapter().countDocuments(new Document().append("changeId", changeId).append("author", author)));
 
     Assert.assertFalse(repository.isAlreadyExecuted(changeId, author));
   }
@@ -98,7 +97,7 @@ public abstract class MongoChangeEntryRepositoryITestBase extends IntegrationTes
     String executionId = "executionId";
     createAndInsertChangeEntry(true, ChangeState.FAILED.toString(), changeId, author, executionId);
     Assert.assertEquals("pre-requisite: changeEntry should be added", 1,
-        getAdapter().countDocuments(new Document().append("changeId", changeId).append("author", author)));
+        getDefaultAdapter().countDocuments(new Document().append("changeId", changeId).append("author", author)));
 
     Assert.assertFalse(repository.isAlreadyExecuted(changeId, author));
   }
@@ -117,7 +116,7 @@ public abstract class MongoChangeEntryRepositoryITestBase extends IntegrationTes
     if (withState) {
       existingEntry = existingEntry.append("state", state);
     }
-    getAdapter().insertOne(existingEntry);
+    getDefaultAdapter().insertOne(existingEntry);
   }
 
   protected abstract void initializeRepository(boolean indexCreation);
