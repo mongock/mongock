@@ -2,13 +2,14 @@ package com.github.cloudyrock.mongock.driver.mongodb.sync.v4.repository;
 
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.model.IndexOptions;
+import io.changock.driver.core.common.Repository;
 import io.changock.migration.api.exception.ChangockException;
 import io.changock.utils.field.FieldInstance;
-import io.changock.driver.core.common.Repository;
 import org.bson.Document;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -68,6 +69,8 @@ public abstract class MongoSync4RepositoryBase<DOMAIN_CLASS> implements Reposito
   }
 
   private List<Document> getResidualKeys() {
+    List<Document> indexArrary = new ArrayList<>();
+    collection.listIndexes().forEach(indexArrary::add);
     return StreamSupport.stream(collection.listIndexes().spliterator(), false)
         .filter(this::doesNeedToBeRemoved)
         .collect(Collectors.toList());
@@ -78,27 +81,31 @@ public abstract class MongoSync4RepositoryBase<DOMAIN_CLASS> implements Reposito
   }
 
   protected boolean isIdIndex(Document index) {
-    return (((Document) index.get("key")).getInteger("_id", 0) == 1);
+    return  ((Document) index.get("key")).get("_id") != null;
   }
 
   protected boolean isRequiredIndexCreated() {
-    return StreamSupport.stream(collection.listIndexes().spliterator(), false).anyMatch(this::isRightIndex);
+    return StreamSupport.stream(
+        collection.listIndexes().spliterator(),
+        false)
+        .anyMatch(this::isRightIndex);
   }
 
   protected void createRequiredUniqueIndex() {
     collection.createIndex(getIndexDocument(uniqueFields), new IndexOptions().unique(true));
-    logger.debug("Index in collection {} was recreated", getCollectionName());
+    logger.debug("Index in collection [{}] was recreated", getCollectionName());
   }
 
   protected boolean isRightIndex(Document index) {
     final Document key = (Document) index.get("key");
-    boolean keyContainsAllFields = Stream.of(uniqueFields).allMatch(uniqueField -> key.getInteger(uniqueField, 0) == 1);
+    boolean keyContainsAllFields = Stream.of(uniqueFields).allMatch(uniqueField -> key.get(uniqueField) != null);
     boolean onlyTheseFields = key.size() == uniqueFields.length;
     return keyContainsAllFields && onlyTheseFields && isUniqueIndex(index);
   }
 
   protected boolean isUniqueIndex(Document index) {
-    return fullCollectionName.equals(index.getString("ns")) && index.getBoolean("unique", false);
+    return fullCollectionName.equals(index.getString("ns")) //changes namespace: [database].[collection]
+        && index.getBoolean("unique", false);// checks it'unique
   }
 
   private String getCollectionName() {
@@ -107,9 +114,7 @@ public abstract class MongoSync4RepositoryBase<DOMAIN_CLASS> implements Reposito
 
   protected Document getIndexDocument(String[] uniqueFields) {
     final Document indexDocument = new Document();
-    for (String field : uniqueFields) {
-      indexDocument.append(field, 1);
-    }
+    Stream.of(uniqueFields).forEach(field -> indexDocument.append(field, 1));
     return indexDocument;
   }
 

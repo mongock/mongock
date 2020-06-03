@@ -79,7 +79,7 @@ public abstract class Mongo3RepositoryBase<DOMAIN_CLASS> implements Repository<D
   }
 
   protected boolean isIdIndex(Document index) {
-    return (((Document) index.get("key")).getInteger("_id", 0) == 1);
+    return  ((Document) index.get("key")).get("_id") != null;
   }
 
   protected boolean isRequiredIndexCreated() {
@@ -88,18 +88,19 @@ public abstract class Mongo3RepositoryBase<DOMAIN_CLASS> implements Repository<D
 
   protected void createRequiredUniqueIndex() {
     collection.createIndex(getIndexDocument(uniqueFields), new IndexOptions().unique(true));
-    logger.debug("Index in collection {} was recreated", getCollectionName());
+    logger.debug("Index in collection [{}] was recreated", getCollectionName());
   }
 
   protected boolean isRightIndex(Document index) {
     final Document key = (Document) index.get("key");
-    boolean keyContainsAllFields = Stream.of(uniqueFields).allMatch(uniqueField -> key.getInteger(uniqueField, 0) == 1);
+    boolean keyContainsAllFields = Stream.of(uniqueFields).allMatch(uniqueField -> key.get(uniqueField) != null);
     boolean onlyTheseFields = key.size() == uniqueFields.length;
     return keyContainsAllFields && onlyTheseFields && isUniqueIndex(index);
   }
 
   protected boolean isUniqueIndex(Document index) {
-    return fullCollectionName.equals(index.getString("ns")) && index.getBoolean("unique", false);
+    return fullCollectionName.equals(index.getString("ns")) //changes namespace: [database].[collection]
+        && index.getBoolean("unique", false);// checks it'unique
   }
 
   private String getCollectionName() {
@@ -108,9 +109,7 @@ public abstract class Mongo3RepositoryBase<DOMAIN_CLASS> implements Repository<D
 
   protected Document getIndexDocument(String[] uniqueFields) {
     final Document indexDocument = new Document();
-    for (String field : uniqueFields) {
-      indexDocument.append(field, 1);
-    }
+    Stream.of(uniqueFields).forEach(field -> indexDocument.append(field, 1));
     return indexDocument;
   }
 
