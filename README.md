@@ -19,9 +19,9 @@ MongoDB version control tool for Java
 
 
 ## LAST NEWS :bangbang::bangbang::collision::collision:
-> **3.2.5 is released with minor bux fixes** 
+> **3.3.2 is released with minor bux fixes** 
 
-> **We are working on version 4!!** 
+> **We are working on version 4!!**...Take a look to [this example](https://github.com/cloudyrock/mongock-integration-tests/tree/master/mongock-spring-v5/mongock-spring5-springdata3-it) and give the version **4.0.7.alpha** a try
 
 ## Table of contents
 
