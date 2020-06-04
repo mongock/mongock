@@ -33,11 +33,19 @@
       <version>${project.version}</version>
     </dependency>
 
-    <!-- GENERAL DEPENDENCIES -->
+
+    <!-- MONGO DEPENDENCIES -->
+    <dependency>
+      <groupId>org.mongodb</groupId>
+      <artifactId>mongodb-driver-sync</artifactId>
+      <version>${mongodb.driver-sync.version}</version>
+      <scope>provided</scope>
+    </dependency>
     <dependency>
       <groupId>org.springframework.data</groupId>
       <artifactId>spring-data-mongodb</artifactId>
       <version>${mongodb.spring-data.v3.version}</version>
+      <scope>provided</scope>
     </dependency>
 
     <dependency>
