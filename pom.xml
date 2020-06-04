@@ -15,7 +15,7 @@
 
   <groupId>com.github.cloudyrock.mongock</groupId>
   <artifactId>mongock</artifactId>
-  <version>4.0.9.alpha-SNAPSHOT</version>
+  <version>4.0.8.alpha-SNAPSHOT</version>
   <packaging>pom</packaging>
 
   <modules>

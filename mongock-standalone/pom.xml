@@ -5,7 +5,7 @@
   <parent>
     <artifactId>mongock</artifactId>
     <groupId>com.github.cloudyrock.mongock</groupId>
-    <version>4.0.9.alpha-SNAPSHOT</version>
+    <version>4.0.8.alpha-SNAPSHOT</version>
   </parent>
 
   <artifactId>mongock-standalone</artifactId>
