@@ -10,7 +10,7 @@
   <parent>
     <groupId>com.github.cloudyrock.changock</groupId>
     <artifactId>changock-bom</artifactId>
-    <version>1.0.10.alpha</version>
+    <version>1.0.11.alpha</version>
   </parent>
 
   <groupId>com.github.cloudyrock.mongock</groupId>
