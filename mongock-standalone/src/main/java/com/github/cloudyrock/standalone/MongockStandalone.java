@@ -4,7 +4,7 @@ import com.github.cloudyrock.mongock.MongockAnnotationProcessor;
 import com.github.cloudyrock.mongock.MongockConnectionDriver;
 import io.changock.runner.core.ChangeLogService;
 import io.changock.runner.core.MigrationExecutor;
-import io.changock.runner.core.builder.ChangockConfiguration;
+import io.changock.runner.core.builder.configuration.ChangockConfiguration;
 import io.changock.runner.core.builder.DriverBuilderConfigurable;
 import io.changock.runner.core.builder.RunnerBuilderBase;
 import io.changock.runner.standalone.ChangockStandalone;
