@@ -9,7 +9,7 @@ import org.springframework.context.annotation.Configuration;
 
 @Configuration
 @ConfigurationProperties("spring.mongock")
-public class MongockConfiguration extends ChangockSpringConfiguration<MongockConfiguration.MongockLegacyMigration> {
+public class MongockConfiguration extends ChangockSpringConfiguration {
 
   public final static String DEFAULT_CHANGELOG_COLLECTION_NAME = "mongockChangeLog";
   public final static String DEFAULT_LOCK_COLLECTION_NAME = "mongockLock";
@@ -57,6 +57,7 @@ public class MongockConfiguration extends ChangockSpringConfiguration<MongockCon
   }
 
   @Override
+  @SuppressWarnings("unchecked")
   public MongockLegacyMigration getLegacyMigration() {
     return legacyMigration;
   }
@@ -69,6 +70,21 @@ public class MongockConfiguration extends ChangockSpringConfiguration<MongockCon
   public static class MongockLegacyMigration extends LegacyMigration {
 
     private String collectionName;
+
+    public MongockLegacyMigration() {
+    }
+
+    public MongockLegacyMigration(String collectionName) {
+      this.collectionName = collectionName;
+    }
+
+
+    public MongockLegacyMigration(String collectionName,
+                                  LegacyMigrationMappingFields legacyMigrationMappingFields) {
+      this.collectionName = collectionName;
+      this.setMappingFields(legacyMigrationMappingFields);
+    }
+
 
     public String getCollectionName() {
       return collectionName;
