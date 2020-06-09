@@ -6,6 +6,8 @@ public class MongockLegacyMigration extends LegacyMigration {
 
   private String collectionName;
 
+  private boolean failFast = true;
+
   public String getCollectionName() {
     return collectionName;
   }
@@ -14,4 +16,11 @@ public class MongockLegacyMigration extends LegacyMigration {
     this.collectionName = collectionName;
   }
 
+  public boolean isFailFast() {
+    return failFast;
+  }
+
+  public void setFailFast(boolean failFast) {
+    this.failFast = failFast;
+  }
 }

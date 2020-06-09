@@ -11,6 +11,7 @@ import io.changock.driver.api.entry.ChangeEntryService;
 import io.changock.driver.api.entry.ChangeState;
 import io.changock.migration.api.annotations.NonLockGuarded;
 import io.changock.migration.api.annotations.NonLockGuardedType;
+import io.changock.migration.api.exception.ChangockException;
 import io.changock.runner.core.builder.configuration.LegacyMigrationMappingFields;
 import org.bson.Document;
 import org.slf4j.Logger;
@@ -30,13 +31,15 @@ public class MongockSync4LegacyMigrationChangeLog {
 
   private final static Logger logger = LoggerFactory.getLogger(MongockSync4LegacyMigrationChangeLog.class);
 
+
   @ChangeSet(id = "mongock-legacy-migration", author = "mongock", order = "00001", runAlways = true)
   public void mongockSpringLegacyMigration(@NonLockGuarded(NonLockGuardedType.NONE)
                                            @Named("legacy-migration") MongockLegacyMigration legacyMigration,
                                            MongoDatabase mongoDatabase,
                                            ChangeEntryService<ChangeEntry> changeEntryService) {
 
-    if (validMigration(legacyMigration)) {
+    try {
+      validateLegacyMigration(legacyMigration);
       getOriginalMigrationAsChangeEntryList(mongoDatabase.getCollection(legacyMigration.getCollectionName()), legacyMigration)
           .forEach(originalChange -> {
             if (!changeEntryService.isAlreadyExecuted(originalChange.getChangeId(), originalChange.getAuthor())) {
@@ -47,15 +50,18 @@ public class MongockSync4LegacyMigrationChangeLog {
               logAlreadyTracked(originalChange);
             }
           });
-    } else {
-      logger.warn("Trying to run legacy migration, but not valid");
-      return;
+    } catch(Exception ex) {
+      if(legacyMigration.isFailFast()) {
+        RuntimeException exToThrow = ex instanceof ChangockException ? (ChangockException)ex : new ChangockException(ex);
+        throw exToThrow;
+      }
+      logger.warn(ex.getMessage());
     }
+
   }
 
-  private List<ChangeEntry> getOriginalMigrationAsChangeEntryList(
-      MongoCollection<Document> originalCollection,
-      MongockLegacyMigration legacyMigration) {
+  private List<ChangeEntry> getOriginalMigrationAsChangeEntryList(MongoCollection<Document> originalCollection, MongockLegacyMigration legacyMigration) {
+
     List<ChangeEntry> originalMigrations = new ArrayList<>();
     LegacyMigrationMappingFields mappingFields = legacyMigration.getMappingFields();
 
@@ -102,18 +108,19 @@ public class MongockSync4LegacyMigrationChangeLog {
     return "legacy-migration_" + new Random().nextInt(999) + System.currentTimeMillis();
   }
 
-  private boolean validMigration(MongockLegacyMigration legacyMigration) {
-    return legacyMigration != null
-        && !isEmpty(legacyMigration.getCollectionName())
-        && legacyMigration.getMappingFields() != null
-        && !isEmpty(legacyMigration.getMappingFields().getChangeId())
-        && !isEmpty(legacyMigration.getMappingFields().getAuthor());
+  private void validateLegacyMigration(MongockLegacyMigration legacyMigration) {
+    if (legacyMigration == null
+        || isEmpty(legacyMigration.getCollectionName())
+        || legacyMigration.getMappingFields() == null
+        || isEmpty(legacyMigration.getMappingFields().getChangeId())
+        || isEmpty(legacyMigration.getMappingFields().getAuthor())) {
+      throw new ChangockException("Legacy migration wrong configured. Either is null, or doesn't contain collectionName or mapping fields are wrong");
+    }
   }
 
   private static boolean isEmpty(String text) {
     return text == null || text.isEmpty();
   }
-
 
   private void logAlreadyTracked(ChangeEntry originalChange) {
     logger.info("legacy-migration: Change[changeId: {} ][author: {} ] already tracked in Mongock changeLog collection", originalChange.getChangeId(), originalChange.getAuthor());
