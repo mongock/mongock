@@ -2,7 +2,7 @@ package com.github.cloudyrock.mongock.driver.mongodb.v3.changelogs;
 
 import com.github.cloudyrock.mongock.ChangeLog;
 import com.github.cloudyrock.mongock.ChangeSet;
-import com.github.cloudyrock.mongock.migration.MongockLegacyMigrationVo;
+import com.github.cloudyrock.mongock.migration.MongockLegacyMigration;
 import com.mongodb.client.FindIterable;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
@@ -16,6 +16,7 @@ import org.bson.Document;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.inject.Named;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -30,14 +31,15 @@ public class LegacyMigrationChangeLog {
   private final static Logger logger = LoggerFactory.getLogger(LegacyMigrationChangeLog.class);
 
   @ChangeSet(id = "mongock-legacy-migration", author = "mongock", order = "00001", runAlways = true)
-  public void mongockSpringLegacyMigration(@NonLockGuarded(NonLockGuardedType.NONE) MongockLegacyMigrationVo legacyMigration,
+  public void mongockSpringLegacyMigration(@NonLockGuarded(NonLockGuardedType.NONE)
+                                           @Named("legacy-migration") MongockLegacyMigration legacyMigration,
                                            MongoDatabase mongoDatabase,
                                            ChangeEntryService<ChangeEntry> changeEntryService) {
 
     if (validMigration(legacyMigration)) {
-      getOriginalMigrationAsChangeEntryList(mongoDatabase.getCollection(legacyMigration.getCollectionName()),legacyMigration)
+      getOriginalMigrationAsChangeEntryList(mongoDatabase.getCollection(legacyMigration.getCollectionName()), legacyMigration)
           .forEach(originalChange -> {
-            if(!changeEntryService.isAlreadyExecuted(originalChange.getChangeId(), originalChange.getAuthor())) {
+            if (!changeEntryService.isAlreadyExecuted(originalChange.getChangeId(), originalChange.getAuthor())) {
               logTracking(originalChange);
               changeEntryService.save(originalChange);
               logSuccessfullyTracked(originalChange);
@@ -53,7 +55,7 @@ public class LegacyMigrationChangeLog {
 
   private List<ChangeEntry> getOriginalMigrationAsChangeEntryList(
       MongoCollection<Document> originalCollection,
-      MongockLegacyMigrationVo legacyMigration) {
+      MongockLegacyMigration legacyMigration) {
     List<ChangeEntry> originalMigrations = new ArrayList<>();
     LegacyMigrationMappingFields mappingFields = legacyMigration.getMappingFields();
 
@@ -82,7 +84,7 @@ public class LegacyMigrationChangeLog {
     Map<String, Object> newMetadata = new HashMap<>();
     newMetadata.put("migration-type", "legacy");
     Object originalMetadata;
-    if((originalMetadata = field != null ? changeDocument.getString(field) : null) != null) {
+    if ((originalMetadata = field != null ? changeDocument.getString(field) : null) != null) {
       newMetadata.put("original-metadata", originalMetadata);
     }
     return newMetadata;
@@ -100,7 +102,7 @@ public class LegacyMigrationChangeLog {
     return "legacy-migration_" + new Random().nextInt(999) + System.currentTimeMillis();
   }
 
-  private boolean validMigration(MongockLegacyMigrationVo legacyMigration) {
+  private boolean validMigration(MongockLegacyMigration legacyMigration) {
     return legacyMigration != null
         && !isEmpty(legacyMigration.getCollectionName())
         && legacyMigration.getMappingFields() != null

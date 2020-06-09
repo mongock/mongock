@@ -1,7 +1,6 @@
 package com.github.cloudyrock.spring.v5;
 
-import io.changock.migration.api.exception.ChangockException;
-import io.changock.runner.core.builder.configuration.LegacyMigration;
+import com.github.cloudyrock.mongock.migration.MongockLegacyMigration;
 import io.changock.runner.core.builder.configuration.LegacyMigrationMappingFields;
 import io.changock.runner.spring.util.config.ChangockSpringConfiguration;
 import org.springframework.boot.context.properties.ConfigurationProperties;
@@ -32,7 +31,7 @@ public class MongockConfiguration extends ChangockSpringConfiguration {
    */
   private boolean indexCreation = true;
 
-  private MongockLegacyMigration legacyMigration = null;
+  private MongockLegacyMigrationConfig legacyMigration = null;
 
   public String getChangeLogCollectionName() {
     return changeLogCollectionName;
@@ -60,11 +59,11 @@ public class MongockConfiguration extends ChangockSpringConfiguration {
 
   @Override
   @SuppressWarnings("unchecked")
-  public MongockLegacyMigration getLegacyMigration() {
+  public MongockLegacyMigrationConfig getLegacyMigration() {
     return legacyMigration;
   }
 
-  public void setLegacyMigration(MongockLegacyMigration legacyMigration) {
+  public void setLegacyMigration(MongockLegacyMigrationConfig legacyMigration) {
     this.legacyMigration = legacyMigration;
   }
 
@@ -76,35 +75,7 @@ public class MongockConfiguration extends ChangockSpringConfiguration {
         || StringUtils.isEmpty(config.getLegacyMigration().getMappingFields().getAuthor());
   }
 
-  public static class MongockLegacyMigration extends LegacyMigration {
-
-    private String collectionName;
-
-    public MongockLegacyMigration() {
-    }
-
-    public MongockLegacyMigration(String collectionName) {
-      if(collectionName == null || collectionName.isEmpty()) {
-        throw new ChangockException("Legacy migration collectionName cannot be empty");
-      }
-      this.collectionName = collectionName;
-    }
-
-
-    public MongockLegacyMigration(String collectionName,
-                                  LegacyMigrationMappingFields legacyMigrationMappingFields) {
-      this.collectionName = collectionName;
-      this.setMappingFields(legacyMigrationMappingFields);
-    }
-
-
-    public String getCollectionName() {
-      return collectionName;
-    }
-
-    public void setCollectionName(String collectionName) {
-      this.collectionName = collectionName;
-    }
+  public static class MongockLegacyMigrationConfig extends MongockLegacyMigration {
 
     @Override
     @ConfigurationProperties("spring.mongock.legacy-migration.mapping-fields")
