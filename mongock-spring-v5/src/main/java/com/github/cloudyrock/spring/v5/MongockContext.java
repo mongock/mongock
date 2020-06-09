@@ -3,8 +3,8 @@ package com.github.cloudyrock.spring.v5;
 import com.github.cloudyrock.mongock.MongockConnectionDriver;
 import com.github.cloudyrock.mongock.driver.mongodb.springdata.v2.SpringDataMongo2Driver;
 import com.github.cloudyrock.mongock.driver.mongodb.springdata.v3.SpringDataMongo3Driver;
-import com.github.cloudyrock.mongock.driver.mongodb.v3.changelogs.LegacyMigrationChangeLog;
-import com.github.cloudyrock.mongock.migration.MongockLegacyMigration;
+import com.github.cloudyrock.mongock.driver.mongodb.sync.v4.changelogs.MongockSync4LegacyMigrationChangeLog;
+import com.github.cloudyrock.mongock.driver.mongodb.v3.changelogs.MongockV3LegacyMigrationChangeLog;
 import io.changock.migration.api.exception.ChangockException;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.ApplicationContext;
@@ -41,12 +41,23 @@ public class MongockContext {
         .setDriver(getDriver(mongoTemplate, mongockConfiguration))
         .setConfig(mongockConfiguration)
         .setSpringContext(springContext);
-    if(mongockConfiguration.getLegacyMigration() != null) {
-      builder.addChangeLogsScanPackage(LegacyMigrationChangeLog.class.getPackage().getName());
-    }
+    setLegacyMigrationChangeLog(builder, mongockConfiguration);
     return builder;
   }
 
+  private void setLegacyMigrationChangeLog(MongockSpring5.Builder builder, MongockConfiguration mongockConfiguration) {
+    if(mongockConfiguration.getLegacyMigration() != null) {
+      try {
+        builder.addChangeLogsScanPackage(MongockSync4LegacyMigrationChangeLog.class.getPackage().getName());
+      } catch (NoClassDefFoundError mongockSyncDriverNotFoundError) {
+        try {
+          builder.addChangeLogsScanPackage(MongockV3LegacyMigrationChangeLog.class.getPackage().getName());
+        } catch (NoClassDefFoundError mongockDriverV3NotFoundError) {
+          throw new ChangockException("\n\n" + DRIVER_NOT_FOUND_ERROR + "\n\n");
+        }
+      }
+    }
+  }
 
   private MongockConnectionDriver getDriver(MongoTemplate mongoTemplate, MongockConfiguration mongockConfiguration) {
     MongockConnectionDriver driver;

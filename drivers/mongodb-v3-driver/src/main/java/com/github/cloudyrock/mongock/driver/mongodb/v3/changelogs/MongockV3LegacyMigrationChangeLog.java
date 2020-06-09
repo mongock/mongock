@@ -26,9 +26,9 @@ import java.util.Map;
 import java.util.Random;
 
 @ChangeLog(order = "00001")
-public class LegacyMigrationChangeLog {
+public class MongockV3LegacyMigrationChangeLog {
 
-  private final static Logger logger = LoggerFactory.getLogger(LegacyMigrationChangeLog.class);
+  private final static Logger logger = LoggerFactory.getLogger(MongockV3LegacyMigrationChangeLog.class);
 
   @ChangeSet(id = "mongock-legacy-migration", author = "mongock", order = "00001", runAlways = true)
   public void mongockSpringLegacyMigration(@NonLockGuarded(NonLockGuardedType.NONE)
