@@ -7,6 +7,7 @@ import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
 import io.changock.driver.api.driver.ChangeSetDependency;
 import io.changock.driver.api.entry.ChangeEntry;
+import io.changock.driver.api.entry.ChangeEntryService;
 import io.changock.driver.api.lock.LockManager;
 import io.changock.driver.api.lock.guard.invoker.LockGuardInvokerImpl;
 import io.changock.driver.core.driver.ConnectionDriverBase;
@@ -75,6 +76,7 @@ public abstract class MongoSync4DriverBase<CHANGE_ENTRY extends ChangeEntry>
     Set<ChangeSetDependency> dependencies = new HashSet<>();
     MongoDataBaseDecoratorImpl mongoDataBaseDecorator = new MongoDataBaseDecoratorImpl(mongoDatabase, new LockGuardInvokerImpl(lockManager));
     dependencies.add(new ChangeSetDependency(MongoDatabase.class, mongoDataBaseDecorator));
+    dependencies.add(new ChangeSetDependency(ChangeEntryService.class, getChangeEntryService()));
     return dependencies;
   }
 }

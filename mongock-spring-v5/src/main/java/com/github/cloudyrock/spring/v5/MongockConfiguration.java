@@ -1,10 +1,12 @@
 package com.github.cloudyrock.spring.v5;
 
+import io.changock.migration.api.exception.ChangockException;
 import io.changock.runner.core.builder.configuration.LegacyMigration;
 import io.changock.runner.core.builder.configuration.LegacyMigrationMappingFields;
 import io.changock.runner.spring.util.config.ChangockSpringConfiguration;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.util.StringUtils;
 
 
 @Configuration
@@ -66,6 +68,13 @@ public class MongockConfiguration extends ChangockSpringConfiguration {
     this.legacyMigration = legacyMigration;
   }
 
+  public static boolean isLegacyMigrationValid(MongockConfiguration config) {
+    return config.getLegacyMigration() == null
+        || StringUtils.isEmpty(config.getLegacyMigration().getCollectionName())
+        || config.getLegacyMigration().getMappingFields() == null
+        || StringUtils.isEmpty(config.getLegacyMigration().getMappingFields().getChangeId())
+        || StringUtils.isEmpty(config.getLegacyMigration().getMappingFields().getAuthor());
+  }
 
   public static class MongockLegacyMigration extends LegacyMigration {
 
@@ -75,6 +84,9 @@ public class MongockConfiguration extends ChangockSpringConfiguration {
     }
 
     public MongockLegacyMigration(String collectionName) {
+      if(collectionName == null || collectionName.isEmpty()) {
+        throw new ChangockException("Legacy migration collectionName cannot be empty");
+      }
       this.collectionName = collectionName;
     }
 
