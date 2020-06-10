@@ -18,6 +18,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.inject.Named;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -31,13 +32,11 @@ public class MongockSync4LegacyMigrationChangeLog {
 
   private final static Logger logger = LoggerFactory.getLogger(MongockSync4LegacyMigrationChangeLog.class);
 
-
   @ChangeSet(id = "mongock-legacy-migration", author = "mongock", order = "00001", runAlways = true)
   public void mongockSpringLegacyMigration(@NonLockGuarded(NonLockGuardedType.NONE)
                                            @Named("legacy-migration") MongockLegacyMigration legacyMigration,
                                            MongoDatabase mongoDatabase,
                                            ChangeEntryService<ChangeEntry> changeEntryService) {
-
     try {
       validateLegacyMigration(legacyMigration);
       getOriginalMigrationAsChangeEntryList(mongoDatabase.getCollection(legacyMigration.getCollectionName()), legacyMigration)
@@ -50,9 +49,9 @@ public class MongockSync4LegacyMigrationChangeLog {
               logAlreadyTracked(originalChange);
             }
           });
-    } catch(Exception ex) {
-      if(legacyMigration.isFailFast()) {
-        RuntimeException exToThrow = ex instanceof ChangockException ? (ChangockException)ex : new ChangockException(ex);
+    } catch (Exception ex) {
+      if (legacyMigration.isFailFast()) {
+        RuntimeException exToThrow = ex instanceof ChangockException ? (ChangockException) ex : new ChangockException(ex);
         throw exToThrow;
       }
       logger.warn(ex.getMessage());
@@ -105,7 +104,7 @@ public class MongockSync4LegacyMigrationChangeLog {
   }
 
   private String getExecutionId() {
-    return "legacy-migration_" + new Random().nextInt(999) + System.currentTimeMillis();
+    return String.format("%s-%s-%d", "legacy_migration", LocalDateTime.now().toString(), new Random().nextInt(999));
   }
 
   private void validateLegacyMigration(MongockLegacyMigration legacyMigration) {
@@ -123,14 +122,14 @@ public class MongockSync4LegacyMigrationChangeLog {
   }
 
   private void logAlreadyTracked(ChangeEntry originalChange) {
-    logger.info("legacy-migration: Change[changeId: {} ][author: {} ] already tracked in Mongock changeLog collection", originalChange.getChangeId(), originalChange.getAuthor());
+    logger.debug("legacy-migration: Change[changeId: {} ][author: {} ] already tracked in Mongock changeLog collection", originalChange.getChangeId(), originalChange.getAuthor());
   }
 
   private void logSuccessfullyTracked(ChangeEntry originalChange) {
-    logger.info("legacy-migration: Change[changeId: {} ][author: {} ] tracked successfully", originalChange.getChangeId(), originalChange.getAuthor());
+    logger.debug("legacy-migration: Change[changeId: {} ][author: {} ] tracked successfully", originalChange.getChangeId(), originalChange.getAuthor());
   }
 
   private void logTracking(ChangeEntry originalChange) {
-    logger.info("legacy-migration: Tracking change[changeId: {} ][author: {} ]...", originalChange.getChangeId(), originalChange.getAuthor());
+    logger.debug("legacy-migration: Tracking change[changeId: {} ][author: {} ]...", originalChange.getChangeId(), originalChange.getAuthor());
   }
 }
