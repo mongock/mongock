@@ -1,8 +1,11 @@
 package com.github.cloudyrock.spring.v5;
 
+import com.github.cloudyrock.mongock.migration.MongockLegacyMigration;
+import io.changock.runner.core.builder.configuration.LegacyMigrationMappingFields;
 import io.changock.runner.spring.util.config.ChangockSpringConfiguration;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.util.StringUtils;
 
 
 @Configuration
@@ -28,6 +31,7 @@ public class MongockConfiguration extends ChangockSpringConfiguration {
    */
   private boolean indexCreation = true;
 
+  private MongockLegacyMigrationConfig legacyMigration = null;
 
   public String getChangeLogCollectionName() {
     return changeLogCollectionName;
@@ -51,5 +55,32 @@ public class MongockConfiguration extends ChangockSpringConfiguration {
 
   public void setIndexCreation(boolean indexCreation) {
     this.indexCreation = indexCreation;
+  }
+
+  @Override
+  @SuppressWarnings("unchecked")
+  public MongockLegacyMigrationConfig getLegacyMigration() {
+    return legacyMigration;
+  }
+
+  public void setLegacyMigration(MongockLegacyMigrationConfig legacyMigration) {
+    this.legacyMigration = legacyMigration;
+  }
+
+  public static boolean isLegacyMigrationValid(MongockConfiguration config) {
+    return config.getLegacyMigration() == null
+        || StringUtils.isEmpty(config.getLegacyMigration().getCollectionName())
+        || config.getLegacyMigration().getMappingFields() == null
+        || StringUtils.isEmpty(config.getLegacyMigration().getMappingFields().getChangeId())
+        || StringUtils.isEmpty(config.getLegacyMigration().getMappingFields().getAuthor());
+  }
+
+  public static class MongockLegacyMigrationConfig extends MongockLegacyMigration {
+
+    @Override
+    @ConfigurationProperties("spring.mongock.legacy-migration.mapping-fields")
+    public LegacyMigrationMappingFields getMappingFields() {
+      return super.getMappingFields();
+    }
   }
 }
