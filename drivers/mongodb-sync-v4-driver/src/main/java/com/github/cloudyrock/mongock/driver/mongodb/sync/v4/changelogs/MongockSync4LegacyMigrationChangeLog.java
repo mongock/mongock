@@ -56,8 +56,9 @@ public class MongockSync4LegacyMigrationChangeLog {
         changesMigrated++;
       }
       if(changesCountExpectation != null && changesCountExpectation != changesMigrated) {
-        throw new ChangockException(String.format("[legacy-migration] - Expectation [%d] changes migrated. Actual [%d] migrated", changesCountExpectation, changesMigrated));
+        throw new ChangockException(String.format("[legacy-migration] - Expectation [%d changes migrated], but actual [%d changes migrated]", changesCountExpectation, changesMigrated));
       }
+      logger.debug("[legacy-migration] - {} changes migrated", changesMigrated);
     } catch (Exception ex) {
       if (legacyMigration.isFailFast()) {
         throw ex instanceof ChangockException ? (ChangockException) ex : new ChangockException(ex);
