@@ -32,8 +32,6 @@ public class MongockV3LegacyMigrationChangeLog {
 
   private final static Logger logger = LoggerFactory.getLogger(MongockV3LegacyMigrationChangeLog.class);
 
-  private final static Logger logger = LoggerFactory.getLogger(MongockSync4LegacyMigrationChangeLog.class);
-
   @ChangeSet(id = "mongock-legacy-migration", author = "mongock", order = "00001", runAlways = true)
   public void mongockSpringLegacyMigration(@NonLockGuarded(NonLockGuardedType.NONE)
                                            @Named("legacy-migration") MongockLegacyMigration legacyMigration,
