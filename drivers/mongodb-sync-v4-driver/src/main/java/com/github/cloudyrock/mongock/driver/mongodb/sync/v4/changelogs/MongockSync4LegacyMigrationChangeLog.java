@@ -37,22 +37,30 @@ public class MongockSync4LegacyMigrationChangeLog {
                                            @Named("legacy-migration") MongockLegacyMigration legacyMigration,
                                            MongoDatabase mongoDatabase,
                                            ChangeEntryService<ChangeEntry> changeEntryService) {
+    int changesMigrated = 0;
+    Integer changesCountExpectation = legacyMigration.getChangesCountExpectation();
+    if(changesCountExpectation == null) {
+      logger.warn("[legacy-migration] - There is no changes count expectation!");
+    }
     try {
       validateLegacyMigration(legacyMigration);
-      getOriginalMigrationAsChangeEntryList(mongoDatabase.getCollection(legacyMigration.getCollectionName()), legacyMigration)
-          .forEach(originalChange -> {
-            if (!changeEntryService.isAlreadyExecuted(originalChange.getChangeId(), originalChange.getAuthor())) {
-              logTracking(originalChange);
-              changeEntryService.save(originalChange);
-              logSuccessfullyTracked(originalChange);
-            } else {
-              logAlreadyTracked(originalChange);
-            }
-          });
+      List<ChangeEntry> changesToMigrate = getOriginalMigrationAsChangeEntryList(mongoDatabase.getCollection(legacyMigration.getCollectionName()), legacyMigration);
+      for (ChangeEntry originalChange : changesToMigrate) {
+        if (!changeEntryService.isAlreadyExecuted(originalChange.getChangeId(), originalChange.getAuthor())) {
+          logTracking(originalChange);
+          changeEntryService.save(originalChange);
+          logSuccessfullyTracked(originalChange);
+        } else {
+          logAlreadyTracked(originalChange);
+        }
+        changesMigrated++;
+      }
+      if(changesCountExpectation != null && changesCountExpectation != changesMigrated) {
+        throw new ChangockException(String.format("[legacy-migration] - Expectation [%d] changes migrated. Actual [%d] migrated", changesCountExpectation, changesMigrated));
+      }
     } catch (Exception ex) {
       if (legacyMigration.isFailFast()) {
-        RuntimeException exToThrow = ex instanceof ChangockException ? (ChangockException) ex : new ChangockException(ex);
-        throw exToThrow;
+        throw ex instanceof ChangockException ? (ChangockException) ex : new ChangockException(ex);
       }
       logger.warn(ex.getMessage());
     }
@@ -113,7 +121,7 @@ public class MongockSync4LegacyMigrationChangeLog {
         || legacyMigration.getMappingFields() == null
         || isEmpty(legacyMigration.getMappingFields().getChangeId())
         || isEmpty(legacyMigration.getMappingFields().getAuthor())) {
-      throw new ChangockException("Legacy migration wrong configured. Either is null, or doesn't contain collectionName or mapping fields are wrong");
+      throw new ChangockException("[legacy-migration] - wrong configured. Either is null, or doesn't contain collectionName or mapping fields are wrong");
     }
   }
 
@@ -122,14 +130,14 @@ public class MongockSync4LegacyMigrationChangeLog {
   }
 
   private void logAlreadyTracked(ChangeEntry originalChange) {
-    logger.debug("legacy-migration: Change[changeId: {} ][author: {} ] already tracked in Mongock changeLog collection", originalChange.getChangeId(), originalChange.getAuthor());
+    logger.debug("[legacy-migration] - Change[changeId: {} ][author: {} ] already tracked in Mongock changeLog collection", originalChange.getChangeId(), originalChange.getAuthor());
   }
 
   private void logSuccessfullyTracked(ChangeEntry originalChange) {
-    logger.debug("legacy-migration: Change[changeId: {} ][author: {} ] tracked successfully", originalChange.getChangeId(), originalChange.getAuthor());
+    logger.debug("[legacy-migration] - Change[changeId: {} ][author: {} ] tracked successfully", originalChange.getChangeId(), originalChange.getAuthor());
   }
 
   private void logTracking(ChangeEntry originalChange) {
-    logger.debug("legacy-migration: Tracking change[changeId: {} ][author: {} ]...", originalChange.getChangeId(), originalChange.getAuthor());
+    logger.debug("[legacy-migration] - Tracking change[changeId: {} ][author: {} ]...", originalChange.getChangeId(), originalChange.getAuthor());
   }
 }
