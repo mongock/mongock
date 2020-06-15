@@ -21,7 +21,7 @@ MongoDB version control tool for Java
 ## LAST NEWS :bangbang::bangbang::collision::collision:
 > **3.3.2 is released with minor bux fixes** 
 
-> **We are working on version 4!!**...Take a look to [this example](https://github.com/cloudyrock/mongock-integration-tests/tree/master/mongock-spring-v5/mongock-spring5-springdata3-it) and give the version **4.0.7.alpha** a try
+> **We are working on version 4!!**...Take a look to [this example][sampleProject] and give the version **4.0.7.alpha** a try
 
 ## Table of contents
 
@@ -72,8 +72,8 @@ MongoDB version control tool for Java
 There are several good reasons to use Mongock in your project. Here we give you some of them:
 
 * Solid solution which really works.
-* **Works well with sharded collections**: Unlike other similar projects using javascript, which requires `db.eval()`. [Documentation](https://docs.mongodb.com/manual/reference/method/db.eval/#sharded-data).
-* Works with [Mongo Atlas](https://www.mongodb.com/cloud/atlas).
+* **Works well with sharded collections**: Unlike other similar projects using javascript, which requires `db.eval()`. [Documentation][evalDocumentation]
+* Works with [Mongo Atlas][mongoAtlas].
 * Distributed solution with solid locking mechanism.
 * We are very responsive for community license and maximum 2 business days for professional license.
 * Well maintained and regularly updated.
@@ -85,10 +85,10 @@ There are several good reasons to use Mongock in your project. Here we give you 
 ## Sample projects
 >**Note:** Sample projects are not updated. We are working to have them updated as soon as possible.
 
-In [here](https://github.com/cloudyrock/mongock-samples) you can find some sample projects that show you how to use Mongock.
+In [here][sampleProject] you can find some sample projects that show you how to use Mongock.
 
 ## Contributing
-If you would like to contribute to Mongock project, please read [how to contribute](././community/CONTRIBUTING.md) for details on our collaboration process and standards.
+If you would like to contribute to Mongock project, please read [how to contribute][contributing] for details on our collaboration process and standards.
 
 ## Roadmap
 ### Version 4.0.0
@@ -647,12 +647,16 @@ could be enough if the changelog's execution time is shorter than the interrupti
 execution time depends on the machine, but in most case could be enough.
 
 ## Code of conduct
-Please read the [code of conduct](././community/CODE_OF_CONDUCT.md) for details on our code of conduct.
+Please read the [code of conduct][codeOfConduct] for details on our code of conduct.
 
 ## LICENSE
-Mongock propject is licensed under the [Apache License Version 2.0](http://www.apache.org/licenses/LICENSE-2.0.html). See the [LICENSE](./LICENSE.md) file for details
+Mongock propject is licensed under the [Apache License Version 2.0][apacheLicense]. See the [LICENSE][mongockLicense] file for details
 
+[contributing]: ./community/CONTRIBUTING.md
+[codeOfConduct]: ./community/CODE_OF_CONDUCT.md
+[mongockLicense]: ./LICENSE.md
 
+[apacheLicense]: http://www.apache.org/licenses/LICENSE-2.0.html
 [ApplicationRunner]: https://docs.spring.io/spring-boot/docs/current/api/org/springframework/boot/ApplicationRunner.html
 [InitializingBean]: https://docs.spring.io/spring-framework/docs/current/javadoc-api/org/springframework/beans/factory/InitializingBean.html
 [ApplicationContext]: https://docs.spring.io/spring-framework/docs/current/javadoc-api/org/springframework/context/ApplicationContext.html
@@ -664,3 +668,6 @@ Mongock propject is licensed under the [Apache License Version 2.0](http://www.a
 [JHipster]: https://www.jhipster.tech/
 [spring]: https://spring.io/
 [springboot]:https://spring.io/projects/spring-boot
+[mongoAtlas]: https://www.mongodb.com/cloud/atlas
+[evalDocumentation]: https://docs.mongodb.com/manual/reference/method/db.eval/#sharded-data
+[sampleProject]: https://github.com/cloudyrock/mongock-integration-tests/tree/master/mongock-spring-v5/mongock-spring5-springdata3-it
