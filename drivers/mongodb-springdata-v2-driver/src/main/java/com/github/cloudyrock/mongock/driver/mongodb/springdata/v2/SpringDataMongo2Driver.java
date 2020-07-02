@@ -38,10 +38,16 @@ public class SpringDataMongo2Driver extends MongoCore3Driver {
   }
 
   @Override
-  public Set<ChangeSetDependency> getDependencies() {
-    Set<ChangeSetDependency> dependencies = super.getDependencies();
-    dependencies.add(new ChangeSetDependency(MongockTemplate.class, new MongockTemplate(mongoTemplate, new LockGuardInvokerImpl(this.getLockManager()))));
-    return dependencies;
+  public void initialize() {
+    super.initialize();
+    if (!doesDependenciesContainMongockTemplate()) {
+      dependencies.add(new ChangeSetDependency(MongockTemplate.class, new MongockTemplate(mongoTemplate, new LockGuardInvokerImpl(this.getLockManager()))));
+    }
+  }
+
+
+  private boolean doesDependenciesContainMongockTemplate() {
+    return dependencies != null && dependencies.stream().anyMatch(dependency -> MongockTemplate.class.isAssignableFrom(dependency.getType()));
   }
 
   @Override

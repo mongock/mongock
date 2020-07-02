@@ -1,18 +1,16 @@
 package com.github.cloudyrock.mongock.driver.mongodb.springdata.v3;
 
+import com.github.cloudyrock.mongock.driver.mongodb.springdata.v3.decorator.impl.MongockTemplate;
 import com.github.cloudyrock.mongock.driver.mongodb.sync.v4.driver.MongoSync4Driver;
 import io.changock.driver.api.driver.ChangeSetDependency;
 import io.changock.driver.api.driver.ForbiddenParametersMap;
 import io.changock.driver.api.lock.guard.invoker.LockGuardInvokerImpl;
-import com.github.cloudyrock.mongock.driver.mongodb.springdata.v3.decorator.impl.MongockTemplate;
 import io.changock.migration.api.exception.ChangockException;
 import io.changock.utils.annotation.NotThreadSafe;
 import org.springframework.data.mongodb.core.MongoTemplate;
 
-import java.util.Set;
-
 @NotThreadSafe
-public class   SpringDataMongo3Driver extends MongoSync4Driver {
+public class SpringDataMongo3Driver extends MongoSync4Driver {
 
   private static final ForbiddenParametersMap FORBIDDEN_PARAMETERS_MAP;
 
@@ -37,10 +35,15 @@ public class   SpringDataMongo3Driver extends MongoSync4Driver {
   }
 
   @Override
-  public Set<ChangeSetDependency> getDependencies() {
-    Set<ChangeSetDependency> dependencies = super.getDependencies();
-    dependencies.add(new ChangeSetDependency(MongockTemplate.class, new MongockTemplate(mongoTemplate, new LockGuardInvokerImpl(this.getLockManager()))));
-    return dependencies;
+  public void initialize() {
+    super.initialize();
+    if (!doesDependenciesContainMongockTemplate()) {
+      dependencies.add(new ChangeSetDependency(MongockTemplate.class, new MongockTemplate(mongoTemplate, new LockGuardInvokerImpl(this.getLockManager()))));
+    }
+  }
+
+  private boolean doesDependenciesContainMongockTemplate() {
+    return dependencies != null && dependencies.stream().anyMatch(dependency -> MongockTemplate.class.isAssignableFrom(dependency.getType()));
   }
 
   @Override

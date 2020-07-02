@@ -8,7 +8,6 @@ import com.mongodb.client.MongoDatabase;
 import io.changock.driver.api.driver.ChangeSetDependency;
 import io.changock.driver.api.entry.ChangeEntry;
 import io.changock.driver.api.entry.ChangeEntryService;
-import io.changock.driver.api.lock.LockManager;
 import io.changock.driver.api.lock.guard.invoker.LockGuardInvokerImpl;
 import io.changock.driver.core.driver.ConnectionDriverBase;
 import io.changock.driver.core.lock.LockRepository;
@@ -31,6 +30,7 @@ public abstract class MongoCore3DriverBase<CHANGE_ENTRY extends ChangeEntry>
   protected String lockCollectionName = DEFAULT_LOCK_COLLECTION_NAME;
   protected boolean indexCreation = true;
   protected Mongo3LockRepository lockRepository;
+  protected Set<ChangeSetDependency> dependencies;
 
   public MongoCore3DriverBase(MongoDatabase mongoDatabase) {
     this.mongoDatabase = mongoDatabase;
@@ -72,11 +72,19 @@ public abstract class MongoCore3DriverBase<CHANGE_ENTRY extends ChangeEntry>
 
   @Override
   public Set<ChangeSetDependency> getDependencies() {
-    LockManager lockManager = this.getLockManager();
-    Set<ChangeSetDependency> dependencies = new HashSet<>();
-    MongoDataBaseDecoratorImpl mongoDataBaseDecorator = new MongoDataBaseDecoratorImpl(mongoDatabase, new LockGuardInvokerImpl(lockManager));
-    dependencies.add(new ChangeSetDependency(MongoDatabase.class, mongoDataBaseDecorator));
-    dependencies.add(new ChangeSetDependency(ChangeEntryService.class, getChangeEntryService()));
+    if(dependencies == null) {
+      throw new ChangockException("Driver not initialized");
+    }
     return dependencies;
+  }
+
+  @Override
+  public void initialize() {
+    super.initialize();
+    if(dependencies == null) {
+      dependencies = new HashSet<>();
+      dependencies.add(new ChangeSetDependency(MongoDatabase.class, new MongoDataBaseDecoratorImpl(mongoDatabase, new LockGuardInvokerImpl(getLockManager()))));
+      dependencies.add(new ChangeSetDependency(ChangeEntryService.class, getChangeEntryService()));
+    }
   }
 }
