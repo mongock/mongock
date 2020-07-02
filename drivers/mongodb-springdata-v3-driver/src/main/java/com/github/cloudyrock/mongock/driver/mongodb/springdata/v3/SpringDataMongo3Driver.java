@@ -9,8 +9,6 @@ import io.changock.migration.api.exception.ChangockException;
 import io.changock.utils.annotation.NotThreadSafe;
 import org.springframework.data.mongodb.core.MongoTemplate;
 
-import java.util.Set;
-
 @NotThreadSafe
 public class SpringDataMongo3Driver extends MongoSync4Driver {
 
@@ -39,12 +37,12 @@ public class SpringDataMongo3Driver extends MongoSync4Driver {
   @Override
   public void initialize() {
     super.initialize();
-    if (!dependenciesContainMongockTemplate()) {
+    if (!doesDependenciesContainMongockTemplate()) {
       dependencies.add(new ChangeSetDependency(MongockTemplate.class, new MongockTemplate(mongoTemplate, new LockGuardInvokerImpl(this.getLockManager()))));
     }
   }
 
-  private boolean dependenciesContainMongockTemplate() {
+  private boolean doesDependenciesContainMongockTemplate() {
     return dependencies != null && dependencies.stream().anyMatch(dependency -> MongockTemplate.class.isAssignableFrom(dependency.getType()));
   }
 

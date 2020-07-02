@@ -8,7 +8,6 @@ import com.mongodb.client.MongoDatabase;
 import io.changock.driver.api.driver.ChangeSetDependency;
 import io.changock.driver.api.entry.ChangeEntry;
 import io.changock.driver.api.entry.ChangeEntryService;
-import io.changock.driver.api.lock.LockManager;
 import io.changock.driver.api.lock.guard.invoker.LockGuardInvokerImpl;
 import io.changock.driver.core.driver.ConnectionDriverBase;
 import io.changock.driver.core.lock.LockRepository;
