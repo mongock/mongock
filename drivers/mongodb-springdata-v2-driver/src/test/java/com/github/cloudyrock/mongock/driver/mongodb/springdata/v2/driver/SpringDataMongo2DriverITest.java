@@ -10,7 +10,7 @@ public class SpringDataMongo2DriverITest extends MongoDriverITestBase {
 
   @Override
   protected SpringDataMongo2Driver getDriver() {
-    SpringDataMongo2Driver driver = new SpringDataMongo2Driver(getMongoTemplate());
+    SpringDataMongo2Driver driver = SpringDataMongo2Driver.withDefaultLock(getMongoTemplate());
     driver.setChangeLogCollectionName(CHANGELOG_COLLECTION_NAME);
     return driver;
   }

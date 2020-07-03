@@ -17,16 +17,15 @@ public class MongockDriverContext {
                                                          MongockConfiguration mongockConfiguration) {
     MongockConnectionDriver driver;
     try {
-      driver = new SpringDataMongo3Driver(mongoTemplate);
+      driver = SpringDataMongo3Driver.withLockSetting(mongoTemplate, mongockConfiguration.getLockAcquiredForMinutes(), mongockConfiguration.getMaxWaitingForLockMinutes(), mongockConfiguration.getMaxTries());
     } catch (NoClassDefFoundError driver3NotFoundError) {
       try {
-        driver = new SpringDataMongo2Driver(mongoTemplate);
+        driver = SpringDataMongo2Driver.withLockSetting(mongoTemplate, mongockConfiguration.getLockAcquiredForMinutes(), mongockConfiguration.getMaxWaitingForLockMinutes(), mongockConfiguration.getMaxTries());
         return driver;
       } catch (NoClassDefFoundError driver2NotFoundError) {
         throw new ChangockException("\n\n" + ConfigErrorMessages.DRIVER_NOT_FOUND_ERROR + "\n\n");
       }
     }
-    driver.setLockSettings(mongockConfiguration.getLockAcquiredForMinutes(), mongockConfiguration.getMaxWaitingForLockMinutes(), mongockConfiguration.getMaxTries());
     driver.setChangeLogCollectionName(mongockConfiguration.getChangeLogCollectionName());
     driver.setLockCollectionName(mongockConfiguration.getLockCollectionName());
     driver.setIndexCreation(mongockConfiguration.isIndexCreation());

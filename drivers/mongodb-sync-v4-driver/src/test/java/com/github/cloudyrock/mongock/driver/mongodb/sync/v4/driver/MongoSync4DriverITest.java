@@ -9,7 +9,7 @@ public class MongoSync4DriverITest extends MongoDriverITestBase {
 
   @Override
   protected MongoSync4Driver getDriver() {
-    MongoSync4Driver driver = new MongoSync4Driver(this.getDataBase());
+    MongoSync4Driver driver = MongoSync4Driver.withDefaultLock(this.getDataBase());
     driver.setChangeLogCollectionName(CHANGELOG_COLLECTION_NAME);
     return driver;
   }

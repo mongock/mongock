@@ -21,8 +21,22 @@ public class SpringDataMongo3Driver extends MongoSync4Driver {
     FORBIDDEN_PARAMETERS_MAP.put(MongoTemplate.class, MongockTemplate.class);
   }
 
-  public SpringDataMongo3Driver(MongoTemplate mongoTemplate) {
-    super(mongoTemplate.getDb());
+  public static SpringDataMongo3Driver withDefaultLock(MongoTemplate mongoTemplate) {
+    return new SpringDataMongo3Driver(mongoTemplate, 3L, 4L, 3);
+  }
+
+  public static SpringDataMongo3Driver withLockSetting(MongoTemplate mongoTemplate,
+                                                       long lockAcquiredForMinutes,
+                                                       long maxWaitingForLockMinutes,
+                                                       int maxTries) {
+    return new SpringDataMongo3Driver(mongoTemplate, lockAcquiredForMinutes, maxWaitingForLockMinutes, maxTries);
+  }
+
+  public SpringDataMongo3Driver(MongoTemplate mongoTemplate,
+                                long lockAcquiredForMinutes,
+                                long maxWaitingForLockMinutes,
+                                int maxTries) {
+    super(mongoTemplate.getDb(), lockAcquiredForMinutes, maxWaitingForLockMinutes, maxTries);
     this.mongoTemplate = mongoTemplate;
   }
 

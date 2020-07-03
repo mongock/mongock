@@ -33,7 +33,11 @@ public abstract class MongoSync4DriverBase<CHANGE_ENTRY extends ChangeEntry>
   protected MongoSync4LockRepository lockRepository;
   protected Set<ChangeSetDependency> dependencies;
 
-  public MongoSync4DriverBase(MongoDatabase mongoDatabase) {
+  protected MongoSync4DriverBase(MongoDatabase mongoDatabase,
+                                 long lockAcquiredForMinutes,
+                                 long maxWaitingForLockMinutes,
+                                 int maxTries) {
+    super(lockAcquiredForMinutes, maxWaitingForLockMinutes, maxTries);
     this.mongoDatabase = mongoDatabase;
   }
 

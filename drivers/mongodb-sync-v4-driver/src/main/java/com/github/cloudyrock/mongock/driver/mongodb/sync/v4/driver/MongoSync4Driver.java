@@ -14,8 +14,22 @@ public class MongoSync4Driver extends MongoSync4DriverBase<ChangeEntry> {
 
   protected MongoSync4ChangeEntryRepository<ChangeEntry> changeEntryRepository;
 
-  public MongoSync4Driver(MongoDatabase mongoDatabase) {
-    super(mongoDatabase);
+  public static MongoSync4Driver withDefaultLock(MongoDatabase mongoDatabase) {
+    return new MongoSync4Driver(mongoDatabase, 3L, 4L, 3);
+  }
+
+  public static MongoSync4Driver withLockSetting(MongoDatabase mongoDatabase,
+                                                 long lockAcquiredForMinutes,
+                                                 long maxWaitingForLockMinutes,
+                                                 int maxTries) {
+    return new MongoSync4Driver(mongoDatabase, lockAcquiredForMinutes, maxWaitingForLockMinutes, maxTries);
+  }
+
+  protected MongoSync4Driver(MongoDatabase mongoDatabase,
+                             long lockAcquiredForMinutes,
+                             long maxWaitingForLockMinutes,
+                             int maxTries) {
+    super(mongoDatabase, lockAcquiredForMinutes, maxWaitingForLockMinutes, maxTries);
   }
 
   @Override

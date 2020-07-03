@@ -1,15 +1,13 @@
 package com.github.cloudyrock.mongock.driver.mongodb.springdata.v2;
 
+import com.github.cloudyrock.mongock.driver.mongodb.springdata.v2.decorator.impl.MongockTemplate;
 import com.github.cloudyrock.mongock.driver.mongodb.v3.driver.MongoCore3Driver;
 import io.changock.driver.api.driver.ChangeSetDependency;
 import io.changock.driver.api.driver.ForbiddenParametersMap;
 import io.changock.driver.api.lock.guard.invoker.LockGuardInvokerImpl;
-import com.github.cloudyrock.mongock.driver.mongodb.springdata.v2.decorator.impl.MongockTemplate;
 import io.changock.migration.api.exception.ChangockException;
 import io.changock.utils.annotation.NotThreadSafe;
 import org.springframework.data.mongodb.core.MongoTemplate;
-
-import java.util.Set;
 
 @NotThreadSafe
 public class SpringDataMongo2Driver extends MongoCore3Driver {
@@ -23,8 +21,22 @@ public class SpringDataMongo2Driver extends MongoCore3Driver {
     FORBIDDEN_PARAMETERS_MAP.put(MongoTemplate.class, MongockTemplate.class);
   }
 
-  public SpringDataMongo2Driver(MongoTemplate mongoTemplate) {
-    super(mongoTemplate.getDb());
+  public static SpringDataMongo2Driver withDefaultLock(MongoTemplate mongoTemplate) {
+    return new SpringDataMongo2Driver(mongoTemplate, 3L, 4L, 3);
+  }
+
+  public static SpringDataMongo2Driver withLockSetting(MongoTemplate mongoTemplate,
+                                                       long lockAcquiredForMinutes,
+                                                       long maxWaitingForLockMinutes,
+                                                       int maxTries) {
+    return new SpringDataMongo2Driver(mongoTemplate, lockAcquiredForMinutes, maxWaitingForLockMinutes, maxTries);
+  }
+
+  public SpringDataMongo2Driver(MongoTemplate mongoTemplate,
+                                long lockAcquiredForMinutes,
+                                long maxWaitingForLockMinutes,
+                                int maxTries) {
+    super(mongoTemplate.getDb(), lockAcquiredForMinutes, maxWaitingForLockMinutes, maxTries);
     this.mongoTemplate = mongoTemplate;
   }
 

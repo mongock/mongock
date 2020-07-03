@@ -32,7 +32,11 @@ public abstract class MongoCore3DriverBase<CHANGE_ENTRY extends ChangeEntry>
   protected Mongo3LockRepository lockRepository;
   protected Set<ChangeSetDependency> dependencies;
 
-  public MongoCore3DriverBase(MongoDatabase mongoDatabase) {
+  public MongoCore3DriverBase(MongoDatabase mongoDatabase,
+                              long lockAcquiredForMinutes,
+                              long maxWaitingForLockMinutes,
+                              int maxTries) {
+    super(lockAcquiredForMinutes, maxWaitingForLockMinutes, maxTries);
     this.mongoDatabase = mongoDatabase;
   }
 

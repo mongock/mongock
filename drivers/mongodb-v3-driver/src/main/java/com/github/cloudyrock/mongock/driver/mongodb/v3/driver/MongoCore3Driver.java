@@ -14,9 +14,22 @@ public class MongoCore3Driver extends MongoCore3DriverBase<ChangeEntry> {
 
   protected Mongo3ChangeEntryRepository<ChangeEntry> changeEntryRepository;
 
+  public static MongoCore3Driver withDefaultLock(MongoDatabase mongoDatabase) {
+    return new MongoCore3Driver(mongoDatabase, 3L, 4L, 3);
+  }
 
-  public MongoCore3Driver(MongoDatabase mongoDatabase) {
-    super(mongoDatabase);
+  public static MongoCore3Driver withLockSetting(MongoDatabase mongoDatabase,
+                                                 long lockAcquiredForMinutes,
+                                                 long maxWaitingForLockMinutes,
+                                                 int maxTries) {
+    return new MongoCore3Driver(mongoDatabase, lockAcquiredForMinutes, maxWaitingForLockMinutes, maxTries);
+  }
+
+  protected MongoCore3Driver(MongoDatabase mongoDatabase,
+                             long lockAcquiredForMinutes,
+                             long maxWaitingForLockMinutes,
+                             int maxTries) {
+    super(mongoDatabase, lockAcquiredForMinutes, maxWaitingForLockMinutes, maxTries);
   }
 
   @Override

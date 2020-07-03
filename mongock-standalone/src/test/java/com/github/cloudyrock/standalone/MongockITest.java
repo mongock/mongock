@@ -132,7 +132,7 @@ public class MongockITest extends IndependentDbIntegrationTestBase {
   }
 
   private MongoSync4Driver getDriver() {
-    MongoSync4Driver driver = new MongoSync4Driver(db);
+    MongoSync4Driver driver = MongoSync4Driver.withDefaultLock(db);
     driver.setChangeLogCollectionName(CHANGELOG_COLLECTION_NAME);
     return driver;
   }
