@@ -83,12 +83,9 @@ public abstract class MongoSync4DriverBase<CHANGE_ENTRY extends ChangeEntry>
   }
 
   @Override
-  public void initialize() {
-    super.initialize();
-    if(dependencies == null) {
-      dependencies = new HashSet<>();
-      dependencies.add(new ChangeSetDependency(MongoDatabase.class, new MongoDataBaseDecoratorImpl(mongoDatabase, new LockGuardInvokerImpl(getLockManager()))));
-      dependencies.add(new ChangeSetDependency(ChangeEntryService.class, getChangeEntryService()));
-    }
+  public void specificInitialization() {
+    dependencies = new HashSet<>();
+    dependencies.add(new ChangeSetDependency(MongoDatabase.class, new MongoDataBaseDecoratorImpl(mongoDatabase, new LockGuardInvokerImpl(getLockManager()))));
+    dependencies.add(new ChangeSetDependency(ChangeEntryService.class, getChangeEntryService()));
   }
 }
