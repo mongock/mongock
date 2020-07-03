@@ -42,6 +42,7 @@ public class SpringDataMongo3Driver extends MongoSync4Driver {
     }
   }
 
+
   private boolean doesDependenciesContainMongockTemplate() {
     return dependencies != null && dependencies.stream().anyMatch(dependency -> MongockTemplate.class.isAssignableFrom(dependency.getType()));
   }
