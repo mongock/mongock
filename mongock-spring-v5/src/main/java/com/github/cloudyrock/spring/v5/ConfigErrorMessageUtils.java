@@ -1,8 +1,8 @@
 package com.github.cloudyrock.spring.v5;
 
-final class ConfigErrorMessages {
+final class ConfigErrorMessageUtils {
 
-  private ConfigErrorMessages() {
+  private ConfigErrorMessageUtils() {
   }
 
   final static String DRIVER_NOT_FOUND_ERROR = "MONGOCK DRIVER HAS NOT BEEN IMPORTED" +

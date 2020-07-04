@@ -19,7 +19,7 @@ public class MongockSpringDataV2CoreContext extends MongockSpringDataCoreContext
       setUpMongockConnectionDriver(mongockConfiguration, driver);
       return driver;
     } catch (NoClassDefFoundError driver2NotFoundError) {
-      throw new ChangockException("\n\n" + ConfigErrorMessages.DRIVER_NOT_FOUND_ERROR + "\n\n");
+      throw new ChangockException("\n\n" + ConfigErrorMessageUtils.DRIVER_NOT_FOUND_ERROR + "\n\n");
     }
   }
 
@@ -35,7 +35,7 @@ public class MongockSpringDataV2CoreContext extends MongockSpringDataCoreContext
       try {
         builder.addChangeLogsScanPackage(MongockV3LegacyMigrationChangeLog.class.getPackage().getName());
       } catch (NoClassDefFoundError mongockDriverV3NotFoundError) {
-        throw new ChangockException("\n\n" + ConfigErrorMessages.DRIVER_NOT_FOUND_ERROR + "\n\n");
+        throw new ChangockException("\n\n" + ConfigErrorMessageUtils.DRIVER_NOT_FOUND_ERROR + "\n\n");
       }
     }
   }

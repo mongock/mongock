@@ -15,7 +15,7 @@ public class MongockCoreContextSelector implements ImportSelector {
         Class.forName("com.github.cloudyrock.mongock.driver.mongodb.springdata.v2.SpringDataMongo3Driver");
         return new String[]{"com.github.cloudyrock.spring.v5.MongockSpringDataV2CoreContext"};
       } catch (ClassNotFoundException e2) {
-        throw new ChangockException("\n\n" + ConfigErrorMessages.DRIVER_NOT_FOUND_ERROR + "\n\n");
+        throw new ChangockException("\n\n" + ConfigErrorMessageUtils.DRIVER_NOT_FOUND_ERROR + "\n\n");
 
       }
     }
