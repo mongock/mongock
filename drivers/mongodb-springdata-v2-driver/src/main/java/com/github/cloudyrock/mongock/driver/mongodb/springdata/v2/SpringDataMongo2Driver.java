@@ -14,12 +14,12 @@ public class SpringDataMongo2Driver extends MongoCore3Driver {
 
   private static final ForbiddenParametersMap FORBIDDEN_PARAMETERS_MAP;
 
-  private final MongoTemplate mongoTemplate;
-
   static {
     FORBIDDEN_PARAMETERS_MAP = new ForbiddenParametersMap();
     FORBIDDEN_PARAMETERS_MAP.put(MongoTemplate.class, MongockTemplate.class);
   }
+
+  private final MongoTemplate mongoTemplate;
 
   public static SpringDataMongo2Driver withDefaultLock(MongoTemplate mongoTemplate) {
     return new SpringDataMongo2Driver(mongoTemplate, 3L, 4L, 3);
@@ -60,5 +60,18 @@ public class SpringDataMongo2Driver extends MongoCore3Driver {
     return FORBIDDEN_PARAMETERS_MAP;
   }
 
+  public MongockTemplate getMongockTemplate() {
+    if(!isInitialized()) {
+      throw new ChangockException("Mongock Driver hasn't been initialized yet");
+    }
+    return dependencies
+        .stream()
+        .filter(dependency -> MongockTemplate.class.isAssignableFrom(dependency.getType()))
+        .map(ChangeSetDependency::getInstance)
+        .map(instance -> (MongockTemplate)instance)
+        .findAny()
+        .orElseThrow(() -> new ChangockException("Mongock Driver hasn't been initialized yet"));
+
+  }
 
 }
