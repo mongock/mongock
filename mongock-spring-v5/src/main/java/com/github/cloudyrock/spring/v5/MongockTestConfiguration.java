@@ -11,6 +11,6 @@ import java.lang.annotation.Target;
 @Documented
 @Target(ElementType.TYPE)
 @Retention(RetentionPolicy.RUNTIME)
-@Import({MongockConfiguration.class, MongockCoreContext.class})
-public @interface MongockCoreConfiguration {
+@Import({MongockConfiguration.class, MongockTestContext.class})
+public @interface MongockTestConfiguration {
 }

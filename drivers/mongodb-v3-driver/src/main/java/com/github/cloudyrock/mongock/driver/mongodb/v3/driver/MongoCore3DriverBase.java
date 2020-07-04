@@ -51,6 +51,16 @@ public abstract class MongoCore3DriverBase<CHANGE_ENTRY extends ChangeEntry>
   }
 
   @Override
+  public String getChangeLogCollectionName() {
+    return changeLogCollectionName;
+  }
+
+  @Override
+  public String getLockCollectionName() {
+    return lockCollectionName;
+  }
+
+  @Override
   public void setIndexCreation(boolean indexCreation) {
     this.indexCreation = indexCreation;
   }

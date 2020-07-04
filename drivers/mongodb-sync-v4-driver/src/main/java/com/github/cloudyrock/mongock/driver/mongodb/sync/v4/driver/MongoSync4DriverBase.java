@@ -45,11 +45,21 @@ public abstract class MongoSync4DriverBase<CHANGE_ENTRY extends ChangeEntry>
   public void setChangeLogCollectionName(String changeLogCollectionName) {
     this.changeLogCollectionName = changeLogCollectionName;
   }
+
   @Override
   public void setLockCollectionName(String lockCollectionName) {
     this.lockCollectionName = lockCollectionName;
   }
 
+  @Override
+  public String getChangeLogCollectionName() {
+    return changeLogCollectionName;
+  }
+
+  @Override
+  public String getLockCollectionName() {
+    return lockCollectionName;
+  }
   @Override
   public void setIndexCreation(boolean indexCreation) {
     this.indexCreation = indexCreation;

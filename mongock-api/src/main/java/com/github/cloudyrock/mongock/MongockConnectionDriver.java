@@ -7,7 +7,11 @@ public interface MongockConnectionDriver<CHANGE_ENTRY extends ChangeEntry> exten
 
   void setChangeLogCollectionName(String changeLogCollectionName);
 
+  String getChangeLogCollectionName();
+
   void setLockCollectionName(String lockCollectionName);
+
+  String getLockCollectionName();
 
   void setIndexCreation(boolean indexCreation);
 }

@@ -6,8 +6,8 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
 
 @Configuration
-@Import(MongockCoreContext.class)
-public class MongockRunnerContext {
+@Import(MongockCoreContextSelector.class)
+public class MongockContext {
 
   @Bean
   @ConditionalOnProperty(value = "spring.mongock.runner-type", matchIfMissing = true, havingValue = "ApplicationRunner")
