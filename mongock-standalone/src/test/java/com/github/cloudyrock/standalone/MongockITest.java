@@ -32,7 +32,6 @@ public class MongockITest extends IndependentDbIntegrationTestBase {
     MongockStandalone.Runner runner = MongockStandalone.builder()
         .setDriver(getDriver())
         .addChangeLogsScanPackage(MongockTestResource.class.getPackage().getName())
-        .setDefaultLock()
         .buildRunner();
 
 
@@ -56,7 +55,6 @@ public class MongockITest extends IndependentDbIntegrationTestBase {
     MongockStandalone.Runner runner = MongockStandalone.builder()
         .setDriver(getDriver())
         .addChangeLogsScanPackage(RunAlwaysChangeLog.class.getPackage().getName())
-        .setDefaultLock()
         .buildRunner();
 
     // when
@@ -96,7 +94,6 @@ public class MongockITest extends IndependentDbIntegrationTestBase {
     MongockStandalone.Runner runner = MongockStandalone.builder()
         .setDriver(getDriver())
         .addChangeLogsScanPackage(MongockTestResource.class.getPackage().getName())
-        .setDefaultLock()
         .withMetadata(metadata)
         .buildRunner();
 
@@ -120,7 +117,6 @@ public class MongockITest extends IndependentDbIntegrationTestBase {
     MongockStandalone.Runner runner = MongockStandalone.builder()
         .setDriver(getDriver())
         .addChangeLogsScanPackage(ChangeLogwithChangockAnnotations.class.getPackage().getName())
-        .setDefaultLock()
         .buildRunner();
 
 
@@ -136,7 +132,7 @@ public class MongockITest extends IndependentDbIntegrationTestBase {
   }
 
   private MongoSync4Driver getDriver() {
-    MongoSync4Driver driver = new MongoSync4Driver(db);
+    MongoSync4Driver driver = MongoSync4Driver.withDefaultLock(db);
     driver.setChangeLogCollectionName(CHANGELOG_COLLECTION_NAME);
     return driver;
   }

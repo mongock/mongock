@@ -32,7 +32,11 @@ public abstract class MongoCore3DriverBase<CHANGE_ENTRY extends ChangeEntry>
   protected Mongo3LockRepository lockRepository;
   protected Set<ChangeSetDependency> dependencies;
 
-  public MongoCore3DriverBase(MongoDatabase mongoDatabase) {
+  public MongoCore3DriverBase(MongoDatabase mongoDatabase,
+                              long lockAcquiredForMinutes,
+                              long maxWaitingForLockMinutes,
+                              int maxTries) {
+    super(lockAcquiredForMinutes, maxWaitingForLockMinutes, maxTries);
     this.mongoDatabase = mongoDatabase;
   }
 
@@ -44,6 +48,16 @@ public abstract class MongoCore3DriverBase<CHANGE_ENTRY extends ChangeEntry>
   @Override
   public void setLockCollectionName(String lockCollectionName) {
     this.lockCollectionName = lockCollectionName;
+  }
+
+  @Override
+  public String getChangeLogCollectionName() {
+    return changeLogCollectionName;
+  }
+
+  @Override
+  public String getLockCollectionName() {
+    return lockCollectionName;
   }
 
   @Override
@@ -79,12 +93,9 @@ public abstract class MongoCore3DriverBase<CHANGE_ENTRY extends ChangeEntry>
   }
 
   @Override
-  public void initialize() {
-    super.initialize();
-    if(dependencies == null) {
+  public void specificInitialization() {
       dependencies = new HashSet<>();
       dependencies.add(new ChangeSetDependency(MongoDatabase.class, new MongoDataBaseDecoratorImpl(mongoDatabase, new LockGuardInvokerImpl(getLockManager()))));
       dependencies.add(new ChangeSetDependency(ChangeEntryService.class, getChangeEntryService()));
-    }
   }
 }

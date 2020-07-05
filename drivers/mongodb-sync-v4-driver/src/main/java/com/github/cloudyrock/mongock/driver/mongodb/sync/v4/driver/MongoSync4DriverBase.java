@@ -33,7 +33,11 @@ public abstract class MongoSync4DriverBase<CHANGE_ENTRY extends ChangeEntry>
   protected MongoSync4LockRepository lockRepository;
   protected Set<ChangeSetDependency> dependencies;
 
-  public MongoSync4DriverBase(MongoDatabase mongoDatabase) {
+  protected MongoSync4DriverBase(MongoDatabase mongoDatabase,
+                                 long lockAcquiredForMinutes,
+                                 long maxWaitingForLockMinutes,
+                                 int maxTries) {
+    super(lockAcquiredForMinutes, maxWaitingForLockMinutes, maxTries);
     this.mongoDatabase = mongoDatabase;
   }
 
@@ -41,11 +45,21 @@ public abstract class MongoSync4DriverBase<CHANGE_ENTRY extends ChangeEntry>
   public void setChangeLogCollectionName(String changeLogCollectionName) {
     this.changeLogCollectionName = changeLogCollectionName;
   }
+
   @Override
   public void setLockCollectionName(String lockCollectionName) {
     this.lockCollectionName = lockCollectionName;
   }
 
+  @Override
+  public String getChangeLogCollectionName() {
+    return changeLogCollectionName;
+  }
+
+  @Override
+  public String getLockCollectionName() {
+    return lockCollectionName;
+  }
   @Override
   public void setIndexCreation(boolean indexCreation) {
     this.indexCreation = indexCreation;
@@ -79,12 +93,9 @@ public abstract class MongoSync4DriverBase<CHANGE_ENTRY extends ChangeEntry>
   }
 
   @Override
-  public void initialize() {
-    super.initialize();
-    if(dependencies == null) {
-      dependencies = new HashSet<>();
-      dependencies.add(new ChangeSetDependency(MongoDatabase.class, new MongoDataBaseDecoratorImpl(mongoDatabase, new LockGuardInvokerImpl(getLockManager()))));
-      dependencies.add(new ChangeSetDependency(ChangeEntryService.class, getChangeEntryService()));
-    }
+  public void specificInitialization() {
+    dependencies = new HashSet<>();
+    dependencies.add(new ChangeSetDependency(MongoDatabase.class, new MongoDataBaseDecoratorImpl(mongoDatabase, new LockGuardInvokerImpl(getLockManager()))));
+    dependencies.add(new ChangeSetDependency(ChangeEntryService.class, getChangeEntryService()));
   }
 }

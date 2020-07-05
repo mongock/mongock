@@ -10,12 +10,12 @@
   <parent>
     <groupId>com.github.cloudyrock.changock</groupId>
     <artifactId>changock-bom</artifactId>
-    <version>1.0.12.alpha</version>
+    <version>1.0.13.alpha</version>
   </parent>
 
   <groupId>com.github.cloudyrock.mongock</groupId>
   <artifactId>mongock</artifactId>
-  <version>4.0.9.alpha-SNAPSHOT</version>
+  <version>4.1.1.beta-SNAPSHOT</version>
   <packaging>pom</packaging>
 
   <modules>

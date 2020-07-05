@@ -11,7 +11,7 @@ public class SpringDataMongo3DriverITest extends MongoDriverITestBase {
 
   @Override
   protected SpringDataMongo3Driver getDriver() {
-    SpringDataMongo3Driver driver = new SpringDataMongo3Driver(getMongoTemplate());
+    SpringDataMongo3Driver driver = SpringDataMongo3Driver.withDefaultLock(getMongoTemplate());
     driver.setChangeLogCollectionName(CHANGELOG_COLLECTION_NAME);
     return driver;
   }
