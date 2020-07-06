@@ -3,7 +3,7 @@
   <parent>
     <artifactId>drivers</artifactId>
     <groupId>com.github.cloudyrock.mongock</groupId>
-    <version>4.1.1.beta</version>
+    <version>4.1.2.beta-SNAPSHOT</version>
   </parent>
   <modelVersion>4.0.0</modelVersion>
 
