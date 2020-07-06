@@ -10,9 +10,6 @@ public abstract class MongockSpringDataCoreContextBase {
   protected MongockSpring5.Builder mongockBuilder(MongockConnectionDriver mongockConnectionDriver,
                                                   MongockConfiguration mongockConfiguration,
                                                   ApplicationContext springContext) {
-    if (StringUtils.isEmpty(mongockConfiguration.getChangeLogsScanPackage())) {
-      throw new ChangockException("\n\nMongock: You need to specify property: spring.mongock.changeLogsScanPackage\n\n");
-    }
     MongockSpring5.Builder builder = MongockSpring5.builder()
         .setDriver(mongockConnectionDriver)
         .setConfig(mongockConfiguration)
