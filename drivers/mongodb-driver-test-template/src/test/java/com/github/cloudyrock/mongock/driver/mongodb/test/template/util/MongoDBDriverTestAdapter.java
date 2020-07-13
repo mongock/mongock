@@ -6,7 +6,7 @@ import org.bson.Document;
 
 import java.util.stream.Stream;
 
-public interface MongoDbDriverTestAdapter {
+public interface MongoDBDriverTestAdapter {
 
   void insertOne(Document document);
   long countDocuments(Document document);

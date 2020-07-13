@@ -45,9 +45,9 @@ public abstract class IntegrationTestBase {
     return mongoClient;
   }
 
-  protected MongoDbDriverTestAdapter getDefaultAdapter() {
+  protected MongoDBDriverTestAdapter getDefaultAdapter() {
     return getAdapter(CHANGELOG_COLLECTION_NAME);
   }
 
-  protected abstract MongoDbDriverTestAdapter getAdapter(String collectionName);
+  protected abstract MongoDBDriverTestAdapter getAdapter(String collectionName);
 }

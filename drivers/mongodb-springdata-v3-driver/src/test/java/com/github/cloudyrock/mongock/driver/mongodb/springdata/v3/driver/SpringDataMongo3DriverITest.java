@@ -4,7 +4,7 @@ package com.github.cloudyrock.mongock.driver.mongodb.springdata.v3.driver;
 import com.github.cloudyrock.mongock.driver.mongodb.springdata.v3.SpringDataMongo3Driver;
 import com.github.cloudyrock.mongock.driver.mongodb.springdata.v3.SpringData3DriverTestAdapterImpl;
 import com.github.cloudyrock.mongock.driver.mongodb.test.template.MongoDriverITestBase;
-import com.github.cloudyrock.mongock.driver.mongodb.test.template.util.MongoDbDriverTestAdapter;
+import com.github.cloudyrock.mongock.driver.mongodb.test.template.util.MongoDBDriverTestAdapter;
 import org.springframework.data.mongodb.core.MongoTemplate;
 
 public class SpringDataMongo3DriverITest extends MongoDriverITestBase {
@@ -17,7 +17,7 @@ public class SpringDataMongo3DriverITest extends MongoDriverITestBase {
   }
 
   @Override
-  protected MongoDbDriverTestAdapter getAdapter(String collectionName) {
+  protected MongoDBDriverTestAdapter getAdapter(String collectionName) {
     return new SpringData3DriverTestAdapterImpl(getDataBase().getCollection(collectionName));
   }
 

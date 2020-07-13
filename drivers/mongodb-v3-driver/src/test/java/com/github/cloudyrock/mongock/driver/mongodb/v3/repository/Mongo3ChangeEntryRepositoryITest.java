@@ -1,11 +1,10 @@
 package com.github.cloudyrock.mongock.driver.mongodb.v3.repository;
 
 import com.github.cloudyrock.mongock.driver.mongodb.test.template.MongoChangeEntryRepositoryITestBase;
-import com.github.cloudyrock.mongock.driver.mongodb.test.template.util.MongoDbDriverTestAdapter;
+import com.github.cloudyrock.mongock.driver.mongodb.test.template.util.MongoDBDriverTestAdapter;
 import com.github.cloudyrock.mongock.driver.mongodb.v3.MongoDb3DriverTestAdapterImpl;
 import io.changock.migration.api.exception.ChangockException;
 import org.bson.Document;
-import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
 
@@ -51,7 +50,7 @@ public class Mongo3ChangeEntryRepositoryITest extends MongoChangeEntryRepository
   }
 
   @Override
-  protected MongoDbDriverTestAdapter getAdapter(String collectionName) {
+  protected MongoDBDriverTestAdapter getAdapter(String collectionName) {
     return new MongoDb3DriverTestAdapterImpl(getDataBase().getCollection(collectionName));
   }
 }

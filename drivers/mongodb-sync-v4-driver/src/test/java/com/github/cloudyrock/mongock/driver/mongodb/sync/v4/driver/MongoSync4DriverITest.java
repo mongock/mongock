@@ -3,7 +3,7 @@ package com.github.cloudyrock.mongock.driver.mongodb.sync.v4.driver;
 
 import com.github.cloudyrock.mongock.driver.mongodb.sync.v4.MongoDbSync4DriverTestAdapterImpl;
 import com.github.cloudyrock.mongock.driver.mongodb.test.template.MongoDriverITestBase;
-import com.github.cloudyrock.mongock.driver.mongodb.test.template.util.MongoDbDriverTestAdapter;
+import com.github.cloudyrock.mongock.driver.mongodb.test.template.util.MongoDBDriverTestAdapter;
 
 public class MongoSync4DriverITest extends MongoDriverITestBase {
 
@@ -15,7 +15,7 @@ public class MongoSync4DriverITest extends MongoDriverITestBase {
   }
 
   @Override
-  protected MongoDbDriverTestAdapter getAdapter(String collectionName) {
+  protected MongoDBDriverTestAdapter getAdapter(String collectionName) {
     return new MongoDbSync4DriverTestAdapterImpl(getDataBase().getCollection(collectionName));
   }
 }

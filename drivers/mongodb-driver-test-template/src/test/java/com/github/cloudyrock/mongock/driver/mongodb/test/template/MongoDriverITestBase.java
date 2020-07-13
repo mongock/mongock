@@ -9,7 +9,7 @@ import com.github.cloudyrock.mongock.driver.mongodb.test.template.integration.te
 import com.github.cloudyrock.mongock.driver.mongodb.test.template.util.CallVerifier;
 import com.github.cloudyrock.mongock.driver.mongodb.test.template.util.CallVerifierImpl;
 import com.github.cloudyrock.mongock.driver.mongodb.test.template.util.IntegrationTestBase;
-import com.github.cloudyrock.mongock.driver.mongodb.test.template.util.MongoDbDriverTestAdapter;
+import com.github.cloudyrock.mongock.driver.mongodb.test.template.util.MongoDBDriverTestAdapter;
 import com.mongodb.client.FindIterable;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoCursor;
@@ -59,42 +59,42 @@ public abstract class MongoDriverITestBase extends IntegrationTestBase {
 
   @Test
   public void shouldRegisterChangeSetAsIgnored_WhenAlreadyExecuted_IfNotRunAlways() throws NoSuchMethodException {
-    MongoDbDriverTestAdapter adapter = getDefaultAdapter();
+    MongoDBDriverTestAdapter adapter = getDefaultAdapter();
     adapter.insertOne(getChangeEntryDocument(ChangeLogSuccess.class.getMethod("method_0"), ChangeState.EXECUTED));
     runChanges( getDriver(),ChangeLogSuccess.class, CHANGELOG_COLLECTION_NAME, Collections.singletonList("method_0"), false);
   }
 
   @Test
   public void shouldRegisterChangeSetAsExecuted_WhenAlreadyExecuted_IfRunAlways() throws NoSuchMethodException {
-    MongoDbDriverTestAdapter adapter = getDefaultAdapter();
+    MongoDBDriverTestAdapter adapter = getDefaultAdapter();
     adapter.insertOne(getChangeEntryDocument(WithRunAlways.class.getMethod("method_0"), ChangeState.EXECUTED));
     runChanges(getDriver(), WithRunAlways.class, CHANGELOG_COLLECTION_NAME);
   }
 
   @Test
   public void shouldRegisterChangeSetAsExecuted_WhenAlreadyIgnored_IfNotRunAlways() throws NoSuchMethodException {
-    MongoDbDriverTestAdapter adapter = getDefaultAdapter();
+    MongoDBDriverTestAdapter adapter = getDefaultAdapter();
     adapter.insertOne(getChangeEntryDocument(ChangeLogSuccess.class.getMethod("method_0"), ChangeState.IGNORED));
     runChanges(getDriver(), ChangeLogSuccess.class, CHANGELOG_COLLECTION_NAME);
   }
 
   @Test
   public void shouldRegisterChangeSetAsExecuted_WhenAlreadyIgnored_IfRunAlways() throws NoSuchMethodException {
-    MongoDbDriverTestAdapter adapter = getDefaultAdapter();
+    MongoDBDriverTestAdapter adapter = getDefaultAdapter();
     adapter.insertOne(getChangeEntryDocument(WithRunAlways.class.getMethod("method_0"), ChangeState.IGNORED));
     runChanges(getDriver(), WithRunAlways.class, CHANGELOG_COLLECTION_NAME);
   }
 
   @Test
   public void shouldRegisterChangeSetAsExecuted_WhenAlreadyFailed_IfNotRunAlways() throws NoSuchMethodException {
-    MongoDbDriverTestAdapter adapter = getDefaultAdapter();
+    MongoDBDriverTestAdapter adapter = getDefaultAdapter();
     adapter.insertOne(getChangeEntryDocument(ChangeLogSuccess.class.getMethod("method_0"), ChangeState.FAILED));
     runChanges(getDriver(), ChangeLogSuccess.class, CHANGELOG_COLLECTION_NAME);
   }
 
   @Test
   public void shouldRegisterChangeSetAsExecuted_WhenAlreadyFailed_IfRunAlways() throws NoSuchMethodException {
-    MongoDbDriverTestAdapter adapter = getDefaultAdapter();
+    MongoDBDriverTestAdapter adapter = getDefaultAdapter();
     adapter.insertOne(getChangeEntryDocument(WithRunAlways.class.getMethod("method_0"), ChangeState.FAILED));
     runChanges(getDriver(), WithRunAlways.class, CHANGELOG_COLLECTION_NAME);
   }

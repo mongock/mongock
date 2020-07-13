@@ -2,7 +2,7 @@ package com.github.cloudyrock.mongock.driver.mongodb.sync.v4.repository;
 
 import com.github.cloudyrock.mongock.driver.mongodb.sync.v4.MongoDbSync4DriverTestAdapterImpl;
 import com.github.cloudyrock.mongock.driver.mongodb.test.template.MongoLockManagerITestBase;
-import com.github.cloudyrock.mongock.driver.mongodb.test.template.util.MongoDbDriverTestAdapter;
+import com.github.cloudyrock.mongock.driver.mongodb.test.template.util.MongoDBDriverTestAdapter;
 
 public class MongoSync4LockManagerITest extends MongoLockManagerITestBase {
 
@@ -12,7 +12,7 @@ public class MongoSync4LockManagerITest extends MongoLockManagerITestBase {
   }
 
   @Override
-  protected MongoDbDriverTestAdapter getAdapter(String collectionName) {
+  protected MongoDBDriverTestAdapter getAdapter(String collectionName) {
     return new MongoDbSync4DriverTestAdapterImpl(getDataBase().getCollection(collectionName));
   }
 }

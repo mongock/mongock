@@ -1,7 +1,7 @@
 package com.github.cloudyrock.mongock.driver.mongodb.v3.repository;
 
 import com.github.cloudyrock.mongock.driver.mongodb.test.template.MongoLockManagerITestBase;
-import com.github.cloudyrock.mongock.driver.mongodb.test.template.util.MongoDbDriverTestAdapter;
+import com.github.cloudyrock.mongock.driver.mongodb.test.template.util.MongoDBDriverTestAdapter;
 import com.github.cloudyrock.mongock.driver.mongodb.v3.MongoDb3DriverTestAdapterImpl;
 
 public class Mongo3LockManagerITest extends MongoLockManagerITestBase {
@@ -12,7 +12,7 @@ public class Mongo3LockManagerITest extends MongoLockManagerITestBase {
   }
 
   @Override
-  protected MongoDbDriverTestAdapter getAdapter(String collectionName) {
+  protected MongoDBDriverTestAdapter getAdapter(String collectionName) {
     return new MongoDb3DriverTestAdapterImpl(getDataBase().getCollection(collectionName));
   }
 }
