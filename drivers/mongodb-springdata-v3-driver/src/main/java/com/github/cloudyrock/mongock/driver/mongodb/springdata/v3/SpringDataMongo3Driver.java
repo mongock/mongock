@@ -5,15 +5,18 @@ import com.github.cloudyrock.mongock.driver.mongodb.sync.v4.driver.MongoSync4Dri
 import com.github.cloudyrock.mongock.driver.mongodb.sync.v4.repository.MongoSync4ChangeEntryRepository;
 import io.changock.driver.api.driver.ChangeSetDependency;
 import io.changock.driver.api.driver.ForbiddenParametersMap;
+import io.changock.driver.api.driver.TransactionStrategy;
+import io.changock.driver.api.driver.Transactionable;
 import io.changock.driver.api.entry.ChangeEntry;
 import io.changock.driver.api.entry.ChangeEntryService;
 import io.changock.driver.api.lock.guard.invoker.LockGuardInvokerImpl;
 import io.changock.migration.api.exception.ChangockException;
 import io.changock.utils.annotation.NotThreadSafe;
+import org.springframework.data.mongodb.MongoTransactionManager;
 import org.springframework.data.mongodb.core.MongoTemplate;
 
 @NotThreadSafe
-public class SpringDataMongo3Driver extends MongoSync4Driver {
+public class SpringDataMongo3Driver extends MongoSync4Driver implements Transactionable {
 
   private static final ForbiddenParametersMap FORBIDDEN_PARAMETERS_MAP;
 
@@ -23,6 +26,8 @@ public class SpringDataMongo3Driver extends MongoSync4Driver {
   }
 
   private final MongoTemplate mongoTemplate;
+  private MongoTransactionManager txManager;
+  private TransactionStrategy transactionStrategy = TransactionStrategy.NONE;
 
   public static SpringDataMongo3Driver withDefaultLock(MongoTemplate mongoTemplate) {
     return new SpringDataMongo3Driver(mongoTemplate, 3L, 4L, 3);
@@ -76,12 +81,26 @@ public class SpringDataMongo3Driver extends MongoSync4Driver {
 
   }
 
-
   @Override
   public ChangeEntryService<ChangeEntry> getChangeEntryService() {
     if (changeEntryRepository == null) {
       this.changeEntryRepository = new SpringDataMongo3ChangeEntryRepository<>(mongoTemplate, changeLogCollectionName, indexCreation);
     }
     return changeEntryRepository;
+  }
+
+  public void setTransactionManager(MongoTransactionManager txManager) {
+    this.txManager = txManager;
+    transactionStrategy = TransactionStrategy.ENTIRE_MIGRATION;
+  }
+
+  @Override
+  public void executeInTransaction(Runnable operation) {
+    //todo execute operation
+  }
+
+  @Override
+  public TransactionStrategy getTransactionStrategy() {
+    return transactionStrategy;
   }
 }
