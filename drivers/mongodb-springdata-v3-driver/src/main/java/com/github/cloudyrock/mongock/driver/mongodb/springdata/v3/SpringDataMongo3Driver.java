@@ -4,8 +4,6 @@ import com.github.cloudyrock.mongock.driver.mongodb.springdata.v3.decorator.impl
 import com.github.cloudyrock.mongock.driver.mongodb.sync.v4.driver.MongoSync4Driver;
 import io.changock.driver.api.driver.ChangeSetDependency;
 import io.changock.driver.api.driver.ForbiddenParametersMap;
-import io.changock.driver.api.driver.TransactionStrategy;
-import io.changock.driver.api.driver.Transactionable;
 import io.changock.driver.api.entry.ChangeEntry;
 import io.changock.driver.api.entry.ChangeEntryService;
 import io.changock.driver.api.lock.guard.invoker.LockGuardInvokerImpl;
@@ -15,7 +13,7 @@ import org.springframework.data.mongodb.MongoTransactionManager;
 import org.springframework.data.mongodb.core.MongoTemplate;
 
 @NotThreadSafe
-public class SpringDataMongo3Driver extends MongoSync4Driver implements Transactionable {
+public class SpringDataMongo3Driver extends MongoSync4Driver {
 
   private static final ForbiddenParametersMap FORBIDDEN_PARAMETERS_MAP;
 
@@ -26,7 +24,6 @@ public class SpringDataMongo3Driver extends MongoSync4Driver implements Transact
 
   private final MongoTemplate mongoTemplate;
   private MongoTransactionManager txManager;
-  private TransactionStrategy transactionStrategy = TransactionStrategy.NONE;
 
   public static SpringDataMongo3Driver withDefaultLock(MongoTemplate mongoTemplate) {
     return new SpringDataMongo3Driver(mongoTemplate, 3L, 4L, 3);
@@ -88,18 +85,4 @@ public class SpringDataMongo3Driver extends MongoSync4Driver implements Transact
     return changeEntryRepository;
   }
 
-  public void setTransactionManager(MongoTransactionManager txManager) {
-    this.txManager = txManager;
-    transactionStrategy = TransactionStrategy.ENTIRE_MIGRATION;
-  }
-
-  @Override
-  public void executeInTransaction(Runnable operation) {
-    //todo execute operation
-  }
-
-  @Override
-  public TransactionStrategy getTransactionStrategy() {
-    return transactionStrategy;
-  }
 }
