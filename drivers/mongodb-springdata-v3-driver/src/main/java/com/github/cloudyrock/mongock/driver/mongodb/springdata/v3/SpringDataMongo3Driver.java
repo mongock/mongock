@@ -11,22 +11,29 @@ import io.changock.driver.api.entry.ChangeEntryService;
 import io.changock.driver.api.lock.guard.invoker.LockGuardInvokerImpl;
 import io.changock.migration.api.exception.ChangockException;
 import io.changock.utils.annotation.NotThreadSafe;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.data.mongodb.MongoTransactionManager;
+import org.springframework.data.mongodb.SessionSynchronization;
 import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.transaction.TransactionDefinition;
+import org.springframework.transaction.TransactionStatus;
+import org.springframework.transaction.support.DefaultTransactionDefinition;
 
 @NotThreadSafe
 public class SpringDataMongo3Driver extends MongoSync4Driver implements Transactionable {
 
+  private static final Logger logger = LoggerFactory.getLogger(SpringDataMongo3Driver.class);
   private static final ForbiddenParametersMap FORBIDDEN_PARAMETERS_MAP;
+
 
   static {
     FORBIDDEN_PARAMETERS_MAP = new ForbiddenParametersMap();
     FORBIDDEN_PARAMETERS_MAP.put(MongoTemplate.class, MongockTemplate.class);
   }
-
   private final MongoTemplate mongoTemplate;
   private MongoTransactionManager txManager;
-  private TransactionStrategy transactionStrategy = TransactionStrategy.MIGRATION;
+  private TransactionStrategy transactionStrategy = TransactionStrategy.NONE;
 
   public static SpringDataMongo3Driver withDefaultLock(MongoTemplate mongoTemplate) {
     return new SpringDataMongo3Driver(mongoTemplate, 3L, 4L, 3);
@@ -88,9 +95,31 @@ public class SpringDataMongo3Driver extends MongoSync4Driver implements Transact
     return changeEntryRepository;
   }
 
+  public void setTxManager(MongoTransactionManager txManager) {
+    this.txManager = txManager;
+    this.transactionStrategy = TransactionStrategy.MIGRATION;
+  }
+
   @Override
   public void executeInTransaction(Runnable operation) {
+    TransactionStatus txStatus = getTxStatus(txManager);
+    try {
+      mongoTemplate.setSessionSynchronization(SessionSynchronization.ALWAYS);
+      operation.run();
+      txManager.commit(txStatus);
+    } catch (Exception ex) {
+      logger.warn("Error in Mongock's transaction", ex);
+      txManager.rollback(txStatus);
+    }
 
+  }
+
+  private TransactionStatus getTxStatus(MongoTransactionManager txManager) {
+    DefaultTransactionDefinition def = new DefaultTransactionDefinition();
+// explicitly setting the transaction name is something that can be done only programmatically
+    def.setName("SomeTxName");
+    def.setPropagationBehavior(TransactionDefinition.PROPAGATION_REQUIRED);
+    return txManager.getTransaction(def);
   }
 
   @Override
