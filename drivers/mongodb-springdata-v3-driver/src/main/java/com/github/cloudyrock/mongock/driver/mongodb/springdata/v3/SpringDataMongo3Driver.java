@@ -2,7 +2,6 @@ package com.github.cloudyrock.mongock.driver.mongodb.springdata.v3;
 
 import com.github.cloudyrock.mongock.driver.mongodb.springdata.v3.decorator.impl.MongockTemplate;
 import com.github.cloudyrock.mongock.driver.mongodb.sync.v4.driver.MongoSync4Driver;
-import com.github.cloudyrock.mongock.driver.mongodb.sync.v4.repository.MongoSync4ChangeEntryRepository;
 import io.changock.driver.api.driver.ChangeSetDependency;
 import io.changock.driver.api.driver.ForbiddenParametersMap;
 import io.changock.driver.api.entry.ChangeEntry;
@@ -10,6 +9,7 @@ import io.changock.driver.api.entry.ChangeEntryService;
 import io.changock.driver.api.lock.guard.invoker.LockGuardInvokerImpl;
 import io.changock.migration.api.exception.ChangockException;
 import io.changock.utils.annotation.NotThreadSafe;
+import org.springframework.data.mongodb.MongoTransactionManager;
 import org.springframework.data.mongodb.core.MongoTemplate;
 
 @NotThreadSafe
@@ -23,6 +23,7 @@ public class SpringDataMongo3Driver extends MongoSync4Driver {
   }
 
   private final MongoTemplate mongoTemplate;
+  private MongoTransactionManager txManager;
 
   public static SpringDataMongo3Driver withDefaultLock(MongoTemplate mongoTemplate) {
     return new SpringDataMongo3Driver(mongoTemplate, 3L, 4L, 3);
@@ -76,7 +77,6 @@ public class SpringDataMongo3Driver extends MongoSync4Driver {
 
   }
 
-
   @Override
   public ChangeEntryService<ChangeEntry> getChangeEntryService() {
     if (changeEntryRepository == null) {
@@ -84,4 +84,5 @@ public class SpringDataMongo3Driver extends MongoSync4Driver {
     }
     return changeEntryRepository;
   }
+
 }
