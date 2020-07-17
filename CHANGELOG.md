@@ -1,4 +1,4 @@
-# 4.0.4
+# 4.1.3
 ### Features
 * Added support for Mongodb driver sync 4
 * Added support for spring-data 3
@@ -9,6 +9,7 @@
 ### Bugs fixed
 * Take older changeSets with no state as executed
 * Fixed Changock annotations not processed
+* Invalid condition in MongockCoreContextSelector for driver Spring data v2
 __________________________________________________
 
 # 3.2.4
