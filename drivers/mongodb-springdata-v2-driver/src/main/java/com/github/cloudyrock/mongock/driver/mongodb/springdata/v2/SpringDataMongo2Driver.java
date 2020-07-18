@@ -118,7 +118,6 @@ public class SpringDataMongo2Driver extends MongoCore3Driver implements Transact
 
   private TransactionStatus getTxStatus(MongoTransactionManager txManager) {
     DefaultTransactionDefinition def = new DefaultTransactionDefinition();
-// explicitly setting the transaction name is something that can be done only programmatically
     def.setName("SomeTxName");
     def.setPropagationBehavior(TransactionDefinition.PROPAGATION_REQUIRED);
     return txManager.getTransaction(def);
