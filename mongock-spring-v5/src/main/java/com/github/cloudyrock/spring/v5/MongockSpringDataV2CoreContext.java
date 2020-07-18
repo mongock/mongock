@@ -6,16 +6,21 @@ import io.changock.migration.api.exception.ChangockException;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.data.mongodb.MongoTransactionManager;
 import org.springframework.data.mongodb.core.MongoTemplate;
+
+import java.util.Optional;
 
 @Configuration
 public class MongockSpringDataV2CoreContext extends MongockSpringDataCoreContextBase {
 
   @Bean
   public SpringDataMongo2Driver mongockConnectionDriver(MongoTemplate mongoTemplate,
-                                                        MongockConfiguration mongockConfiguration) {
+                                                        MongockConfiguration mongockConfiguration,
+                                                        Optional<MongoTransactionManager> txManagerOpt) {
     try {
       SpringDataMongo2Driver driver = SpringDataMongo2Driver.withLockSetting(mongoTemplate, mongockConfiguration.getLockAcquiredForMinutes(), mongockConfiguration.getMaxWaitingForLockMinutes(), mongockConfiguration.getMaxTries());
+      txManagerOpt.filter(txManager -> mongockConfiguration.isTransactionEnabled()).ifPresent(driver::setTxManager);
       setUpMongockConnectionDriver(mongockConfiguration, driver);
       return driver;
     } catch (NoClassDefFoundError driver2NotFoundError) {
