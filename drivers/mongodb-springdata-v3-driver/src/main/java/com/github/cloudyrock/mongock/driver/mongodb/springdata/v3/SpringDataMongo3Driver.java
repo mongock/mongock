@@ -95,7 +95,7 @@ public class SpringDataMongo3Driver extends MongoSync4Driver {
     return changeEntryRepository;
   }
 
-  public void setTxManager(MongoTransactionManager txManager) {
+  public void enableTransactionWithTxManager(MongoTransactionManager txManager) {
     this.txManager = txManager;
     this.transactionStrategy = TransactionStrategy.MIGRATION;
   }

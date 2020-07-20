@@ -96,7 +96,7 @@ public class SpringDataMongo2Driver extends MongoCore3Driver {
     return changeEntryRepository;
   }
 
-  public void setTxManager(MongoTransactionManager txManager) {
+  public void enableTransactionWithTxManager(MongoTransactionManager txManager) {
     this.txManager = txManager;
     this.transactionStrategy = TransactionStrategy.MIGRATION;
   }

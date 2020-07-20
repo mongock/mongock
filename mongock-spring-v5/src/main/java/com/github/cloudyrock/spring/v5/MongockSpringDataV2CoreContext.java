@@ -20,7 +20,11 @@ public class MongockSpringDataV2CoreContext extends MongockSpringDataCoreContext
                                                         Optional<MongoTransactionManager> txManagerOpt) {
     try {
       SpringDataMongo2Driver driver = SpringDataMongo2Driver.withLockSetting(mongoTemplate, mongockConfiguration.getLockAcquiredForMinutes(), mongockConfiguration.getMaxWaitingForLockMinutes(), mongockConfiguration.getMaxTries());
-      txManagerOpt.filter(txManager -> mongockConfiguration.isTransactionEnabled()).ifPresent(driver::setTxManager);
+      if(mongockConfiguration.isTransactionEnabled() && txManagerOpt.isPresent()) {
+        txManagerOpt.ifPresent(driver::enableTransactionWithTxManager);
+      } else {
+        driver.disableTransaction();
+      }
       setUpMongockConnectionDriver(mongockConfiguration, driver);
       return driver;
     } catch (NoClassDefFoundError driver2NotFoundError) {
