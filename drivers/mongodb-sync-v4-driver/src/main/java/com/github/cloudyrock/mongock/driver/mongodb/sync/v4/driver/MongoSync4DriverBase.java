@@ -3,9 +3,19 @@ package com.github.cloudyrock.mongock.driver.mongodb.sync.v4.driver;
 import com.github.cloudyrock.mongock.MongockConnectionDriver;
 import com.github.cloudyrock.mongock.driver.mongodb.sync.v4.decorator.impl.MongoDataBaseDecoratorImpl;
 import com.github.cloudyrock.mongock.driver.mongodb.sync.v4.repository.MongoSync4LockRepository;
+import com.mongodb.MongoClientException;
+import com.mongodb.ReadConcern;
+import com.mongodb.ReadPreference;
+import com.mongodb.TransactionOptions;
+import com.mongodb.WriteConcern;
+import com.mongodb.client.ClientSession;
+import com.mongodb.client.MongoClient;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
+import com.mongodb.client.TransactionBody;
 import io.changock.driver.api.driver.ChangeSetDependency;
+import io.changock.driver.api.driver.TransactionStrategy;
+import io.changock.driver.api.driver.Transactionable;
 import io.changock.driver.api.entry.ChangeEntry;
 import io.changock.driver.api.entry.ChangeEntryService;
 import io.changock.driver.api.lock.guard.invoker.LockGuardInvokerImpl;
@@ -21,7 +31,7 @@ import java.util.Set;
 @NotThreadSafe
 public abstract class MongoSync4DriverBase<CHANGE_ENTRY extends ChangeEntry>
     extends ConnectionDriverBase<CHANGE_ENTRY>
-    implements MongockConnectionDriver<CHANGE_ENTRY> {
+    implements MongockConnectionDriver<CHANGE_ENTRY>, Transactionable {
 
   private static final String DEFAULT_CHANGELOG_COLLECTION_NAME = "mongockChangeLog";
   private static final String DEFAULT_LOCK_COLLECTION_NAME = "mongockLock";
@@ -32,14 +42,28 @@ public abstract class MongoSync4DriverBase<CHANGE_ENTRY extends ChangeEntry>
   protected boolean indexCreation = true;
   protected MongoSync4LockRepository lockRepository;
   protected Set<ChangeSetDependency> dependencies;
+  protected TransactionStrategy transactionStrategy;
+  protected MongoClient mongoClient;
+
+  protected  MongoSync4DriverBase(MongoClient mongoClient,
+                       String databaseName,
+                       long lockAcquiredForMinutes,
+                       long maxWaitingForLockMinutes,
+                       int maxTries) {
+    this(mongoClient.getDatabase(databaseName), lockAcquiredForMinutes, maxWaitingForLockMinutes, maxTries);
+    this.mongoClient = mongoClient;
+    this.transactionStrategy = TransactionStrategy.MIGRATION;
+  }
 
   protected MongoSync4DriverBase(MongoDatabase mongoDatabase,
-                                 long lockAcquiredForMinutes,
-                                 long maxWaitingForLockMinutes,
-                                 int maxTries) {
+                       long lockAcquiredForMinutes,
+                       long maxWaitingForLockMinutes,
+                       int maxTries) {
     super(lockAcquiredForMinutes, maxWaitingForLockMinutes, maxTries);
     this.mongoDatabase = mongoDatabase;
+    this.transactionStrategy = TransactionStrategy.NONE;
   }
+
 
   @Override
   public void setChangeLogCollectionName(String changeLogCollectionName) {
@@ -97,5 +121,52 @@ public abstract class MongoSync4DriverBase<CHANGE_ENTRY extends ChangeEntry>
     dependencies = new HashSet<>();
     dependencies.add(new ChangeSetDependency(MongoDatabase.class, new MongoDataBaseDecoratorImpl(mongoDatabase, new LockGuardInvokerImpl(getLockManager()))));
     dependencies.add(new ChangeSetDependency(ChangeEntryService.class, getChangeEntryService()));
+  }
+
+
+
+  @Override
+  public void disableTransaction() {
+    this.transactionStrategy = TransactionStrategy.NONE;
+  }
+
+
+  @Override
+  public TransactionStrategy getTransactionStrategy() {
+    return transactionStrategy;
+  }
+
+  @Override
+  public void executeInTransaction(Runnable operation) {
+    ClientSession clientSession = null;
+    try {
+      clientSession = mongoClient.startSession();
+    } catch (MongoClientException ex) {
+      throw new ChangockException("ERROR starting session. If Mongock is connected to a MongoDB cluster which doesn't support transactions, you must to disable transactions", ex);
+    }
+    try {
+      clientSession.withTransaction(getTransactionBody(operation), getTxOptions());
+    } catch (Exception ex) {
+      throw new ChangockException(ex);
+    } finally {
+      if (clientSession != null) {
+        clientSession.close();
+      }
+    }
+  }
+
+  private TransactionBody getTransactionBody(Runnable operation) {
+    return (TransactionBody<String>) () -> {
+      operation.run();
+      return "Mongock transaction operation";
+    };
+  }
+
+  private TransactionOptions getTxOptions() {
+    return TransactionOptions.builder()
+        .readPreference(ReadPreference.primary())
+        .readConcern(ReadConcern.MAJORITY)
+        .writeConcern(WriteConcern.MAJORITY)
+        .build();
   }
 }

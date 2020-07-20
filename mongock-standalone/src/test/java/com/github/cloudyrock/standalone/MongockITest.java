@@ -5,7 +5,6 @@ import com.github.cloudyrock.standalone.test.changelogs.MongockTestResource;
 import com.github.cloudyrock.standalone.test.changelogs.runAlways.RunAlwaysChangeLog;
 import com.github.cloudyrock.standalone.test.changelogs.withChangockAnnotations.ChangeLogwithChangockAnnotations;
 import com.github.cloudyrock.standalone.utils.IndependentDbIntegrationTestBase;
-import io.changock.driver.api.entry.ChangeState;
 import org.bson.Document;
 import org.junit.Before;
 import org.junit.Test;
@@ -42,7 +41,7 @@ public class MongockITest extends IndependentDbIntegrationTestBase {
     // then
 
     // dbchangelog collection checking
-    final long change1 = db.getCollection(CHANGELOG_COLLECTION_NAME).countDocuments(new Document()
+    final long change1 = mongoDatabase.getCollection(CHANGELOG_COLLECTION_NAME).countDocuments(new Document()
         .append("changeId", "test1")
         .append("author", "testuser")
         .append("state", "EXECUTED"));
@@ -64,17 +63,17 @@ public class MongockITest extends IndependentDbIntegrationTestBase {
     // then
 
     // dbchangelog collection checking
-    long changeSetWithRunAlways = db.getCollection(CHANGELOG_COLLECTION_NAME).countDocuments(new Document()
+    long changeSetWithRunAlways = mongoDatabase.getCollection(CHANGELOG_COLLECTION_NAME).countDocuments(new Document()
         .append("changeId", "runAlways")
         .append("author", "testuser"));
     assertEquals(2, changeSetWithRunAlways);
 
-    long changeSetWithNoRunAlwaysExecuted = db.getCollection(CHANGELOG_COLLECTION_NAME).countDocuments(new Document()
+    long changeSetWithNoRunAlwaysExecuted = mongoDatabase.getCollection(CHANGELOG_COLLECTION_NAME).countDocuments(new Document()
         .append("changeId", "noRunAlways")
         .append("author", "testuser"));
     assertEquals(1, changeSetWithNoRunAlwaysExecuted);
 
-    changeSetWithNoRunAlwaysExecuted = db.getCollection(CHANGELOG_COLLECTION_NAME).countDocuments(new Document()
+    changeSetWithNoRunAlwaysExecuted = mongoDatabase.getCollection(CHANGELOG_COLLECTION_NAME).countDocuments(new Document()
         .append("changeId", "noRunAlways")
         .append("author", "testuser"));
     assertEquals(1, changeSetWithNoRunAlwaysExecuted);
@@ -101,7 +100,7 @@ public class MongockITest extends IndependentDbIntegrationTestBase {
     runner.execute();
 
     // then
-    Map metadataResult = db.getCollection(CHANGELOG_COLLECTION_NAME).find().first().get("metadata", Map.class);
+    Map metadataResult = mongoDatabase.getCollection(CHANGELOG_COLLECTION_NAME).find().first().get("metadata", Map.class);
     assertEquals("string_value", metadataResult.get("string_key"));
     assertEquals(10, metadataResult.get("integer_key"));
     assertEquals(11.11F, (Double) metadataResult.get("float_key"), 0.01);
@@ -124,7 +123,7 @@ public class MongockITest extends IndependentDbIntegrationTestBase {
     runner.execute();
 
     // then
-    final long changeWithChangockAnnotations = db.getCollection(CHANGELOG_COLLECTION_NAME).countDocuments(new Document()
+    final long changeWithChangockAnnotations = mongoDatabase.getCollection(CHANGELOG_COLLECTION_NAME).countDocuments(new Document()
         .append("changeId", "withChangockAnnotations")
         .append("author", "testuser")
         .append("state", "EXECUTED"));
@@ -132,7 +131,8 @@ public class MongockITest extends IndependentDbIntegrationTestBase {
   }
 
   private MongoSync4Driver getDriver() {
-    MongoSync4Driver driver = MongoSync4Driver.withDefaultLock(db);
+    MongoSync4Driver driver = MongoSync4Driver.withDefaultLock(this.getMongoClient(), DEFAULT_DATABASE_NAME);
+    driver.disableTransaction();
     driver.setChangeLogCollectionName(CHANGELOG_COLLECTION_NAME);
     return driver;
   }

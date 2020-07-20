@@ -14,7 +14,7 @@ public abstract class IntegrationTestBase {
 
   private static final String MONGO_CONTAINER = "mongo:3.1.5";
   private static final Integer MONGO_PORT = 27017;
-  private static final String DEFAULT_DATABASE_NAME = "test_container";
+  protected static final String DEFAULT_DATABASE_NAME = "test_container";
   protected static final String CHANGELOG_COLLECTION_NAME = "changockChangeLog";
   protected static final String LOCK_COLLECTION_NAME = "changockLock";
   private MongoDatabase mongoDatabase;

@@ -21,7 +21,7 @@ import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.DefaultTransactionDefinition;
 
 @NotThreadSafe
-public class SpringDataMongo3Driver extends MongoSync4Driver implements Transactionable {
+public class SpringDataMongo3Driver extends MongoSync4Driver {
 
   private static final Logger logger = LoggerFactory.getLogger(SpringDataMongo3Driver.class);
   private static final ForbiddenParametersMap FORBIDDEN_PARAMETERS_MAP;

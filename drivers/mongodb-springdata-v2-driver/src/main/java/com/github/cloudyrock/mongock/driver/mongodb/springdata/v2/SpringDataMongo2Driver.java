@@ -21,7 +21,7 @@ import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.DefaultTransactionDefinition;
 
 @NotThreadSafe
-public class SpringDataMongo2Driver extends MongoCore3Driver implements Transactionable {
+public class SpringDataMongo2Driver extends MongoCore3Driver {
 
 
   private static final Logger logger = LoggerFactory.getLogger(SpringDataMongo2Driver.class);
@@ -34,7 +34,6 @@ public class SpringDataMongo2Driver extends MongoCore3Driver implements Transact
   }
   private final MongoTemplate mongoTemplate;
   private MongoTransactionManager txManager;
-  private TransactionStrategy transactionStrategy = TransactionStrategy.NONE;
 
   public static SpringDataMongo2Driver withDefaultLock(MongoTemplate mongoTemplate) {
     return new SpringDataMongo2Driver(mongoTemplate, 3L, 4L, 3);
@@ -121,11 +120,6 @@ public class SpringDataMongo2Driver extends MongoCore3Driver implements Transact
     def.setName("SomeTxName");
     def.setPropagationBehavior(TransactionDefinition.PROPAGATION_REQUIRED);
     return txManager.getTransaction(def);
-  }
-
-  @Override
-  public TransactionStrategy getTransactionStrategy() {
-    return transactionStrategy;
   }
 
 }

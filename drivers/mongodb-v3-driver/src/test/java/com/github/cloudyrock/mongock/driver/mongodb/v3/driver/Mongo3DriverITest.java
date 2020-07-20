@@ -9,8 +9,9 @@ public class Mongo3DriverITest extends MongoDriverITestBase {
 
   @Override
   protected MongoCore3Driver getDriver() {
-    MongoCore3Driver driver = MongoCore3Driver.withDefaultLock(this.getDataBase());
+    MongoCore3Driver driver = MongoCore3Driver.withDefaultLock(this.getMongoClient(), DEFAULT_DATABASE_NAME);
     driver.setChangeLogCollectionName(CHANGELOG_COLLECTION_NAME);
+    driver.disableTransaction();
     return driver;
   }
 
