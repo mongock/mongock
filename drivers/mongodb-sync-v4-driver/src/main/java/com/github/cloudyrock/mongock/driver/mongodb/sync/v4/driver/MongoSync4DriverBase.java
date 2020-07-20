@@ -64,7 +64,6 @@ public abstract class MongoSync4DriverBase<CHANGE_ENTRY extends ChangeEntry>
     this.transactionStrategy = TransactionStrategy.NONE;
   }
 
-
   @Override
   public void setChangeLogCollectionName(String changeLogCollectionName) {
     this.changeLogCollectionName = changeLogCollectionName;
@@ -84,6 +83,7 @@ public abstract class MongoSync4DriverBase<CHANGE_ENTRY extends ChangeEntry>
   public String getLockCollectionName() {
     return lockCollectionName;
   }
+
   @Override
   public void setIndexCreation(boolean indexCreation) {
     this.indexCreation = indexCreation;
@@ -123,13 +123,10 @@ public abstract class MongoSync4DriverBase<CHANGE_ENTRY extends ChangeEntry>
     dependencies.add(new ChangeSetDependency(ChangeEntryService.class, getChangeEntryService()));
   }
 
-
-
   @Override
   public void disableTransaction() {
     this.transactionStrategy = TransactionStrategy.NONE;
   }
-
 
   @Override
   public TransactionStrategy getTransactionStrategy() {

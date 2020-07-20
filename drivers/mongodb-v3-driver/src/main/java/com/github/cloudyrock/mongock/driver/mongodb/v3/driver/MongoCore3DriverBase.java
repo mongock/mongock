@@ -35,6 +35,7 @@ public abstract class MongoCore3DriverBase<CHANGE_ENTRY extends ChangeEntry>
 
   private static final String DEFAULT_CHANGELOG_COLLECTION_NAME = "mongockChangeLog";
   private static final String DEFAULT_LOCK_COLLECTION_NAME = "mongockLock";
+
   protected final MongoDatabase mongoDatabase;
   protected String changeLogCollectionName = DEFAULT_CHANGELOG_COLLECTION_NAME;
   protected String lockCollectionName = DEFAULT_LOCK_COLLECTION_NAME;
@@ -127,7 +128,6 @@ public abstract class MongoCore3DriverBase<CHANGE_ENTRY extends ChangeEntry>
     this.transactionStrategy = TransactionStrategy.NONE;
   }
 
-
   @Override
   public TransactionStrategy getTransactionStrategy() {
     return transactionStrategy;
@@ -135,7 +135,7 @@ public abstract class MongoCore3DriverBase<CHANGE_ENTRY extends ChangeEntry>
 
   @Override
   public void executeInTransaction(Runnable operation) {
-    ClientSession clientSession = null;
+    ClientSession clientSession;
     try {
       clientSession = mongoClient.startSession();
     } catch (MongoClientException ex) {
