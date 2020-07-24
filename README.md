@@ -670,4 +670,4 @@ Mongock propject is licensed under the [Apache License Version 2.0][apacheLicens
 [springboot]:https://spring.io/projects/spring-boot
 [mongoAtlas]: https://www.mongodb.com/cloud/atlas
 [evalDocumentation]: https://docs.mongodb.com/manual/reference/method/db.eval/#sharded-data
-[sampleProject]: https://github.com/cloudyrock/mongock-integration-tests/tree/master/mongock-spring-v5/mongock-spring5-springdata3-it
+[sampleProject]: https://github.com/cloudyrock/mongock-integration-tests/tree/master/mongock-4/mongock-spring-v5/mongock-spring5-springdata3-it
