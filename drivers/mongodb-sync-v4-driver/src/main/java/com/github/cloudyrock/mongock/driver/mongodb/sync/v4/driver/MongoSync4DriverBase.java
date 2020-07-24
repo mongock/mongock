@@ -44,21 +44,22 @@ public abstract class MongoSync4DriverBase<CHANGE_ENTRY extends ChangeEntry>
   protected Set<ChangeSetDependency> dependencies;
   protected TransactionStrategy transactionStrategy;
   protected MongoClient mongoClient;
+  private TransactionOptions txOptions;
 
-  protected  MongoSync4DriverBase(MongoClient mongoClient,
-                       String databaseName,
-                       long lockAcquiredForMinutes,
-                       long maxWaitingForLockMinutes,
-                       int maxTries) {
+  protected MongoSync4DriverBase(MongoClient mongoClient,
+                                 String databaseName,
+                                 long lockAcquiredForMinutes,
+                                 long maxWaitingForLockMinutes,
+                                 int maxTries) {
     this(mongoClient.getDatabase(databaseName), lockAcquiredForMinutes, maxWaitingForLockMinutes, maxTries);
     this.mongoClient = mongoClient;
     this.transactionStrategy = TransactionStrategy.MIGRATION;
   }
 
   protected MongoSync4DriverBase(MongoDatabase mongoDatabase,
-                       long lockAcquiredForMinutes,
-                       long maxWaitingForLockMinutes,
-                       int maxTries) {
+                                 long lockAcquiredForMinutes,
+                                 long maxWaitingForLockMinutes,
+                                 int maxTries) {
     super(lockAcquiredForMinutes, maxWaitingForLockMinutes, maxTries);
     this.mongoDatabase = mongoDatabase;
     this.transactionStrategy = TransactionStrategy.NONE;
@@ -110,7 +111,7 @@ public abstract class MongoSync4DriverBase<CHANGE_ENTRY extends ChangeEntry>
 
   @Override
   public Set<ChangeSetDependency> getDependencies() {
-    if(dependencies == null) {
+    if (dependencies == null) {
       throw new ChangockException("Driver not initialized");
     }
     return dependencies;
@@ -121,6 +122,7 @@ public abstract class MongoSync4DriverBase<CHANGE_ENTRY extends ChangeEntry>
     dependencies = new HashSet<>();
     dependencies.add(new ChangeSetDependency(MongoDatabase.class, new MongoDataBaseDecoratorImpl(mongoDatabase, new LockGuardInvokerImpl(getLockManager()))));
     dependencies.add(new ChangeSetDependency(ChangeEntryService.class, getChangeEntryService()));
+    this.txOptions = txOptions != null ? txOptions : buildDefaultTxOptions();
   }
 
   @Override
@@ -135,21 +137,36 @@ public abstract class MongoSync4DriverBase<CHANGE_ENTRY extends ChangeEntry>
 
   @Override
   public void executeInTransaction(Runnable operation) {
-    ClientSession clientSession = null;
+    ClientSession clientSession;
     try {
       clientSession = mongoClient.startSession();
     } catch (MongoClientException ex) {
       throw new ChangockException("ERROR starting session. If Mongock is connected to a MongoDB cluster which doesn't support transactions, you must to disable transactions", ex);
     }
     try {
-      clientSession.withTransaction(getTransactionBody(operation), getTxOptions());
+      clientSession.withTransaction(getTransactionBody(operation), txOptions);
     } catch (Exception ex) {
       throw new ChangockException(ex);
     } finally {
-      if (clientSession != null) {
-        clientSession.close();
-      }
+      clientSession.close();
     }
+  }
+
+  /**
+   * When using Java MongoDB driver directly, it sets the transaction options for all the Mongock's transactions.
+   * Default: readPreference: primary, readConcern and writeConcern: majority
+   * @param txOptions transaction options
+   */
+  public void setTxOptions(TransactionOptions txOptions) {
+    this.txOptions = txOptions;
+  }
+
+  private TransactionOptions buildDefaultTxOptions() {
+    return TransactionOptions.builder()
+        .readPreference(ReadPreference.primary())
+        .readConcern(ReadConcern.MAJORITY)
+        .writeConcern(WriteConcern.MAJORITY)
+        .build();
   }
 
   private TransactionBody getTransactionBody(Runnable operation) {
@@ -159,11 +176,4 @@ public abstract class MongoSync4DriverBase<CHANGE_ENTRY extends ChangeEntry>
     };
   }
 
-  private TransactionOptions getTxOptions() {
-    return TransactionOptions.builder()
-        .readPreference(ReadPreference.primary())
-        .readConcern(ReadConcern.MAJORITY)
-        .writeConcern(WriteConcern.MAJORITY)
-        .build();
-  }
 }
