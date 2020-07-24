@@ -18,7 +18,7 @@ public class ProxiesMongockTestResource {
     MongoCollection collection = mongoDatabase.getCollection("anyCollection");
     collection.find(new BsonDocument());
     collection.find(new BsonDocument());
-    System.out.println("invoked ProxyMongoDatabaseTest with db=" + mongoDatabase.toString());
+    System.out.println("invoked ProxyMongoDatabaseTest with mongoDatabase=" + mongoDatabase.toString());
   }
 
 }

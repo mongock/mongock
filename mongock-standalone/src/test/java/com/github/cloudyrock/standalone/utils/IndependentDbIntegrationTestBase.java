@@ -12,7 +12,7 @@ public abstract class IndependentDbIntegrationTestBase {
   protected static final String MONGO_CONTAINER = "mongo:3.1.5";
   protected static final Integer MONGO_PORT = 27017;
   protected static final String DEFAULT_DATABASE_NAME = "mongocktest";
-  protected MongoDatabase db;
+  protected MongoDatabase mongoDatabase;
   protected MongoClient mongoClient;
 
   @Rule
@@ -23,6 +23,14 @@ public abstract class IndependentDbIntegrationTestBase {
 //    mongoClient = new MongoClient(mongo.getContainerIpAddress(), mongo.getFirstMappedPort());
     String connectionString = String.format("mongodb://%s:%d", mongo.getContainerIpAddress(), mongo.getFirstMappedPort());
     mongoClient = MongoClients.create(connectionString);
-    db = mongoClient.getDatabase(DEFAULT_DATABASE_NAME);
+    mongoDatabase = mongoClient.getDatabase(DEFAULT_DATABASE_NAME);
+  }
+
+  public MongoDatabase getMongoDatabase() {
+    return mongoDatabase;
+  }
+
+  public MongoClient getMongoClient() {
+    return mongoClient;
   }
 }

@@ -33,7 +33,7 @@ public class AnotherMongockTestResource {
 
   @ChangeSet(author = "testuser", id = "Btest6", order = "06")
   public void testChangeSet6(MongoDatabase mongoDatabase) {
-    System.out.println("invoked B6 with db=" + mongoDatabase.toString());
+    System.out.println("invoked B6 with mongoDatabase=" + mongoDatabase.toString());
   }
 
 }

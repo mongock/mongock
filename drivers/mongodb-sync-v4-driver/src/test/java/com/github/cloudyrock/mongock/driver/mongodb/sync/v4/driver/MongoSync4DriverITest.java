@@ -8,8 +8,9 @@ import com.github.cloudyrock.mongock.driver.mongodb.test.template.util.MongoDBDr
 public class MongoSync4DriverITest extends MongoDriverITestBase {
 
   @Override
-  protected MongoSync4Driver getDriver() {
-    MongoSync4Driver driver = MongoSync4Driver.withDefaultLock(this.getDataBase());
+  protected MongoSync4Driver getDriverWithTransactionDisabled() {
+    MongoSync4Driver driver = MongoSync4Driver.withDefaultLock(this.getMongoClient(), DEFAULT_DATABASE_NAME);
+    driver.disableTransaction();
     driver.setChangeLogCollectionName(CHANGELOG_COLLECTION_NAME);
     return driver;
   }

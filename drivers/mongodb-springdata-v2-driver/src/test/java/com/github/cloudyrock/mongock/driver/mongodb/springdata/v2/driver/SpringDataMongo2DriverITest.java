@@ -9,7 +9,7 @@ import org.springframework.data.mongodb.core.MongoTemplate;
 public class SpringDataMongo2DriverITest extends MongoDriverITestBase {
 
   @Override
-  protected SpringDataMongo2Driver getDriver() {
+  protected SpringDataMongo2Driver getDriverWithTransactionDisabled() {
     SpringDataMongo2Driver driver = SpringDataMongo2Driver.withDefaultLock(getMongoTemplate());
     driver.setChangeLogCollectionName(CHANGELOG_COLLECTION_NAME);
     return driver;
