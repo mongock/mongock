@@ -157,7 +157,7 @@ public abstract class MongoSync4DriverBase<CHANGE_ENTRY extends ChangeEntry>
    * Default: readPreference: primary, readConcern and writeConcern: majority
    * @param txOptions transaction options
    */
-  public void setTxOptions(TransactionOptions txOptions) {
+  public void setTransactionOptions(TransactionOptions txOptions) {
     this.txOptions = txOptions;
   }
 
