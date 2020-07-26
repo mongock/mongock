@@ -21,7 +21,7 @@ MongoDB version control tool for Java
 > **4.1.8 released**
 
 ## Documentation
-Please, see our recently released documentation [here][documentation_link].
+Please, see our recently released documentation in [here][documentation_link].
 
 ## Old versions
 With new major releases, like now with version 4, we stop enhancing or adding new features to older version(like version 3).
