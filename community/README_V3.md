@@ -1,5 +1,5 @@
 
-**Mongock old documentation for version 3**  
+# Mongock old documentation for version 3  
 
 ## Table of contents
 

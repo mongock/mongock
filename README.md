@@ -19,6 +19,7 @@ MongoDB version control tool for Java
 
 ## LAST NEWS :bangbang::bangbang::collision::collision:
 > **4.1.8 released**
+
 > You can see the new [documentation][documentation_link]. Documentation for version 3 is [here][documentation_v3]
 
 ## Contributing
