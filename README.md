@@ -22,6 +22,16 @@ MongoDB version control tool for Java
 
 > You can see the new [documentation][documentation_link]. Documentation for version 3 is [here][documentation_v3]
 
+## Documentation
+Please, see our recently released documentation [here][documentation_link].
+
+## Old versions
+With new major releases, like now with version 4, we stop enhancing or adding new features to older version(like version 3).
+However, we'll keep providing support and bug fixes for a long period. We are working on an official support plan.
+
+If you are still working with version 3, we suggest you to upgrade to the last version, otherwise you can see the old documentation 
+in [here][documentation_v3] 
+
 ## Contributing
 If you would like to contribute to Mongock project, please read [how to contribute][contributing] for details on our collaboration process and standards.
 
