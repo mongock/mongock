@@ -9,7 +9,7 @@ import org.springframework.util.StringUtils;
 
 
 @Configuration
-@ConfigurationProperties("spring.mongock")
+@ConfigurationProperties("mongock")
 public class MongockConfiguration extends ChangockSpringConfiguration {
 
   public final static String DEFAULT_CHANGELOG_COLLECTION_NAME = "mongockChangeLog";
