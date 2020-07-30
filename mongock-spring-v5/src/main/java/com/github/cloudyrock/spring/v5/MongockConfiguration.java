@@ -78,7 +78,7 @@ public class MongockConfiguration extends ChangockSpringConfiguration {
   public static class MongockLegacyMigrationConfig extends MongockLegacyMigration {
 
     @Override
-    @ConfigurationProperties("spring.mongock.legacy-migration.mapping-fields")
+    @ConfigurationProperties("mongock.legacy-migration.mapping-fields")
     public LegacyMigrationMappingFields getMappingFields() {
       return super.getMappingFields();
     }

@@ -10,13 +10,13 @@ import org.springframework.context.annotation.Import;
 public class MongockContext {
 
   @Bean
-  @ConditionalOnProperty(value = "spring.mongock.runner-type", matchIfMissing = true, havingValue = "ApplicationRunner")
+  @ConditionalOnProperty(value = "mongock.runner-type", matchIfMissing = true, havingValue = "ApplicationRunner")
   public MongockSpring5.MongockApplicationRunner mongockApplicationRunner(MongockSpring5.Builder mongockBuilder) {
     return mongockBuilder.buildApplicationRunner();
   }
 
   @Bean
-  @ConditionalOnProperty(value = "spring.mongock.runner-type", havingValue = "InitializingBean")
+  @ConditionalOnProperty(value = "mongock.runner-type", havingValue = "InitializingBean")
   public MongockSpring5.MongockInitializingBeanRunner mongockInitializingBeanRunner(MongockSpring5.Builder mongockBuilder) {
     return mongockBuilder.buildInitializingBeanRunner();
   }
