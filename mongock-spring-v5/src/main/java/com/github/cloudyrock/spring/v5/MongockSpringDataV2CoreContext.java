@@ -1,7 +1,8 @@
 package com.github.cloudyrock.spring.v5;
 
 import com.github.cloudyrock.mongock.driver.mongodb.springdata.v2.SpringDataMongo2Driver;
-import com.github.cloudyrock.mongock.driver.mongodb.v3.changelogs.MongockV3LegacyMigrationChangeLog;
+import com.github.cloudyrock.mongock.driver.mongodb.v3.changelogs.runalways.MongockV3LegacyMigrationChangeRunAlwaysLog;
+import com.github.cloudyrock.mongock.driver.mongodb.v3.changelogs.runonce.MongockV3LegacyMigrationChangeLog;
 import io.changock.migration.api.exception.ChangockException;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
@@ -42,7 +43,10 @@ public class MongockSpringDataV2CoreContext extends MongockSpringDataCoreContext
   protected void setLegacyMigrationChangeLog(MongockSpring5.Builder builder, MongockConfiguration mongockConfiguration) {
     if (mongockConfiguration.getLegacyMigration() != null) {
       try {
-        builder.addChangeLogsScanPackage(MongockV3LegacyMigrationChangeLog.class.getPackage().getName());
+        String packageName = mongockConfiguration.getLegacyMigration().isRunAlways()
+            ? MongockV3LegacyMigrationChangeRunAlwaysLog.class.getPackage().getName()
+            : MongockV3LegacyMigrationChangeLog.class.getPackage().getName();
+        builder.addChangeLogsScanPackage(packageName);
       } catch (NoClassDefFoundError mongockDriverV3NotFoundError) {
         throw new ChangockException("\n\n" + ConfigErrorMessageUtils.getDriverNotFoundErrorMessage() + "\n\n");
       }
