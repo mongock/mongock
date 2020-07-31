@@ -40,16 +40,4 @@ public class MongockSpringDataV2CoreContext extends MongockSpringDataCoreContext
     return super.mongockBuilder(mongockConnectionDriver, mongockConfiguration, springContext);
   }
 
-  protected void setLegacyMigrationChangeLog(MongockSpring5.Builder builder, MongockConfiguration mongockConfiguration) {
-    if (mongockConfiguration.getLegacyMigration() != null) {
-      try {
-        String packageName = mongockConfiguration.getLegacyMigration().isRunAlways()
-            ? MongockV3LegacyMigrationChangeRunAlwaysLog.class.getPackage().getName()
-            : MongockV3LegacyMigrationChangeLog.class.getPackage().getName();
-        builder.addChangeLogsScanPackage(packageName);
-      } catch (NoClassDefFoundError mongockDriverV3NotFoundError) {
-        throw new ChangockException("\n\n" + ConfigErrorMessageUtils.getDriverNotFoundErrorMessage() + "\n\n");
-      }
-    }
-  }
 }

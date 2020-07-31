@@ -1,5 +1,7 @@
 package com.github.cloudyrock.mongock.driver.mongodb.v3.driver;
 
+import com.github.cloudyrock.mongock.driver.mongodb.v3.changelogs.runalways.MongockV3LegacyMigrationChangeRunAlwaysLog;
+import com.github.cloudyrock.mongock.driver.mongodb.v3.changelogs.runonce.MongockV3LegacyMigrationChangeLog;
 import com.github.cloudyrock.mongock.driver.mongodb.v3.repository.Mongo3ChangeEntryRepository;
 import com.mongodb.client.MongoClient;
 import com.mongodb.client.MongoDatabase;
@@ -55,5 +57,10 @@ public class MongoCore3Driver extends MongoCore3DriverBase<ChangeEntry> {
   @Override
   public ForbiddenParametersMap getForbiddenParameters() {
     return FORBIDDEN_PARAMETERS_MAP;
+  }
+
+  @Override
+  public Class getLegacyMigrationChangeLogClass(boolean runAlways) {
+    return runAlways ? MongockV3LegacyMigrationChangeRunAlwaysLog.class : MongockV3LegacyMigrationChangeLog.class;
   }
 }
