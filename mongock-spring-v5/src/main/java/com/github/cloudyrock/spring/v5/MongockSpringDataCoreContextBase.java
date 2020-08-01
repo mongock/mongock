@@ -12,7 +12,6 @@ public abstract class MongockSpringDataCoreContextBase {
         .setDriver(mongockConnectionDriver)
         .setConfig(mongockConfiguration)
         .setSpringContext(springContext);
-    setLegacyMigrationChangeLog(builder, mongockConfiguration);
     return builder;
   }
 
@@ -23,6 +22,4 @@ public abstract class MongockSpringDataCoreContextBase {
     driver.setIndexCreation(mongockConfiguration.isIndexCreation());
     driver.initialize();
   }
-
-  protected abstract void setLegacyMigrationChangeLog(MongockSpring5.Builder builder, MongockConfiguration mongockConfiguration);
 }

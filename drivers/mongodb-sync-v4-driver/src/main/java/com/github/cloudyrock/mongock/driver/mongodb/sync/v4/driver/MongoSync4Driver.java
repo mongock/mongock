@@ -1,5 +1,7 @@
 package com.github.cloudyrock.mongock.driver.mongodb.sync.v4.driver;
 
+import com.github.cloudyrock.mongock.driver.mongodb.sync.v4.changelogs.runalways.MongockSync4LegacyMigrationChangeRunAlwaysLog;
+import com.github.cloudyrock.mongock.driver.mongodb.sync.v4.changelogs.runonce.MongockSync4LegacyMigrationChangeLog;
 import com.github.cloudyrock.mongock.driver.mongodb.sync.v4.repository.MongoSync4ChangeEntryRepository;
 import com.mongodb.client.MongoClient;
 import com.mongodb.client.MongoDatabase;
@@ -54,5 +56,10 @@ public class MongoSync4Driver extends MongoSync4DriverBase<ChangeEntry> {
   @Override
   public ForbiddenParametersMap getForbiddenParameters() {
     return FORBIDDEN_PARAMETERS_MAP;
+  }
+
+  @Override
+  public Class getLegacyMigrationChangeLogClass(boolean runAlways) {
+    return runAlways ? MongockSync4LegacyMigrationChangeRunAlwaysLog.class : MongockSync4LegacyMigrationChangeLog.class;
   }
 }
