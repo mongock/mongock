@@ -1,8 +1,6 @@
 package com.github.cloudyrock.spring.v5;
 
 import com.github.cloudyrock.mongock.driver.mongodb.springdata.v3.SpringDataMongo3Driver;
-import com.github.cloudyrock.mongock.driver.mongodb.sync.v4.changelogs.runalways.MongockSync4LegacyMigrationChangeRunAlwaysLog;
-import com.github.cloudyrock.mongock.driver.mongodb.sync.v4.changelogs.runonce.MongockSync4LegacyMigrationChangeLog;
 import io.changock.migration.api.exception.ChangockException;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;

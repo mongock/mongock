@@ -9,15 +9,11 @@ import io.changock.driver.api.entry.ChangeEntry;
 import io.changock.driver.api.entry.ChangeEntryService;
 import io.changock.migration.api.annotations.NonLockGuarded;
 import io.changock.migration.api.annotations.NonLockGuardedType;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import javax.inject.Named;
 
 @ChangeLog(order = "00001")
 public class MongockSync4LegacyMigrationChangeRunAlwaysLog {
-
-  private final static Logger logger = LoggerFactory.getLogger(MongockSync4LegacyMigrationChangeRunAlwaysLog.class);
 
   @ChangeSet(id = "mongock-legacy-migration", author = "mongock", order = "00001", runAlways = true)
   public void mongockSpringLegacyMigration(@NonLockGuarded(NonLockGuardedType.NONE)
