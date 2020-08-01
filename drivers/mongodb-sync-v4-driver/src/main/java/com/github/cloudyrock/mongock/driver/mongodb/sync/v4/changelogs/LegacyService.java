@@ -1,7 +1,5 @@
 package com.github.cloudyrock.mongock.driver.mongodb.sync.v4.changelogs;
 
-import com.github.cloudyrock.mongock.ChangeLog;
-import com.github.cloudyrock.mongock.ChangeSet;
 import com.github.cloudyrock.mongock.migration.MongockLegacyMigration;
 import com.mongodb.client.FindIterable;
 import com.mongodb.client.MongoCollection;
@@ -27,13 +25,12 @@ import java.util.List;
 import java.util.Map;
 import java.util.Random;
 
-@ChangeLog(order = "00001")
-public class MongockSync4LegacyMigrationChangeLog {
 
-  private final static Logger logger = LoggerFactory.getLogger(MongockSync4LegacyMigrationChangeLog.class);
+public class LegacyService {
 
-  @ChangeSet(id = "mongock-legacy-migration", author = "mongock", order = "00001", runAlways = true)
-  public void mongockSpringLegacyMigration(@NonLockGuarded(NonLockGuardedType.NONE)
+  private final static Logger logger = LoggerFactory.getLogger(LegacyService.class);
+
+  public void executeMigration(@NonLockGuarded(NonLockGuardedType.NONE)
                                            @Named("legacy-migration") MongockLegacyMigration legacyMigration,
                                            MongoDatabase mongoDatabase,
                                            ChangeEntryService<ChangeEntry> changeEntryService) {

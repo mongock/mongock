@@ -1,7 +1,5 @@
 package com.github.cloudyrock.mongock.driver.mongodb.v3.changelogs;
 
-import com.github.cloudyrock.mongock.ChangeLog;
-import com.github.cloudyrock.mongock.ChangeSet;
 import com.github.cloudyrock.mongock.migration.MongockLegacyMigration;
 import com.mongodb.client.FindIterable;
 import com.mongodb.client.MongoCollection;
@@ -27,19 +25,17 @@ import java.util.List;
 import java.util.Map;
 import java.util.Random;
 
-@ChangeLog(order = "00001")
-public class MongockV3LegacyMigrationChangeLog {
+public class LegacyService {
 
-  private final static Logger logger = LoggerFactory.getLogger(MongockV3LegacyMigrationChangeLog.class);
+  private final static Logger logger = LoggerFactory.getLogger(LegacyService.class);
 
-  @ChangeSet(id = "mongock-legacy-migration", author = "mongock", order = "00001", runAlways = true)
-  public void mongockSpringLegacyMigration(@NonLockGuarded(NonLockGuardedType.NONE)
-                                           @Named("legacy-migration") MongockLegacyMigration legacyMigration,
-                                           MongoDatabase mongoDatabase,
-                                           ChangeEntryService<ChangeEntry> changeEntryService) {
+  public void executeMigration(@NonLockGuarded(NonLockGuardedType.NONE)
+                               @Named("legacy-migration") MongockLegacyMigration legacyMigration,
+                               MongoDatabase mongoDatabase,
+                               ChangeEntryService<ChangeEntry> changeEntryService) {
     int changesMigrated = 0;
     Integer changesCountExpectation = legacyMigration.getChangesCountExpectation();
-    if(changesCountExpectation == null) {
+    if (changesCountExpectation == null) {
       logger.warn("[legacy-migration] - There is no changes count expectation!");
     }
     try {
@@ -55,7 +51,7 @@ public class MongockV3LegacyMigrationChangeLog {
         }
         changesMigrated++;
       }
-      if(changesCountExpectation != null && changesCountExpectation != changesMigrated) {
+      if (changesCountExpectation != null && changesCountExpectation != changesMigrated) {
         throw new ChangockException(String.format("[legacy-migration] - Expectation [%d] changes migrated. Actual [%d] migrated", changesCountExpectation, changesMigrated));
       }
     } catch (Exception ex) {
