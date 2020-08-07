@@ -21,14 +21,12 @@ public abstract class MongoSync4RepositoryBase<DOMAIN_CLASS> implements Reposito
   private final static int INDEX_ENSURE_MAX_TRIES = 3;
 
   private final String[] uniqueFields;
-  private final String fullCollectionName;
   private final boolean indexCreation;
   private boolean ensuredCollectionIndex = false;
   protected MongoCollection<Document> collection;
 
   public MongoSync4RepositoryBase(MongoCollection<Document> collection, String[] uniqueFields, boolean indexCreation) {
     this.collection = collection;
-    this.fullCollectionName = collection.getNamespace().getDatabaseName() + "." + collection.getNamespace().getCollectionName();
     this.uniqueFields = uniqueFields;
     this.indexCreation = indexCreation;
   }
@@ -104,8 +102,7 @@ public abstract class MongoSync4RepositoryBase<DOMAIN_CLASS> implements Reposito
   }
 
   protected boolean isUniqueIndex(Document index) {
-    return fullCollectionName.equals(index.getString("ns")) //changes namespace: [database].[collection]
-        && index.getBoolean("unique", false);// checks it'unique
+    return index.getBoolean("unique", false);// checks it'unique
   }
 
   private String getCollectionName() {
