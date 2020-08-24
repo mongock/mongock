@@ -7,7 +7,6 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.util.StringUtils;
 
-
 @Configuration
 @ConfigurationProperties("mongock")
 public class MongockConfiguration extends ChangockSpringConfiguration {

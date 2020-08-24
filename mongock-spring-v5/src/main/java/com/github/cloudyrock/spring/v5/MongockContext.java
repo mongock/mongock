@@ -7,17 +7,17 @@ import org.springframework.context.annotation.Import;
 
 @Configuration
 @Import(MongockCoreContextSelector.class)
-@ConditionalOnProperty(prefix = "spring.mongock", name = "enabled", matchIfMissing = true, havingValue = "true")
+@ConditionalOnProperty(prefix = "mongock", name = "enabled", matchIfMissing = true, havingValue = "true")
 public class MongockContext {
 
   @Bean
-  @ConditionalOnProperty(prefix = "spring.mongock", value = "runner-type", matchIfMissing = true, havingValue = "ApplicationRunner")
+  @ConditionalOnProperty(prefix = "mongock", value = "runner-type", matchIfMissing = true, havingValue = "ApplicationRunner")
   public MongockSpring5.MongockApplicationRunner mongockApplicationRunner(MongockSpring5.Builder mongockBuilder) {
     return mongockBuilder.buildApplicationRunner();
   }
 
   @Bean
-  @ConditionalOnProperty(prefix = "spring.mongock", value = "runner-type", havingValue = "InitializingBean")
+  @ConditionalOnProperty(prefix = "mongock", value = "runner-type", havingValue = "InitializingBean")
   public MongockSpring5.MongockInitializingBeanRunner mongockInitializingBeanRunner(MongockSpring5.Builder mongockBuilder) {
     return mongockBuilder.buildInitializingBeanRunner();
   }
