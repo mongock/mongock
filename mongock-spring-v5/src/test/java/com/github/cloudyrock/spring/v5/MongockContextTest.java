@@ -18,7 +18,7 @@ import static org.junit.Assert.assertFalse;
 public class MongockContextTest {
 
   @Autowired
-  ApplicationContext applicationContext;
+  private ApplicationContext applicationContext;
 
   @Value("${mongock.enabled}")
   private boolean mongockEnabled;
