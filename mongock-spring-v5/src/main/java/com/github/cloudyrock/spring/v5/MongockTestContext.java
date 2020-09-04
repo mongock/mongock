@@ -3,6 +3,7 @@ package com.github.cloudyrock.spring.v5;
 import com.github.cloudyrock.mongock.MongockConnectionDriver;
 import org.bson.BsonDocument;
 import org.springframework.beans.factory.InitializingBean;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
@@ -10,6 +11,7 @@ import org.springframework.data.mongodb.core.MongoTemplate;
 
 @Configuration
 @Import(MongockCoreContextSelector.class)
+@ConditionalOnProperty(prefix = "mongock", name = "enabled", matchIfMissing = true, havingValue = "true")
 public class MongockTestContext {
 
 
