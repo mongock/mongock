@@ -22,6 +22,8 @@ MongoDB version control tool for Java
 Please, see our recently published documentation in [here][documentation_link]. Although it has been published, it is still
 under development and there may be some sections unfinished or missing.
 
+## Changelog
+To see our changelog, please take a look to  our [github_releases][github_releases]
 
 ## Old versions
 With new major releases, like now with version 4, we stop enhancing or adding new features to older version(like version 3).
@@ -60,3 +62,4 @@ Mongock propject is licensed under the [Apache License Version 2.0][apacheLicens
 [sampleProject]: https://github.com/cloudyrock/mongock-integration-tests/tree/master/mongock-4/mongock-spring-v5/mongock-spring5-springdata3-it
 [documentation_link]: https://www.mongock.io/
 [documentation_v3]: ./community/README_V3.md
+[github_releases]: https://github.com/cloudyrock/mongock/releases
