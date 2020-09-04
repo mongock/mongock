@@ -23,7 +23,7 @@ Please, see our recently published documentation in [here][documentation_link]. 
 under development and there may be some sections unfinished or missing.
 
 ## Changelog
-To see our changelog, please take a look to  our [github_releases][github_releases]
+To see our changelog, please take a look to  our [github releases][github_releases]
 
 ## Old versions
 With new major releases, like now with version 4, we stop enhancing or adding new features to older version(like version 3).
