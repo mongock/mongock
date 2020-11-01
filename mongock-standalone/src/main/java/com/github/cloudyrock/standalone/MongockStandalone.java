@@ -3,6 +3,7 @@ package com.github.cloudyrock.standalone;
 import com.github.cloudyrock.mongock.MongockAnnotationProcessor;
 import com.github.cloudyrock.mongock.MongockConnectionDriver;
 import io.changock.runner.core.ChangeLogService;
+import io.changock.runner.core.EventPublisher;
 import io.changock.runner.core.MigrationExecutor;
 import io.changock.runner.core.builder.configuration.ChangockConfiguration;
 import io.changock.runner.core.builder.DriverBuilderConfigurable;
@@ -45,7 +46,20 @@ public class MongockStandalone {
                    ChangeLogService changeLogService,
                    boolean throwExceptionIfCannotObtainLock,
                    boolean enabled) {
-      super(executor, changeLogService, throwExceptionIfCannotObtainLock, enabled);
+      super(executor, changeLogService, throwExceptionIfCannotObtainLock, enabled,
+          new EventPublisher() {
+            @Override
+            public void publishMigrationSuccessEvent() {
+
+            }
+
+            @Override
+            public void publishMigrationFailedEvent(Exception ex) {
+
+            }
+          }
+
+      );
     }
   }
 }
