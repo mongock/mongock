@@ -5,10 +5,9 @@ import com.github.cloudyrock.mongock.ChangeSet;
 
 
 @ChangeLog(order = "1")
-public class InsideAllSuccess1 {
+public class InsideAllSuccess {
 
-
-  @ChangeSet(author = "testuser", id = "test1", order = "01")
+  @ChangeSet(author = "testuser", id = "InsideAllSuccess1_method1", order = "01")
   public void method1() {
   }
 
