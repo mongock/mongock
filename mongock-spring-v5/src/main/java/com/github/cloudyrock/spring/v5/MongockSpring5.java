@@ -2,10 +2,11 @@ package com.github.cloudyrock.spring.v5;
 
 import com.github.cloudyrock.mongock.MongockAnnotationProcessor;
 import com.github.cloudyrock.mongock.MongockConnectionDriver;
-import io.changock.runner.core.EventPublisher;
 import io.changock.runner.core.builder.DriverBuilderConfigurable;
 import io.changock.runner.spring.util.SpringEventPublisher;
 import io.changock.runner.spring.v5.ChangockSpringBuilderBase;
+import io.changock.runner.spring.v5.SpringApplicationRunner;
+import io.changock.runner.spring.v5.SpringInitializingBean;
 import io.changock.runner.spring.v5.core.ProfiledChangeLogService;
 import io.changock.runner.spring.v5.core.SpringMigrationExecutor;
 
@@ -25,7 +26,8 @@ public class MongockSpring5 {
           buildExecutorWithEnvironmentDependency(),
           buildProfiledChangeLogService(),
           throwExceptionIfCannotObtainLock,
-          enabled);
+          enabled,
+          buildSpringEventPublisher());
     }
 
     public MongockInitializingBeanRunner buildInitializingBeanRunner() {
@@ -33,7 +35,8 @@ public class MongockSpring5 {
           buildExecutorWithEnvironmentDependency(),
           buildProfiledChangeLogService(),
           throwExceptionIfCannotObtainLock,
-          enabled);
+          enabled,
+          buildSpringEventPublisher());
     }
 
     @Override
@@ -43,17 +46,27 @@ public class MongockSpring5 {
 
   }
 
-  public static class MongockApplicationRunner extends ChangockSpringBuilderBase.ChangockSpringApplicationRunner {
+  /**
+   * This class will be removed in following versions.
+   * Please use the equivalent class SpringApplicationRunner.
+   */
+  @Deprecated
+  public static class MongockApplicationRunner extends SpringApplicationRunner {
 
-    protected MongockApplicationRunner(SpringMigrationExecutor executor, ProfiledChangeLogService changeLogService, boolean throwExceptionIfCannotObtainLock, boolean enabled) {
-      super(executor, changeLogService, throwExceptionIfCannotObtainLock, enabled, new SpringEventPublisher(null));
+    protected MongockApplicationRunner(SpringMigrationExecutor executor, ProfiledChangeLogService changeLogService, boolean throwExceptionIfCannotObtainLock, boolean enabled, SpringEventPublisher eventPublisher) {
+      super(executor, changeLogService, throwExceptionIfCannotObtainLock, enabled, eventPublisher);
     }
   }
 
-  public static class MongockInitializingBeanRunner extends ChangockSpringBuilderBase.ChangockSpringInitializingBeanRunner {
+  /**
+   * This class will be removed in following versions.
+   * Please use the equivalent class SpringInitializingBean.
+   */
+  @Deprecated
+  public static class MongockInitializingBeanRunner extends SpringInitializingBean {
 
-    protected MongockInitializingBeanRunner(SpringMigrationExecutor executor, ProfiledChangeLogService changeLogService, boolean throwExceptionIfCannotObtainLock, boolean enabled) {
-      super(executor, changeLogService, throwExceptionIfCannotObtainLock, enabled, new SpringEventPublisher(null));
+    protected MongockInitializingBeanRunner(SpringMigrationExecutor executor, ProfiledChangeLogService changeLogService, boolean throwExceptionIfCannotObtainLock, boolean enabled, SpringEventPublisher eventPublisher) {
+      super(executor, changeLogService, throwExceptionIfCannotObtainLock, enabled, eventPublisher);
     }
   }
 
