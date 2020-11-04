@@ -49,6 +49,7 @@ public class MongockSpring5 {
   /**
    * This class will be removed in following versions.
    * Please use the equivalent class SpringApplicationRunner.
+   * @see SpringApplicationRunner
    */
   @Deprecated
   public static class MongockApplicationRunner extends SpringApplicationRunner {
@@ -61,6 +62,7 @@ public class MongockSpring5 {
   /**
    * This class will be removed in following versions.
    * Please use the equivalent class SpringInitializingBean.
+   * @see SpringInitializingBean
    */
   @Deprecated
   public static class MongockInitializingBeanRunner extends SpringInitializingBean {
