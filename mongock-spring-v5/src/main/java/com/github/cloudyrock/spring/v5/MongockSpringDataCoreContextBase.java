@@ -14,7 +14,7 @@ public abstract class MongockSpringDataCoreContextBase {
         .setDriver(mongockConnectionDriver)
         .setConfig(mongockConfiguration)
         .setSpringContext(springContext)
-        .setSpringEventPublisher(applicationEventPublisher);
+        .setEventPublisher(applicationEventPublisher);
     return builder;
   }
 

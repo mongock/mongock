@@ -10,6 +10,7 @@ public class AllSuccess3 {
 
   @ChangeSet(author = "testuser", id = "AllSuccess3_method1", order = "01")
   public void method1() {
+    // TODO - nothing
   }
 
 
