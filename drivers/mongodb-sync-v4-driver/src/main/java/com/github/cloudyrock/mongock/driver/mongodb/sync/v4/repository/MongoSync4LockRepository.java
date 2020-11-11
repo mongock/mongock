@@ -31,7 +31,7 @@ public class MongoSync4LockRepository extends MongoSync4RepositoryBase<LockEntry
    * If there is no lock with the same key, it's inserted.
    *
    * @param newLock lock to replace the existing one or be inserted.
-   * @throws  if there is a lock in database with same key, but is expired and belong to
+   * @throws  LockPersistenceException if there is a lock in database with same key, but is expired and belong to
    *                                  another owner or cannot insert/update the lock for any other reason
    */
   @Override

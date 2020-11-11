@@ -19,7 +19,6 @@ import io.changock.migration.api.annotations.ChangeSet;
 import io.changock.migration.api.exception.ChangockException;
 import io.changock.runner.standalone.TestChangockRunner;
 import org.bson.Document;
-import org.jetbrains.annotations.NotNull;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
@@ -297,7 +296,7 @@ public abstract class MongoDriverITestBase extends IntegrationTestBase {
     }
   }
 
-  @NotNull
+
   private Map<String, Object> getStringObjectMap() {
     Map<String, Object> metadata = new HashMap<>();
     metadata.put("string_key", "string_value");
