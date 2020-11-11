@@ -5,15 +5,15 @@ import com.github.cloudyrock.mongock.MongockConnectionDriver;
 import io.changock.runner.core.ChangeLogService;
 import io.changock.runner.core.EventPublisher;
 import io.changock.runner.core.MigrationExecutor;
-import io.changock.runner.core.builder.configuration.ChangockConfiguration;
 import io.changock.runner.core.builder.DriverBuilderConfigurable;
-import io.changock.runner.core.builder.RunnerBuilderBase;
-import io.changock.runner.standalone.ChangockStandalone;
+import io.changock.runner.core.builder.configuration.ChangockConfiguration;
+import io.changock.runner.standalone.StandaloneBuilder;
+import io.changock.runner.standalone.StandaloneRunner;
 
 /**
  * Mongock runner
  *
- * @since 26/07/2014
+ * @since 26/07/2020
  */
 public class MongockStandalone {
 
@@ -23,14 +23,14 @@ public class MongockStandalone {
   }
 
 
-  public static class Builder extends RunnerBuilderBase<Builder, MongockConnectionDriver, ChangockConfiguration> {
+  public static class Builder extends StandaloneBuilder<Builder, MongockConnectionDriver> {
 
     private Builder() {
       this.overrideAnnoatationProcessor(new MongockAnnotationProcessor());
     }
 
     public Runner buildRunner() {
-      return new Runner(buildExecutorDefault(), buildChangeLogServiceDefault(), throwExceptionIfCannotObtainLock, enabled);
+      return new Runner(buildExecutorDefault(), buildChangeLogServiceDefault(), throwExceptionIfCannotObtainLock, enabled, getEventPublisher());
     }
 
     @Override
@@ -39,27 +39,15 @@ public class MongockStandalone {
     }
   }
 
-  public static class Runner extends ChangockStandalone.ChangockStandaloneRunner {
-
+  public static class Runner extends StandaloneRunner {
 
     private Runner(MigrationExecutor executor,
                    ChangeLogService changeLogService,
                    boolean throwExceptionIfCannotObtainLock,
-                   boolean enabled) {
-      super(executor, changeLogService, throwExceptionIfCannotObtainLock, enabled,
-          new EventPublisher() {
-            @Override
-            public void publishMigrationSuccessEvent() {
-
-            }
-
-            @Override
-            public void publishMigrationFailedEvent(Exception ex) {
-
-            }
-          }
-
-      );
+                   boolean enabled,
+                   EventPublisher eventPublisher) {
+      super(executor, changeLogService, throwExceptionIfCannotObtainLock, enabled, eventPublisher);
     }
   }
+
 }
