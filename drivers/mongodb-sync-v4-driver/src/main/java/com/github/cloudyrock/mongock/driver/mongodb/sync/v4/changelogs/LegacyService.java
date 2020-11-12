@@ -56,15 +56,20 @@ public class LegacyService {
         throw new ChangockException(String.format("[legacy-migration] - Expectation [%d changes migrated], but actual [%d changes migrated]", changesCountExpectation, changesMigrated));
       }
       logger.debug("[legacy-migration] - {} changes migrated", changesMigrated);
+    } catch (ChangockException ex) {
+      processException(legacyMigration.isFailFast(), ex);
     } catch (Exception ex) {
-      if (legacyMigration.isFailFast()) {
-        throw ex instanceof ChangockException ? (ChangockException) ex : new ChangockException(ex);
-      }
-      logger.warn(ex.getMessage());
+      processException(legacyMigration.isFailFast(), new ChangockException(ex));
     }
 
   }
 
+  private void processException(boolean isFailFast, ChangockException ex) {
+    if (isFailFast) {
+      throw new ChangockException(ex);
+    }
+    logger.warn(ex.getMessage());
+  }
   private List<ChangeEntry> getOriginalMigrationAsChangeEntryList(MongoCollection<Document> originalCollection, MongockLegacyMigration legacyMigration) {
 
     List<ChangeEntry> originalMigrations = new ArrayList<>();
