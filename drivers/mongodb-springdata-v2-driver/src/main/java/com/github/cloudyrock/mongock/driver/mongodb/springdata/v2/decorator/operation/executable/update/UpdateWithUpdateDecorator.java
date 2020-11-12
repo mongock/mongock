@@ -1,8 +1,8 @@
 package com.github.cloudyrock.mongock.driver.mongodb.springdata.v2.decorator.operation.executable.update;
 
-import io.changock.driver.api.lock.guard.decorator.Invokable;
 import com.github.cloudyrock.mongock.driver.mongodb.springdata.v2.decorator.operation.executable.update.impl.FindAndReplaceWithProjectionDecoratorImpl;
 import com.github.cloudyrock.mongock.driver.mongodb.springdata.v2.decorator.operation.executable.update.impl.TerminatingUpdateDecoratorImpl;
+import io.changock.driver.api.lock.guard.decorator.Invokable;
 import org.springframework.data.mongodb.core.ExecutableUpdateOperation;
 import org.springframework.data.mongodb.core.query.Update;
 

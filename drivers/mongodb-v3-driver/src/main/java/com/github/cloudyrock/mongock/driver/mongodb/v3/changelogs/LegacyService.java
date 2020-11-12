@@ -54,13 +54,19 @@ public class LegacyService {
       if (changesCountExpectation != null && changesCountExpectation != changesMigrated) {
         throw new ChangockException(String.format("[legacy-migration] - Expectation [%d] changes migrated. Actual [%d] migrated", changesCountExpectation, changesMigrated));
       }
+    } catch (ChangockException ex) {
+      processException(legacyMigration.isFailFast(), ex);
     } catch (Exception ex) {
-      if (legacyMigration.isFailFast()) {
-        throw ex instanceof ChangockException ? (ChangockException) ex : new ChangockException(ex);
-      }
-      logger.warn(ex.getMessage());
+      processException(legacyMigration.isFailFast(), new ChangockException(ex));
     }
 
+  }
+
+  private void processException(boolean isFailFast, ChangockException ex) {
+    if (isFailFast) {
+      throw new ChangockException(ex);
+    }
+    logger.warn(ex.getMessage());
   }
 
   private List<ChangeEntry> getOriginalMigrationAsChangeEntryList(MongoCollection<Document> originalCollection, MongockLegacyMigration legacyMigration) {

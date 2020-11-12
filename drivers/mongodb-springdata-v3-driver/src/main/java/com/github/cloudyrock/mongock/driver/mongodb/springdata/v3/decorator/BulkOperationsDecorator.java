@@ -1,8 +1,8 @@
 package com.github.cloudyrock.mongock.driver.mongodb.springdata.v3.decorator;
 
+import com.github.cloudyrock.mongock.driver.mongodb.springdata.v3.decorator.impl.BulkOperationsDecoratorImpl;
 import com.mongodb.bulk.BulkWriteResult;
 import io.changock.driver.api.lock.guard.invoker.LockGuardInvoker;
-import com.github.cloudyrock.mongock.driver.mongodb.springdata.v3.decorator.impl.BulkOperationsDecoratorImpl;
 import org.springframework.data.mongodb.core.BulkOperations;
 import org.springframework.data.mongodb.core.FindAndReplaceOptions;
 import org.springframework.data.mongodb.core.query.Query;

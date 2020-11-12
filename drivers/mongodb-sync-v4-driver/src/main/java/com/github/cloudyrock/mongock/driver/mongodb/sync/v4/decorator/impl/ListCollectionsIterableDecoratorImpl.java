@@ -1,8 +1,8 @@
 package com.github.cloudyrock.mongock.driver.mongodb.sync.v4.decorator.impl;
 
+import com.github.cloudyrock.mongock.driver.mongodb.sync.v4.decorator.ListCollectionsIterableDecorator;
 import com.mongodb.client.ListCollectionsIterable;
 import io.changock.driver.api.lock.guard.invoker.LockGuardInvoker;
-import com.github.cloudyrock.mongock.driver.mongodb.sync.v4.decorator.ListCollectionsIterableDecorator;
 
 public class ListCollectionsIterableDecoratorImpl<T> implements ListCollectionsIterableDecorator<T> {
 

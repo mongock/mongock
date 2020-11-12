@@ -1,8 +1,8 @@
 package com.github.cloudyrock.mongock.driver.mongodb.v3.decorator;
 
+import com.github.cloudyrock.mongock.driver.mongodb.v3.decorator.impl.AggregateIterableDecoratorImpl;
 import com.mongodb.client.AggregateIterable;
 import com.mongodb.client.model.Collation;
-import com.github.cloudyrock.mongock.driver.mongodb.v3.decorator.impl.AggregateIterableDecoratorImpl;
 import io.changock.migration.api.annotations.NonLockGuarded;
 import org.bson.conversions.Bson;
 

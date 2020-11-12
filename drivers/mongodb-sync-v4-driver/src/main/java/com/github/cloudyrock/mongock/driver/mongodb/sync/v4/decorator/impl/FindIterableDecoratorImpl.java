@@ -1,8 +1,8 @@
 package com.github.cloudyrock.mongock.driver.mongodb.sync.v4.decorator.impl;
 
+import com.github.cloudyrock.mongock.driver.mongodb.sync.v4.decorator.FindIterableDecorator;
 import com.mongodb.client.FindIterable;
 import io.changock.driver.api.lock.guard.invoker.LockGuardInvoker;
-import com.github.cloudyrock.mongock.driver.mongodb.sync.v4.decorator.FindIterableDecorator;
 
 public class FindIterableDecoratorImpl<T> implements FindIterableDecorator<T> {
 

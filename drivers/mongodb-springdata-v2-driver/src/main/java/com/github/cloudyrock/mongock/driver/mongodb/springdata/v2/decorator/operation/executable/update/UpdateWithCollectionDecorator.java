@@ -1,7 +1,7 @@
 package com.github.cloudyrock.mongock.driver.mongodb.springdata.v2.decorator.operation.executable.update;
 
-import io.changock.driver.api.lock.guard.decorator.Invokable;
 import com.github.cloudyrock.mongock.driver.mongodb.springdata.v2.decorator.operation.executable.update.impl.UpdateWithQueryDecoratorImpl;
+import io.changock.driver.api.lock.guard.decorator.Invokable;
 import org.springframework.data.mongodb.core.ExecutableUpdateOperation;
 
 public interface UpdateWithCollectionDecorator<T> extends Invokable, ExecutableUpdateOperation.UpdateWithCollection<T> {

@@ -51,7 +51,7 @@ public abstract class MongoSync4RepositoryBase<DOMAIN_CLASS> implements Reposito
       if (!isRequiredIndexCreated()) {
         createRequiredUniqueIndex();
       }
-      ensureIndex(--tryCounter);
+      ensureIndex(tryCounter - 1);
     }
   }
 

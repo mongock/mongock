@@ -1,8 +1,8 @@
 package com.github.cloudyrock.mongock.driver.mongodb.sync.v4.decorator.impl;
 
+import com.github.cloudyrock.mongock.driver.mongodb.sync.v4.decorator.MongoChangeStreamCursorDecorator;
 import com.mongodb.client.MongoChangeStreamCursor;
 import io.changock.driver.api.lock.guard.invoker.LockGuardInvoker;
-import com.github.cloudyrock.mongock.driver.mongodb.sync.v4.decorator.MongoChangeStreamCursorDecorator;
 
 public class MongoChangeStreamCursorDecoratorImpl<T> implements MongoChangeStreamCursorDecorator<T> {
 

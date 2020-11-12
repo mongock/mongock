@@ -12,7 +12,6 @@ import io.changock.driver.core.lock.LockRepository;
 import io.changock.driver.core.lock.LockStatus;
 import io.changock.migration.api.exception.ChangockException;
 import org.bson.Document;
-import org.junit.Before;
 import org.junit.Test;
 
 import java.util.Date;

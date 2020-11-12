@@ -1,7 +1,7 @@
 package com.github.cloudyrock.mongock.driver.mongodb.v3.decorator;
 
-import com.mongodb.client.ListCollectionsIterable;
 import com.github.cloudyrock.mongock.driver.mongodb.v3.decorator.impl.ListCollectionsIterableDecoratorImpl;
+import com.mongodb.client.ListCollectionsIterable;
 import io.changock.migration.api.annotations.NonLockGuarded;
 import io.changock.migration.api.annotations.NonLockGuardedType;
 import org.bson.conversions.Bson;

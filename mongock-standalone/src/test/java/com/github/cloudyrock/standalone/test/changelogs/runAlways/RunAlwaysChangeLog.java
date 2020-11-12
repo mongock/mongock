@@ -2,7 +2,6 @@ package com.github.cloudyrock.standalone.test.changelogs.runAlways;
 
 import com.github.cloudyrock.mongock.ChangeLog;
 import com.github.cloudyrock.mongock.ChangeSet;
-import com.mongodb.client.MongoDatabase;
 
 
 @ChangeLog(order = "1")

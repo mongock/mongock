@@ -1,11 +1,10 @@
 package com.github.cloudyrock.mongock.driver.mongodb.v3.decorator;
 
+import com.github.cloudyrock.mongock.driver.mongodb.v3.decorator.impl.FindIterableDecoratorImpl;
 import com.mongodb.CursorType;
 import com.mongodb.client.FindIterable;
 import com.mongodb.client.model.Collation;
-import com.github.cloudyrock.mongock.driver.mongodb.v3.decorator.impl.FindIterableDecoratorImpl;
 import io.changock.migration.api.annotations.NonLockGuarded;
-import io.changock.migration.api.annotations.NonLockGuardedType;
 import org.bson.conversions.Bson;
 
 import java.util.concurrent.TimeUnit;
