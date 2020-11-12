@@ -1,8 +1,8 @@
 package com.github.cloudyrock.mongock.driver.mongodb.v3.decorator.impl;
 
+import com.github.cloudyrock.mongock.driver.mongodb.v3.decorator.MongoIterableDecorator;
 import com.mongodb.client.MongoIterable;
 import io.changock.driver.api.lock.guard.invoker.LockGuardInvoker;
-import com.github.cloudyrock.mongock.driver.mongodb.v3.decorator.MongoIterableDecorator;
 
 public class MongoIterableDecoratorImpl<T> implements MongoIterableDecorator<T> {
 

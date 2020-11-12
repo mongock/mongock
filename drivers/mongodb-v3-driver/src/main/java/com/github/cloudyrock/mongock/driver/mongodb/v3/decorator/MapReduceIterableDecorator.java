@@ -1,9 +1,9 @@
 package com.github.cloudyrock.mongock.driver.mongodb.v3.decorator;
 
+import com.github.cloudyrock.mongock.driver.mongodb.v3.decorator.impl.MapReduceIterableDecoratorImpl;
 import com.mongodb.client.MapReduceIterable;
 import com.mongodb.client.model.Collation;
 import com.mongodb.client.model.MapReduceAction;
-import com.github.cloudyrock.mongock.driver.mongodb.v3.decorator.impl.MapReduceIterableDecoratorImpl;
 import io.changock.migration.api.annotations.NonLockGuarded;
 import org.bson.conversions.Bson;
 

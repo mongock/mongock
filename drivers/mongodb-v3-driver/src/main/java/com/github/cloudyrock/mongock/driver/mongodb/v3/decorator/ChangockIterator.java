@@ -5,7 +5,6 @@ import io.changock.migration.api.annotations.NonLockGuarded;
 import io.changock.migration.api.annotations.NonLockGuardedType;
 
 import java.util.Iterator;
-import java.util.Objects;
 import java.util.function.Consumer;
 
 public interface ChangockIterator<T> extends Iterator<T> {

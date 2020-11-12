@@ -1,18 +1,17 @@
 package com.github.cloudyrock.mongock.driver.mongodb.v3.decorator;
 
+import com.github.cloudyrock.mongock.driver.mongodb.v3.decorator.impl.MongoCursorDecoratorImpl;
+import com.github.cloudyrock.mongock.driver.mongodb.v3.decorator.impl.MongoIterableDecoratorImpl;
 import com.mongodb.Block;
 import com.mongodb.Function;
 import com.mongodb.client.MongoCursor;
 import com.mongodb.client.MongoIterable;
 import io.changock.driver.api.lock.guard.invoker.LockGuardInvoker;
-import com.github.cloudyrock.mongock.driver.mongodb.v3.decorator.impl.MongoCursorDecoratorImpl;
-import com.github.cloudyrock.mongock.driver.mongodb.v3.decorator.impl.MongoIterableDecoratorImpl;
 import io.changock.migration.api.annotations.DecoratorDiverted;
 import io.changock.migration.api.annotations.NonLockGuarded;
 import io.changock.migration.api.annotations.NonLockGuardedType;
 
 import java.util.Collection;
-import java.util.Objects;
 import java.util.Spliterator;
 import java.util.Spliterators;
 import java.util.function.Consumer;

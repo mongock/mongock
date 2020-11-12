@@ -1,5 +1,12 @@
 package com.github.cloudyrock.mongock.driver.mongodb.sync.v4.decorator;
 
+import com.github.cloudyrock.mongock.driver.mongodb.sync.v4.decorator.impl.AggregateIterableDecoratorImpl;
+import com.github.cloudyrock.mongock.driver.mongodb.sync.v4.decorator.impl.ChangeStreamIterableDecoratorImpl;
+import com.github.cloudyrock.mongock.driver.mongodb.sync.v4.decorator.impl.DistinctIterableDecoratorImpl;
+import com.github.cloudyrock.mongock.driver.mongodb.sync.v4.decorator.impl.FindIterableDecoratorImpl;
+import com.github.cloudyrock.mongock.driver.mongodb.sync.v4.decorator.impl.ListIndexesIterableDecoratorImpl;
+import com.github.cloudyrock.mongock.driver.mongodb.sync.v4.decorator.impl.MapReduceIterableDecoratorImpl;
+import com.github.cloudyrock.mongock.driver.mongodb.sync.v4.decorator.impl.MongoCollectionDecoratorImpl;
 import com.mongodb.MongoNamespace;
 import com.mongodb.ReadConcern;
 import com.mongodb.ReadPreference;
@@ -35,13 +42,6 @@ import com.mongodb.client.result.InsertManyResult;
 import com.mongodb.client.result.InsertOneResult;
 import com.mongodb.client.result.UpdateResult;
 import io.changock.driver.api.lock.guard.invoker.LockGuardInvoker;
-import com.github.cloudyrock.mongock.driver.mongodb.sync.v4.decorator.impl.AggregateIterableDecoratorImpl;
-import com.github.cloudyrock.mongock.driver.mongodb.sync.v4.decorator.impl.ChangeStreamIterableDecoratorImpl;
-import com.github.cloudyrock.mongock.driver.mongodb.sync.v4.decorator.impl.DistinctIterableDecoratorImpl;
-import com.github.cloudyrock.mongock.driver.mongodb.sync.v4.decorator.impl.FindIterableDecoratorImpl;
-import com.github.cloudyrock.mongock.driver.mongodb.sync.v4.decorator.impl.ListIndexesIterableDecoratorImpl;
-import com.github.cloudyrock.mongock.driver.mongodb.sync.v4.decorator.impl.MapReduceIterableDecoratorImpl;
-import com.github.cloudyrock.mongock.driver.mongodb.sync.v4.decorator.impl.MongoCollectionDecoratorImpl;
 import io.changock.migration.api.annotations.NonLockGuarded;
 import io.changock.migration.api.annotations.NonLockGuardedType;
 import org.bson.Document;

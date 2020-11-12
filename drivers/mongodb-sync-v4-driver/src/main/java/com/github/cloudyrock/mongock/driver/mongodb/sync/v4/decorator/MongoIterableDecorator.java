@@ -1,11 +1,11 @@
 package com.github.cloudyrock.mongock.driver.mongodb.sync.v4.decorator;
 
+import com.github.cloudyrock.mongock.driver.mongodb.sync.v4.decorator.impl.MongoCursorDecoratorImpl;
+import com.github.cloudyrock.mongock.driver.mongodb.sync.v4.decorator.impl.MongoIterableDecoratorImpl;
 import com.mongodb.Function;
 import com.mongodb.client.MongoCursor;
 import com.mongodb.client.MongoIterable;
 import io.changock.driver.api.lock.guard.invoker.LockGuardInvoker;
-import com.github.cloudyrock.mongock.driver.mongodb.sync.v4.decorator.impl.MongoCursorDecoratorImpl;
-import com.github.cloudyrock.mongock.driver.mongodb.sync.v4.decorator.impl.MongoIterableDecoratorImpl;
 import io.changock.migration.api.annotations.DecoratorDiverted;
 import io.changock.migration.api.annotations.NonLockGuarded;
 import io.changock.migration.api.annotations.NonLockGuardedType;

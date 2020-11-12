@@ -1,8 +1,8 @@
 package com.github.cloudyrock.mongock.driver.mongodb.sync.v4.decorator;
 
+import com.github.cloudyrock.mongock.driver.mongodb.sync.v4.decorator.impl.DistinctIterableDecoratorImpl;
 import com.mongodb.client.DistinctIterable;
 import com.mongodb.client.model.Collation;
-import com.github.cloudyrock.mongock.driver.mongodb.sync.v4.decorator.impl.DistinctIterableDecoratorImpl;
 import io.changock.migration.api.annotations.NonLockGuarded;
 import org.bson.conversions.Bson;
 

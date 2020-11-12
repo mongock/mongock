@@ -1,9 +1,9 @@
 package com.github.cloudyrock.mongock.driver.mongodb.sync.v4.decorator;
 
+import com.github.cloudyrock.mongock.driver.mongodb.sync.v4.decorator.impl.FindIterableDecoratorImpl;
 import com.mongodb.CursorType;
 import com.mongodb.client.FindIterable;
 import com.mongodb.client.model.Collation;
-import com.github.cloudyrock.mongock.driver.mongodb.sync.v4.decorator.impl.FindIterableDecoratorImpl;
 import io.changock.migration.api.annotations.NonLockGuarded;
 import org.bson.conversions.Bson;
 

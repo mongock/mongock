@@ -1,12 +1,5 @@
 package com.github.cloudyrock.mongock.driver.mongodb.springdata.v3.decorator;
 
-import com.mongodb.ClientSessionOptions;
-import com.mongodb.ReadPreference;
-import com.mongodb.client.ClientSession;
-import com.mongodb.client.MongoCollection;
-import com.mongodb.client.result.DeleteResult;
-import com.mongodb.client.result.UpdateResult;
-import io.changock.driver.api.lock.guard.invoker.LockGuardInvoker;
 import com.github.cloudyrock.mongock.driver.mongodb.springdata.v3.decorator.impl.BulkOperationsDecoratorImpl;
 import com.github.cloudyrock.mongock.driver.mongodb.springdata.v3.decorator.impl.CloseableIteratorDecoratorImpl;
 import com.github.cloudyrock.mongock.driver.mongodb.springdata.v3.decorator.impl.IndexOperationsDecoratorImpl;
@@ -20,6 +13,13 @@ import com.github.cloudyrock.mongock.driver.mongodb.springdata.v3.decorator.oper
 import com.github.cloudyrock.mongock.driver.mongodb.springdata.v3.decorator.operation.executable.remove.impl.ExecutableRemoveDecoratorImpl;
 import com.github.cloudyrock.mongock.driver.mongodb.springdata.v3.decorator.operation.executable.update.impl.ExecutableUpdateDecoratorImpl;
 import com.github.cloudyrock.mongock.driver.mongodb.sync.v4.decorator.impl.MongoCollectionDecoratorImpl;
+import com.mongodb.ClientSessionOptions;
+import com.mongodb.ReadPreference;
+import com.mongodb.client.ClientSession;
+import com.mongodb.client.MongoCollection;
+import com.mongodb.client.result.DeleteResult;
+import com.mongodb.client.result.UpdateResult;
+import io.changock.driver.api.lock.guard.invoker.LockGuardInvoker;
 import org.bson.Document;
 import org.springframework.data.geo.GeoResults;
 import org.springframework.data.mongodb.core.BulkOperations;

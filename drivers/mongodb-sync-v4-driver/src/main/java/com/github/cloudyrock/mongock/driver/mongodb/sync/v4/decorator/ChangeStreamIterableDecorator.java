@@ -1,14 +1,14 @@
 package com.github.cloudyrock.mongock.driver.mongodb.sync.v4.decorator;
 
+import com.github.cloudyrock.mongock.driver.mongodb.sync.v4.decorator.impl.ChangeStreamIterableDecoratorImpl;
+import com.github.cloudyrock.mongock.driver.mongodb.sync.v4.decorator.impl.MongoChangeStreamCursorDecoratorImpl;
+import com.github.cloudyrock.mongock.driver.mongodb.sync.v4.decorator.impl.MongoIterableDecoratorImpl;
 import com.mongodb.client.ChangeStreamIterable;
 import com.mongodb.client.MongoChangeStreamCursor;
 import com.mongodb.client.MongoIterable;
 import com.mongodb.client.model.Collation;
 import com.mongodb.client.model.changestream.ChangeStreamDocument;
 import com.mongodb.client.model.changestream.FullDocument;
-import com.github.cloudyrock.mongock.driver.mongodb.sync.v4.decorator.impl.ChangeStreamIterableDecoratorImpl;
-import com.github.cloudyrock.mongock.driver.mongodb.sync.v4.decorator.impl.MongoChangeStreamCursorDecoratorImpl;
-import com.github.cloudyrock.mongock.driver.mongodb.sync.v4.decorator.impl.MongoIterableDecoratorImpl;
 import org.bson.BsonDocument;
 import org.bson.BsonTimestamp;
 

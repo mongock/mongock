@@ -1,7 +1,7 @@
 package com.github.cloudyrock.mongock.driver.mongodb.springdata.v2.decorator.impl;
 
-import io.changock.driver.api.lock.guard.invoker.LockGuardInvoker;
 import com.github.cloudyrock.mongock.driver.mongodb.springdata.v2.decorator.SessionScopedDecorator;
+import io.changock.driver.api.lock.guard.invoker.LockGuardInvoker;
 import org.springframework.data.mongodb.core.SessionScoped;
 
 public class SessionScopedDecoratorImpl implements SessionScopedDecorator {

@@ -51,7 +51,7 @@ public abstract class Mongo3RepositoryBase<DOMAIN_CLASS> implements Repository<D
       if (!isRequiredIndexCreated()) {
         createRequiredUniqueIndex();
       }
-      ensureIndex(--tryCounter);
+      ensureIndex(tryCounter - 1);
     }
   }
 

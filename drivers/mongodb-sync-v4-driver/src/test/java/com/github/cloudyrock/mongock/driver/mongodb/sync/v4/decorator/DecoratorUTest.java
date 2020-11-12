@@ -1,5 +1,6 @@
 package com.github.cloudyrock.mongock.driver.mongodb.sync.v4.decorator;
 
+import com.github.cloudyrock.mongock.driver.mongodb.sync.v4.decorator.impl.MongoDataBaseDecoratorImpl;
 import com.mongodb.MongoNamespace;
 import com.mongodb.ReadConcern;
 import com.mongodb.ReadPreference;
@@ -14,7 +15,6 @@ import com.mongodb.client.result.InsertOneResult;
 import com.mongodb.client.result.UpdateResult;
 import io.changock.driver.api.lock.LockManager;
 import io.changock.driver.api.lock.guard.invoker.LockGuardInvokerImpl;
-import com.github.cloudyrock.mongock.driver.mongodb.sync.v4.decorator.impl.MongoDataBaseDecoratorImpl;
 import io.changock.test.util.decorator.DecoratorMethodFailure;
 import io.changock.test.util.decorator.DecoratorTestCollection;
 import io.changock.test.util.decorator.DecoratorValidator;
