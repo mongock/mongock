@@ -4,6 +4,7 @@ import com.github.cloudyrock.mongock.driver.mongodb.springdata.v3.SpringDataMong
 import io.changock.migration.api.exception.ChangockException;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.ApplicationContext;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.mongodb.MongoTransactionManager;
@@ -36,8 +37,9 @@ public class MongockSpringDataV3CoreContext extends MongockSpringDataCoreContext
   @Bean
   public MongockSpring5.Builder mongockBuilder(SpringDataMongo3Driver mongockConnectionDriver,
                                                MongockConfiguration mongockConfiguration,
-                                               ApplicationContext springContext) {
-    return super.mongockBuilder(mongockConnectionDriver, mongockConfiguration, springContext);
+                                               ApplicationContext springContext,
+                                               ApplicationEventPublisher applicationEventPublisher) {
+    return super.mongockBuilder(mongockConnectionDriver, mongockConfiguration, springContext, applicationEventPublisher);
   }
 
 
