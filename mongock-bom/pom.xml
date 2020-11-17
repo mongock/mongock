@@ -3,23 +3,24 @@
   <parent>
     <artifactId>mongock</artifactId>
     <groupId>com.github.cloudyrock.mongock</groupId>
-    <version>4.1.20-SNAPSHOT</version>
+    <version>4.2.1</version>
   </parent>
   <modelVersion>4.0.0</modelVersion>
 
   <artifactId>mongock-bom</artifactId>
+  <version>4.1.20</version>
   <packaging>pom</packaging>
   <name>Mongock BOM</name>
   <description>Mongock dependency management</description>
 
   <properties>
-    <mongock.driver.spring-data-v2.version>4.1.20-SNAPSHOT</mongock.driver.spring-data-v2.version>
-    <mongock.driver.spring-data-v3.version>4.1.20-SNAPSHOT</mongock.driver.spring-data-v3.version>
-    <mongock.driver.mongodb-v3.version>4.1.20-SNAPSHOT</mongock.driver.mongodb-v3.version>
-    <mongock.driver.mongodb-sync-v4.version>4.1.20-SNAPSHOT</mongock.driver.mongodb-sync-v4.version>
-    <mongock.api.version>4.1.20-SNAPSHOT</mongock.api.version>
-    <mongock.spring-v5.version>4.1.20-SNAPSHOT</mongock.spring-v5.version>
-    <mongock.standalone.version>4.1.20-SNAPSHOT</mongock.standalone.version>
+    <mongock.driver.spring-data-v2.version>4.1.20</mongock.driver.spring-data-v2.version>
+    <mongock.driver.spring-data-v3.version>4.1.20</mongock.driver.spring-data-v3.version>
+    <mongock.driver.mongodb-v3.version>4.1.20</mongock.driver.mongodb-v3.version>
+    <mongock.driver.mongodb-sync-v4.version>4.1.20</mongock.driver.mongodb-sync-v4.version>
+    <mongock.api.version>4.1.20</mongock.api.version>
+    <mongock.spring-v5.version>4.1.20</mongock.spring-v5.version>
+    <mongock.standalone.version>4.1.20</mongock.standalone.version>
   </properties>
   <dependencyManagement>
     <dependencies>
