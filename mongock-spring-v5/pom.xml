@@ -5,11 +5,10 @@
   <parent>
     <artifactId>mongock</artifactId>
     <groupId>com.github.cloudyrock.mongock</groupId>
-    <version>4.2.2-SNAPSHOT</version>
+    <version>4.1.20-SNAPSHOT</version>
   </parent>
 
   <artifactId>mongock-spring-v5</artifactId>
-  <version>4.1.21-SNAPSHOT</version>
   <properties>
     <java.version>1.8</java.version>
     <maven.compiler.target>1.8</maven.compiler.target>
