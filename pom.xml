@@ -15,7 +15,7 @@
 
   <groupId>com.github.cloudyrock.mongock</groupId>
   <artifactId>mongock</artifactId>
-  <version>4.2.1.BETA</version>
+  <version>4.2.2.BETA-SNAPSHOT</version>
   <packaging>pom</packaging>
 
   <modules>
@@ -55,7 +55,7 @@
     <connection>scm:git:git@github.com:cloudyrock/mongock.git</connection>
     <developerConnection>scm:git:git@github.com:cloudyrock/mongock.git</developerConnection>
     <url>https://github.com/cloudyrock/mongock</url>
-    <tag>mongock-4.2.1.BETA</tag>
+    <tag>mongock-1.13</tag>
   </scm>
   <developers>
     <developer>
