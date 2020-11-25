@@ -1,5 +1,6 @@
 package com.github.cloudyrock.spring.v5;
 
+import com.github.cloudyrock.mongock.MongockConnectionDriver;
 import com.github.cloudyrock.mongock.driver.mongodb.springdata.v2.SpringDataMongo2Driver;
 import io.changock.migration.api.exception.ChangockException;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
@@ -14,19 +15,14 @@ import java.util.Optional;
 
 @Configuration
 @ConditionalOnProperty(prefix = "mongock", name = "enabled", matchIfMissing = true, havingValue = "true")
-public class MongockSpringDataV2CoreContext extends MongockSpringDataCoreContextBase {
+public class MongockSpringDataV2CoreContext {
 
   @Bean
-  public SpringDataMongo2Driver mongockConnectionDriver(MongoTemplate mongoTemplate,
+  public MongockConnectionDriver mongockConnectionDriver(MongoTemplate mongoTemplate,
                                                         MongockConfiguration mongockConfiguration,
                                                         Optional<MongoTransactionManager> txManagerOpt) {
     try {
-      SpringDataMongo2Driver driver = SpringDataMongo2Driver.withLockSetting(mongoTemplate, mongockConfiguration.getLockAcquiredForMinutes(), mongockConfiguration.getMaxWaitingForLockMinutes(), mongockConfiguration.getMaxTries());
-      if(mongockConfiguration.isTransactionEnabled() && txManagerOpt.isPresent()) {
-        txManagerOpt.ifPresent(driver::enableTransactionWithTxManager);
-      } else {
-        driver.disableTransaction();
-      }
+      SpringDataMongo2Driver driver = getDriver(mongoTemplate, mongockConfiguration, txManagerOpt);
       setUpMongockConnectionDriver(mongockConfiguration, driver);
       return driver;
     } catch (NoClassDefFoundError driver2NotFoundError) {
@@ -34,12 +30,24 @@ public class MongockSpringDataV2CoreContext extends MongockSpringDataCoreContext
     }
   }
 
-  @Bean
-  public MongockSpring5.Builder mongockBuilder(SpringDataMongo2Driver mongockConnectionDriver,
-                                               MongockConfiguration mongockConfiguration,
-                                               ApplicationContext springContext,
-                                               ApplicationEventPublisher applicationEventPublisher) {
-    return super.mongockBuilder(mongockConnectionDriver, mongockConfiguration, springContext, applicationEventPublisher);
+  private SpringDataMongo2Driver getDriver(MongoTemplate mongoTemplate, MongockConfiguration mongockConfiguration, Optional<MongoTransactionManager> txManagerOpt) {
+    SpringDataMongo2Driver driver = SpringDataMongo2Driver.withLockSetting(mongoTemplate, mongockConfiguration.getLockAcquiredForMinutes(), mongockConfiguration.getMaxWaitingForLockMinutes(), mongockConfiguration.getMaxTries());
+    if (mongockConfiguration.isTransactionEnabled() && txManagerOpt.isPresent()) {
+      txManagerOpt.ifPresent(driver::enableTransactionWithTxManager);
+    } else {
+      driver.disableTransaction();
+    }
+    return driver;
   }
+
+  private void setUpMongockConnectionDriver(MongockConfiguration mongockConfiguration,
+                                            MongockConnectionDriver driver) {
+    driver.setChangeLogCollectionName(mongockConfiguration.getChangeLogCollectionName());
+    driver.setLockCollectionName(mongockConfiguration.getLockCollectionName());
+    driver.setIndexCreation(mongockConfiguration.isIndexCreation());
+    driver.initialize();
+  }
+
+
 
 }
