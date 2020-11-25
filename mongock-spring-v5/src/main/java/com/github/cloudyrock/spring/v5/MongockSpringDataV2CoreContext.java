@@ -1,11 +1,9 @@
 package com.github.cloudyrock.spring.v5;
 
-import com.github.cloudyrock.mongock.MongockConnectionDriver;
 import com.github.cloudyrock.mongock.driver.mongodb.springdata.v2.SpringDataMongo2Driver;
+import io.changock.driver.api.driver.ConnectionDriver;
 import io.changock.migration.api.exception.ChangockException;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
-import org.springframework.context.ApplicationContext;
-import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.mongodb.MongoTransactionManager;
@@ -18,9 +16,9 @@ import java.util.Optional;
 public class MongockSpringDataV2CoreContext {
 
   @Bean
-  public MongockConnectionDriver mongockConnectionDriver(MongoTemplate mongoTemplate,
-                                                        MongockConfiguration mongockConfiguration,
-                                                        Optional<MongoTransactionManager> txManagerOpt) {
+  public ConnectionDriver mongockConnectionDriver(MongoTemplate mongoTemplate,
+                                                  MongockConfiguration mongockConfiguration,
+                                                  Optional<MongoTransactionManager> txManagerOpt) {
     try {
       SpringDataMongo2Driver driver = getDriver(mongoTemplate, mongockConfiguration, txManagerOpt);
       setUpMongockConnectionDriver(mongockConfiguration, driver);
@@ -41,13 +39,12 @@ public class MongockSpringDataV2CoreContext {
   }
 
   private void setUpMongockConnectionDriver(MongockConfiguration mongockConfiguration,
-                                            MongockConnectionDriver driver) {
+                                            SpringDataMongo2Driver driver) {
     driver.setChangeLogCollectionName(mongockConfiguration.getChangeLogCollectionName());
     driver.setLockCollectionName(mongockConfiguration.getLockCollectionName());
     driver.setIndexCreation(mongockConfiguration.isIndexCreation());
     driver.initialize();
   }
-
 
 
 }

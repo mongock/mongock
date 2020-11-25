@@ -1,6 +1,6 @@
 package com.github.cloudyrock.spring.v5;
 
-import com.github.cloudyrock.mongock.MongockConnectionDriver;
+import io.changock.driver.api.driver.ConnectionDriver;
 import io.changock.runner.spring.v5.SpringApplicationRunner;
 import io.changock.runner.spring.v5.SpringInitializingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
@@ -16,7 +16,7 @@ public class MongockContext {
 
   @Bean
   @ConditionalOnProperty(value = "mongock.runner-type", matchIfMissing = true, havingValue = "ApplicationRunner")
-  public SpringApplicationRunner mongockApplicationRunner(MongockConnectionDriver mongockConnectionDriver,
+  public SpringApplicationRunner mongockApplicationRunner(ConnectionDriver mongockConnectionDriver,
                                                           MongockConfiguration mongockConfiguration,
                                                           ApplicationContext springContext,
                                                           ApplicationEventPublisher applicationEventPublisher) {
@@ -26,7 +26,7 @@ public class MongockContext {
 
   @Bean
   @ConditionalOnProperty(value = "mongock.runner-type", havingValue = "InitializingBean")
-  public SpringInitializingBean mongockInitializingBeanRunner(MongockConnectionDriver mongockConnectionDriver,
+  public SpringInitializingBean mongockInitializingBeanRunner(ConnectionDriver mongockConnectionDriver,
                                                               MongockConfiguration mongockConfiguration,
                                                               ApplicationContext springContext,
                                                               ApplicationEventPublisher applicationEventPublisher) {
@@ -35,7 +35,7 @@ public class MongockContext {
   }
 
 
-  private MongockSpring5.Builder mongockBuilder(MongockConnectionDriver mongockConnectionDriver,
+  private MongockSpring5.Builder mongockBuilder(ConnectionDriver mongockConnectionDriver,
                                                MongockConfiguration mongockConfiguration,
                                                ApplicationContext springContext,
                                                ApplicationEventPublisher applicationEventPublisher) {
