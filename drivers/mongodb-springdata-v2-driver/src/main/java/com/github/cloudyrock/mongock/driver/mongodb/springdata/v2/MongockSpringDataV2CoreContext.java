@@ -1,7 +1,6 @@
-package com.github.cloudyrock.spring.v5;
+package com.github.cloudyrock.mongock.driver.mongodb.springdata.v2;
 
 import com.github.cloudyrock.mongock.config.MongockConfiguration;
-import com.github.cloudyrock.mongock.driver.mongodb.springdata.v3.SpringDataMongo3Driver;
 import io.changock.driver.api.driver.ConnectionDriver;
 import io.changock.migration.api.exception.ChangockException;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
@@ -14,25 +13,23 @@ import java.util.Optional;
 
 @Configuration
 @ConditionalOnProperty(prefix = "mongock", name = "enabled", matchIfMissing = true, havingValue = "true")
-public class MongockSpringDataV3CoreContext {
+public class MongockSpringDataV2CoreContext {
 
   @Bean
   public ConnectionDriver mongockConnectionDriver(MongoTemplate mongoTemplate,
                                                   MongockConfiguration mongockConfiguration,
                                                   Optional<MongoTransactionManager> txManagerOpt) {
     try {
-      SpringDataMongo3Driver driver = getDriver(mongoTemplate, mongockConfiguration, txManagerOpt);
+      SpringDataMongo2Driver driver = getDriver(mongoTemplate, mongockConfiguration, txManagerOpt);
       setUpMongockConnectionDriver(mongockConfiguration, driver);
       return driver;
-    } catch (NoClassDefFoundError driver3NotFoundError) {
+    } catch (NoClassDefFoundError driver2NotFoundError) {
       throw new ChangockException("\n\n" + ConfigErrorMessageUtils.getDriverNotFoundErrorMessage() + "\n\n");
     }
   }
 
-  private SpringDataMongo3Driver getDriver(MongoTemplate mongoTemplate,
-                                           MongockConfiguration mongockConfiguration,
-                                           Optional<MongoTransactionManager> txManagerOpt) {
-    SpringDataMongo3Driver driver = SpringDataMongo3Driver.withLockSetting(mongoTemplate, mongockConfiguration.getLockAcquiredForMinutes(), mongockConfiguration.getMaxWaitingForLockMinutes(), mongockConfiguration.getMaxTries());
+  private SpringDataMongo2Driver getDriver(MongoTemplate mongoTemplate, MongockConfiguration mongockConfiguration, Optional<MongoTransactionManager> txManagerOpt) {
+    SpringDataMongo2Driver driver = SpringDataMongo2Driver.withLockSetting(mongoTemplate, mongockConfiguration.getLockAcquiredForMinutes(), mongockConfiguration.getMaxWaitingForLockMinutes(), mongockConfiguration.getMaxTries());
     if (mongockConfiguration.isTransactionEnabled() && txManagerOpt.isPresent()) {
       txManagerOpt.ifPresent(driver::enableTransactionWithTxManager);
     } else {
@@ -42,11 +39,12 @@ public class MongockSpringDataV3CoreContext {
   }
 
   private void setUpMongockConnectionDriver(MongockConfiguration mongockConfiguration,
-                                            SpringDataMongo3Driver driver) {
+                                            SpringDataMongo2Driver driver) {
     driver.setChangeLogCollectionName(mongockConfiguration.getChangeLogCollectionName());
     driver.setLockCollectionName(mongockConfiguration.getLockCollectionName());
     driver.setIndexCreation(mongockConfiguration.isIndexCreation());
     driver.initialize();
   }
+
 
 }

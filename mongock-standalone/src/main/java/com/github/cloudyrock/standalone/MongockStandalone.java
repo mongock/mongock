@@ -3,8 +3,8 @@ package com.github.cloudyrock.standalone;
 import com.github.cloudyrock.mongock.MongockAnnotationProcessor;
 import com.github.cloudyrock.mongock.MongockConnectionDriver;
 
+import io.changock.migration.api.config.ChangockConfiguration;
 import io.changock.runner.core.builder.DriverBuilderConfigurable;
-import io.changock.runner.core.builder.configuration.ChangockConfiguration;
 import io.changock.runner.core.event.EventPublisher;
 import io.changock.runner.core.executor.ChangeLogService;
 import io.changock.runner.core.executor.MigrationExecutor;
