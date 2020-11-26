@@ -1,8 +1,14 @@
 package com.github.cloudyrock.spring.v5;
 
+import com.github.cloudyrock.spring.v5.importers.ContextImporter;
+import com.github.cloudyrock.spring.v5.importers.MongoSpringDataImporter;
 import io.changock.migration.api.exception.ChangockException;
 import org.springframework.context.annotation.ImportSelector;
 import org.springframework.core.type.AnnotationMetadata;
+
+import java.util.Arrays;
+import java.util.List;
+import java.util.Objects;
 
 public class MongockCoreContextSelector implements ImportSelector {
 
@@ -13,36 +19,18 @@ public class MongockCoreContextSelector implements ImportSelector {
       "\n\t- 'mongodb-springdata-v3-driver' for springdata 3" +
       "\n\t- 'mongodb-springdata-v2-driver' for springdata 2";
 
-
+  private final List<ContextImporter> contextImporters = Arrays.asList(
+    new MongoSpringDataImporter()
+  );
 
 
   @Override
   public String[] selectImports(AnnotationMetadata importingClassMetadata) {
-    try {
-      return loadSpringDataContextV3();
-    } catch (ClassNotFoundException e) {
-      try {
-        return loadSpringDataContextV2();
-      } catch (ClassNotFoundException e2) {
-        throw new ChangockException(String.format("\n\n%s\n\n", DRIVER_NOT_FOUND_ERROR));
-
-      }
-    }
+    return contextImporters.stream()
+        .map(ContextImporter::getPaths)
+        .filter(Objects::nonNull)
+        .findFirst()
+        .orElseThrow(() ->  new ChangockException(String.format("\n\n%s\n\n", DRIVER_NOT_FOUND_ERROR)));
   }
 
-  private String[] loadSpringDataContextV2() throws ClassNotFoundException {
-    Class.forName("com.github.cloudyrock.mongock.driver.mongodb.springdata.v2.SpringDataMongo2Driver");
-    return new String[]{
-        "com.github.cloudyrock.mongock.driver.mongodb.springdata.v2.MongockSpringDataV3Configuration",
-        "com.github.cloudyrock.mongock.driver.mongodb.springdata.v2.MongockSpringDataV2Context"
-    };
-  }
-
-  private String[] loadSpringDataContextV3() throws ClassNotFoundException {
-    Class.forName("com.github.cloudyrock.mongock.driver.mongodb.springdata.v3.SpringDataMongo3Driver");
-    return new String[]{
-        "com.github.cloudyrock.mongock.driver.mongodb.springdata.v3.MongockSpringDataV3Configuration",
-        "com.github.cloudyrock.mongock.driver.mongodb.springdata.v3.MongockSpringDataV3Context"
-    };
-  }
 }

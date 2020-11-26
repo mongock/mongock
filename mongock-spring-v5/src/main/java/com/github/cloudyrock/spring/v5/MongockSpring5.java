@@ -11,6 +11,10 @@ import io.changock.runner.spring.v5.SpringInitializingBean;
 import io.changock.runner.spring.v5.core.ProfiledChangeLogService;
 import io.changock.runner.spring.v5.core.SpringMigrationExecutor;
 
+/**
+ * Deprecated. Use ChangockSpring5 instead.
+ */
+@Deprecated
 public class MongockSpring5 {
   public static DriverBuilderConfigurable<Builder, ConnectionDriver, ChangockSpringConfiguration> builder() {
     return new Builder();
