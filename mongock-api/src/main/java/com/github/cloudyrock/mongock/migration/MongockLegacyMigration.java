@@ -3,6 +3,7 @@ package com.github.cloudyrock.mongock.migration;
 
 import io.changock.migration.api.config.LegacyMigration;
 import io.changock.migration.api.config.LegacyMigrationMappingFields;
+import org.apache.commons.lang3.StringUtils;
 
 public class MongockLegacyMigration extends LegacyMigration {
 

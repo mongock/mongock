@@ -1,7 +1,7 @@
 package com.github.cloudyrock.spring.v5;
 
 import com.github.cloudyrock.mongock.MongockAnnotationProcessor;
-import com.github.cloudyrock.mongock.MongockConnectionDriver;
+import com.github.cloudyrock.mongock.config.MongockConfiguration;
 import io.changock.driver.api.driver.ConnectionDriver;
 import io.changock.runner.core.builder.DriverBuilderConfigurable;
 import io.changock.runner.spring.util.SpringEventPublisher;

@@ -1,5 +1,6 @@
 package com.github.cloudyrock.spring.v5;
 
+import com.github.cloudyrock.mongock.config.MongockConfiguration;
 import org.springframework.context.annotation.Import;
 
 import java.lang.annotation.Documented;
