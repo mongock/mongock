@@ -1,7 +1,6 @@
-package com.github.cloudyrock.mongock.driver.mongodb.springdata.v2;
+package com.github.cloudyrock.mongock.driver.mongodb.springdata.v3;
 
-import com.github.cloudyrock.mongock.config.MongockSpringConfiguration;
-
+import com.github.cloudyrock.mongock.config.MongockSpringConfigurationBase;
 import com.github.cloudyrock.mongock.migration.MongockLegacyMigration;
 import io.changock.migration.api.config.LegacyMigrationMappingFields;
 import org.apache.commons.lang3.StringUtils;
@@ -11,7 +10,7 @@ import org.springframework.context.annotation.Configuration;
 
 @Configuration
 @ConfigurationProperties("mongock")
-public class MongockSpringDataV2Configuration extends MongockSpringConfiguration {
+public class MongockSpringDataV3Configuration extends MongockSpringConfigurationBase {
 
   public final static String DEFAULT_CHANGELOG_COLLECTION_NAME = "mongockChangeLog";
   public final static String DEFAULT_LOCK_COLLECTION_NAME = "mongockLock";
@@ -70,7 +69,7 @@ public class MongockSpringDataV2Configuration extends MongockSpringConfiguration
     this.legacyMigration = legacyMigration;
   }
 
-  public static boolean isLegacyMigrationValid(MongockSpringDataV2Configuration config) {
+  public static boolean isLegacyMigrationValid(MongockSpringDataV3Configuration config) {
     return config.getLegacyMigration() == null
         || StringUtils.isEmpty(config.getLegacyMigration().getCollectionName())
         || config.getLegacyMigration().getMappingFields() == null

@@ -1,16 +1,8 @@
 package com.github.cloudyrock.mongock.config;
 
-import com.github.cloudyrock.mongock.migration.MongockLegacyMigration;
 import io.changock.migration.api.config.ChangockSpringConfiguration;
-import io.changock.migration.api.config.LegacyMigrationMappingFields;
-import org.apache.commons.lang3.StringUtils;
-//import org.springframework.boot.context.properties.ConfigurationProperties;
-//import org.springframework.context.annotation.Configuration;
-//
-//
-//@Configuration
-//@ConfigurationProperties("mongock")
-public abstract class MongockSpringConfiguration extends ChangockSpringConfiguration {
+
+public abstract class MongockSpringConfigurationBase extends ChangockSpringConfiguration {
 
   public final static String DEFAULT_CHANGELOG_COLLECTION_NAME = "mongockChangeLog";
   public final static String DEFAULT_LOCK_COLLECTION_NAME = "mongockLock";
@@ -56,33 +48,4 @@ public abstract class MongockSpringConfiguration extends ChangockSpringConfigura
   }
 
 
-
-
-//  private MongockLegacyMigrationConfig legacyMigration = null;
-//  @Override
-//  @SuppressWarnings("unchecked")
-//  public MongockLegacyMigrationConfig getLegacyMigration() {
-//    return legacyMigration;
-//  }
-//
-//  public void setLegacyMigration(MongockLegacyMigrationConfig legacyMigration) {
-//    this.legacyMigration = legacyMigration;
-//  }
-//
-//  public static boolean isLegacyMigrationValid(MongockConfiguration config) {
-//    return config.getLegacyMigration() == null
-//        || StringUtils.isEmpty(config.getLegacyMigration().getCollectionName())
-//        || config.getLegacyMigration().getMappingFields() == null
-//        || StringUtils.isEmpty(config.getLegacyMigration().getMappingFields().getChangeId())
-//        || StringUtils.isEmpty(config.getLegacyMigration().getMappingFields().getAuthor());
-//  }
-//
-//  public static class MongockLegacyMigrationConfig extends MongockLegacyMigration {
-//
-//    @Override
-//    @ConfigurationProperties("mongock.legacy-migration.mapping-fields")
-//    public LegacyMigrationMappingFields getMappingFields() {
-//      return super.getMappingFields();
-//    }
-//  }
 }

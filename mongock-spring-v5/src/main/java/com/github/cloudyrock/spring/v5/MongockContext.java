@@ -1,7 +1,7 @@
 package com.github.cloudyrock.spring.v5;
 
-import com.github.cloudyrock.mongock.config.MongockConfiguration;
 import io.changock.driver.api.driver.ConnectionDriver;
+import io.changock.migration.api.config.ChangockSpringConfiguration;
 import io.changock.runner.spring.v5.SpringApplicationRunner;
 import io.changock.runner.spring.v5.SpringInitializingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
@@ -18,31 +18,31 @@ public class MongockContext {
   @Bean
   @ConditionalOnProperty(value = "mongock.runner-type", matchIfMissing = true, havingValue = "ApplicationRunner")
   public SpringApplicationRunner mongockApplicationRunner(ConnectionDriver mongockConnectionDriver,
-                                                          MongockConfiguration mongockConfiguration,
+                                                          ChangockSpringConfiguration mongockSpringConfiguration,
                                                           ApplicationContext springContext,
                                                           ApplicationEventPublisher applicationEventPublisher) {
-    return mongockBuilder(mongockConnectionDriver, mongockConfiguration, springContext, applicationEventPublisher)
+    return mongockBuilder(mongockConnectionDriver, mongockSpringConfiguration, springContext, applicationEventPublisher)
         .buildApplicationRunner();
   }
 
   @Bean
   @ConditionalOnProperty(value = "mongock.runner-type", havingValue = "InitializingBean")
   public SpringInitializingBean mongockInitializingBeanRunner(ConnectionDriver mongockConnectionDriver,
-                                                              MongockConfiguration mongockConfiguration,
+                                                              ChangockSpringConfiguration mongockSpringConfiguration,
                                                               ApplicationContext springContext,
                                                               ApplicationEventPublisher applicationEventPublisher) {
-    return mongockBuilder(mongockConnectionDriver, mongockConfiguration, springContext, applicationEventPublisher)
+    return mongockBuilder(mongockConnectionDriver, mongockSpringConfiguration, springContext, applicationEventPublisher)
         .buildInitializingBeanRunner();
   }
 
 
   private MongockSpring5.Builder mongockBuilder(ConnectionDriver mongockConnectionDriver,
-                                               MongockConfiguration mongockConfiguration,
+                                                ChangockSpringConfiguration mongockSpringConfiguration,
                                                ApplicationContext springContext,
                                                ApplicationEventPublisher applicationEventPublisher) {
     return MongockSpring5.builder()
         .setDriver(mongockConnectionDriver)
-        .setConfig(mongockConfiguration)
+        .setConfig(mongockSpringConfiguration)
         .setSpringContext(springContext)
         .setEventPublisher(applicationEventPublisher);
   }

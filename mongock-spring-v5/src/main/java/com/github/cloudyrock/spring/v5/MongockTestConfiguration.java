@@ -1,6 +1,5 @@
 package com.github.cloudyrock.spring.v5;
 
-import com.github.cloudyrock.mongock.config.MongockConfiguration;
 import org.springframework.context.annotation.Import;
 
 import java.lang.annotation.Documented;
@@ -12,6 +11,6 @@ import java.lang.annotation.Target;
 @Documented
 @Target(ElementType.TYPE)
 @Retention(RetentionPolicy.RUNTIME)
-@Import({MongockConfiguration.class, MongockTestContext.class})
+@Import({MongockTestContext.class})
 public @interface MongockTestConfiguration {
 }
