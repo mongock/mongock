@@ -1,5 +1,6 @@
 package com.github.cloudyrock.spring.v5;
 
+import com.github.cloudyrock.mongock.MongockAnnotationProcessor;
 import io.changock.driver.api.driver.ConnectionDriver;
 import io.changock.migration.api.config.ChangockSpringConfiguration;
 import io.changock.runner.spring.v5.ChangockSpring5;
@@ -44,6 +45,7 @@ public class MongockContext {
     return ChangockSpring5.builder()
         .setDriver(mongockConnectionDriver)
         .setConfig(mongockSpringConfiguration)
+        .overrideAnnoatationProcessor(new MongockAnnotationProcessor())
         .setSpringContext(springContext)
         .setEventPublisher(applicationEventPublisher);
   }

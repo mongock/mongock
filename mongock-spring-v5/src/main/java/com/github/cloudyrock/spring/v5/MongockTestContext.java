@@ -1,6 +1,5 @@
 package com.github.cloudyrock.spring.v5;
 
-import com.github.cloudyrock.mongock.MongockConnectionDriver;
 import io.changock.driver.api.driver.ConnectionDriver;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
@@ -13,7 +12,7 @@ public class MongockTestContext {
 
 
   @Bean
-  public MongockTestDriverInitializingBean mongockTestDriverInitializingBean(MongockConnectionDriver connectionDriver) {
+  public MongockTestDriverInitializingBean mongockTestDriverInitializingBean(ConnectionDriver connectionDriver) {
     return new MongockTestDriverInitializingBean(connectionDriver);
   }
 
