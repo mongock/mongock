@@ -1,7 +1,8 @@
 package com.github.cloudyrock.mongock.migration;
 
-import io.changock.runner.core.builder.configuration.LegacyMigration;
-import io.changock.runner.core.builder.configuration.LegacyMigrationMappingFields;
+
+import io.changock.migration.api.config.LegacyMigration;
+import io.changock.migration.api.config.LegacyMigrationMappingFields;
 
 public class MongockLegacyMigration extends LegacyMigration {
 

@@ -1,8 +1,8 @@
 package com.github.cloudyrock.spring.v5;
 
 import com.github.cloudyrock.mongock.migration.MongockLegacyMigration;
-import io.changock.runner.core.builder.configuration.LegacyMigrationMappingFields;
-import io.changock.runner.spring.util.config.ChangockSpringConfiguration;
+import io.changock.migration.api.config.ChangockSpringConfiguration;
+import io.changock.migration.api.config.LegacyMigrationMappingFields;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.util.StringUtils;
