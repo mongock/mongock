@@ -4,12 +4,12 @@ import com.github.cloudyrock.mongock.migration.MongockLegacyMigration;
 import io.changock.migration.api.config.ChangockSpringConfiguration;
 import io.changock.migration.api.config.LegacyMigrationMappingFields;
 import org.apache.commons.lang3.StringUtils;
-//import org.springframework.boot.context.properties.ConfigurationProperties;
-//import org.springframework.context.annotation.Configuration;
+import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.context.annotation.Configuration;
 
 
-//@Configuration
-//@ConfigurationProperties("mongock")
+@Configuration
+@ConfigurationProperties("mongock")
 public class MongockConfiguration extends ChangockSpringConfiguration {
 
   public final static String DEFAULT_CHANGELOG_COLLECTION_NAME = "mongockChangeLog";
@@ -78,7 +78,7 @@ public class MongockConfiguration extends ChangockSpringConfiguration {
   public static class MongockLegacyMigrationConfig extends MongockLegacyMigration {
 
     @Override
-//    @ConfigurationProperties("mongock.legacy-migration.mapping-fields")
+    @ConfigurationProperties("mongock.legacy-migration.mapping-fields")
     public LegacyMigrationMappingFields getMappingFields() {
       return super.getMappingFields();
     }

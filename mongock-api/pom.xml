@@ -30,6 +30,14 @@
       <groupId>com.github.cloudyrock.changock</groupId>
       <artifactId>changock-driver-api</artifactId>
     </dependency>
+
+    <dependency>
+      <groupId>org.springframework</groupId>
+      <artifactId>spring-beans</artifactId>
+      <version>${spring.v5.version}</version>
+    </dependency>
+
+
   </dependencies>
 
 </project>
