@@ -7,15 +7,10 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Configuration;
 
-/**
- * Deprecated use of properties prefixed with "mongock". Use prefix "changock" instead
- *
- * @see SpringDataMongoV3Configuration
- */
-@Deprecated
+
 @Configuration
-@ConfigurationProperties("mongock")
-public class MongockSpringDataV3Configuration extends MongockSpringConfigurationBase {
+@ConfigurationProperties("changock")
+public class SpringDataMongoV3Configuration extends MongockSpringConfigurationBase {
 
   public final static String DEFAULT_CHANGELOG_COLLECTION_NAME = "mongockChangeLog";
   public final static String DEFAULT_LOCK_COLLECTION_NAME = "mongockLock";
@@ -74,7 +69,7 @@ public class MongockSpringDataV3Configuration extends MongockSpringConfiguration
     this.legacyMigration = legacyMigration;
   }
 
-  public static boolean isLegacyMigrationValid(MongockSpringDataV3Configuration config) {
+  public static boolean isLegacyMigrationValid(SpringDataMongoV3Configuration config) {
     return config.getLegacyMigration() == null
         || StringUtils.isEmpty(config.getLegacyMigration().getCollectionName())
         || config.getLegacyMigration().getMappingFields() == null

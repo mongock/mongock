@@ -1,6 +1,7 @@
 package com.github.cloudyrock.mongock.driver.mongodb.springdata.v3;
 
 import io.changock.driver.api.driver.ConnectionDriver;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnExpression;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -10,7 +11,7 @@ import org.springframework.data.mongodb.core.MongoTemplate;
 import java.util.Optional;
 
 @Configuration
-@ConditionalOnProperty(prefix = "mongock", name = "enabled", matchIfMissing = true, havingValue = "true")
+@ConditionalOnExpression("${mongock.enabled:true} && ${changock.enabled:true}")
 public class MongockSpringDataV3Context {
 
   @Bean
