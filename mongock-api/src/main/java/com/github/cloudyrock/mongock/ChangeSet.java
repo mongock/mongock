@@ -6,18 +6,19 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * Set of changes to be added to the DB. Many changesets are included in one changelog.
+ * Set of changes to be added to the DB. Many changeSets are included in one changelog.
+ *  * Deprecated, please use @ChangeSet from Changock
  *
- *
- * @see ChangeLog
+ * @see io.changock.migration.api.annotations.ChangeSet
  * @since 27/07/2014
  */
 @Target(ElementType.METHOD)
 @Retention(RetentionPolicy.RUNTIME)
+@Deprecated
 public @interface ChangeSet {
 
   /**
-   * Author of the changeset.
+   * Author of the changeSet.
    * Obligatory
    *
    * @return author
@@ -25,7 +26,7 @@ public @interface ChangeSet {
   String author();  // must be set
 
   /**
-   * Unique ID of the changeset.
+   * Unique ID of the changeSet.
    * Obligatory
    *
    * @return unique id
