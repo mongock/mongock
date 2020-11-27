@@ -3,7 +3,7 @@
   <parent>
     <artifactId>drivers</artifactId>
     <groupId>com.github.cloudyrock.mongock</groupId>
-    <version>4.2.5.BETA-SNAPSHOT</version>
+    <version>4.2.6.BETA-SNAPSHOT</version>
   </parent>
   <modelVersion>4.0.0</modelVersion>
 
@@ -51,6 +51,11 @@
     <dependency>
       <groupId>org.springframework.boot</groupId>
       <artifactId>spring-boot-autoconfigure</artifactId>
+      <version>${springboot.v2.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-configuration-processor</artifactId>
       <version>${springboot.v2.version}</version>
     </dependency>
 
