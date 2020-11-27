@@ -2,7 +2,7 @@ package com.github.cloudyrock.mongock.driver.mongodb.springdata.v2;
 
 import com.github.cloudyrock.mongock.config.MongockSpringConfigurationBase;
 
-import com.github.cloudyrock.mongock.migration.MongockLegacyMigration;
+import com.github.cloudyrock.mongock.migration.MongoDbLegacyMigration;
 import io.changock.migration.api.config.LegacyMigrationMappingFields;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.boot.context.properties.ConfigurationProperties;
@@ -78,7 +78,7 @@ public class MongockSpringDataV2Configuration extends MongockSpringConfiguration
         || StringUtils.isEmpty(config.getLegacyMigration().getMappingFields().getAuthor());
   }
 
-  public static class MongockLegacyMigrationConfig extends MongockLegacyMigration {
+  public static class MongockLegacyMigrationConfig extends MongoDbLegacyMigration {
 
     @Override
     @ConfigurationProperties("mongock.legacy-migration.mapping-fields")

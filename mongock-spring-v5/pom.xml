@@ -20,13 +20,6 @@
 
   <dependencies>
 
-    <!-- TODO remove mongock-api dependency -->
-    <dependency>
-      <groupId>com.github.cloudyrock.mongock</groupId>
-      <artifactId>mongock-api</artifactId>
-      <version>${project.version}</version>
-    </dependency>
-
     <dependency>
       <groupId>com.github.cloudyrock.changock</groupId>
       <artifactId>changock-spring-v5-runner</artifactId>
@@ -35,46 +28,11 @@
 
     <!-- SPRING GENERAL-->
     <dependency>
-      <groupId>org.springframework</groupId>
-      <artifactId>spring-beans</artifactId>
-      <version>${spring.v5.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>org.springframework</groupId>
-      <artifactId>spring-context</artifactId>
-      <version>${spring.v5.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>org.springframework.boot</groupId>
-      <artifactId>spring-boot</artifactId>
-      <version>${springboot.v2.version}</version>
-    </dependency>
-    <dependency>
       <groupId>org.springframework.boot</groupId>
       <artifactId>spring-boot-autoconfigure</artifactId>
       <version>${springboot.v2.version}</version>
     </dependency>
 
-    <!-- TEST -->
-    <dependency>
-      <groupId>junit</groupId>
-      <artifactId>junit</artifactId>
-      <version>4.13.1</version>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.mockito</groupId>
-      <artifactId>mockito-all</artifactId>
-      <version>1.10.19</version>
-      <scope>test</scope>
-    </dependency>
-
-    <dependency>
-      <groupId>org.testcontainers</groupId>
-      <artifactId>testcontainers</artifactId>
-      <version>1.15.0</version>
-      <scope>test</scope>
-    </dependency>
 
   </dependencies>
 

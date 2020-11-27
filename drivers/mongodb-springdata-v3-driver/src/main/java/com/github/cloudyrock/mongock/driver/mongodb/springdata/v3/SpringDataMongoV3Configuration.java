@@ -1,7 +1,7 @@
 package com.github.cloudyrock.mongock.driver.mongodb.springdata.v3;
 
 import com.github.cloudyrock.mongock.config.MongockSpringConfigurationBase;
-import com.github.cloudyrock.mongock.migration.MongockLegacyMigration;
+import com.github.cloudyrock.mongock.migration.MongoDbLegacyMigration;
 import io.changock.migration.api.config.LegacyMigrationMappingFields;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.boot.context.properties.ConfigurationProperties;
@@ -58,15 +58,26 @@ public class SpringDataMongoV3Configuration extends MongockSpringConfigurationBa
 
 
 
-  private MongockLegacyMigrationConfig legacyMigration = null;
+  private LegacyMigrationConfig legacyMigration = null;
   @Override
   @SuppressWarnings("unchecked")
-  public MongockLegacyMigrationConfig getLegacyMigration() {
+  public MongoDbLegacyMigration getLegacyMigration() {
     return legacyMigration;
   }
 
-  public void setLegacyMigration(MongockLegacyMigrationConfig legacyMigration) {
+  public void setLegacyMigration(LegacyMigrationConfig legacyMigration) {
     this.legacyMigration = legacyMigration;
+  }
+
+
+
+  public static class LegacyMigrationConfig extends MongoDbLegacyMigration {
+
+    @Override
+    @ConfigurationProperties("changock.legacy-migration.mapping-fields")
+    public LegacyMigrationMappingFields getMappingFields() {
+      return super.getMappingFields();
+    }
   }
 
   public static boolean isLegacyMigrationValid(SpringDataMongoV3Configuration config) {
@@ -75,14 +86,5 @@ public class SpringDataMongoV3Configuration extends MongockSpringConfigurationBa
         || config.getLegacyMigration().getMappingFields() == null
         || StringUtils.isEmpty(config.getLegacyMigration().getMappingFields().getChangeId())
         || StringUtils.isEmpty(config.getLegacyMigration().getMappingFields().getAuthor());
-  }
-
-  public static class MongockLegacyMigrationConfig extends MongockLegacyMigration {
-
-    @Override
-    @ConfigurationProperties("mongock.legacy-migration.mapping-fields")
-    public LegacyMigrationMappingFields getMappingFields() {
-      return super.getMappingFields();
-    }
   }
 }

@@ -5,20 +5,20 @@ import io.changock.migration.api.config.LegacyMigration;
 import io.changock.migration.api.config.LegacyMigrationMappingFields;
 
 
-public class MongockLegacyMigration extends LegacyMigration {
+public class MongoDbLegacyMigration extends LegacyMigration {
 
   private String collectionName;
 
   private boolean failFast = true;
 
-  public MongockLegacyMigration() {
+  public MongoDbLegacyMigration() {
   }
 
-  public MongockLegacyMigration(String collectionName) {
+  public MongoDbLegacyMigration(String collectionName) {
     this.collectionName = collectionName;
   }
 
-  public MongockLegacyMigration(String collectionName,
+  public MongoDbLegacyMigration(String collectionName,
                                 boolean failFast,
                                 String changeId,
                                 String author,
@@ -30,7 +30,7 @@ public class MongockLegacyMigration extends LegacyMigration {
     this.failFast = failFast;
   }
 
-  public MongockLegacyMigration(String collectionName,
+  public MongoDbLegacyMigration(String collectionName,
                                 boolean failFast,
                                 String changeId,
                                 String author,

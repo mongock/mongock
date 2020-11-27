@@ -1,7 +1,6 @@
 package com.github.cloudyrock.mongock.driver.mongodb.springdata.v3;
 
-import com.github.cloudyrock.mongock.config.MongockSpringConfigurationBase;
-import com.github.cloudyrock.mongock.migration.MongockLegacyMigration;
+import com.github.cloudyrock.mongock.migration.MongoDbLegacyMigration;
 import io.changock.migration.api.config.LegacyMigrationMappingFields;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.boot.context.properties.ConfigurationProperties;
@@ -15,7 +14,7 @@ import org.springframework.context.annotation.Configuration;
 @Deprecated
 @Configuration
 @ConfigurationProperties("mongock")
-public class MongockSpringDataV3Configuration extends MongockSpringConfigurationBase {
+public class MongockSpringDataV3Configuration extends SpringDataMongoV3Configuration {
 
   public final static String DEFAULT_CHANGELOG_COLLECTION_NAME = "mongockChangeLog";
   public final static String DEFAULT_LOCK_COLLECTION_NAME = "mongockLock";
@@ -66,7 +65,7 @@ public class MongockSpringDataV3Configuration extends MongockSpringConfiguration
   private MongockLegacyMigrationConfig legacyMigration = null;
   @Override
   @SuppressWarnings("unchecked")
-  public MongockLegacyMigrationConfig getLegacyMigration() {
+  public MongoDbLegacyMigration getLegacyMigration() {
     return legacyMigration;
   }
 
@@ -74,20 +73,23 @@ public class MongockSpringDataV3Configuration extends MongockSpringConfiguration
     this.legacyMigration = legacyMigration;
   }
 
-  public static boolean isLegacyMigrationValid(MongockSpringDataV3Configuration config) {
-    return config.getLegacyMigration() == null
-        || StringUtils.isEmpty(config.getLegacyMigration().getCollectionName())
-        || config.getLegacyMigration().getMappingFields() == null
-        || StringUtils.isEmpty(config.getLegacyMigration().getMappingFields().getChangeId())
-        || StringUtils.isEmpty(config.getLegacyMigration().getMappingFields().getAuthor());
-  }
-
-  public static class MongockLegacyMigrationConfig extends MongockLegacyMigration {
+  public static class MongockLegacyMigrationConfig extends MongoDbLegacyMigration {
 
     @Override
     @ConfigurationProperties("mongock.legacy-migration.mapping-fields")
     public LegacyMigrationMappingFields getMappingFields() {
       return super.getMappingFields();
     }
+  }
+
+
+
+
+  public static boolean isLegacyMigrationValid(MongockSpringDataV3Configuration config) {
+    return config.getLegacyMigration() == null
+        || StringUtils.isEmpty(config.getLegacyMigration().getCollectionName())
+        || config.getLegacyMigration().getMappingFields() == null
+        || StringUtils.isEmpty(config.getLegacyMigration().getMappingFields().getChangeId())
+        || StringUtils.isEmpty(config.getLegacyMigration().getMappingFields().getAuthor());
   }
 }
