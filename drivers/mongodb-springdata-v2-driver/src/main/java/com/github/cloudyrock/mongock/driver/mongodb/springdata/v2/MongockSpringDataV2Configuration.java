@@ -1,17 +1,20 @@
 package com.github.cloudyrock.mongock.driver.mongodb.springdata.v2;
 
-import com.github.cloudyrock.mongock.config.MongockSpringConfigurationBase;
-
 import com.github.cloudyrock.mongock.migration.MongoDbLegacyMigration;
 import io.changock.migration.api.config.LegacyMigrationMappingFields;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Configuration;
 
-
+/**
+ * Deprecated use of properties prefixed with "mongock". Use prefix "changock" instead
+ *
+ * @see SpringDataMongoV2Configuration
+ */
+@Deprecated
 @Configuration
 @ConfigurationProperties("mongock")
-public class MongockSpringDataV2Configuration extends MongockSpringConfigurationBase {
+public class MongockSpringDataV2Configuration extends SpringDataMongoV2Configuration {
 
   public final static String DEFAULT_CHANGELOG_COLLECTION_NAME = "mongockChangeLog";
   public final static String DEFAULT_LOCK_COLLECTION_NAME = "mongockLock";
@@ -57,12 +60,11 @@ public class MongockSpringDataV2Configuration extends MongockSpringConfiguration
   }
 
 
-
-
   private MongockLegacyMigrationConfig legacyMigration = null;
+
   @Override
   @SuppressWarnings("unchecked")
-  public MongockLegacyMigrationConfig getLegacyMigration() {
+  public MongoDbLegacyMigration getLegacyMigration() {
     return legacyMigration;
   }
 

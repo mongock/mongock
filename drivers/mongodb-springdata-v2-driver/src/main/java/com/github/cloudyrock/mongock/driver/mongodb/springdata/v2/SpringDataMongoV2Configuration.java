@@ -1,4 +1,4 @@
-package com.github.cloudyrock.mongock.driver.mongodb.springdata.v3;
+package com.github.cloudyrock.mongock.driver.mongodb.springdata.v2;
 
 import com.github.cloudyrock.mongock.config.MongockSpringConfigurationBase;
 import com.github.cloudyrock.mongock.migration.MongoDbLegacyMigration;
@@ -10,7 +10,7 @@ import org.springframework.context.annotation.Configuration;
 
 @Configuration
 @ConfigurationProperties("changock")
-public class SpringDataMongoV3Configuration extends MongockSpringConfigurationBase {
+public class SpringDataMongoV2Configuration extends MongockSpringConfigurationBase {
 
   public final static String DEFAULT_CHANGELOG_COLLECTION_NAME = "mongockChangeLog";
   public final static String DEFAULT_LOCK_COLLECTION_NAME = "mongockLock";
@@ -30,11 +30,6 @@ public class SpringDataMongoV3Configuration extends MongockSpringConfigurationBa
    * created, failing otherwise. Default true
    */
   private boolean indexCreation = true;
-
-
-  private LegacyMigrationConfig legacyMigration = null;
-
-
 
   public String getChangeLogCollectionName() {
     return changeLogCollectionName;
@@ -60,6 +55,9 @@ public class SpringDataMongoV3Configuration extends MongockSpringConfigurationBa
     this.indexCreation = indexCreation;
   }
 
+
+  private LegacyMigrationConfig legacyMigration = null;
+
   @Override
   @SuppressWarnings("unchecked")
   public MongoDbLegacyMigration getLegacyMigration() {
@@ -70,8 +68,6 @@ public class SpringDataMongoV3Configuration extends MongockSpringConfigurationBa
     this.legacyMigration = legacyMigration;
   }
 
-
-
   public static class LegacyMigrationConfig extends MongoDbLegacyMigration {
 
     @Override
@@ -81,7 +77,8 @@ public class SpringDataMongoV3Configuration extends MongockSpringConfigurationBa
     }
   }
 
-  public static boolean isLegacyMigrationValid(SpringDataMongoV3Configuration config) {
+
+  public static boolean isLegacyMigrationValid(SpringDataMongoV2Configuration config) {
     return config.getLegacyMigration() == null
         || StringUtils.isEmpty(config.getLegacyMigration().getCollectionName())
         || config.getLegacyMigration().getMappingFields() == null

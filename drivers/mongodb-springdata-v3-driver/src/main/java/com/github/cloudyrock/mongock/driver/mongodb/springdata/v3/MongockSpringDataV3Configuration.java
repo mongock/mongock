@@ -35,6 +35,10 @@ public class MongockSpringDataV3Configuration extends SpringDataMongoV3Configura
    */
   private boolean indexCreation = true;
 
+
+  private MongockLegacyMigrationConfig legacyMigration = null;
+
+
   public String getChangeLogCollectionName() {
     return changeLogCollectionName;
   }
@@ -62,7 +66,6 @@ public class MongockSpringDataV3Configuration extends SpringDataMongoV3Configura
 
 
 
-  private MongockLegacyMigrationConfig legacyMigration = null;
   @Override
   @SuppressWarnings("unchecked")
   public MongoDbLegacyMigration getLegacyMigration() {
