@@ -1,6 +1,6 @@
 package com.github.cloudyrock.mongock.driver.mongodb.v3.changelogs;
 
-import com.github.cloudyrock.mongock.migration.MongockLegacyMigration;
+import com.github.cloudyrock.mongock.migration.MongoDbLegacyMigration;
 import com.mongodb.client.FindIterable;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
@@ -9,8 +9,8 @@ import io.changock.driver.api.entry.ChangeEntryService;
 import io.changock.driver.api.entry.ChangeState;
 import io.changock.migration.api.annotations.NonLockGuarded;
 import io.changock.migration.api.annotations.NonLockGuardedType;
+import io.changock.migration.api.config.LegacyMigrationMappingFields;
 import io.changock.migration.api.exception.ChangockException;
-import io.changock.runner.core.builder.configuration.LegacyMigrationMappingFields;
 import org.bson.Document;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -30,7 +30,7 @@ public class LegacyService {
   private final static Logger logger = LoggerFactory.getLogger(LegacyService.class);
 
   public void executeMigration(@NonLockGuarded(NonLockGuardedType.NONE)
-                               @Named("legacy-migration") MongockLegacyMigration legacyMigration,
+                               @Named("legacy-migration") MongoDbLegacyMigration legacyMigration,
                                MongoDatabase mongoDatabase,
                                ChangeEntryService<ChangeEntry> changeEntryService) {
     int changesMigrated = 0;
@@ -69,7 +69,7 @@ public class LegacyService {
     logger.warn(ex.getMessage());
   }
 
-  private List<ChangeEntry> getOriginalMigrationAsChangeEntryList(MongoCollection<Document> originalCollection, MongockLegacyMigration legacyMigration) {
+  private List<ChangeEntry> getOriginalMigrationAsChangeEntryList(MongoCollection<Document> originalCollection, MongoDbLegacyMigration legacyMigration) {
 
     List<ChangeEntry> originalMigrations = new ArrayList<>();
     LegacyMigrationMappingFields mappingFields = legacyMigration.getMappingFields();
@@ -117,7 +117,7 @@ public class LegacyService {
     return String.format("%s-%s-%d", "legacy_migration", LocalDateTime.now().toString(), new Random().nextInt(999));
   }
 
-  private void validateLegacyMigration(MongockLegacyMigration legacyMigration) {
+  private void validateLegacyMigration(MongoDbLegacyMigration legacyMigration) {
     if (legacyMigration == null
         || isEmpty(legacyMigration.getCollectionName())
         || legacyMigration.getMappingFields() == null

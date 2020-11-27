@@ -1,7 +1,7 @@
-package com.github.cloudyrock.mongock.driver.mongodb.springdata.v2;
+package com.github.cloudyrock.mongock.driver.mongodb.springdata.v3;
 
-import com.github.cloudyrock.mongock.driver.mongodb.springdata.v2.decorator.impl.MongockTemplate;
-import com.github.cloudyrock.mongock.driver.mongodb.v3.driver.MongoCore3Driver;
+import com.github.cloudyrock.mongock.driver.mongodb.springdata.v3.decorator.impl.MongockTemplate;
+import com.github.cloudyrock.mongock.driver.mongodb.sync.v4.driver.MongoSync4Driver;
 import io.changock.driver.api.driver.ChangeSetDependency;
 import io.changock.driver.api.driver.ForbiddenParametersMap;
 import io.changock.driver.api.driver.TransactionStrategy;
@@ -20,10 +20,11 @@ import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.DefaultTransactionDefinition;
 
 @NotThreadSafe
-public class SpringDataMongo2Driver extends MongoCore3Driver {
+public class SpringDataMongoV3Driver extends MongoSync4Driver {
 
-  private static final Logger logger = LoggerFactory.getLogger(SpringDataMongo2Driver.class);
+  private static final Logger logger = LoggerFactory.getLogger(SpringDataMongoV3Driver.class);
   private static final ForbiddenParametersMap FORBIDDEN_PARAMETERS_MAP;
+
 
   static {
     FORBIDDEN_PARAMETERS_MAP = new ForbiddenParametersMap();
@@ -32,22 +33,23 @@ public class SpringDataMongo2Driver extends MongoCore3Driver {
 
   private final MongoTemplate mongoTemplate;
   private MongoTransactionManager txManager;
+  private TransactionStrategy transactionStrategy = TransactionStrategy.NONE;
 
-  public static SpringDataMongo2Driver withDefaultLock(MongoTemplate mongoTemplate) {
-    return new SpringDataMongo2Driver(mongoTemplate, 3L, 4L, 3);
+  public static SpringDataMongoV3Driver withDefaultLock(MongoTemplate mongoTemplate) {
+    return new SpringDataMongoV3Driver(mongoTemplate, 3L, 4L, 3);
   }
 
-  public static SpringDataMongo2Driver withLockSetting(MongoTemplate mongoTemplate,
-                                                       long lockAcquiredForMinutes,
-                                                       long maxWaitingForLockMinutes,
-                                                       int maxTries) {
-    return new SpringDataMongo2Driver(mongoTemplate, lockAcquiredForMinutes, maxWaitingForLockMinutes, maxTries);
+  public static SpringDataMongoV3Driver withLockSetting(MongoTemplate mongoTemplate,
+                                                        long lockAcquiredForMinutes,
+                                                        long maxWaitingForLockMinutes,
+                                                        int maxTries) {
+    return new SpringDataMongoV3Driver(mongoTemplate, lockAcquiredForMinutes, maxWaitingForLockMinutes, maxTries);
   }
 
-  protected SpringDataMongo2Driver(MongoTemplate mongoTemplate,
-                                   long lockAcquiredForMinutes,
-                                   long maxWaitingForLockMinutes,
-                                   int maxTries) {
+  protected SpringDataMongoV3Driver(MongoTemplate mongoTemplate,
+                                    long lockAcquiredForMinutes,
+                                    long maxWaitingForLockMinutes,
+                                    int maxTries) {
     super(mongoTemplate.getDb(), lockAcquiredForMinutes, maxWaitingForLockMinutes, maxTries);
     this.mongoTemplate = mongoTemplate;
   }
@@ -55,7 +57,6 @@ public class SpringDataMongo2Driver extends MongoCore3Driver {
   @Override
   public void runValidation() throws ChangockException {
     super.runValidation();
-
     if (this.mongoTemplate == null) {
       throw new ChangockException("MongoTemplate must not be null");
     }
@@ -83,12 +84,13 @@ public class SpringDataMongo2Driver extends MongoCore3Driver {
         .map(instance -> (MongockTemplate) instance)
         .findAny()
         .orElseThrow(() -> new ChangockException("Mongock Driver hasn't been initialized yet"));
+
   }
 
   @Override
   public ChangeEntryService<ChangeEntry> getChangeEntryService() {
     if (changeEntryRepository == null) {
-      this.changeEntryRepository = new SpringDataMongo2ChangeEntryRepository<>(mongoTemplate, changeLogCollectionName, indexCreation);
+      this.changeEntryRepository = new SpringDataMongoV3ChangeEntryRepository<>(mongoTemplate, changeLogCollectionName, indexCreation);
     }
     return changeEntryRepository;
   }
@@ -109,12 +111,19 @@ public class SpringDataMongo2Driver extends MongoCore3Driver {
       logger.warn("Error in Mongock's transaction", ex);
       txManager.rollback(txStatus);
     }
+
   }
 
   private TransactionStatus getTxStatus(MongoTransactionManager txManager) {
     DefaultTransactionDefinition def = new DefaultTransactionDefinition();
+// explicitly setting the transaction name is something that can be done only programmatically
     def.setName("SomeTxName");
     def.setPropagationBehavior(TransactionDefinition.PROPAGATION_REQUIRED);
     return txManager.getTransaction(def);
+  }
+
+  @Override
+  public TransactionStrategy getTransactionStrategy() {
+    return transactionStrategy;
   }
 }

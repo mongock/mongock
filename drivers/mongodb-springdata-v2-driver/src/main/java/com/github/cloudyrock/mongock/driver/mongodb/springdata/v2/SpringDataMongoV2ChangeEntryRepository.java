@@ -7,11 +7,11 @@ import io.changock.migration.api.exception.ChangockException;
 import org.bson.Document;
 import org.springframework.data.mongodb.core.MongoTemplate;
 
-public class SpringDataMongo2ChangeEntryRepository<CHANGE_ENTRY extends ChangeEntry> extends Mongo3ChangeEntryRepository<CHANGE_ENTRY> implements ChangeEntryRepository<CHANGE_ENTRY, Document> {
+public class SpringDataMongoV2ChangeEntryRepository<CHANGE_ENTRY extends ChangeEntry> extends Mongo3ChangeEntryRepository<CHANGE_ENTRY> implements ChangeEntryRepository<CHANGE_ENTRY, Document> {
 
   private final MongoTemplate mongoTemplate;
 
-  public SpringDataMongo2ChangeEntryRepository(MongoTemplate mongoTemplate, String collectionName, boolean indexCreation) {
+  public SpringDataMongoV2ChangeEntryRepository(MongoTemplate mongoTemplate, String collectionName, boolean indexCreation) {
     super(mongoTemplate.getCollection(collectionName), indexCreation);
     this.mongoTemplate = mongoTemplate;
   }

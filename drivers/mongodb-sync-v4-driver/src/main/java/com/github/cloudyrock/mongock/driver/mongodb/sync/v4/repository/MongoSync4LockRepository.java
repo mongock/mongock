@@ -11,6 +11,7 @@ import io.changock.driver.core.lock.LockEntry;
 import io.changock.driver.core.lock.LockPersistenceException;
 import io.changock.driver.core.lock.LockRepository;
 import io.changock.driver.core.lock.LockStatus;
+import org.bson.BsonDocument;
 import org.bson.Document;
 import org.bson.conversions.Bson;
 
@@ -77,6 +78,11 @@ public class MongoSync4LockRepository extends MongoSync4RepositoryBase<LockEntry
    */
   public void removeByKeyAndOwner(String lockKey, String owner) {
     collection.deleteMany(Filters.and(Filters.eq(KEY_FIELD, lockKey), Filters.eq(OWNER_FIELD, owner)));
+  }
+
+  @Override
+  public void deleteAll() {
+    collection.deleteMany(new BsonDocument());
   }
 
   protected void insertUpdate(LockEntry newLock, boolean onlyIfSameOwner)  {

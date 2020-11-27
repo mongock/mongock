@@ -2,7 +2,7 @@ package com.github.cloudyrock.mongock.driver.mongodb.springdata.v3.driver;
 
 
 import com.github.cloudyrock.mongock.driver.mongodb.springdata.v3.SpringData3DriverTestAdapterImpl;
-import com.github.cloudyrock.mongock.driver.mongodb.springdata.v3.SpringDataMongo3Driver;
+import com.github.cloudyrock.mongock.driver.mongodb.springdata.v3.SpringDataMongoV3Driver;
 import com.github.cloudyrock.mongock.driver.mongodb.test.template.MongoDriverITestBase;
 import com.github.cloudyrock.mongock.driver.mongodb.test.template.util.MongoDBDriverTestAdapter;
 import org.springframework.data.mongodb.core.MongoTemplate;
@@ -10,8 +10,8 @@ import org.springframework.data.mongodb.core.MongoTemplate;
 public class SpringDataMongo3DriverITest extends MongoDriverITestBase {
 
   @Override
-  protected SpringDataMongo3Driver getDriverWithTransactionDisabled() {
-    SpringDataMongo3Driver driver = SpringDataMongo3Driver.withDefaultLock(getMongoTemplate());
+  protected SpringDataMongoV3Driver getDriverWithTransactionDisabled() {
+    SpringDataMongoV3Driver driver = SpringDataMongoV3Driver.withDefaultLock(getMongoTemplate());
     driver.setChangeLogCollectionName(CHANGELOG_COLLECTION_NAME);
     return driver;
   }

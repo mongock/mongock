@@ -1,7 +1,8 @@
 package com.github.cloudyrock.spring.v5;
 
 import com.github.cloudyrock.mongock.MongockAnnotationProcessor;
-import com.github.cloudyrock.mongock.MongockConnectionDriver;
+import io.changock.driver.api.driver.ConnectionDriver;
+import io.changock.migration.api.config.ChangockSpringConfiguration;
 import io.changock.runner.core.builder.DriverBuilderConfigurable;
 import io.changock.runner.spring.util.SpringEventPublisher;
 import io.changock.runner.spring.v5.ChangockSpringBuilderBase;
@@ -10,12 +11,16 @@ import io.changock.runner.spring.v5.SpringInitializingBean;
 import io.changock.runner.spring.v5.core.ProfiledChangeLogService;
 import io.changock.runner.spring.v5.core.SpringMigrationExecutor;
 
+/**
+ * Deprecated. Use ChangockSpring5 instead.
+ */
+@Deprecated
 public class MongockSpring5 {
-  public static DriverBuilderConfigurable<Builder, MongockConnectionDriver, MongockConfiguration> builder() {
+  public static DriverBuilderConfigurable<Builder, ConnectionDriver, ChangockSpringConfiguration> builder() {
     return new Builder();
   }
 
-  public static class Builder extends ChangockSpringBuilderBase<Builder, MongockConnectionDriver, MongockConfiguration> {
+  public static class Builder extends ChangockSpringBuilderBase<Builder, ConnectionDriver, ChangockSpringConfiguration> {
 
     private Builder() {
       overrideAnnoatationProcessor(new MongockAnnotationProcessor());
