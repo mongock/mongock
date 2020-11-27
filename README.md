@@ -7,6 +7,7 @@ MongoDB version control tool for Java
 <br />
 <p align="center" >
 
+[![Codacy Badge](https://api.codacy.com/project/badge/Grade/5f9459fc702a4ee389071f77cec97a38)](https://app.codacy.com/gh/cloudyrock/mongock?utm_source=github.com&utm_medium=referral&utm_content=cloudyrock/mongock&utm_campaign=Badge_Grade)
 [![Maven Central](https://maven-badges.herokuapp.com/maven-central/com.github.cloudyrock.mongock/mongock/badge.png)](https://search.maven.org/artifact/com.github.cloudyrock.mongock/mongock)
 ![Build](https://github.com/cloudyrock/mongock/workflows/Build/badge.svg)
 [![Bugs](https://sonarcloud.io/api/project_badges/measure?project=com.github.cloudyrock.mongock&metric=bugs)](https://sonarcloud.io/component_measures?id=com.github.cloudyrock.mongock&metric=bugs)
