@@ -35,6 +35,8 @@ public class MongockSpringDataV2Configuration extends SpringDataMongoV2Configura
    */
   private boolean indexCreation = true;
 
+  private MongockLegacyMigrationConfig legacyMigration = null;
+
   public String getChangeLogCollectionName() {
     return changeLogCollectionName;
   }
@@ -58,9 +60,6 @@ public class MongockSpringDataV2Configuration extends SpringDataMongoV2Configura
   public void setIndexCreation(boolean indexCreation) {
     this.indexCreation = indexCreation;
   }
-
-
-  private MongockLegacyMigrationConfig legacyMigration = null;
 
   @Override
   @SuppressWarnings("unchecked")
