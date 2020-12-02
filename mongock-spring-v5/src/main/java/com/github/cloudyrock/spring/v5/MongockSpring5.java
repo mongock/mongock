@@ -7,7 +7,7 @@ import io.changock.runner.core.builder.DriverBuilderConfigurable;
 import io.changock.runner.spring.util.SpringEventPublisher;
 import io.changock.runner.spring.v5.ChangockSpringBuilderBase;
 import io.changock.runner.spring.v5.SpringApplicationRunner;
-import io.changock.runner.spring.v5.SpringInitializingBean;
+import io.changock.runner.spring.v5.SpringInitializingBeanRunner;
 import io.changock.runner.spring.v5.core.ProfiledChangeLogService;
 import io.changock.runner.spring.v5.core.SpringMigrationExecutor;
 
@@ -67,10 +67,10 @@ public class MongockSpring5 {
   /**
    * This class will be removed in following versions.
    * Please use the equivalent class SpringInitializingBean.
-   * @see SpringInitializingBean
+   * @see SpringInitializingBeanRunner
    */
   @Deprecated
-  public static class MongockInitializingBeanRunner extends SpringInitializingBean {
+  public static class MongockInitializingBeanRunner extends SpringInitializingBeanRunner {
 
     protected MongockInitializingBeanRunner(SpringMigrationExecutor executor, ProfiledChangeLogService changeLogService, boolean throwExceptionIfCannotObtainLock, boolean enabled, SpringEventPublisher eventPublisher) {
       super(executor, changeLogService, throwExceptionIfCannotObtainLock, enabled, eventPublisher);
