@@ -7,18 +7,15 @@ import io.changock.migration.api.config.LegacyMigrationMappingFields;
 
 public class MongoDbLegacyMigration extends LegacyMigration {
 
-  private String collectionName;
-
-  private boolean failFast = true;
 
   public MongoDbLegacyMigration() {
   }
 
   public MongoDbLegacyMigration(String collectionName) {
-    this.collectionName = collectionName;
+    setOrigin(collectionName);
   }
 
-  public MongoDbLegacyMigration(String collectionName,
+  public MongoDbLegacyMigration(String origin,
                                 boolean failFast,
                                 String changeId,
                                 String author,
@@ -26,11 +23,10 @@ public class MongoDbLegacyMigration extends LegacyMigration {
                                 String changeLogClass,
                                 String changeSetMethod) {
 
-    this(collectionName, failFast, changeId, author, timestamp, changeLogClass, changeSetMethod, null, null);
-    this.failFast = failFast;
+    this(origin, failFast, changeId, author, timestamp, changeLogClass, changeSetMethod, null, null);
   }
 
-  public MongoDbLegacyMigration(String collectionName,
+  public MongoDbLegacyMigration(String origin,
                                 boolean failFast,
                                 String changeId,
                                 String author,
@@ -39,25 +35,18 @@ public class MongoDbLegacyMigration extends LegacyMigration {
                                 String changeSetMethod,
                                 String metadata,
                                 Integer changesCountExpectation) {
-    this.collectionName = collectionName;
-    this.failFast = failFast;
+    setOrigin(origin);
+    setFailFast(failFast);
     this.setChangesCountExpectation(changesCountExpectation);
     this.setMappingFields(new LegacyMigrationMappingFields(changeId, author, timestamp, changeLogClass, changeSetMethod, metadata));
   }
 
   public String getCollectionName() {
-    return collectionName;
+    return getOrigin();
   }
 
   public void setCollectionName(String collectionName) {
-    this.collectionName = collectionName;
+    setOrigin(collectionName);
   }
 
-  public boolean isFailFast() {
-    return failFast;
-  }
-
-  public void setFailFast(boolean failFast) {
-    this.failFast = failFast;
-  }
 }
