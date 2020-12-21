@@ -13,50 +13,46 @@
   <description>Mongock dependency management</description>
 
   <properties>
-    <mongock.driver.spring-data-v2.version>4.2.7.BETA-SNAPSHOT</mongock.driver.spring-data-v2.version>
-    <mongock.driver.spring-data-v3.version>4.2.7.BETA-SNAPSHOT</mongock.driver.spring-data-v3.version>
-    <mongock.driver.mongodb-v3.version>4.2.7.BETA-SNAPSHOT</mongock.driver.mongodb-v3.version>
-    <mongock.driver.mongodb-sync-v4.version>4.2.7.BETA-SNAPSHOT</mongock.driver.mongodb-sync-v4.version>
-    <mongock.api.version>4.2.7.BETA-SNAPSHOT</mongock.api.version>
-    <mongock.spring-v5.version>4.2.7.BETA-SNAPSHOT</mongock.spring-v5.version>
-    <mongock.standalone.version>4.2.7.BETA-SNAPSHOT</mongock.standalone.version>
+    <mongock.version>4.2.7.BETA-SNAPSHOT</mongock.version>
   </properties>
+
   <dependencyManagement>
     <dependencies>
       <dependency>
         <groupId>com.github.cloudyrock.mongock</groupId>
         <artifactId>mongodb-v3-driver</artifactId>
-        <version>${mongock.driver.mongodb-v3.version}</version>
+        <version>${mongock.version}</version>
       </dependency>
       <dependency>
         <groupId>com.github.cloudyrock.mongock</groupId>
         <artifactId>mongodb-sync-v4-driver</artifactId>
-        <version>${mongock.driver.mongodb-sync-v4.version}</version>
+        <version>${mongock.version}</version>
       </dependency>
       <dependency>
         <groupId>com.github.cloudyrock.mongock</groupId>
         <artifactId>mongodb-springdata-v2-driver</artifactId>
-        <version>${mongock.driver.spring-data-v2.version}</version>
+        <version>${mongock.version}</version>
       </dependency>
       <dependency>
         <groupId>com.github.cloudyrock.mongock</groupId>
         <artifactId>mongodb-springdata-v3-driver</artifactId>
-        <version>${mongock.driver.spring-data-v3.version}</version>
+        <version>${mongock.version}</version>
       </dependency>
       <dependency>
+
         <groupId>com.github.cloudyrock.mongock</groupId>
         <artifactId>mongock-api</artifactId>
-        <version>${mongock.api.version}</version>
+        <version>${mongock.version}</version>
       </dependency>
       <dependency>
         <groupId>com.github.cloudyrock.mongock</groupId>
         <artifactId>mongock-standalone</artifactId>
-        <version>${mongock.standalone.version}</version>
+        <version>${mongock.version}</version>
       </dependency>
       <dependency>
         <groupId>com.github.cloudyrock.mongock</groupId>
         <artifactId>mongock-spring-v5</artifactId>
-        <version>${mongock.spring-v5.version}</version>
+        <version>${mongock.version}</version>
       </dependency>
     </dependencies>
   </dependencyManagement>
