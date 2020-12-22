@@ -32,7 +32,7 @@
       <artifactId>mongodb-v3-driver</artifactId>
       <version>${project.version}</version>
     </dependency>
-    <!-- MONGO DEPENDENCIES -->
+    <!-- MONGO & SPRING DEPENDENCIES-->
     <dependency>
       <groupId>org.mongodb</groupId>
       <artifactId>mongo-java-driver</artifactId>
@@ -48,12 +48,12 @@
     <dependency>
       <groupId>org.springframework.boot</groupId>
       <artifactId>spring-boot-autoconfigure</artifactId>
-      <version>2.3.7.RELEASE</version>
+      <version>${springboot.v2.version}</version>
     </dependency>
     <dependency>
       <groupId>org.springframework.boot</groupId>
       <artifactId>spring-boot-configuration-processor</artifactId>
-      <version>2.3.7.RELEASE</version>
+      <version>${springboot.v2.version}</version>
     </dependency>
 
     <dependency>

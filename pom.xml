@@ -10,7 +10,7 @@
   <parent>
     <groupId>com.github.cloudyrock.changock</groupId>
     <artifactId>changock-bom</artifactId>
-    <version>1.2.7-SNAPSHOT</version>
+    <version>1.2.7</version>
   </parent>
 
   <groupId>com.github.cloudyrock.mongock</groupId>
@@ -37,8 +37,8 @@
 
     <!-- mongodb driver versions -->
 
-    <mongodb.java-driver>3.11.0</mongodb.java-driver>
-    <mongodb.driver-sync.version>4.0.2</mongodb.driver-sync.version>
+    <mongodb.java-driver>3.11.2</mongodb.java-driver>
+    <mongodb.driver-sync.version>4.0.5</mongodb.driver-sync.version>
     <mongodb.spring-data.v2.version>2.2.12.RELEASE</mongodb.spring-data.v2.version>
     <mongodb.spring-data.v3.version>3.0.6.RELEASE</mongodb.spring-data.v3.version>
   </properties>
