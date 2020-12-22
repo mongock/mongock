@@ -34,7 +34,7 @@
     </dependency>
 
 
-    <!-- MONGO DEPENDENCIES -->
+    <!-- MONGO & SPRING DEPENDENCIES -->
     <dependency>
       <groupId>org.mongodb</groupId>
       <artifactId>mongodb-driver-sync</artifactId>

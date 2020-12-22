@@ -32,7 +32,7 @@
       <artifactId>mongodb-v3-driver</artifactId>
       <version>${project.version}</version>
     </dependency>
-    <!-- MONGO DEPENDENCIES -->
+    <!-- MONGO & SPRING DEPENDENCIES-->
     <dependency>
       <groupId>org.mongodb</groupId>
       <artifactId>mongo-java-driver</artifactId>
