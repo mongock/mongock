@@ -21,8 +21,8 @@
   <dependencies>
     <!-- CHANGOCK DEPENDENCIES -->
     <dependency>
-      <groupId>com.github.cloudyrock.changock</groupId>
-      <artifactId>changock-driver-core</artifactId>
+      <groupId>com.github.cloudyrock.mongock</groupId>
+      <artifactId>mongock-driver-core</artifactId>
     </dependency>
     <dependency>
       <groupId>com.github.cloudyrock.mongock</groupId>
@@ -44,13 +44,13 @@
       <version>${mongodb.java-driver}</version>
     </dependency>
     <dependency>
-      <groupId>com.github.cloudyrock.changock</groupId>
-      <artifactId>changock-decorator-util</artifactId>
+      <groupId>com.github.cloudyrock.mongock</groupId>
+      <artifactId>mongock-decorator-util</artifactId>
     </dependency>
 
     <dependency>
-      <groupId>com.github.cloudyrock.changock</groupId>
-      <artifactId>changock-test-runner</artifactId>
+      <groupId>com.github.cloudyrock.mongock</groupId>
+      <artifactId>mongock-test-runner</artifactId>
     </dependency>
     <dependency>
       <groupId>junit</groupId>

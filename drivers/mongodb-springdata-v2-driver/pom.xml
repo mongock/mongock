@@ -19,8 +19,8 @@
 
   <dependencies>
     <dependency>
-      <groupId>com.github.cloudyrock.changock</groupId>
-      <artifactId>changock-driver-core</artifactId>
+      <groupId>com.github.cloudyrock.mongock</groupId>
+      <artifactId>mongock-driver-core</artifactId>
     </dependency>
     <dependency>
       <groupId>com.github.cloudyrock.mongock</groupId>
