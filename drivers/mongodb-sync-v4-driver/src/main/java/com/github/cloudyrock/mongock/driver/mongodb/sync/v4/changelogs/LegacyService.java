@@ -1,16 +1,16 @@
 package com.github.cloudyrock.mongock.driver.mongodb.sync.v4.changelogs;
 
-import com.github.cloudyrock.mongock.migration.MongoDbLegacyMigration;
+import com.github.cloudyrock.mongock.config.LegacyMigration;
+import com.github.cloudyrock.mongock.config.LegacyMigrationMappingFields;
 import com.mongodb.client.FindIterable;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
-import io.changock.driver.api.entry.ChangeEntry;
-import io.changock.driver.api.entry.ChangeEntryService;
-import io.changock.driver.api.entry.ChangeState;
-import io.changock.migration.api.annotations.NonLockGuarded;
-import io.changock.migration.api.annotations.NonLockGuardedType;
-import io.changock.migration.api.config.LegacyMigrationMappingFields;
-import io.changock.migration.api.exception.ChangockException;
+import com.github.cloudyrock.mongock.driver.api.entry.ChangeEntry;
+import com.github.cloudyrock.mongock.driver.api.entry.ChangeEntryService;
+import com.github.cloudyrock.mongock.driver.api.entry.ChangeState;
+import com.github.cloudyrock.mongock.annotations.NonLockGuarded;
+import com.github.cloudyrock.mongock.annotations.NonLockGuardedType;
+import com.github.cloudyrock.mongock.exception.MongockException;
 import org.bson.Document;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -31,7 +31,7 @@ public class LegacyService {
   private final static Logger logger = LoggerFactory.getLogger(LegacyService.class);
 
   public void executeMigration(@NonLockGuarded(NonLockGuardedType.NONE)
-                                           @Named("legacy-migration") MongoDbLegacyMigration legacyMigration,
+                                           @Named("legacy-migration") LegacyMigration legacyMigration,
                                            MongoDatabase mongoDatabase,
                                            ChangeEntryService<ChangeEntry> changeEntryService) {
     int changesMigrated = 0;
@@ -41,7 +41,7 @@ public class LegacyService {
     }
     try {
       validateLegacyMigration(legacyMigration);
-      List<ChangeEntry> changesToMigrate = getOriginalMigrationAsChangeEntryList(mongoDatabase.getCollection(legacyMigration.getCollectionName()), legacyMigration);
+      List<ChangeEntry> changesToMigrate = getOriginalMigrationAsChangeEntryList(mongoDatabase.getCollection(legacyMigration.getOrigin()), legacyMigration);
       for (ChangeEntry originalChange : changesToMigrate) {
         if (!changeEntryService.isAlreadyExecuted(originalChange.getChangeId(), originalChange.getAuthor())) {
           logTracking(originalChange);
@@ -53,24 +53,24 @@ public class LegacyService {
         changesMigrated++;
       }
       if(changesCountExpectation != null && changesCountExpectation != changesMigrated) {
-        throw new ChangockException(String.format("[legacy-migration] - Expectation [%d changes migrated], but actual [%d changes migrated]", changesCountExpectation, changesMigrated));
+        throw new MongockException(String.format("[legacy-migration] - Expectation [%d changes migrated], but actual [%d changes migrated]", changesCountExpectation, changesMigrated));
       }
       logger.debug("[legacy-migration] - {} changes migrated", changesMigrated);
-    } catch (ChangockException ex) {
+    } catch (MongockException ex) {
       processException(legacyMigration.isFailFast(), ex);
     } catch (Exception ex) {
-      processException(legacyMigration.isFailFast(), new ChangockException(ex));
+      processException(legacyMigration.isFailFast(), new MongockException(ex));
     }
 
   }
 
-  private void processException(boolean isFailFast, ChangockException ex) {
+  private void processException(boolean isFailFast, MongockException ex) {
     if (isFailFast) {
-      throw new ChangockException(ex);
+      throw new MongockException(ex);
     }
     logger.warn(ex.getMessage());
   }
-  private List<ChangeEntry> getOriginalMigrationAsChangeEntryList(MongoCollection<Document> originalCollection, MongoDbLegacyMigration legacyMigration) {
+  private List<ChangeEntry> getOriginalMigrationAsChangeEntryList(MongoCollection<Document> originalCollection, LegacyMigration legacyMigration) {
 
     List<ChangeEntry> originalMigrations = new ArrayList<>();
     LegacyMigrationMappingFields mappingFields = legacyMigration.getMappingFields();
@@ -118,13 +118,13 @@ public class LegacyService {
     return String.format("%s-%s-%d", "legacy_migration", LocalDateTime.now().toString(), new Random().nextInt(999));
   }
 
-  private void validateLegacyMigration(MongoDbLegacyMigration legacyMigration) {
+  private void validateLegacyMigration(LegacyMigration legacyMigration) {
     if (legacyMigration == null
-        || isEmpty(legacyMigration.getCollectionName())
+        || isEmpty(legacyMigration.getOrigin())
         || legacyMigration.getMappingFields() == null
         || isEmpty(legacyMigration.getMappingFields().getChangeId())
         || isEmpty(legacyMigration.getMappingFields().getAuthor())) {
-      throw new ChangockException("[legacy-migration] - wrong configured. Either is null, or doesn't contain collectionName or mapping fields are wrong");
+      throw new MongockException("[legacy-migration] - wrong configured. Either is null, or doesn't contain collectionName or mapping fields are wrong");
     }
   }
 

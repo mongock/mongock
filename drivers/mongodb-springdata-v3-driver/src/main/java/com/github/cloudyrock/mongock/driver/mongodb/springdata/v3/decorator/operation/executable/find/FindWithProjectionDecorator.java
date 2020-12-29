@@ -1,7 +1,7 @@
 package com.github.cloudyrock.mongock.driver.mongodb.springdata.v3.decorator.operation.executable.find;
 
 import com.github.cloudyrock.mongock.driver.mongodb.springdata.v3.decorator.operation.executable.find.impl.FindWithQueryDecoratorImpl;
-import io.changock.driver.api.lock.guard.decorator.Invokable;
+import com.github.cloudyrock.mongock.driver.api.lock.guard.decorator.Invokable;
 import org.springframework.data.mongodb.core.ExecutableFindOperation;
 
 public interface FindWithProjectionDecorator<T> extends Invokable, ExecutableFindOperation.FindWithProjection<T>, FindWithQueryDecorator<T>, FindDistinctDecorator {

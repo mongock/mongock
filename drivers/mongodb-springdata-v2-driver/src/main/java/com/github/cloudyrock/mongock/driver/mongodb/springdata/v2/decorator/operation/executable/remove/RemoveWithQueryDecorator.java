@@ -1,7 +1,7 @@
 package com.github.cloudyrock.mongock.driver.mongodb.springdata.v2.decorator.operation.executable.remove;
 
 import com.github.cloudyrock.mongock.driver.mongodb.springdata.v2.decorator.operation.executable.remove.impl.TerminatingRemoveDecoratorImpl;
-import io.changock.driver.api.lock.guard.decorator.Invokable;
+import com.github.cloudyrock.mongock.driver.api.lock.guard.decorator.Invokable;
 import org.springframework.data.mongodb.core.ExecutableRemoveOperation;
 import org.springframework.data.mongodb.core.query.Query;
 

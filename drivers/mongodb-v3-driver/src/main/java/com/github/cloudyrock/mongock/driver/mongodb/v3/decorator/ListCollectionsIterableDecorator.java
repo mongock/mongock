@@ -2,8 +2,8 @@ package com.github.cloudyrock.mongock.driver.mongodb.v3.decorator;
 
 import com.github.cloudyrock.mongock.driver.mongodb.v3.decorator.impl.ListCollectionsIterableDecoratorImpl;
 import com.mongodb.client.ListCollectionsIterable;
-import io.changock.migration.api.annotations.NonLockGuarded;
-import io.changock.migration.api.annotations.NonLockGuardedType;
+import com.github.cloudyrock.mongock.annotations.NonLockGuarded;
+import com.github.cloudyrock.mongock.annotations.NonLockGuardedType;
 import org.bson.conversions.Bson;
 
 import java.util.concurrent.TimeUnit;

@@ -1,6 +1,7 @@
 package com.github.cloudyrock.mongock.driver.mongodb.springdata.v3;
 
-import io.changock.driver.api.driver.ConnectionDriver;
+import com.github.cloudyrock.mongock.config.MongockSpringConfiguration;
+import com.github.cloudyrock.mongock.driver.api.driver.ConnectionDriver;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnExpression;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -15,7 +16,7 @@ public class SpringDataMongoV3Context {
 
   @Bean
   public ConnectionDriver connectionDriver(MongoTemplate mongoTemplate,
-                                           SpringDataMongoV3Configuration config,
+                                           MongockSpringConfiguration config,
                                            Optional<MongoTransactionManager> txManagerOpt) {
     SpringDataMongoV3Driver driver = getDriver(mongoTemplate, config, txManagerOpt);
     setUpConnectionDriver(config, driver);
@@ -23,7 +24,7 @@ public class SpringDataMongoV3Context {
   }
 
   private SpringDataMongoV3Driver getDriver(MongoTemplate mongoTemplate,
-                                            SpringDataMongoV3Configuration config,
+                                            MongockSpringConfiguration config,
                                             Optional<MongoTransactionManager> txManagerOpt) {
     SpringDataMongoV3Driver driver = SpringDataMongoV3Driver.withLockSetting(mongoTemplate, config.getLockAcquiredForMinutes(), config.getMaxWaitingForLockMinutes(), config.getMaxTries());
     if (config.isTransactionEnabled() && txManagerOpt.isPresent()) {
@@ -34,10 +35,10 @@ public class SpringDataMongoV3Context {
     return driver;
   }
 
-  private void setUpConnectionDriver(SpringDataMongoV3Configuration config,
+  private void setUpConnectionDriver(MongockSpringConfiguration config,
                                      SpringDataMongoV3Driver driver) {
-    driver.setChangeLogCollectionName(config.getChangeLogCollectionName());
-    driver.setLockCollectionName(config.getLockCollectionName());
+    driver.setChangeLogRepositoryName(config.getChangeLogRepositoryName());
+    driver.setLockRepositoryName(config.getLockRepositoryName());
     driver.setIndexCreation(config.isIndexCreation());
     driver.initialize();
   }

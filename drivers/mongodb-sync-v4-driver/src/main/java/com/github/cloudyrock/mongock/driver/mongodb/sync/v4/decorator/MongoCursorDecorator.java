@@ -3,8 +3,8 @@ package com.github.cloudyrock.mongock.driver.mongodb.sync.v4.decorator;
 import com.mongodb.ServerAddress;
 import com.mongodb.ServerCursor;
 import com.mongodb.client.MongoCursor;
-import io.changock.driver.api.lock.guard.invoker.LockGuardInvoker;
-import io.changock.migration.api.annotations.NonLockGuarded;
+import com.github.cloudyrock.mongock.driver.api.lock.guard.invoker.LockGuardInvoker;
+import com.github.cloudyrock.mongock.annotations.NonLockGuarded;
 
 public interface MongoCursorDecorator<T> extends MongoCursor<T>, ChangockIterator<T> {
 

@@ -1,7 +1,7 @@
 package com.github.cloudyrock.mongock.driver.mongodb.springdata.v3.decorator;
 
 import com.github.cloudyrock.mongock.driver.mongodb.springdata.v3.decorator.impl.MongoOperationsDecoratorImpl;
-import io.changock.driver.api.lock.guard.invoker.LockGuardInvoker;
+import com.github.cloudyrock.mongock.driver.api.lock.guard.invoker.LockGuardInvoker;
 import org.springframework.data.mongodb.core.MongoOperations;
 import org.springframework.data.mongodb.core.SessionCallback;
 

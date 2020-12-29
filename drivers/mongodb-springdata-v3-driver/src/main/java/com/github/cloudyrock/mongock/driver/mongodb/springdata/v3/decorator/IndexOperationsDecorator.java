@@ -1,6 +1,6 @@
 package com.github.cloudyrock.mongock.driver.mongodb.springdata.v3.decorator;
 
-import io.changock.driver.api.lock.guard.invoker.LockGuardInvoker;
+import com.github.cloudyrock.mongock.driver.api.lock.guard.invoker.LockGuardInvoker;
 import org.springframework.data.mongodb.core.index.IndexDefinition;
 import org.springframework.data.mongodb.core.index.IndexInfo;
 import org.springframework.data.mongodb.core.index.IndexOperations;

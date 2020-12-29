@@ -1,7 +1,7 @@
 package com.github.cloudyrock.mongock.driver.mongodb.test.template;
 
 
-import com.github.cloudyrock.mongock.MongockConnectionDriver;
+import com.github.cloudyrock.mongock.driver.api.driver.ConnectionDriver;
 import com.github.cloudyrock.mongock.driver.mongodb.test.template.integration.test1.withnorunalways.ChangeLogSuccess;
 import com.github.cloudyrock.mongock.driver.mongodb.test.template.integration.test1.withrunalways.WithRunAlways;
 import com.github.cloudyrock.mongock.driver.mongodb.test.template.integration.test2.ChangeLogFailure;
@@ -10,14 +10,14 @@ import com.github.cloudyrock.mongock.driver.mongodb.test.template.util.CallVerif
 import com.github.cloudyrock.mongock.driver.mongodb.test.template.util.CallVerifierImpl;
 import com.github.cloudyrock.mongock.driver.mongodb.test.template.util.IntegrationTestBase;
 import com.github.cloudyrock.mongock.driver.mongodb.test.template.util.MongoDBDriverTestAdapter;
+import com.github.cloudyrock.test.runner.TestMongockRunner;
 import com.mongodb.client.FindIterable;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoCursor;
 import com.mongodb.client.MongoDatabase;
-import io.changock.driver.api.entry.ChangeState;
-import io.changock.migration.api.annotations.ChangeSet;
-import io.changock.migration.api.exception.ChangockException;
-import io.changock.runner.standalone.TestChangockRunner;
+import com.github.cloudyrock.mongock.driver.api.entry.ChangeState;
+import com.github.cloudyrock.mongock.ChangeSet;
+import com.github.cloudyrock.mongock.exception.MongockException;
 import org.bson.Document;
 import org.junit.Rule;
 import org.junit.Test;
@@ -101,8 +101,8 @@ public abstract class MongoDriverITestBase extends IntegrationTestBase {
   @Test
   public void shouldUseDifferentChangeLogCollectionName_whenSettingChangeLogCollectionName() {
     String newChangeLogCollectionName = "newChangeLogCollectionName";
-    MongockConnectionDriver driver = getDriverWithTransactionDisabled();
-    driver.setChangeLogCollectionName(newChangeLogCollectionName);
+    ConnectionDriver driver = getDriverWithTransactionDisabled();
+    driver.setChangeLogRepositoryName(newChangeLogCollectionName);
     runChanges(driver, ChangeLogSuccess.class, newChangeLogCollectionName, Collections.emptyList(), false);
   }
 
@@ -123,11 +123,11 @@ public abstract class MongoDriverITestBase extends IntegrationTestBase {
 
   @Test
   public void shouldFail_WhenRunningChangeLog_IfChangeSetIdDuplicated() {
-    TestChangockRunner runner = TestChangockRunner.builder()
+    TestMongockRunner runner = TestMongockRunner.builder()
         .setDriver(getDriverWithTransactionDisabled())
         .addChangeLogsScanPackage(ChangeLogFailure.class.getPackage().getName())
         .build();
-    exceptionRule.expect(ChangockException.class);
+    exceptionRule.expect(MongockException.class);
     exceptionRule.expectMessage("Duplicated changeset id found: 'id_duplicated'");
     runner.execute();
   }
@@ -135,7 +135,7 @@ public abstract class MongoDriverITestBase extends IntegrationTestBase {
   @Test
   public void shouldPassMongoDatabaseDecoratorToChangeSet() {
     CallVerifierImpl callVerifier = new CallVerifierImpl();
-    TestChangockRunner.builder()
+    TestMongockRunner.builder()
         .setDriver(getDriverWithTransactionDisabled())
         .addChangeLogsScanPackage(ChangeLogEnsureDecorator.class.getPackage().getName())
         .addDependency(CallVerifier.class, callVerifier)
@@ -147,7 +147,7 @@ public abstract class MongoDriverITestBase extends IntegrationTestBase {
   @Test
   public void shouldPrioritizeConnectorOverStandardDependencies_WhenThereIsConflict() {
     CallVerifierImpl callVerifier = new CallVerifierImpl();
-    TestChangockRunner.builder()
+    TestMongockRunner.builder()
         .setDriver(getDriverWithTransactionDisabled())
         .addChangeLogsScanPackage(ChangeLogEnsureDecorator.class.getPackage().getName())
         .addDependency(CallVerifier.class, callVerifier)
@@ -160,15 +160,15 @@ public abstract class MongoDriverITestBase extends IntegrationTestBase {
   @Test
   public void shouldThrowException_WhenNotIndexCreation_IfNotCreatedBefore() {
     // given
-    MongockConnectionDriver driver = getDriverWithTransactionDisabled();
+    ConnectionDriver driver = getDriverWithTransactionDisabled();
     driver.setIndexCreation(false);
 
     //then
-    exceptionRule.expect(ChangockException.class);
+    exceptionRule.expect(MongockException.class);
     exceptionRule.expectMessage("Index creation not allowed, but not created or wrongly created");
 
     //when
-    TestChangockRunner.builder()
+    TestMongockRunner.builder()
         .setDriver(driver)
         .addChangeLogsScanPackage(ChangeLogSuccess.class.getPackage().getName())
         .build()
@@ -178,14 +178,14 @@ public abstract class MongoDriverITestBase extends IntegrationTestBase {
   @Test
   public void shouldBeOk_WhenNotIndexCreation_IfCreatedBefore() {
     // given
-    MongockConnectionDriver driver = getDriverWithTransactionDisabled();
+    ConnectionDriver driver = getDriverWithTransactionDisabled();
     driver.setIndexCreation(false);
     getAdapter(CHANGELOG_COLLECTION_NAME).createUniqueIndex("executionId", "author", "changeId");
-    driver.setLockCollectionName(LOCK_COLLECTION_NAME);
+    driver.setLockRepositoryName(LOCK_COLLECTION_NAME);
     getAdapter(LOCK_COLLECTION_NAME).createUniqueIndex("key");
 
     //when
-    TestChangockRunner.builder()
+    TestMongockRunner.builder()
         .setDriver(driver)
         .addChangeLogsScanPackage(ChangeLogSuccess.class.getPackage().getName())
         .build()
@@ -196,18 +196,18 @@ public abstract class MongoDriverITestBase extends IntegrationTestBase {
   @Test
   public void shouldThrowException_WhenNotIndexCreation_IfWrongLockIndexCreated() {
     // given
-    MongockConnectionDriver driver = getDriverWithTransactionDisabled();
+    ConnectionDriver driver = getDriverWithTransactionDisabled();
     driver.setIndexCreation(false);
     getAdapter(CHANGELOG_COLLECTION_NAME).createUniqueIndex("executionId", "author", "changeId");
-    driver.setLockCollectionName(LOCK_COLLECTION_NAME);
+    driver.setLockRepositoryName(LOCK_COLLECTION_NAME);
     getAdapter(LOCK_COLLECTION_NAME).createUniqueIndex("keywrong");
 
     //then
-    exceptionRule.expect(ChangockException.class);
+    exceptionRule.expect(MongockException.class);
     exceptionRule.expectMessage("Index creation not allowed, but not created or wrongly created");
 
     //when
-    TestChangockRunner.builder()
+    TestMongockRunner.builder()
         .setDriver(driver)
         .addChangeLogsScanPackage(ChangeLogSuccess.class.getPackage().getName())
         .build()
@@ -217,18 +217,18 @@ public abstract class MongoDriverITestBase extends IntegrationTestBase {
   @Test
   public void shouldThrowException_WhenNotIndexCreation_IfChangeLogIndexPartiallyCreated() {
     // given
-    MongockConnectionDriver driver = getDriverWithTransactionDisabled();
+    ConnectionDriver driver = getDriverWithTransactionDisabled();
     driver.setIndexCreation(false);
     getAdapter(CHANGELOG_COLLECTION_NAME).createUniqueIndex("executionId_wrong", "author", "changeId");
-    driver.setLockCollectionName(LOCK_COLLECTION_NAME);
+    driver.setLockRepositoryName(LOCK_COLLECTION_NAME);
     getAdapter(LOCK_COLLECTION_NAME).createUniqueIndex("key");
 
     //then
-    exceptionRule.expect(ChangockException.class);
+    exceptionRule.expect(MongockException.class);
     exceptionRule.expectMessage("Index creation not allowed, but not created or wrongly created");
 
     //when
-    TestChangockRunner.builder()
+    TestMongockRunner.builder()
         .setDriver(driver)
         .addChangeLogsScanPackage(ChangeLogSuccess.class.getPackage().getName())
         .build()
@@ -238,17 +238,17 @@ public abstract class MongoDriverITestBase extends IntegrationTestBase {
 
 
 
-  private void runChanges(MongockConnectionDriver driver, Class changeLogClass, String changeLogCollectionName) {
+  private void runChanges(ConnectionDriver driver, Class changeLogClass, String changeLogCollectionName) {
     runChanges(driver, changeLogClass, changeLogCollectionName, Collections.emptyList(), false);
   }
 
 
 
-  private void runChanges(MongockConnectionDriver driver, Class changeLogClass, String chageLogCollectionName, Collection<String> ignoredChangeIds, boolean trackIgnored) {
+  private void runChanges(ConnectionDriver driver, Class changeLogClass, String chageLogCollectionName, Collection<String> ignoredChangeIds, boolean trackIgnored) {
     Map<String, Object> metadata = getStringObjectMap();
 
     String executionId = UUID.randomUUID().toString();
-    TestChangockRunner runner = TestChangockRunner.builder()
+    TestMongockRunner runner = TestMongockRunner.builder()
         .setDriver(driver)
         .addChangeLogsScanPackage(changeLogClass.getPackage().getName())
         .withMetadata(metadata)
@@ -318,7 +318,7 @@ public abstract class MongoDriverITestBase extends IntegrationTestBase {
     assertEquals(true, metadataResult.get("boolean_key"));
   }
 
-  protected abstract MongockConnectionDriver getDriverWithTransactionDisabled();
+  protected abstract ConnectionDriver getDriverWithTransactionDisabled();
 
 
 }

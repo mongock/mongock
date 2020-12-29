@@ -2,7 +2,7 @@ package com.github.cloudyrock.mongock.driver.mongodb.sync.v4.decorator.impl;
 
 import com.github.cloudyrock.mongock.driver.mongodb.sync.v4.decorator.DistinctIterableDecorator;
 import com.mongodb.client.DistinctIterable;
-import io.changock.driver.api.lock.guard.invoker.LockGuardInvoker;
+import com.github.cloudyrock.mongock.driver.api.lock.guard.invoker.LockGuardInvoker;
 
 public class DistinctIterableDecoratorImpl<T> implements DistinctIterableDecorator<T> {
 

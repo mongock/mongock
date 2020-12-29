@@ -12,7 +12,7 @@ public class SpringDataMongo3DriverITest extends MongoDriverITestBase {
   @Override
   protected SpringDataMongoV3Driver getDriverWithTransactionDisabled() {
     SpringDataMongoV3Driver driver = SpringDataMongoV3Driver.withDefaultLock(getMongoTemplate());
-    driver.setChangeLogCollectionName(CHANGELOG_COLLECTION_NAME);
+    driver.setChangeLogRepositoryName(CHANGELOG_COLLECTION_NAME);
     return driver;
   }
 

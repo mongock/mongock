@@ -2,9 +2,9 @@ package com.github.cloudyrock.mongock.driver.mongodb.v3.repository;
 
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.model.IndexOptions;
-import io.changock.driver.core.common.Repository;
-import io.changock.migration.api.exception.ChangockException;
-import io.changock.utils.field.FieldInstance;
+import com.github.cloudyrock.mongock.driver.core.common.Repository;
+import com.github.cloudyrock.mongock.exception.MongockException;
+import com.github.cloudyrock.mongock.utils.field.FieldInstance;
 import org.bson.Document;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -41,11 +41,11 @@ public abstract class Mongo3RepositoryBase<DOMAIN_CLASS> implements Repository<D
 
   private void ensureIndex(int tryCounter) {
     if (tryCounter <= 0) {
-      throw new ChangockException("Max tries " + INDEX_ENSURE_MAX_TRIES + " index  creation");
+      throw new MongockException("Max tries " + INDEX_ENSURE_MAX_TRIES + " index  creation");
     }
     if (!isIndexFine()) {
       if (!indexCreation) {
-        throw new ChangockException("Index creation not allowed, but not created or wrongly created for collection " + collection.getNamespace().getCollectionName());
+        throw new MongockException("Index creation not allowed, but not created or wrongly created for collection " + collection.getNamespace().getCollectionName());
       }
       cleanResidualUniqueKeys();
       if (!isRequiredIndexCreated()) {

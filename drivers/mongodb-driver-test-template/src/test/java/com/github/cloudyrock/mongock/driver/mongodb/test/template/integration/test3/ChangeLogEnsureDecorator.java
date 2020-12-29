@@ -1,9 +1,9 @@
 package com.github.cloudyrock.mongock.driver.mongodb.test.template.integration.test3;
 
+import com.github.cloudyrock.mongock.ChangeLog;
+import com.github.cloudyrock.mongock.ChangeSet;
 import com.github.cloudyrock.mongock.driver.mongodb.test.template.util.CallVerifier;
 import com.mongodb.client.MongoDatabase;
-import io.changock.migration.api.annotations.ChangeLog;
-import io.changock.migration.api.annotations.ChangeSet;
 import org.junit.Assert;
 
 @ChangeLog

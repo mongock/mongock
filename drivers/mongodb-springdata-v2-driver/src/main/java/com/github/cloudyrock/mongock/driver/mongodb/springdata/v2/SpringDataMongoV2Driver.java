@@ -2,14 +2,14 @@ package com.github.cloudyrock.mongock.driver.mongodb.springdata.v2;
 
 import com.github.cloudyrock.mongock.driver.mongodb.springdata.v2.decorator.impl.MongockTemplate;
 import com.github.cloudyrock.mongock.driver.mongodb.v3.driver.MongoCore3Driver;
-import io.changock.driver.api.driver.ChangeSetDependency;
-import io.changock.driver.api.driver.ForbiddenParametersMap;
-import io.changock.driver.api.driver.TransactionStrategy;
-import io.changock.driver.api.entry.ChangeEntry;
-import io.changock.driver.api.entry.ChangeEntryService;
-import io.changock.driver.api.lock.guard.invoker.LockGuardInvokerImpl;
-import io.changock.migration.api.exception.ChangockException;
-import io.changock.utils.annotation.NotThreadSafe;
+import com.github.cloudyrock.mongock.driver.api.driver.ChangeSetDependency;
+import com.github.cloudyrock.mongock.driver.api.driver.ForbiddenParametersMap;
+import com.github.cloudyrock.mongock.driver.api.driver.TransactionStrategy;
+import com.github.cloudyrock.mongock.driver.api.entry.ChangeEntry;
+import com.github.cloudyrock.mongock.driver.api.entry.ChangeEntryService;
+import com.github.cloudyrock.mongock.driver.api.lock.guard.invoker.LockGuardInvokerImpl;
+import com.github.cloudyrock.mongock.exception.MongockException;
+import com.github.cloudyrock.mongock.utils.annotation.NotThreadSafe;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.mongodb.MongoTransactionManager;
@@ -53,11 +53,11 @@ public class SpringDataMongoV2Driver extends MongoCore3Driver {
   }
 
   @Override
-  public void runValidation() throws ChangockException {
+  public void runValidation() throws MongockException {
     super.runValidation();
 
     if (this.mongoTemplate == null) {
-      throw new ChangockException("MongoTemplate must not be null");
+      throw new MongockException("MongoTemplate must not be null");
     }
   }
 
@@ -74,7 +74,7 @@ public class SpringDataMongoV2Driver extends MongoCore3Driver {
 
   public MongockTemplate getMongockTemplate() {
     if (!isInitialized()) {
-      throw new ChangockException("Mongock Driver hasn't been initialized yet");
+      throw new MongockException("Mongock Driver hasn't been initialized yet");
     }
     return dependencies
         .stream()
@@ -82,7 +82,7 @@ public class SpringDataMongoV2Driver extends MongoCore3Driver {
         .map(ChangeSetDependency::getInstance)
         .map(instance -> (MongockTemplate) instance)
         .findAny()
-        .orElseThrow(() -> new ChangockException("Mongock Driver hasn't been initialized yet"));
+        .orElseThrow(() -> new MongockException("Mongock Driver hasn't been initialized yet"));
   }
 
   @Override

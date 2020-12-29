@@ -4,7 +4,7 @@ package com.github.cloudyrock.mongock.driver.mongodb.sync.v4.repository;
 import com.github.cloudyrock.mongock.driver.mongodb.sync.v4.MongoDbSync4DriverTestAdapterImpl;
 import com.github.cloudyrock.mongock.driver.mongodb.test.template.MongoLockRepositoryITestBase;
 import com.github.cloudyrock.mongock.driver.mongodb.test.template.util.MongoDBDriverTestAdapter;
-import io.changock.migration.api.exception.ChangockException;
+import com.github.cloudyrock.mongock.exception.MongockException;
 import org.bson.Document;
 import org.junit.Test;
 import org.mockito.Mockito;
@@ -22,7 +22,7 @@ public class MongoSync4LockRepositoryITest extends MongoLockRepositoryITestBase 
 
 
   @Test
-  public void shouldCreateUniqueIndex_whenEnsureIndex_IfNotCreatedYet() throws ChangockException {
+  public void shouldCreateUniqueIndex_whenEnsureIndex_IfNotCreatedYet() throws MongockException {
     initializeRepository();
     //then
     verify((MongoSync4LockRepository)repository, times(1)).createRequiredUniqueIndex();
@@ -31,7 +31,7 @@ public class MongoSync4LockRepositoryITest extends MongoLockRepositoryITestBase 
   }
 
   @Test
-  public void shouldNoCreateUniqueIndex_whenEnsureIndex_IfAlreadyCreated() throws ChangockException {
+  public void shouldNoCreateUniqueIndex_whenEnsureIndex_IfAlreadyCreated() throws MongockException {
     initializeRepository();
     // given
     repository = Mockito.spy(new MongoSync4LockRepository(getDataBase().getCollection(LOCK_COLLECTION_NAME), true));

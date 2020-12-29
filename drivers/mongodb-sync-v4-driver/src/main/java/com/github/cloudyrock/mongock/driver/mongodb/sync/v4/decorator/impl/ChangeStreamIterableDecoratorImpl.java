@@ -2,7 +2,7 @@ package com.github.cloudyrock.mongock.driver.mongodb.sync.v4.decorator.impl;
 
 import com.github.cloudyrock.mongock.driver.mongodb.sync.v4.decorator.ChangeStreamIterableDecorator;
 import com.mongodb.client.ChangeStreamIterable;
-import io.changock.driver.api.lock.guard.invoker.LockGuardInvoker;
+import com.github.cloudyrock.mongock.driver.api.lock.guard.invoker.LockGuardInvoker;
 
 public class ChangeStreamIterableDecoratorImpl<T> implements ChangeStreamIterableDecorator<T> {
 

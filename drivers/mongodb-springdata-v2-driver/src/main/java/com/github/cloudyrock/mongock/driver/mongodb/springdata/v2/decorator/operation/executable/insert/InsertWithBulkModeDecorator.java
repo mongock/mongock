@@ -1,7 +1,7 @@
 package com.github.cloudyrock.mongock.driver.mongodb.springdata.v2.decorator.operation.executable.insert;
 
 import com.github.cloudyrock.mongock.driver.mongodb.springdata.v2.decorator.operation.executable.insert.impl.TerminatingBulkInsertDecoratorImpl;
-import io.changock.driver.api.lock.guard.decorator.Invokable;
+import com.github.cloudyrock.mongock.driver.api.lock.guard.decorator.Invokable;
 import org.springframework.data.mongodb.core.BulkOperations;
 import org.springframework.data.mongodb.core.ExecutableInsertOperation;
 

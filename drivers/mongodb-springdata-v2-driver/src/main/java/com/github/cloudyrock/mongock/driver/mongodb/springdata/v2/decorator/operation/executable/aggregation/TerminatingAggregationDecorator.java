@@ -1,7 +1,7 @@
 package com.github.cloudyrock.mongock.driver.mongodb.springdata.v2.decorator.operation.executable.aggregation;
 
 import com.github.cloudyrock.mongock.driver.mongodb.springdata.v2.decorator.impl.CloseableIteratorDecoratorImpl;
-import io.changock.driver.api.lock.guard.decorator.Invokable;
+import com.github.cloudyrock.mongock.driver.api.lock.guard.decorator.Invokable;
 import org.springframework.data.mongodb.core.ExecutableAggregationOperation;
 import org.springframework.data.mongodb.core.aggregation.AggregationResults;
 import org.springframework.data.util.CloseableIterator;

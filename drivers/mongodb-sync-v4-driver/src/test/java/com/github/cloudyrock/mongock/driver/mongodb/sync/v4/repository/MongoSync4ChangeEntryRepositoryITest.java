@@ -3,7 +3,7 @@ package com.github.cloudyrock.mongock.driver.mongodb.sync.v4.repository;
 import com.github.cloudyrock.mongock.driver.mongodb.sync.v4.MongoDbSync4DriverTestAdapterImpl;
 import com.github.cloudyrock.mongock.driver.mongodb.test.template.MongoChangeEntryRepositoryITestBase;
 import com.github.cloudyrock.mongock.driver.mongodb.test.template.util.MongoDBDriverTestAdapter;
-import io.changock.migration.api.exception.ChangockException;
+import com.github.cloudyrock.mongock.exception.MongockException;
 import org.bson.Document;
 import org.junit.Test;
 import org.mockito.Mockito;
@@ -23,7 +23,7 @@ public class MongoSync4ChangeEntryRepositoryITest extends MongoChangeEntryReposi
   }
 
   @Test
-  public void shouldCreateUniqueIndex_whenEnsureIndex_IfNotCreatedYet() throws ChangockException {
+  public void shouldCreateUniqueIndex_whenEnsureIndex_IfNotCreatedYet() throws MongockException {
     initializeRepository(true);
 
     //then
@@ -33,7 +33,7 @@ public class MongoSync4ChangeEntryRepositoryITest extends MongoChangeEntryReposi
   }
 
   @Test
-  public void shouldNoCreateUniqueIndex_whenEnsureIndex_IfAlreadyCreated() throws ChangockException {
+  public void shouldNoCreateUniqueIndex_whenEnsureIndex_IfAlreadyCreated() throws MongockException {
     initializeRepository(true);
     // given
     repository = Mockito.spy(new MongoSync4ChangeEntryRepository(getDataBase().getCollection(CHANGELOG_COLLECTION_NAME), true));

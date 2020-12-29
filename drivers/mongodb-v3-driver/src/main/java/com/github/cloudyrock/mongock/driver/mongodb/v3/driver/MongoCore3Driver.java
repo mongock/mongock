@@ -5,10 +5,10 @@ import com.github.cloudyrock.mongock.driver.mongodb.v3.changelogs.runonce.Mongoc
 import com.github.cloudyrock.mongock.driver.mongodb.v3.repository.Mongo3ChangeEntryRepository;
 import com.mongodb.client.MongoClient;
 import com.mongodb.client.MongoDatabase;
-import io.changock.driver.api.driver.ForbiddenParametersMap;
-import io.changock.driver.api.entry.ChangeEntry;
-import io.changock.driver.api.entry.ChangeEntryService;
-import io.changock.utils.annotation.NotThreadSafe;
+import com.github.cloudyrock.mongock.driver.api.driver.ForbiddenParametersMap;
+import com.github.cloudyrock.mongock.driver.api.entry.ChangeEntry;
+import com.github.cloudyrock.mongock.driver.api.entry.ChangeEntryService;
+import com.github.cloudyrock.mongock.utils.annotation.NotThreadSafe;
 
 @NotThreadSafe
 public class MongoCore3Driver extends MongoCore3DriverBase<ChangeEntry> {

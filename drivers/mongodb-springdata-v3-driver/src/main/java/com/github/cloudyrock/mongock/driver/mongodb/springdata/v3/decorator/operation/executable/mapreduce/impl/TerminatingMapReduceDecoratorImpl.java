@@ -1,7 +1,7 @@
 package com.github.cloudyrock.mongock.driver.mongodb.springdata.v3.decorator.operation.executable.mapreduce.impl;
 
 import com.github.cloudyrock.mongock.driver.mongodb.springdata.v3.decorator.operation.executable.mapreduce.TerminatingMapReduceDecorator;
-import io.changock.driver.api.lock.guard.invoker.LockGuardInvoker;
+import com.github.cloudyrock.mongock.driver.api.lock.guard.invoker.LockGuardInvoker;
 import org.springframework.data.mongodb.core.ExecutableMapReduceOperation;
 
 public class TerminatingMapReduceDecoratorImpl<T> implements TerminatingMapReduceDecorator<T> {

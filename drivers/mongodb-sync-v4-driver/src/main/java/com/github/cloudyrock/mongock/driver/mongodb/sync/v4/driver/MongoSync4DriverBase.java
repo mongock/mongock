@@ -1,6 +1,6 @@
 package com.github.cloudyrock.mongock.driver.mongodb.sync.v4.driver;
 
-import com.github.cloudyrock.mongock.MongockConnectionDriver;
+import com.github.cloudyrock.mongock.driver.api.driver.ConnectionDriver;
 import com.github.cloudyrock.mongock.driver.mongodb.sync.v4.decorator.impl.MongoDataBaseDecoratorImpl;
 import com.github.cloudyrock.mongock.driver.mongodb.sync.v4.repository.MongoSync4LockRepository;
 import com.mongodb.MongoClientException;
@@ -13,16 +13,16 @@ import com.mongodb.client.MongoClient;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
 import com.mongodb.client.TransactionBody;
-import io.changock.driver.api.driver.ChangeSetDependency;
-import io.changock.driver.api.driver.TransactionStrategy;
-import io.changock.driver.api.driver.Transactionable;
-import io.changock.driver.api.entry.ChangeEntry;
-import io.changock.driver.api.entry.ChangeEntryService;
-import io.changock.driver.api.lock.guard.invoker.LockGuardInvokerImpl;
-import io.changock.driver.core.driver.ConnectionDriverBase;
-import io.changock.driver.core.lock.LockRepository;
-import io.changock.migration.api.exception.ChangockException;
-import io.changock.utils.annotation.NotThreadSafe;
+import com.github.cloudyrock.mongock.driver.api.driver.ChangeSetDependency;
+import com.github.cloudyrock.mongock.driver.api.driver.TransactionStrategy;
+import com.github.cloudyrock.mongock.driver.api.driver.Transactionable;
+import com.github.cloudyrock.mongock.driver.api.entry.ChangeEntry;
+import com.github.cloudyrock.mongock.driver.api.entry.ChangeEntryService;
+import com.github.cloudyrock.mongock.driver.api.lock.guard.invoker.LockGuardInvokerImpl;
+import com.github.cloudyrock.mongock.driver.core.driver.ConnectionDriverBase;
+import com.github.cloudyrock.mongock.driver.core.lock.LockRepository;
+import com.github.cloudyrock.mongock.exception.MongockException;
+import com.github.cloudyrock.mongock.utils.annotation.NotThreadSafe;
 import org.bson.Document;
 
 import java.util.HashSet;
@@ -31,7 +31,7 @@ import java.util.Set;
 @NotThreadSafe
 public abstract class MongoSync4DriverBase<CHANGE_ENTRY extends ChangeEntry>
     extends ConnectionDriverBase<CHANGE_ENTRY>
-    implements MongockConnectionDriver<CHANGE_ENTRY>, Transactionable {
+    implements ConnectionDriver<CHANGE_ENTRY>, Transactionable {
 
   private static final String DEFAULT_CHANGELOG_COLLECTION_NAME = "mongockChangeLog";
   private static final String DEFAULT_LOCK_COLLECTION_NAME = "mongockLock";
@@ -66,22 +66,22 @@ public abstract class MongoSync4DriverBase<CHANGE_ENTRY extends ChangeEntry>
   }
 
   @Override
-  public void setChangeLogCollectionName(String changeLogCollectionName) {
+  public void setChangeLogRepositoryName(String changeLogCollectionName) {
     this.changeLogCollectionName = changeLogCollectionName;
   }
 
   @Override
-  public void setLockCollectionName(String lockCollectionName) {
+  public void setLockRepositoryName(String lockCollectionName) {
     this.lockCollectionName = lockCollectionName;
   }
 
   @Override
-  public String getChangeLogCollectionName() {
+  public String getChangeLogRepositoryName() {
     return changeLogCollectionName;
   }
 
   @Override
-  public String getLockCollectionName() {
+  public String getLockRepositoryName() {
     return lockCollectionName;
   }
 
@@ -91,12 +91,12 @@ public abstract class MongoSync4DriverBase<CHANGE_ENTRY extends ChangeEntry>
   }
 
   @Override
-  public void runValidation() throws ChangockException {
+  public void runValidation() throws MongockException {
     if (mongoDatabase == null) {
-      throw new ChangockException("MongoDatabase cannot be null");
+      throw new MongockException("MongoDatabase cannot be null");
     }
     if (this.getLockManager() == null) {
-      throw new ChangockException("Internal error: Driver needs to be initialized by the runner");
+      throw new MongockException("Internal error: Driver needs to be initialized by the runner");
     }
   }
 
@@ -112,7 +112,7 @@ public abstract class MongoSync4DriverBase<CHANGE_ENTRY extends ChangeEntry>
   @Override
   public Set<ChangeSetDependency> getDependencies() {
     if (dependencies == null) {
-      throw new ChangockException("Driver not initialized");
+      throw new MongockException("Driver not initialized");
     }
     return dependencies;
   }
@@ -141,12 +141,12 @@ public abstract class MongoSync4DriverBase<CHANGE_ENTRY extends ChangeEntry>
     try {
       clientSession = mongoClient.startSession();
     } catch (MongoClientException ex) {
-      throw new ChangockException("ERROR starting session. If Mongock is connected to a MongoDB cluster which doesn't support transactions, you must to disable transactions", ex);
+      throw new MongockException("ERROR starting session. If Mongock is connected to a MongoDB cluster which doesn't support transactions, you must to disable transactions", ex);
     }
     try {
       clientSession.withTransaction(getTransactionBody(operation), txOptions);
     } catch (Exception ex) {
-      throw new ChangockException(ex);
+      throw new MongockException(ex);
     } finally {
       clientSession.close();
     }

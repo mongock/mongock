@@ -2,7 +2,7 @@ package com.github.cloudyrock.mongock.driver.mongodb.sync.v4.decorator.impl;
 
 import com.github.cloudyrock.mongock.driver.mongodb.sync.v4.decorator.MongoCollectionDecorator;
 import com.mongodb.client.MongoCollection;
-import io.changock.driver.api.lock.guard.invoker.LockGuardInvoker;
+import com.github.cloudyrock.mongock.driver.api.lock.guard.invoker.LockGuardInvoker;
 
 public class MongoCollectionDecoratorImpl<T> implements MongoCollectionDecorator<T> {
 

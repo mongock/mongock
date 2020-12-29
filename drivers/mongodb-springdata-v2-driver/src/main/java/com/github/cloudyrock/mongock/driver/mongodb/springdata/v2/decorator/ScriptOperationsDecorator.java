@@ -1,8 +1,8 @@
 package com.github.cloudyrock.mongock.driver.mongodb.springdata.v2.decorator;
 
-import io.changock.driver.api.lock.guard.invoker.LockGuardInvoker;
-import io.changock.migration.api.annotations.NonLockGuarded;
-import io.changock.migration.api.annotations.NonLockGuardedType;
+import com.github.cloudyrock.mongock.driver.api.lock.guard.invoker.LockGuardInvoker;
+import com.github.cloudyrock.mongock.annotations.NonLockGuarded;
+import com.github.cloudyrock.mongock.annotations.NonLockGuardedType;
 import org.springframework.data.mongodb.core.ScriptOperations;
 import org.springframework.data.mongodb.core.script.ExecutableMongoScript;
 import org.springframework.data.mongodb.core.script.NamedMongoScript;

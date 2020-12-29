@@ -4,7 +4,7 @@ import com.github.cloudyrock.mongock.driver.mongodb.v3.decorator.impl.MapReduceI
 import com.mongodb.client.MapReduceIterable;
 import com.mongodb.client.model.Collation;
 import com.mongodb.client.model.MapReduceAction;
-import io.changock.migration.api.annotations.NonLockGuarded;
+import com.github.cloudyrock.mongock.annotations.NonLockGuarded;
 import org.bson.conversions.Bson;
 
 import java.util.concurrent.TimeUnit;

@@ -6,7 +6,7 @@ import com.mongodb.TransactionOptions;
 import com.mongodb.client.ClientSession;
 import com.mongodb.client.TransactionBody;
 import com.mongodb.session.ServerSession;
-import io.changock.driver.api.lock.guard.invoker.LockGuardInvoker;
+import com.github.cloudyrock.mongock.driver.api.lock.guard.invoker.LockGuardInvoker;
 import org.bson.BsonDocument;
 import org.bson.BsonTimestamp;
 

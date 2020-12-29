@@ -2,9 +2,9 @@ package com.github.cloudyrock.mongock.driver.mongodb.test.template;
 
 import com.github.cloudyrock.mongock.driver.mongodb.test.template.util.IntegrationTestBase;
 import com.mongodb.client.model.IndexOptions;
-import io.changock.driver.api.entry.ChangeState;
-import io.changock.driver.core.entry.ChangeEntryRepository;
-import io.changock.migration.api.exception.ChangockException;
+import com.github.cloudyrock.mongock.driver.api.entry.ChangeState;
+import com.github.cloudyrock.mongock.driver.core.entry.ChangeEntryRepository;
+import com.github.cloudyrock.mongock.exception.MongockException;
 import org.bson.Document;
 import org.junit.Assert;
 import org.junit.Rule;
@@ -23,15 +23,15 @@ public abstract class MongoChangeEntryRepositoryITestBase extends IntegrationTes
   public ExpectedException exceptionRule = ExpectedException.none();
 
   @Test
-  public void shouldThrowException_WhenNoIndexCreation_IfIndexNoPreviouslyCreated() throws ChangockException {
-    exceptionRule.expect(ChangockException.class);
+  public void shouldThrowException_WhenNoIndexCreation_IfIndexNoPreviouslyCreated() throws MongockException {
+    exceptionRule.expect(MongockException.class);
     exceptionRule.expectMessage("Index creation not allowed, but not created or wrongly created for collection");
     initializeRepository(false);
   }
 
 
   @Test
-  public void shouldBeOk_WhenNoIndexCreation_IfIndexAlreadyCreated() throws ChangockException {
+  public void shouldBeOk_WhenNoIndexCreation_IfIndexAlreadyCreated() throws MongockException {
     getDefaultAdapter().createIndex(getIndexDocument(new String[]{"executionId", "author", "changeId"}), new IndexOptions().unique(true));
     initializeRepository(false);
   }

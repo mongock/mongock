@@ -2,7 +2,7 @@ package com.github.cloudyrock.mongock.driver.mongodb.springdata.v3.decorator.ope
 
 
 import com.mongodb.client.result.UpdateResult;
-import io.changock.driver.api.lock.guard.decorator.Invokable;
+import com.github.cloudyrock.mongock.driver.api.lock.guard.decorator.Invokable;
 import org.springframework.data.mongodb.core.ExecutableUpdateOperation;
 
 public interface TerminatingUpdateDecorator<T> extends Invokable, ExecutableUpdateOperation.TerminatingUpdate<T>, TerminatingFindAndModifyDecorator<T>, FindAndModifyWithOptionsDecorator<T> {

@@ -2,10 +2,10 @@ package com.github.cloudyrock.mongock.driver.mongodb.sync.v4.repository;
 
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.model.Filters;
-import io.changock.driver.api.entry.ChangeEntry;
-import io.changock.driver.api.entry.ChangeState;
-import io.changock.driver.core.entry.ChangeEntryRepository;
-import io.changock.migration.api.exception.ChangockException;
+import com.github.cloudyrock.mongock.driver.api.entry.ChangeEntry;
+import com.github.cloudyrock.mongock.driver.api.entry.ChangeState;
+import com.github.cloudyrock.mongock.driver.core.entry.ChangeEntryRepository;
+import com.github.cloudyrock.mongock.exception.MongockException;
 import org.bson.Document;
 import org.bson.conversions.Bson;
 
@@ -22,21 +22,21 @@ public class MongoSync4ChangeEntryRepository<CHANGE_ENTRY extends ChangeEntry> e
     try {
        Field field = ChangeEntry.class.getDeclaredField("executionId");
        field.setAccessible(true);
-      KEY_EXECUTION_ID = field.getAnnotation(io.changock.utils.field.Field.class).value();
+      KEY_EXECUTION_ID = field.getAnnotation(com.github.cloudyrock.mongock.utils.field.Field.class).value();
 
       field = ChangeEntry.class.getDeclaredField("changeId");
       field.setAccessible(true);
-      KEY_CHANGE_ID = field.getAnnotation(io.changock.utils.field.Field.class).value();
+      KEY_CHANGE_ID = field.getAnnotation(com.github.cloudyrock.mongock.utils.field.Field.class).value();
 
       field = ChangeEntry.class.getDeclaredField("state");
       field.setAccessible(true);
-      KEY_STATE = field.getAnnotation(io.changock.utils.field.Field.class).value();
+      KEY_STATE = field.getAnnotation(com.github.cloudyrock.mongock.utils.field.Field.class).value();
 
       field = ChangeEntry.class.getDeclaredField("author");
       field.setAccessible(true);
-      KEY_AUTHOR = field.getAnnotation(io.changock.utils.field.Field.class).value();
+      KEY_AUTHOR = field.getAnnotation(com.github.cloudyrock.mongock.utils.field.Field.class).value();
     } catch (NoSuchFieldException e) {
-      throw new ChangockException(e);
+      throw new MongockException(e);
     }
   }
 
@@ -45,13 +45,13 @@ public class MongoSync4ChangeEntryRepository<CHANGE_ENTRY extends ChangeEntry> e
   }
 
   @Override
-  public boolean isAlreadyExecuted(String changeSetId, String author) throws ChangockException {
+  public boolean isAlreadyExecuted(String changeSetId, String author) throws MongockException {
     Document entry = collection.find(buildSearchQueryDBObject(changeSetId, author)).first();
     return entry != null && !entry.isEmpty();
   }
 
   @Override
-  public void save(CHANGE_ENTRY changeEntry) throws ChangockException {
+  public void save(CHANGE_ENTRY changeEntry) throws MongockException {
     collection.insertOne(toEntity(changeEntry));
   }
 

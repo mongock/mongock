@@ -11,7 +11,7 @@ public class SpringDataMongo2DriverITest extends MongoDriverITestBase {
   @Override
   protected SpringDataMongoV2Driver getDriverWithTransactionDisabled() {
     SpringDataMongoV2Driver driver = SpringDataMongoV2Driver.withDefaultLock(getMongoTemplate());
-    driver.setChangeLogCollectionName(CHANGELOG_COLLECTION_NAME);
+    driver.setChangeLogRepositoryName(CHANGELOG_COLLECTION_NAME);
     return driver;
   }
 

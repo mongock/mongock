@@ -2,7 +2,7 @@ package com.github.cloudyrock.mongock.driver.mongodb.v3.decorator;
 
 import com.github.cloudyrock.mongock.driver.mongodb.v3.decorator.impl.ListIndexesIterableDecoratorImpl;
 import com.mongodb.client.ListIndexesIterable;
-import io.changock.migration.api.annotations.NonLockGuarded;
+import com.github.cloudyrock.mongock.annotations.NonLockGuarded;
 
 import java.util.concurrent.TimeUnit;
 

@@ -6,8 +6,8 @@ import com.github.cloudyrock.mongock.driver.mongodb.sync.v4.decorator.impl.Mongo
 import com.mongodb.ClientSessionOptions;
 import com.mongodb.client.ClientSession;
 import com.mongodb.client.MongoDatabase;
-import io.changock.driver.api.lock.guard.decorator.Invokable;
-import io.changock.migration.api.annotations.NonLockGuarded;
+import com.github.cloudyrock.mongock.driver.api.lock.guard.decorator.Invokable;
+import com.github.cloudyrock.mongock.annotations.NonLockGuarded;
 import org.bson.codecs.Codec;
 import org.bson.codecs.configuration.CodecRegistry;
 import org.springframework.dao.DataAccessException;

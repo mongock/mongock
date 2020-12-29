@@ -1,8 +1,8 @@
 package com.github.cloudyrock.mongock.driver.mongodb.sync.v4.decorator;
 
-import io.changock.driver.api.lock.guard.invoker.LockGuardInvoker;
-import io.changock.migration.api.annotations.NonLockGuarded;
-import io.changock.migration.api.annotations.NonLockGuardedType;
+import com.github.cloudyrock.mongock.driver.api.lock.guard.invoker.LockGuardInvoker;
+import com.github.cloudyrock.mongock.annotations.NonLockGuarded;
+import com.github.cloudyrock.mongock.annotations.NonLockGuardedType;
 
 import java.util.Iterator;
 import java.util.function.Consumer;

@@ -6,11 +6,11 @@ import com.mongodb.ErrorCategory;
 import com.mongodb.MongoWriteException;
 import com.mongodb.client.FindIterable;
 import com.mongodb.client.model.UpdateOptions;
-import io.changock.driver.core.lock.LockEntry;
-import io.changock.driver.core.lock.LockPersistenceException;
-import io.changock.driver.core.lock.LockRepository;
-import io.changock.driver.core.lock.LockStatus;
-import io.changock.migration.api.exception.ChangockException;
+import com.github.cloudyrock.mongock.driver.core.lock.LockEntry;
+import com.github.cloudyrock.mongock.driver.core.lock.LockPersistenceException;
+import com.github.cloudyrock.mongock.driver.core.lock.LockRepository;
+import com.github.cloudyrock.mongock.driver.core.lock.LockStatus;
+import com.github.cloudyrock.mongock.exception.MongockException;
 import org.bson.Document;
 import org.junit.Test;
 
@@ -50,7 +50,7 @@ public abstract class MongoLockRepositoryITestBase extends IntegrationTestBase {
   }
 
   @Test
-  public void findByKeyShouldReturnLockWhenThereIsOne() throws LockPersistenceException, ChangockException {
+  public void findByKeyShouldReturnLockWhenThereIsOne() throws LockPersistenceException, MongockException {
     initializeRepository();
     //given
     getDataBase().getCollection(LOCK_COLLECTION_NAME).updateMany(
@@ -68,7 +68,7 @@ public abstract class MongoLockRepositoryITestBase extends IntegrationTestBase {
 
 
   @Test
-  public void insertUpdateShouldInsertWhenEmpty() throws LockPersistenceException, ChangockException {
+  public void insertUpdateShouldInsertWhenEmpty() throws LockPersistenceException, MongockException {
     initializeRepository();
 
     // when
@@ -82,7 +82,7 @@ public abstract class MongoLockRepositoryITestBase extends IntegrationTestBase {
   }
 
   @Test
-  public void insertUpdateShouldUpdateWhenExpiresAtIsGraterThanSaved() throws LockPersistenceException, ChangockException {
+  public void insertUpdateShouldUpdateWhenExpiresAtIsGraterThanSaved() throws LockPersistenceException, MongockException {
     initializeRepository();
     //given
     final long currentMillis = System.currentTimeMillis();
@@ -101,7 +101,7 @@ public abstract class MongoLockRepositoryITestBase extends IntegrationTestBase {
   }
 
   @Test
-  public void insertUpdateShouldUpdateWhenSameOwner() throws LockPersistenceException, ChangockException {
+  public void insertUpdateShouldUpdateWhenSameOwner() throws LockPersistenceException, MongockException {
     initializeRepository();
     //given
     repository.insertUpdate(
@@ -119,7 +119,7 @@ public abstract class MongoLockRepositoryITestBase extends IntegrationTestBase {
   }
 
   @Test(expected = LockPersistenceException.class)
-  public void insertUpdateShouldThrowExceptionWhenLockIsInDBWIthDifferentOwnerAndNotExpired() throws LockPersistenceException, ChangockException {
+  public void insertUpdateShouldThrowExceptionWhenLockIsInDBWIthDifferentOwnerAndNotExpired() throws LockPersistenceException, MongockException {
     initializeRepository();
     //given
     final long currentMillis = System.currentTimeMillis();
@@ -134,7 +134,7 @@ public abstract class MongoLockRepositoryITestBase extends IntegrationTestBase {
   }
 
   @Test
-  public void removeShouldRemoveWhenSameOwner() throws LockPersistenceException, ChangockException {
+  public void removeShouldRemoveWhenSameOwner() throws LockPersistenceException, MongockException {
     initializeRepository();
     //given
     getDataBase().getCollection(LOCK_COLLECTION_NAME).updateMany(
@@ -154,7 +154,7 @@ public abstract class MongoLockRepositoryITestBase extends IntegrationTestBase {
   }
 
   @Test
-  public void removeShouldNotRemoveWhenDifferentOwner() throws LockPersistenceException, ChangockException {
+  public void removeShouldNotRemoveWhenDifferentOwner() throws LockPersistenceException, MongockException {
     initializeRepository();
     //given
     getDataBase().getCollection(LOCK_COLLECTION_NAME).updateMany(
@@ -174,7 +174,7 @@ public abstract class MongoLockRepositoryITestBase extends IntegrationTestBase {
   }
 
   @Test(expected = LockPersistenceException.class)
-  public void updateIfSameOwnerShouldNotInsertWhenEmpty() throws LockPersistenceException, ChangockException {
+  public void updateIfSameOwnerShouldNotInsertWhenEmpty() throws LockPersistenceException, MongockException {
     initializeRepository();
     //when
     repository.updateIfSameOwner(
@@ -183,7 +183,7 @@ public abstract class MongoLockRepositoryITestBase extends IntegrationTestBase {
   }
 
   @Test(expected = LockPersistenceException.class)
-  public void updateIfSameOwnerShouldNotUpdateWhenExpiresAtIsGraterThanSavedButOtherOwner() throws LockPersistenceException, ChangockException {
+  public void updateIfSameOwnerShouldNotUpdateWhenExpiresAtIsGraterThanSavedButOtherOwner() throws LockPersistenceException, MongockException {
     initializeRepository();
     //given
     final long currentMillis = System.currentTimeMillis();
@@ -197,7 +197,7 @@ public abstract class MongoLockRepositoryITestBase extends IntegrationTestBase {
   }
 
   @Test
-  public void updateIfSameOwnerShouldUpdateWhenSameOwner() throws LockPersistenceException, ChangockException {
+  public void updateIfSameOwnerShouldUpdateWhenSameOwner() throws LockPersistenceException, MongockException {
     initializeRepository();
     //given
     repository.insertUpdate(
@@ -215,7 +215,7 @@ public abstract class MongoLockRepositoryITestBase extends IntegrationTestBase {
   }
 
   @Test(expected = LockPersistenceException.class)
-  public void updateIfSameOwnerShouldNotUpdateWhenDifferentOwnerAndExpiresAtIsNotGrater() throws LockPersistenceException, ChangockException {
+  public void updateIfSameOwnerShouldNotUpdateWhenDifferentOwnerAndExpiresAtIsNotGrater() throws LockPersistenceException, MongockException {
     initializeRepository();
     // given
     final long currentMillis = System.currentTimeMillis();

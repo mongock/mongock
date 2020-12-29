@@ -6,7 +6,7 @@ import com.github.cloudyrock.mongock.driver.mongodb.sync.v4.decorator.impl.Mongo
 import com.mongodb.ClientSessionOptions;
 import com.mongodb.client.ClientSession;
 import com.mongodb.client.MongoDatabase;
-import io.changock.driver.api.lock.guard.decorator.Invokable;
+import com.github.cloudyrock.mongock.driver.api.lock.guard.decorator.Invokable;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.support.PersistenceExceptionTranslator;
 import org.springframework.data.mongodb.MongoDatabaseFactory;

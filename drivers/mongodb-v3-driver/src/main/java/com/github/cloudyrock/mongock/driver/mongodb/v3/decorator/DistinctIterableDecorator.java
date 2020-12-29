@@ -3,7 +3,7 @@ package com.github.cloudyrock.mongock.driver.mongodb.v3.decorator;
 import com.github.cloudyrock.mongock.driver.mongodb.v3.decorator.impl.DistinctIterableDecoratorImpl;
 import com.mongodb.client.DistinctIterable;
 import com.mongodb.client.model.Collation;
-import io.changock.migration.api.annotations.NonLockGuarded;
+import com.github.cloudyrock.mongock.annotations.NonLockGuarded;
 import org.bson.conversions.Bson;
 
 import java.util.concurrent.TimeUnit;

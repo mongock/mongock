@@ -6,10 +6,10 @@ import com.mongodb.Block;
 import com.mongodb.Function;
 import com.mongodb.client.MongoCursor;
 import com.mongodb.client.MongoIterable;
-import io.changock.driver.api.lock.guard.invoker.LockGuardInvoker;
-import io.changock.migration.api.annotations.DecoratorDiverted;
-import io.changock.migration.api.annotations.NonLockGuarded;
-import io.changock.migration.api.annotations.NonLockGuardedType;
+import com.github.cloudyrock.mongock.driver.api.lock.guard.invoker.LockGuardInvoker;
+import com.github.cloudyrock.mongock.annotations.DecoratorDiverted;
+import com.github.cloudyrock.mongock.annotations.NonLockGuarded;
+import com.github.cloudyrock.mongock.annotations.NonLockGuardedType;
 
 import java.util.Collection;
 import java.util.Spliterator;
