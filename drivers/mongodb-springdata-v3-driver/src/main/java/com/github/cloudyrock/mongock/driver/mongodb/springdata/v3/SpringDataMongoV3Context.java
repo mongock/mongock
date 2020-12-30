@@ -11,7 +11,7 @@ import org.springframework.data.mongodb.core.MongoTemplate;
 import java.util.Optional;
 
 @Configuration
-@ConditionalOnExpression("${mongock.enabled:true} && ${changock.enabled:true}")
+//@ConditionalOnExpression("${mongock.enabled:true} && ${changock.enabled:true}")
 public class SpringDataMongoV3Context {
 
   @Bean
