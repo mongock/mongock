@@ -42,14 +42,17 @@
 
         <groupId>com.github.cloudyrock.mongock</groupId>
         <artifactId>mongock-api</artifactId>
+        <version>2.0.0.BETA-SNAPSHOT</version>
       </dependency>
       <dependency>
         <groupId>com.github.cloudyrock.mongock</groupId>
         <artifactId>mongock-standalone</artifactId>
+        <version>2.0.0.BETA-SNAPSHOT</version>
       </dependency>
       <dependency>
         <groupId>com.github.cloudyrock.mongock</groupId>
         <artifactId>mongock-spring-v5</artifactId>
+        <version>2.0.0.BETA-SNAPSHOT</version>
       </dependency>
     </dependencies>
   </dependencyManagement>
