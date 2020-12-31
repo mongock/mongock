@@ -2,8 +2,8 @@ package com.github.cloudyrock.mongock.driver.mongodb.v3.changelogs.runonce;
 
 import com.github.cloudyrock.mongock.ChangeLog;
 import com.github.cloudyrock.mongock.ChangeSet;
-import com.github.cloudyrock.mongock.annotations.NonLockGuarded;
-import com.github.cloudyrock.mongock.annotations.NonLockGuardedType;
+import io.changock.migration.api.annotations.NonLockGuarded;
+import io.changock.migration.api.annotations.NonLockGuardedType;
 import com.github.cloudyrock.mongock.config.LegacyMigration;
 import com.github.cloudyrock.mongock.driver.api.entry.ChangeEntry;
 import com.github.cloudyrock.mongock.driver.api.entry.ChangeEntryService;

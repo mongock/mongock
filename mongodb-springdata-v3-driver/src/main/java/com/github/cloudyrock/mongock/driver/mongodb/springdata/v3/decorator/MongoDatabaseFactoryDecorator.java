@@ -1,6 +1,6 @@
 package com.github.cloudyrock.mongock.driver.mongodb.springdata.v3.decorator;
 
-import com.github.cloudyrock.mongock.annotations.NonLockGuarded;
+import io.changock.migration.api.annotations.NonLockGuarded;
 import com.github.cloudyrock.mongock.driver.api.lock.guard.decorator.Invokable;
 import com.github.cloudyrock.mongock.driver.mongodb.springdata.v3.decorator.impl.ClientSessionDecoratorImpl;
 import com.github.cloudyrock.mongock.driver.mongodb.springdata.v3.decorator.impl.MongoDatabaseFactoryDecoratorImpl;

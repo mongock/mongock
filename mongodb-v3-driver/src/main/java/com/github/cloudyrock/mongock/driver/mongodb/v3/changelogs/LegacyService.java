@@ -1,7 +1,7 @@
 package com.github.cloudyrock.mongock.driver.mongodb.v3.changelogs;
 
-import com.github.cloudyrock.mongock.annotations.NonLockGuarded;
-import com.github.cloudyrock.mongock.annotations.NonLockGuardedType;
+import io.changock.migration.api.annotations.NonLockGuarded;
+import io.changock.migration.api.annotations.NonLockGuardedType;
 import com.github.cloudyrock.mongock.config.LegacyMigration;
 import com.github.cloudyrock.mongock.config.LegacyMigrationMappingFields;
 import com.github.cloudyrock.mongock.driver.api.entry.ChangeEntry;
