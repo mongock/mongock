@@ -17,7 +17,7 @@ import static org.mockito.Mockito.verify;
 
 public class MongoSync4LockRepositoryITest extends MongoLockRepositoryITestBase {
 
-  private static final String LOCK_COLLECTION_NAME = "changockLock";
+  private static final String LOCK_COLLECTION_NAME = "mongockLock";
 
 
 

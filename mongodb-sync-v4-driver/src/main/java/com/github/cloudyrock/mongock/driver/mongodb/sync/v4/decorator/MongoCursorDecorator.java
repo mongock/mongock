@@ -6,7 +6,7 @@ import com.mongodb.ServerAddress;
 import com.mongodb.ServerCursor;
 import com.mongodb.client.MongoCursor;
 
-public interface MongoCursorDecorator<T> extends MongoCursor<T>, ChangockIterator<T> {
+public interface MongoCursorDecorator<T> extends MongoCursor<T>, MongockIterator<T> {
 
   MongoCursor<T> getImpl();
 

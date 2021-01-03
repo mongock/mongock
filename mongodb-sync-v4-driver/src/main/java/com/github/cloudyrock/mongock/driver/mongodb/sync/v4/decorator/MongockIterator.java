@@ -7,7 +7,7 @@ import com.github.cloudyrock.mongock.driver.api.lock.guard.invoker.LockGuardInvo
 import java.util.Iterator;
 import java.util.function.Consumer;
 
-public interface ChangockIterator<T> extends Iterator<T> {
+public interface MongockIterator<T> extends Iterator<T> {
 
   Iterator<T> getImpl();
 

@@ -23,7 +23,7 @@ import static org.junit.Assert.assertNull;
 
 public abstract class MongoLockRepositoryITestBase extends IntegrationTestBase {
 
-  private static final String LOCK_COLLECTION_NAME = "changockLock";
+  private static final String LOCK_COLLECTION_NAME = "mongockLock";
   private static final String LOCK_KEY = "LOCK_KEY";
 
   protected LockRepository<Document> repository;

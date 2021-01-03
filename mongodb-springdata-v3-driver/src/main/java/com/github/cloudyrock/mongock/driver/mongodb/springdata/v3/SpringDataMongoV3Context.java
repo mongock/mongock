@@ -2,6 +2,7 @@ package com.github.cloudyrock.mongock.driver.mongodb.springdata.v3;
 
 import com.github.cloudyrock.mongock.config.MongockSpringConfiguration;
 import com.github.cloudyrock.mongock.driver.api.driver.ConnectionDriver;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnExpression;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.mongodb.MongoTransactionManager;
@@ -10,7 +11,7 @@ import org.springframework.data.mongodb.core.MongoTemplate;
 import java.util.Optional;
 
 @Configuration
-//@ConditionalOnExpression("${mongock.enabled:true} && ${changock.enabled:true}")
+@ConditionalOnExpression("${mongock.enabled:true}")
 public class SpringDataMongoV3Context {
 
   @Bean

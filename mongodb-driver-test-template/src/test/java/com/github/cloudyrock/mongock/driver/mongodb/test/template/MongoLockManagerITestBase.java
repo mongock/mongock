@@ -22,7 +22,7 @@ import static org.junit.Assert.assertNull;
 
 
 public abstract class MongoLockManagerITestBase extends IntegrationTestBase {
-  protected static final String LOCK_COLLECTION_NAME = "changockLock";
+  protected static final String LOCK_COLLECTION_NAME = "mongockLock";
   protected static final long lockActiveMillis = 5 * 60 * 1000;
   protected static final long maxWaitMillis = 5 * 60 * 1000;
   protected static final int lockMaxTries = 3;

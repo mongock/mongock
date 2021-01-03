@@ -1,9 +1,9 @@
 package com.github.cloudyrock.mongock.driver.mongodb.springdata.v2.decorator;
 
-import com.github.cloudyrock.mongock.driver.mongodb.v3.decorator.ChangockIterator;
+import com.github.cloudyrock.mongock.driver.mongodb.v3.decorator.MongockIterator;
 import org.springframework.data.util.CloseableIterator;
 
-public interface CloseableIteratorDecorator<T> extends CloseableIterator<T>, ChangockIterator<T> {
+public interface CloseableIteratorDecorator<T> extends CloseableIterator<T>, MongockIterator<T> {
 
   CloseableIterator<T> getImpl();
 
