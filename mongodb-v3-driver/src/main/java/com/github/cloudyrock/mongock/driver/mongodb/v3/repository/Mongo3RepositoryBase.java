@@ -3,6 +3,8 @@ package com.github.cloudyrock.mongock.driver.mongodb.v3.repository;
 import com.github.cloudyrock.mongock.driver.core.common.Repository;
 import com.github.cloudyrock.mongock.exception.MongockException;
 import com.github.cloudyrock.mongock.utils.field.FieldInstance;
+import com.mongodb.ReadConcern;
+import com.mongodb.ReadPreference;
 import com.mongodb.WriteConcern;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.model.IndexOptions;
@@ -27,7 +29,10 @@ public abstract class Mongo3RepositoryBase<DOMAIN_CLASS> implements Repository<D
   protected MongoCollection<Document> collection;
 
   public Mongo3RepositoryBase(MongoCollection<Document> collection, String[] uniqueFields, boolean indexCreation) {
-    this.collection = collection.withWriteConcern(WriteConcern.MAJORITY);
+    this.collection = collection
+        .withReadConcern(ReadConcern.MAJORITY)
+        .withReadPreference(ReadPreference.primary())
+        .withWriteConcern(WriteConcern.MAJORITY.withJournal(true));
     this.uniqueFields = uniqueFields;
     this.indexCreation = indexCreation;
   }
@@ -78,7 +83,7 @@ public abstract class Mongo3RepositoryBase<DOMAIN_CLASS> implements Repository<D
   }
 
   protected boolean isIdIndex(Document index) {
-    return  ((Document) index.get("key")).get("_id") != null;
+    return ((Document) index.get("key")).get("_id") != null;
   }
 
   protected boolean isRequiredIndexCreated() {
