@@ -3,6 +3,7 @@ package com.github.cloudyrock.mongock.driver.mongodb.v3.repository;
 import com.github.cloudyrock.mongock.driver.core.common.Repository;
 import com.github.cloudyrock.mongock.exception.MongockException;
 import com.github.cloudyrock.mongock.utils.field.FieldInstance;
+import com.mongodb.WriteConcern;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.model.IndexOptions;
 import org.bson.Document;
@@ -26,7 +27,7 @@ public abstract class Mongo3RepositoryBase<DOMAIN_CLASS> implements Repository<D
   protected MongoCollection<Document> collection;
 
   public Mongo3RepositoryBase(MongoCollection<Document> collection, String[] uniqueFields, boolean indexCreation) {
-    this.collection = collection;
+    this.collection = collection.withWriteConcern(WriteConcern.MAJORITY);
     this.uniqueFields = uniqueFields;
     this.indexCreation = indexCreation;
   }

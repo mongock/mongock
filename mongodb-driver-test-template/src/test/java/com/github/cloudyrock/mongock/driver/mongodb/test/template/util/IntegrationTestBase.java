@@ -1,5 +1,8 @@
 package com.github.cloudyrock.mongock.driver.mongodb.test.template.util;
 
+import com.mongodb.ConnectionString;
+import com.mongodb.MongoClientSettings;
+import com.mongodb.WriteConcern;
 import com.mongodb.client.MongoClient;
 import com.mongodb.client.MongoClients;
 import com.mongodb.client.MongoDatabase;
@@ -25,7 +28,11 @@ public abstract class IntegrationTestBase {
 
   @Before
   public final void setUpParent() {
-    mongoClient = MongoClients.create(String.format("mongodb://%s:%d", mongo.getContainerIpAddress(), mongo.getFirstMappedPort()));
+    MongoClientSettings settings = MongoClientSettings.builder()
+        .writeConcern(getDefaultConnectionWriteConcern())
+        .applyConnectionString(new ConnectionString(String.format("mongodb://%s:%d", mongo.getContainerIpAddress(), mongo.getFirstMappedPort())))
+        .build();
+    mongoClient = MongoClients.create(settings);
     mongoDatabase = mongoClient.getDatabase(DEFAULT_DATABASE_NAME);
 
   }
@@ -50,4 +57,11 @@ public abstract class IntegrationTestBase {
   }
 
   protected abstract MongoDBDriverTestAdapter getAdapter(String collectionName);
+
+  //Default write concern for the connection.
+  //If the Mongock doesn't set the acknowledgement at operation level(in collection),
+  // lockRepository will throw UnsupportedOperationException at starting time
+  protected WriteConcern getDefaultConnectionWriteConcern() {
+    return WriteConcern.UNACKNOWLEDGED;
+  }
 }

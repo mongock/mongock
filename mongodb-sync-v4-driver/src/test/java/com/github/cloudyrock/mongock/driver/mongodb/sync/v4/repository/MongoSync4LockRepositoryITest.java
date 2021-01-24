@@ -5,6 +5,7 @@ import com.github.cloudyrock.mongock.driver.mongodb.sync.v4.MongoDbSync4DriverTe
 import com.github.cloudyrock.mongock.driver.mongodb.test.template.MongoLockRepositoryITestBase;
 import com.github.cloudyrock.mongock.driver.mongodb.test.template.util.MongoDBDriverTestAdapter;
 import com.github.cloudyrock.mongock.exception.MongockException;
+import com.mongodb.WriteConcern;
 import org.bson.Document;
 import org.junit.Test;
 import org.mockito.Mockito;
