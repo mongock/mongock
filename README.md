@@ -18,6 +18,7 @@ MongoDB version control tool for Java
 
 **Mongock** is a java MongoDB tool for tracking, managing and applying database schema changes accross all your environments based on a coding approach.  
 
+> Mongock has released Events:exclamation: Take a look to our [documentation](https://www.mongock.io/events):boom::boom:
 
 ## Documentation
 Please, see our recently published documentation in [here][documentation_link]. Although it has been published, it is still
