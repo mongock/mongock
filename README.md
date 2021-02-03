@@ -24,6 +24,9 @@ MongoDB version control tool for Java
 Please, see our recently published documentation in [here][documentation_link]. Although it has been published, it is still
 under development and there may be some sections unfinished or missing.
 
+## Examples
+[Mongock examples](https://github.com/cloudyrock/mongock-examples)
+
 ## Changelog
 To see our changelog, please take a look to  our [github releases][github_releases]
 
