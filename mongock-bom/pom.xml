@@ -3,7 +3,7 @@
   <parent>
     <artifactId>mongock</artifactId>
     <groupId>com.github.cloudyrock.mongock</groupId>
-    <version>4.3.4-SNAPSHOT</version>
+    <version>4.3.4</version>
   </parent>
   <modelVersion>4.0.0</modelVersion>
 
@@ -13,7 +13,7 @@
   <description>Mongock dependency management</description>
 
   <properties>
-    <mongock.mongodb.version>4.3.4-SNAPSHOT</mongock.mongodb.version>
+    <mongock.mongodb.version>4.3.4</mongock.mongodb.version>
     <mongock.core.version>4.3.4</mongock.core.version>
   </properties>
 
