@@ -14,7 +14,7 @@
 
   <properties>
     <mongock.mongodb.version>4.3.5-SNAPSHOT</mongock.mongodb.version>
-    <mongock.core.version>4.3.4</mongock.core.version>
+<!--    <mongock.core.version>4.3.4</mongock.core.version>-->
   </properties>
 
   <dependencyManagement>
@@ -22,7 +22,7 @@
       <dependency>
         <groupId>com.github.cloudyrock.mongock</groupId>
         <artifactId>mongodb-v3-driver</artifactId>
-        <version>${mongock.mongodb.version}</version>
+<!--        <version>${mongock.mongodb.version}</version>-->
       </dependency>
       <dependency>
         <groupId>com.github.cloudyrock.mongock</groupId>
@@ -44,17 +44,17 @@
         <!-- MONGOCK CORE-->
         <groupId>com.github.cloudyrock.mongock</groupId>
         <artifactId>mongock-api</artifactId>
-        <version>${mongock.core.version}</version>
+<!--        <version>${mongock.core.version}</version>-->
       </dependency>
       <dependency>
         <groupId>com.github.cloudyrock.mongock</groupId>
         <artifactId>mongock-standalone</artifactId>
-        <version>${mongock.core.version}</version>
+<!--        <version>${mongock.core.version}</version>-->
       </dependency>
       <dependency>
         <groupId>com.github.cloudyrock.mongock</groupId>
         <artifactId>mongock-spring-v5</artifactId>
-        <version>${mongock.core.version}</version>
+<!--        <version>${mongock.core.version}</version>-->
       </dependency>
     </dependencies>
   </dependencyManagement>
