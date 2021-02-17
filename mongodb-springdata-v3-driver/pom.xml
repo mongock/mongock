@@ -18,13 +18,16 @@
   </properties>
 
   <dependencies>
+    <!-- CORE DEPENDENCIES -->
     <dependency>
       <groupId>com.github.cloudyrock.mongock</groupId>
       <artifactId>mongock-driver-core</artifactId>
+      <version>${mongock.core.version}</version>
     </dependency>
     <dependency>
       <groupId>com.github.cloudyrock.mongock</groupId>
       <artifactId>mongock-api</artifactId>
+      <version>${mongock.core.version}</version>
     </dependency>
     <dependency>
       <groupId>com.github.cloudyrock.mongock</groupId>
@@ -47,29 +50,11 @@
       <scope>provided</scope>
     </dependency>
 
-    <dependency>
-      <groupId>org.springframework.boot</groupId>
-      <artifactId>spring-boot-autoconfigure</artifactId>
-      <version>${springboot.v2.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>org.springframework.boot</groupId>
-      <artifactId>spring-boot-configuration-processor</artifactId>
-      <version>${springboot.v2.version}</version>
-    </dependency>
-
-    <dependency>
-      <groupId>org.slf4j</groupId>
-      <artifactId>slf4j-api</artifactId>
-      <version>1.7.25</version>
-    </dependency>
-
     <!-- TEST -->
     <dependency>
       <groupId>com.github.cloudyrock.mongock</groupId>
       <artifactId>mongodb-driver-test-template</artifactId>
       <classifier>tests</classifier>
-      <type>test-jar</type>
       <version>${project.version}</version>
       <scope>test</scope>
     </dependency>

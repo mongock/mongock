@@ -7,12 +7,7 @@
   <description>MongoDB tool for tracking, managing and applying database schema changes</description>
   <url>https://github.com/cloudyrock/mongock</url>
 
-  <parent>
-    <groupId>com.github.cloudyrock.mongock</groupId>
-    <artifactId>mongock-core-bom</artifactId>
-    <version>4.3.4</version>
-  </parent>
-
+  <groupId>com.github.cloudyrock.mongock</groupId>
   <artifactId>mongock</artifactId>
   <version>4.3.5-SNAPSHOT</version>
   <packaging>pom</packaging>
@@ -28,6 +23,13 @@
 
 
   <properties>
+
+    <!-- CORE
+    TODO UPDATE THIS VERSION FOR CORE UPDATES
+    -->
+    <mongock.core.version>4.3.5-SNAPSHOT</mongock.core.version>
+
+
     <java.version>1.8</java.version>
     <maven.compiler.target>1.8</maven.compiler.target>
     <maven.compiler.source>1.8</maven.compiler.source>
@@ -36,7 +38,6 @@
     <maven.javadoc.failOnError>false</maven.javadoc.failOnError>
 
     <!-- mongodb driver versions -->
-
     <mongodb.java-driver>3.11.2</mongodb.java-driver>
     <mongodb.driver-sync.version>4.0.5</mongodb.driver-sync.version>
     <mongodb.spring-data.v2.version>2.2.12.RELEASE</mongodb.spring-data.v2.version>
