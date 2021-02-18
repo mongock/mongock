@@ -48,7 +48,7 @@ public class MongoSync4Driver extends MongoSync4DriverBase<ChangeEntry> {
   @Override
   public ChangeEntryService<ChangeEntry> getChangeEntryService() {
     if (changeEntryRepository == null) {
-      this.changeEntryRepository = new MongoSync4ChangeEntryRepository<>(mongoDatabase.getCollection(changeLogCollectionName), indexCreation);
+      this.changeEntryRepository = new MongoSync4ChangeEntryRepository<>(mongoDatabase.getCollection(changeLogCollectionName), indexCreation, getReadWriteConfiguration());
     }
     return changeEntryRepository;
   }
