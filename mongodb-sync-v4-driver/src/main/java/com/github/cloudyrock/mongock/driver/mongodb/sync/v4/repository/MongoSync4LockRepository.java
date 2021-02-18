@@ -24,8 +24,15 @@ public class MongoSync4LockRepository extends MongoSync4RepositoryBase<LockEntry
   private static final String OWNER_FIELD = "owner";
   private static final String EXPIRES_AT_FIELD = "expiresAt";
 
-  public MongoSync4LockRepository(MongoCollection<Document> collection, boolean indexCreation) {
-    super(collection, new String[]{KEY_FIELD}, indexCreation);
+  public MongoSync4LockRepository(MongoCollection<Document> collection,
+                                  boolean indexCreation) {
+    super(collection, new String[]{KEY_FIELD}, indexCreation, ReadWriteConfiguration.getDefault());
+  }
+
+  public MongoSync4LockRepository(MongoCollection<Document> collection,
+                                  boolean indexCreation,
+                                  ReadWriteConfiguration readWriteConfiguration) {
+    super(collection, new String[]{KEY_FIELD}, indexCreation, readWriteConfiguration);
   }
   /**
    * If there is a lock in the database with the same key, updates it if either is expired or both share the same owner.
