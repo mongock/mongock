@@ -16,7 +16,7 @@ public class SpringDataMongoV3Context {
 
   @Bean
   public ConnectionDriver connectionDriver(MongoTemplate mongoTemplate,
-                                           MongockSpringConfiguration config,
+                                           MongockSpringWithMongoDBConfiguration config,
                                            Optional<MongoTransactionManager> txManagerOpt) {
     SpringDataMongoV3Driver driver = getDriver(mongoTemplate, config, txManagerOpt);
     setUpConnectionDriver(config, driver);
