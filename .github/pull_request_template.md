@@ -22,7 +22,9 @@ Add any other context about the problem here.
 - [ ] mongodb-driver-test-template  
 
 ## Checklist before PR
-- [ ] Branch name follows strategy (ISSUE|FEATURE|REFACTOR|DOC|TEST)[/issue_number][/description_underscored]
+- [ ] Branch name follows strategy (ISSUE|FEATURE|REFACTOR|DOC|TEST)[-issue_number][/description_underscored]. 
+
+      Ex: ISSUE-294/fix_read_concern_driver_v3
 - [ ] If depends on a new change in the mongock-core project, version updated and snapshot removed
 - [ ] Unit tests provided
 - [ ] Integration tests provided in [separated project](https://github.com/cloudyrock/mongock-integration-tests)
