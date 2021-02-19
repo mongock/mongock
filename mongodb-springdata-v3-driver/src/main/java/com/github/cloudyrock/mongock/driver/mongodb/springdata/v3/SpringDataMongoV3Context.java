@@ -2,6 +2,7 @@ package com.github.cloudyrock.mongock.driver.mongodb.springdata.v3;
 
 import com.github.cloudyrock.mongock.config.MongockSpringConfiguration;
 import com.github.cloudyrock.mongock.driver.api.driver.ConnectionDriver;
+import com.mongodb.ReadConcern;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnExpression;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -16,31 +17,44 @@ public class SpringDataMongoV3Context {
 
   @Bean
   public ConnectionDriver connectionDriver(MongoTemplate mongoTemplate,
-                                           MongockSpringWithMongoDBConfiguration config,
+                                           SpringMongoDBConfiguration config,
                                            Optional<MongoTransactionManager> txManagerOpt) {
-    SpringDataMongoV3Driver driver = getDriver(mongoTemplate, config, txManagerOpt);
-    setUpConnectionDriver(config, driver);
+    SpringDataMongoV3Driver driver = SpringDataMongoV3Driver.withLockSetting(
+        mongoTemplate,
+        config.getLockAcquiredForMinutes(),
+        config.getMaxWaitingForLockMinutes(),
+        config.getMaxTries());
+    setGenericDriverConfig(config, txManagerOpt, driver);
+    setMongoDBConfig(config, driver);
+    driver.initialize();
     return driver;
   }
 
-  private SpringDataMongoV3Driver getDriver(MongoTemplate mongoTemplate,
-                                            MongockSpringConfiguration config,
-                                            Optional<MongoTransactionManager> txManagerOpt) {
-    SpringDataMongoV3Driver driver = SpringDataMongoV3Driver.withLockSetting(mongoTemplate, config.getLockAcquiredForMinutes(), config.getMaxWaitingForLockMinutes(), config.getMaxTries());
-    if (config.isTransactionEnabled() && txManagerOpt.isPresent()) {
-      txManagerOpt.ifPresent(driver::enableTransactionWithTxManager);
-    } else {
+  private void setGenericDriverConfig(SpringMongoDBConfiguration config, Optional<MongoTransactionManager> txManagerOpt, SpringDataMongoV3Driver driver) {
+    if(setTransactionOrFalseInstead(config, txManagerOpt, driver)) {
       driver.disableTransaction();
     }
-    return driver;
-  }
-
-  private void setUpConnectionDriver(MongockSpringConfiguration config,
-                                     SpringDataMongoV3Driver driver) {
     driver.setChangeLogRepositoryName(config.getChangeLogRepositoryName());
     driver.setLockRepositoryName(config.getLockRepositoryName());
     driver.setIndexCreation(config.isIndexCreation());
-    driver.initialize();
   }
+
+  private void setMongoDBConfig(SpringMongoDBConfiguration config, SpringDataMongoV3Driver driver) {
+    driver.setWriteConcern(config.getMongoDb().getBuiltMongoDBWriteConcern());
+    driver.setReadConcern(new ReadConcern(config.getMongoDb().getReadConcern()));
+    driver.setReadPreference(config.getMongoDb().getReadPreference().getValue());
+  }
+
+
+
+  private Boolean setTransactionOrFalseInstead(SpringMongoDBConfiguration config, Optional<MongoTransactionManager> txManagerOpt, SpringDataMongoV3Driver driver) {
+    return txManagerOpt
+        .filter(tx-> config.isTransactionEnabled())
+        .map(tx-> {
+          driver.enableTransactionWithTxManager(tx);
+          return false;})
+        .orElse(true);
+  }
+
 
 }

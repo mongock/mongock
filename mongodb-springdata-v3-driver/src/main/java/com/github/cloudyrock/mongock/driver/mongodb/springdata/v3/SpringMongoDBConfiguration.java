@@ -11,9 +11,9 @@ import java.util.concurrent.TimeUnit;
 
 @Configuration
 @ConfigurationProperties("mongock")
-public class MongockSpringWithMongoDBConfiguration extends MongockSpringConfiguration {
+public class SpringMongoDBConfiguration extends MongockSpringConfiguration {
 
-  private MongoDBConfiguration mongoDb;
+  private MongoDBConfiguration mongoDb = new MongoDBConfiguration();
 
   public MongoDBConfiguration getMongoDb() {
     return mongoDb;
@@ -26,7 +26,9 @@ public class MongockSpringWithMongoDBConfiguration extends MongockSpringConfigur
   public static class MongoDBConfiguration {
 
     private WriteConcernLevel writeConcern = WriteConcernLevel.MAJORITY_WITH_JOURNAL;
+
     private ReadConcernLevel readConcern = ReadConcernLevel.MAJORITY;
+
     private ReadPreferenceLevel readPreference = ReadPreferenceLevel.PRIMARY;
 
     public WriteConcernLevel getWriteConcern() {
@@ -53,7 +55,7 @@ public class MongockSpringWithMongoDBConfiguration extends MongockSpringConfigur
       this.readPreference = readPreference;
     }
 
-    public WriteConcern getMongockWriteConcern() {
+    WriteConcern getBuiltMongoDBWriteConcern() {
       WriteConcern wc = new WriteConcern(writeConcern.w).withJournal(writeConcern.journal);
       return writeConcern.getwTimeoutMs() == null
           ? wc
