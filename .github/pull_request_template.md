@@ -5,15 +5,15 @@ issue: [Link to the issue related, if apply]
 
 ---
 
-**Description** 
+## Description
 
 A clear and concise description of what the change is.
 
-**Additional context**
+## Additional context
 
 Add any other context about the problem here.
 
-**Modules affected**
+## Modules affected
 - [ ] mongock-bom
 - [ ] mongodb-sync-v4-driver
 - [ ] mongodb-springdata-v3-driver
@@ -21,7 +21,7 @@ Add any other context about the problem here.
 - [ ] mongodb-springdata-v2-driver
 - [ ] mongodb-driver-test-template  
 
-**Checklist before PR**
+## Checklist before PR
 - [ ] Branch name follows strategy (ISSUE|FEATURE|REFACTOR|DOC|TEST)[/issue_number][/description_underscored]
 - [ ] If depends on a new change in the mongock-core project, version updated and snapshot removed
 - [ ] Unit tests provided
