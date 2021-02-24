@@ -1,6 +1,6 @@
 package com.github.cloudyrock.mongock.driver.mongodb.springdata.v3;
 
-import com.github.cloudyrock.mongock.config.MongockSpringConfiguration;
+
 import com.mongodb.ReadConcernLevel;
 import com.mongodb.ReadPreference;
 import com.mongodb.WriteConcern;
@@ -10,58 +10,44 @@ import org.springframework.context.annotation.Configuration;
 import java.util.concurrent.TimeUnit;
 
 @Configuration
-@ConfigurationProperties("mongock")
-public class SpringMongoDBConfiguration extends MongockSpringConfiguration {
+@ConfigurationProperties("mongock.mongo-db")
+public class MongoDBConfiguration {
 
-  private MongoDBConfiguration mongoDb = new MongoDBConfiguration();
+  private WriteConcernLevel writeConcern = WriteConcernLevel.MAJORITY_WITH_JOURNAL;
 
-  public MongoDBConfiguration getMongoDb() {
-    return mongoDb;
+  private ReadConcernLevel readConcern = ReadConcernLevel.MAJORITY;
+
+  private ReadPreferenceLevel readPreference = ReadPreferenceLevel.PRIMARY;
+
+  public WriteConcernLevel getWriteConcern() {
+    return writeConcern;
   }
 
-  public void setMongoDb(MongoDBConfiguration mongoDb) {
-    this.mongoDb = mongoDb;
+  public void setWriteConcern(WriteConcernLevel writeConcern) {
+    this.writeConcern = writeConcern;
   }
 
-  public static class MongoDBConfiguration {
+  public ReadConcernLevel getReadConcern() {
+    return readConcern;
+  }
 
-    private WriteConcernLevel writeConcern = WriteConcernLevel.MAJORITY_WITH_JOURNAL;
+  public void setReadConcern(ReadConcernLevel readConcern) {
+    this.readConcern = readConcern;
+  }
 
-    private ReadConcernLevel readConcern = ReadConcernLevel.MAJORITY;
+  public ReadPreferenceLevel getReadPreference() {
+    return readPreference;
+  }
 
-    private ReadPreferenceLevel readPreference = ReadPreferenceLevel.PRIMARY;
+  public void setReadPreference(ReadPreferenceLevel readPreference) {
+    this.readPreference = readPreference;
+  }
 
-    public WriteConcernLevel getWriteConcern() {
-      return writeConcern;
-    }
-
-    public void setWriteConcern(WriteConcernLevel writeConcern) {
-      this.writeConcern = writeConcern;
-    }
-
-    public ReadConcernLevel getReadConcern() {
-      return readConcern;
-    }
-
-    public void setReadConcern(ReadConcernLevel readConcern) {
-      this.readConcern = readConcern;
-    }
-
-    public ReadPreferenceLevel getReadPreference() {
-      return readPreference;
-    }
-
-    public void setReadPreference(ReadPreferenceLevel readPreference) {
-      this.readPreference = readPreference;
-    }
-
-    WriteConcern getBuiltMongoDBWriteConcern() {
-      WriteConcern wc = new WriteConcern(writeConcern.w).withJournal(writeConcern.journal);
-      return writeConcern.getwTimeoutMs() == null
-          ? wc
-          : wc.withWTimeout(writeConcern.getwTimeoutMs().longValue(), TimeUnit.MILLISECONDS);
-    }
-
+  WriteConcern getBuiltMongoDBWriteConcern() {
+    WriteConcern wc = new WriteConcern(writeConcern.w).withJournal(writeConcern.journal);
+    return writeConcern.getwTimeoutMs() == null
+        ? wc
+        : wc.withWTimeout(writeConcern.getwTimeoutMs().longValue(), TimeUnit.MILLISECONDS);
   }
 
 
