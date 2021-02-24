@@ -181,7 +181,6 @@ public abstract class MongoSync4DriverBase<CHANGE_ENTRY extends ChangeEntry>
     }
   }
 
-
   protected ReadWriteConfiguration getReadWriteConfiguration() {
     return new ReadWriteConfiguration(
         writeConcern != null ? writeConcern : DEFAULT_WRITE_CONCERN,

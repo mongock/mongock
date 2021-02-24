@@ -28,11 +28,14 @@ public abstract class Mongo3RepositoryBase<DOMAIN_CLASS> implements Repository<D
   private boolean ensuredCollectionIndex = false;
   protected MongoCollection<Document> collection;
 
-  public Mongo3RepositoryBase(MongoCollection<Document> collection, String[] uniqueFields, boolean indexCreation) {
+  public Mongo3RepositoryBase(MongoCollection<Document> collection,
+                              String[] uniqueFields,
+                              boolean indexCreation,
+                              ReadWriteConfiguration readWriteConfiguration) {
     this.collection = collection
-        .withReadConcern(ReadConcern.MAJORITY)
-        .withReadPreference(ReadPreference.primary())
-        .withWriteConcern(WriteConcern.MAJORITY.withJournal(true));
+        .withReadConcern(readWriteConfiguration.getReadConcern())
+        .withReadPreference(readWriteConfiguration.getReadPreference())
+        .withWriteConcern(readWriteConfiguration.getWriteConcern());
     this.uniqueFields = uniqueFields;
     this.indexCreation = indexCreation;
   }

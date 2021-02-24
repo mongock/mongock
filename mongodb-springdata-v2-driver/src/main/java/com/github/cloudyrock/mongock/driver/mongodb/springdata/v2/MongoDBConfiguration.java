@@ -1,4 +1,4 @@
-package com.github.cloudyrock.mongock.driver.mongodb.springdata.v3;
+package com.github.cloudyrock.mongock.driver.mongodb.springdata.v2;
 
 
 import com.mongodb.ReadConcernLevel;
@@ -13,11 +13,22 @@ import java.util.concurrent.TimeUnit;
 @ConfigurationProperties("mongock.mongo-db")
 public class MongoDBConfiguration {
 
+  private String myValue;
+
   private WriteConcernLevel writeConcern = WriteConcernLevel.MAJORITY_WITH_JOURNAL;
 
   private ReadConcernLevel readConcern = ReadConcernLevel.MAJORITY;
 
   private ReadPreferenceLevel readPreference = ReadPreferenceLevel.PRIMARY;
+
+
+  public String getMyValue() {
+    return myValue;
+  }
+
+  public void setMyValue(String myValue) {
+    this.myValue = myValue;
+  }
 
   public WriteConcernLevel getWriteConcern() {
     return writeConcern;

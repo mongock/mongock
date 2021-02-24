@@ -30,7 +30,6 @@
       <version>${mongock.core.version}</version>
     </dependency>
 
-
     <dependency>
       <groupId>com.github.cloudyrock.mongock</groupId>
       <artifactId>mongodb-v3-driver</artifactId>
@@ -56,7 +55,6 @@
       <groupId>com.github.cloudyrock.mongock</groupId>
       <artifactId>mongodb-driver-test-template</artifactId>
       <classifier>tests</classifier>
-      <type>test-jar</type>
       <version>${project.version}</version>
       <scope>test</scope>
     </dependency>

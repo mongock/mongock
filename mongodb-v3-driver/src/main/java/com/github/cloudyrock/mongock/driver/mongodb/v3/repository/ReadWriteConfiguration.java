@@ -1,4 +1,4 @@
-package com.github.cloudyrock.mongock.driver.mongodb.sync.v4.repository;
+package com.github.cloudyrock.mongock.driver.mongodb.v3.repository;
 
 
 import com.mongodb.ReadConcern;
