@@ -43,7 +43,7 @@ public class SpringDataMongoV3Context {
   private void setGenericDriverConfig(MongockConfiguration config,
                                       Optional<MongoTransactionManager> txManagerOpt,
                                       SpringDataMongoV3Driver driver) {
-    setTransactionOrFalseInstead(config, txManagerOpt, driver);
+    setTransactionManager(config, txManagerOpt, driver);
     driver.setChangeLogRepositoryName(config.getChangeLogRepositoryName());
     driver.setLockRepositoryName(config.getLockRepositoryName());
     driver.setIndexCreation(config.isIndexCreation());
@@ -57,9 +57,9 @@ public class SpringDataMongoV3Context {
 
 
 
-  private void setTransactionOrFalseInstead(MongockConfiguration config,
-                                               Optional<MongoTransactionManager> txManagerOpt,
-                                               SpringDataMongoV3Driver driver) {
+  private void setTransactionManager(MongockConfiguration config,
+                                     Optional<MongoTransactionManager> txManagerOpt,
+                                     SpringDataMongoV3Driver driver) {
     txManagerOpt
         .filter(tx-> config.isTransactionEnabled())
         .map(tx-> {
