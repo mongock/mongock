@@ -1,7 +1,7 @@
 package com.github.cloudyrock.mongock.driver.mongodb.sync.v4.repository;
 
 import com.github.cloudyrock.mongock.driver.mongodb.sync.v4.MongoDbSync4DriverTestAdapterImpl;
-import com.github.cloudyrock.mongock.driver.mongodb.sync.v4.repository.util.RepositoryAccessor;
+import com.github.cloudyrock.mongock.driver.mongodb.sync.v4.repository.util.RepositoryAccessorHelper;
 import com.github.cloudyrock.mongock.driver.mongodb.test.template.MongoChangeEntryRepositoryITestBase;
 import com.github.cloudyrock.mongock.driver.mongodb.test.template.util.MongoDBDriverTestAdapter;
 import com.github.cloudyrock.mongock.exception.MongockException;
@@ -82,7 +82,7 @@ public class MongoSync4ChangeEntryRepositoryITest extends MongoChangeEntryReposi
     } else {
       repo = new MongoSync4LockRepository(getDataBase().getCollection(LOCK_COLLECTION_NAME), true);
     }
-    MongoCollection collection = RepositoryAccessor.getCollection(repo);
+    MongoCollection collection = RepositoryAccessorHelper.getCollection(repo);
     Assert.assertEquals(expectedWriteConcern, collection.getWriteConcern());
     Assert.assertEquals(expectedReadConcern, collection.getReadConcern());
     Assert.assertEquals(expectedReadPreference, collection.getReadPreference());

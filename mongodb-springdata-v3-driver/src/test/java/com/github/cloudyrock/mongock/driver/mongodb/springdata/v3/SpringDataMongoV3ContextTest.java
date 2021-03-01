@@ -3,9 +3,8 @@ package com.github.cloudyrock.mongock.driver.mongodb.springdata.v3;
 
 import com.github.cloudyrock.mongock.config.MongockConfiguration;
 import com.github.cloudyrock.mongock.driver.mongodb.sync.v4.repository.MongoSync4RepositoryBase;
-import com.github.cloudyrock.mongock.driver.mongodb.sync.v4.repository.util.RepositoryAccessor;
+import com.github.cloudyrock.mongock.driver.mongodb.sync.v4.repository.util.RepositoryAccessorHelper;
 import com.mongodb.ReadConcern;
-import com.mongodb.ReadConcernLevel;
 import com.mongodb.ReadPreference;
 import com.mongodb.WriteConcern;
 import com.mongodb.client.MongoCollection;
@@ -49,7 +48,7 @@ public class SpringDataMongoV3ContextTest {
     ReadConcern expectedReadConcern = ReadConcern.MAJORITY;
     ReadPreference expectedReadPreference = ReadPreference.primary();
 
-    MongoCollection changeEntryCollection = RepositoryAccessor.getCollection((MongoSync4RepositoryBase) driver.getChangeEntryService());
+    MongoCollection changeEntryCollection = RepositoryAccessorHelper.getCollection((MongoSync4RepositoryBase) driver.getChangeEntryService());
     Assert.assertEquals(expectedWriteConcern, changeEntryCollection.getWriteConcern());
     Assert.assertEquals(expectedReadConcern, changeEntryCollection.getReadConcern());
     Assert.assertEquals(expectedReadPreference, changeEntryCollection.getReadPreference());

@@ -5,7 +5,7 @@ import com.mongodb.client.MongoCollection;
 
 import java.lang.reflect.Field;
 
-public class RepositoryAccessor {
+public class RepositoryAccessorHelper {
 
   private static final Field collectionField;
 

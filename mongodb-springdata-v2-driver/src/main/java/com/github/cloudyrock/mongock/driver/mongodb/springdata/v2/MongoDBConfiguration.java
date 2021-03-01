@@ -54,7 +54,7 @@ public class MongoDBConfiguration {
     this.readPreference = readPreference;
   }
 
-  WriteConcern getBuiltMongoDBWriteConcern() {
+  protected WriteConcern getBuiltMongoDBWriteConcern() {
     WriteConcern wc = new WriteConcern(writeConcern.w).withJournal(writeConcern.journal);
     return writeConcern.getwTimeoutMs() == null
         ? wc
