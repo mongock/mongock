@@ -24,7 +24,7 @@ public class RepositoryAccessorHelper {
     try {
       return (MongoCollection) collectionField.get(repo);
     } catch (IllegalAccessException e) {
-      throw  new RuntimeException(e);
+      throw  new RepositoryAccessorException(e);
     }
   }
 
