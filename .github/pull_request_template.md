@@ -1,11 +1,11 @@
----
-name: Pull request
-about: [Title of the work done]
-issue: [Link to the issue related, if apply]
 
----
+## Title of the work done
+Brief title of the PR
+
 
 ## Description
+
+> [Issue <ISSUE_NUMBE>](https://github.com/cloudyrock/mongock/issues/<ISSUE_NUMBE>)
 
 A clear and concise description of what the change is.
 
