@@ -15,7 +15,7 @@ public class RepositoryAccessorHelper {
       collectionField.setAccessible(true);
     }
     catch (NoSuchFieldException e) {
-      throw  new RuntimeException(e);
+      throw  new RepositoryAccessorException(e);
     }
   }
 
