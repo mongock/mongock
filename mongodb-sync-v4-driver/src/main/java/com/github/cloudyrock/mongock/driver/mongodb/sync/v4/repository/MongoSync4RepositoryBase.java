@@ -3,9 +3,6 @@ package com.github.cloudyrock.mongock.driver.mongodb.sync.v4.repository;
 import com.github.cloudyrock.mongock.driver.core.common.Repository;
 import com.github.cloudyrock.mongock.exception.MongockException;
 import com.github.cloudyrock.mongock.utils.field.FieldInstance;
-import com.mongodb.ReadConcern;
-import com.mongodb.ReadPreference;
-import com.mongodb.WriteConcern;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.model.IndexOptions;
 import org.bson.Document;
@@ -28,11 +25,14 @@ public abstract class MongoSync4RepositoryBase<DOMAIN_CLASS> implements Reposito
   private boolean ensuredCollectionIndex = false;
   protected MongoCollection<Document> collection;
 
-  public MongoSync4RepositoryBase(MongoCollection<Document> collection, String[] uniqueFields, boolean indexCreation) {
+  public MongoSync4RepositoryBase(MongoCollection<Document> collection,
+                                  String[] uniqueFields,
+                                  boolean indexCreation,
+                                  ReadWriteConfiguration readWriteConfiguration) {
     this.collection = collection
-        .withReadConcern(ReadConcern.MAJORITY)
-        .withReadPreference(ReadPreference.primary())
-        .withWriteConcern(WriteConcern.MAJORITY.withJournal(true));
+        .withReadConcern(readWriteConfiguration.getReadConcern())
+        .withReadPreference(readWriteConfiguration.getReadPreference())
+        .withWriteConcern(readWriteConfiguration.getWriteConcern());
     this.uniqueFields = uniqueFields;
     this.indexCreation = indexCreation;
   }

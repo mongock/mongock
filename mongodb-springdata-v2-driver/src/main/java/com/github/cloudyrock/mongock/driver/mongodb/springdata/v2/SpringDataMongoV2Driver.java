@@ -88,7 +88,7 @@ public class SpringDataMongoV2Driver extends MongoCore3Driver {
   @Override
   public ChangeEntryService<ChangeEntry> getChangeEntryService() {
     if (changeEntryRepository == null) {
-      this.changeEntryRepository = new SpringDataMongoV2ChangeEntryRepository<>(mongoTemplate, changeLogCollectionName, indexCreation);
+      this.changeEntryRepository = new SpringDataMongoV2ChangeEntryRepository<>(mongoTemplate, changeLogCollectionName, indexCreation, getReadWriteConfiguration());
     }
     return changeEntryRepository;
   }

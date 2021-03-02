@@ -90,7 +90,7 @@ public class SpringDataMongoV3Driver extends MongoSync4Driver {
   @Override
   public ChangeEntryService<ChangeEntry> getChangeEntryService() {
     if (changeEntryRepository == null) {
-      this.changeEntryRepository = new SpringDataMongoV3ChangeEntryRepository<>(mongoTemplate, changeLogCollectionName, indexCreation);
+      this.changeEntryRepository = new SpringDataMongoV3ChangeEntryRepository<>(mongoTemplate, changeLogCollectionName, indexCreation, getReadWriteConfiguration());
     }
     return changeEntryRepository;
   }
