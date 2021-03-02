@@ -35,8 +35,7 @@ Please report unacceptable behavior to [dev@cloudyrock.io][dev_email].
 
 > **Note:** Please don't file an issue to ask a question.
  
-We have an official [FAQ page](FAQ.md) where your question may be already answered. Otherwise an email to [dev@cloudyrock][dev_email]  will be the fastest way to get 
-tour question resolved. 
+We have an official [FAQ page](FAQ.md) where your question may be already answered. Otherwise an email to [dev@cloudyrock][dev_email]  will be the fastest way to get your question resolved. 
  
 ## Mongock project packages
 Mongock project contains 2 main areas. 
