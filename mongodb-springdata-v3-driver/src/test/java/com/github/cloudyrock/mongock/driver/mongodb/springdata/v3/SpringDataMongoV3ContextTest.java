@@ -2,6 +2,8 @@ package com.github.cloudyrock.mongock.driver.mongodb.springdata.v3;
 
 
 import com.github.cloudyrock.mongock.config.MongockConfiguration;
+import com.github.cloudyrock.mongock.driver.mongodb.springdata.v3.config.MongoDBConfiguration;
+import com.github.cloudyrock.mongock.driver.mongodb.springdata.v3.config.SpringDataMongoV3Context;
 import com.github.cloudyrock.mongock.driver.mongodb.sync.v4.repository.MongoSync4RepositoryBase;
 import com.github.cloudyrock.mongock.driver.mongodb.sync.v4.repository.util.RepositoryAccessorHelper;
 import com.mongodb.ReadConcern;
