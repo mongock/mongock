@@ -108,6 +108,7 @@ public class SpringDataMongoV2Driver extends MongoCore3Driver {
     } catch (Exception ex) {
       logger.warn("Error in Mongock's transaction", ex);
       txManager.rollback(txStatus);
+      throw new MongockException(ex);
     }
   }
 
