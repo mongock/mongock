@@ -7,9 +7,9 @@
   </parent>
   <modelVersion>4.0.0</modelVersion>
 
+  <name>Mongock(MongoDB) main BOM</name>
   <artifactId>mongock-bom</artifactId>
   <packaging>pom</packaging>
-  <name>Mongock BOM</name>
   <description>Mongock for MongoDB dependency management</description>
 
   <dependencyManagement>

@@ -7,6 +7,7 @@
   </parent>
   <modelVersion>4.0.0</modelVersion>
 
+  <name>Mongock(MongoDB) Driver Spring-data  v2.2 (${mongodb.spring-data.v2.version})</name>
   <artifactId>mongodb-springdata-v2-driver</artifactId>
   <properties>
     <java.version>1.8</java.version>
