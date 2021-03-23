@@ -18,9 +18,9 @@ MongoDB version control tool for Java
 
 **Mongock** is a java MongoDB tool for tracking, managing and applying database schema changes accross all your environments based on a coding approach.  
 
-> JHipster is finally adding Mongock as one of all the amagin tools in their list. We are really proud and ahppy for this! :sunglasses::muscle: 
+> JHipster finally added Mongock to their list of amaziing tools. We are really proud and happy! :sunglasses::muscle: 
 > 
-> Already working on version 5 to bring greate new features :boom::boom:
+> Already working on version 5 to bring you new great features :boom::boom:
 
 ## Documentation
 Please, see our recently published documentation in [here][documentation_link]. Although it has been published, it is still
