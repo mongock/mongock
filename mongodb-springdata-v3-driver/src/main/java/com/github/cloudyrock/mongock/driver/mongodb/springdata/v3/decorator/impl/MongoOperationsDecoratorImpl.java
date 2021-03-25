@@ -23,4 +23,5 @@ public class MongoOperationsDecoratorImpl implements MongoOperationsDecorator {
     public LockGuardInvoker getInvoker() {
         return invoker;
     }
+
 }

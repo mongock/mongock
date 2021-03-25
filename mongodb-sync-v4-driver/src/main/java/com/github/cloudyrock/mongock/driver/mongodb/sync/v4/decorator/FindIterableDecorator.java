@@ -140,4 +140,12 @@ public interface FindIterableDecorator<T> extends MongoIterableDecorator<T>, Fin
     return new FindIterableDecoratorImpl<>(getImpl().hintString(s), getInvoker());
   }
 
+
+  //from v4.1.2
+  @Override
+  @NonLockGuarded
+  default FindIterable<T> allowDiskUse(Boolean aBoolean) {
+    return new FindIterableDecoratorImpl<>(getImpl().allowDiskUse(aBoolean), getInvoker());
+  }
+
 }
