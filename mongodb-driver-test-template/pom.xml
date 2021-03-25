@@ -8,7 +8,7 @@
   <modelVersion>4.0.0</modelVersion>
 
 
-  <name>Mongock(MongoDB) Driver test template</name>
+  <name>Mongock driver for mongodb test template</name>
   <artifactId>mongodb-driver-test-template</artifactId>
   <properties>
     <java.version>1.8</java.version>
@@ -49,7 +49,7 @@
     <dependency>
       <groupId>org.mongodb</groupId>
       <artifactId>mongo-java-driver</artifactId>
-      <version>${mongodb.java-driver}</version>
+      <version>3.12.1</version>
     </dependency>
 
     <!-- TEST DEPENDENCIES -->
