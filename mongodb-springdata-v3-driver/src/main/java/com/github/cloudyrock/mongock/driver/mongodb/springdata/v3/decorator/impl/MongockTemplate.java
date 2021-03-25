@@ -282,6 +282,16 @@ public class MongockTemplate extends DecoratorBase<MongoTemplate> implements Mon
   }
 
   @Override
+  public long estimatedCount(Class<?> entityClass) {
+    return getInvoker().invoke(() -> getImpl().estimatedCount(entityClass));
+  }
+
+  @Override
+  public long estimatedCount(String s) {
+    return getInvoker().invoke(() -> getImpl().estimatedCount(s));
+  }
+
+  @Override
   public long count(Query query, Class<?> entityClass, String collectionName) {
     return getInvoker().invoke(() -> getImpl().count(query, entityClass, collectionName));
   }

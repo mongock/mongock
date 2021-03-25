@@ -231,6 +231,11 @@ public interface MongoOperationsDecorator extends MongoOperations {
   }
 
   @Override
+  default long estimatedCount(String s) {
+    return getInvoker().invoke(() -> getImpl().estimatedCount(s));
+  }
+
+  @Override
   default long count(Query query, Class<?> entityClass) {
     return getInvoker().invoke(() -> getImpl().count(query, entityClass));
   }
