@@ -40,8 +40,6 @@
         <version>${project.version}</version>
       </dependency>
 
-
-
       <!-- MONGOCK CORE-->
       <dependency>
         <groupId>com.github.cloudyrock.mongock</groupId>
