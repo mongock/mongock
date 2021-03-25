@@ -3,7 +3,7 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
 
-  <name>Mongock(MongoDB) Parent project</name>
+  <name>Mongock parent project for MongoDB</name>
   <description>MongoDB tool for tracking, managing and applying database schema changes</description>
   <url>https://github.com/cloudyrock/mongock</url>
 
@@ -36,12 +36,6 @@
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
     <maven.javadoc.failOnError>false</maven.javadoc.failOnError>
-
-    <!-- mongodb driver versions -->
-    <mongodb.java-driver>3.11.1</mongodb.java-driver>
-    <mongodb.driver-sync.version>4.0.5</mongodb.driver-sync.version>
-    <mongodb.spring-data.v2.version>2.2.12.RELEASE</mongodb.spring-data.v2.version>
-    <mongodb.spring-data.v3.version>3.0.6.RELEASE</mongodb.spring-data.v3.version>
   </properties>
 
   <licenses>
