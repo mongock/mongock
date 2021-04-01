@@ -88,6 +88,7 @@ public class LegacyService {
           getDocumentStringValue(changeDocument, mappingFields.getChangeLogClass()),
           getDocumentStringValue(changeDocument, mappingFields.getChangeSetMethod()),
           -1L,
+          "unknown",
           getMetadata(changeDocument, mappingFields.getMetadata())
       );
       originalMigrations.add(change);
