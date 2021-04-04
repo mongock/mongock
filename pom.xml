@@ -9,7 +9,7 @@
 
   <groupId>com.github.cloudyrock.mongock</groupId>
   <artifactId>mongock</artifactId>
-  <version>4.3.9-SNAPSHOT</version>
+  <version>5.0.0.BETA-SNAPSHOT</version>
   <packaging>pom</packaging>
 
   <modules>
@@ -27,7 +27,7 @@
     <!-- CORE
     TODO UPDATE THIS VERSION FOR CORE UPDATES
     -->
-    <mongock.core.version>4.3.8</mongock.core.version>
+    <mongock.core.version>5.0.0.BETA-SNAPSHOT</mongock.core.version>
 
 
     <java.version>1.8</java.version>
