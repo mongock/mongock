@@ -46,6 +46,9 @@ public abstract class MongoDriverITestBase extends IntegrationTestBase {
   protected static final String KEY_CHANGE_SET_METHOD = "changeSetMethod";
   protected static final String KEY_EXECUTION_MILLIS = "executionMillis";
   protected static final String KEY_METADATA = "metadata";
+  public static final String ANY_EXECUTION_ID = "any";
+  public static final String TEST_USER = "testuser";
+  public static final String METHOD_PREFIX = "method_";
 //  private final MongoDbDriverTestAdapter adapter;
 
   @Rule
@@ -53,49 +56,57 @@ public abstract class MongoDriverITestBase extends IntegrationTestBase {
 
   @Test
   public void shouldRunAllChangeLogsSuccessfully() {
-    runChanges(getDriverWithTransactionDisabled(), ChangeLogSuccess.class, CHANGELOG_COLLECTION_NAME, Collections.emptyList(), false);
+    runChangesAndCheck(getDriverWithTransactionDisabled(), ChangeLogSuccess.class, CHANGELOG_COLLECTION_NAME, Collections.emptyList(), false);
   }
 
   @Test
   public void shouldRegisterChangeSetAsIgnored_WhenAlreadyExecuted_IfNotRunAlways() throws NoSuchMethodException {
     MongoDBDriverTestAdapter adapter = getDefaultAdapter();
     adapter.insertOne(getChangeEntryDocument(ChangeLogSuccess.class.getMethod("method_0"), ChangeState.EXECUTED));
-    runChanges( getDriverWithTransactionDisabled(),ChangeLogSuccess.class, CHANGELOG_COLLECTION_NAME, Collections.singletonList("method_0"), false);
+    runChangesAndCheck( getDriverWithTransactionDisabled(),ChangeLogSuccess.class, CHANGELOG_COLLECTION_NAME, Collections.singletonList("method_0"), false);
   }
 
   @Test
   public void shouldRegisterChangeSetAsExecuted_WhenAlreadyExecuted_IfRunAlways() throws NoSuchMethodException {
     MongoDBDriverTestAdapter adapter = getDefaultAdapter();
-    adapter.insertOne(getChangeEntryDocument(WithRunAlways.class.getMethod("method_0"), ChangeState.EXECUTED));
-    runChanges(getDriverWithTransactionDisabled(), WithRunAlways.class, CHANGELOG_COLLECTION_NAME);
+    Document changeEntry = getChangeEntryDocument(WithRunAlways.class.getMethod("method_0"), ChangeState.EXECUTED);
+    adapter.insertOne(changeEntry);
+    String executionId = UUID.randomUUID().toString();
+    runChanges(getDriverWithTransactionDisabled(), WithRunAlways.class, executionId);
+    checkChanges(WithRunAlways.class, CHANGELOG_COLLECTION_NAME, Collections.singletonList(changeEntry.getString(KEY_CHANGE_ID)), false, executionId);
+    MongoCollection<Document> collection = this.getDataBase().getCollection(CHANGELOG_COLLECTION_NAME);
+    assertNotNull(collection.find(new Document()
+        .append(KEY_EXECUTION_ID, ANY_EXECUTION_ID)
+        .append(KEY_AUTHOR, TEST_USER)
+        .append(KEY_CHANGE_ID, METHOD_PREFIX + "0")).first());
   }
 
   @Test
   public void shouldRegisterChangeSetAsExecuted_WhenAlreadyIgnored_IfNotRunAlways() throws NoSuchMethodException {
     MongoDBDriverTestAdapter adapter = getDefaultAdapter();
     adapter.insertOne(getChangeEntryDocument(ChangeLogSuccess.class.getMethod("method_0"), ChangeState.IGNORED));
-    runChanges(getDriverWithTransactionDisabled(), ChangeLogSuccess.class, CHANGELOG_COLLECTION_NAME);
+    runChangesAndCheck(getDriverWithTransactionDisabled(), ChangeLogSuccess.class, CHANGELOG_COLLECTION_NAME);
   }
 
   @Test
   public void shouldRegisterChangeSetAsExecuted_WhenAlreadyIgnored_IfRunAlways() throws NoSuchMethodException {
     MongoDBDriverTestAdapter adapter = getDefaultAdapter();
     adapter.insertOne(getChangeEntryDocument(WithRunAlways.class.getMethod("method_0"), ChangeState.IGNORED));
-    runChanges(getDriverWithTransactionDisabled(), WithRunAlways.class, CHANGELOG_COLLECTION_NAME);
+    runChangesAndCheck(getDriverWithTransactionDisabled(), WithRunAlways.class, CHANGELOG_COLLECTION_NAME);
   }
 
   @Test
   public void shouldRegisterChangeSetAsExecuted_WhenAlreadyFailed_IfNotRunAlways() throws NoSuchMethodException {
     MongoDBDriverTestAdapter adapter = getDefaultAdapter();
     adapter.insertOne(getChangeEntryDocument(ChangeLogSuccess.class.getMethod("method_0"), ChangeState.FAILED));
-    runChanges(getDriverWithTransactionDisabled(), ChangeLogSuccess.class, CHANGELOG_COLLECTION_NAME);
+    runChangesAndCheck(getDriverWithTransactionDisabled(), ChangeLogSuccess.class, CHANGELOG_COLLECTION_NAME);
   }
 
   @Test
   public void shouldRegisterChangeSetAsExecuted_WhenAlreadyFailed_IfRunAlways() throws NoSuchMethodException {
     MongoDBDriverTestAdapter adapter = getDefaultAdapter();
     adapter.insertOne(getChangeEntryDocument(WithRunAlways.class.getMethod("method_0"), ChangeState.FAILED));
-    runChanges(getDriverWithTransactionDisabled(), WithRunAlways.class, CHANGELOG_COLLECTION_NAME);
+    runChangesAndCheck(getDriverWithTransactionDisabled(), WithRunAlways.class, CHANGELOG_COLLECTION_NAME);
   }
 
   @Test
@@ -103,13 +114,13 @@ public abstract class MongoDriverITestBase extends IntegrationTestBase {
     String newChangeLogCollectionName = "newChangeLogCollectionName";
     ConnectionDriver driver = getDriverWithTransactionDisabled();
     driver.setChangeLogRepositoryName(newChangeLogCollectionName);
-    runChanges(driver, ChangeLogSuccess.class, newChangeLogCollectionName, Collections.emptyList(), false);
+    runChangesAndCheck(driver, ChangeLogSuccess.class, newChangeLogCollectionName, Collections.emptyList(), false);
   }
 
   private Document getChangeEntryDocument(Method method, ChangeState state) {
     ChangeSet changeSet = method.getAnnotation(ChangeSet.class);
     return new Document()
-        .append(KEY_EXECUTION_ID, "any")
+        .append(KEY_EXECUTION_ID, ANY_EXECUTION_ID)
         .append(KEY_CHANGE_ID, changeSet.id())
         .append(KEY_AUTHOR, changeSet.author())
         .append(KEY_STATE, state.name())
@@ -238,40 +249,28 @@ public abstract class MongoDriverITestBase extends IntegrationTestBase {
 
 
 
-  private void runChanges(ConnectionDriver driver, Class changeLogClass, String changeLogCollectionName) {
-    runChanges(driver, changeLogClass, changeLogCollectionName, Collections.emptyList(), false);
+  private void runChangesAndCheck(ConnectionDriver driver, Class changeLogClass, String changeLogCollectionName) {
+    runChangesAndCheck(driver, changeLogClass, changeLogCollectionName, Collections.emptyList(), false);
   }
 
 
 
-  private void runChanges(ConnectionDriver driver, Class changeLogClass, String chageLogCollectionName, Collection<String> ignoredChangeIds, boolean trackIgnored) {
-    Map<String, Object> metadata = getStringObjectMap();
-
+  private void runChangesAndCheck(ConnectionDriver driver, Class changeLogClass, String chageLogCollectionName, Collection<String> ignoredChangeIds, boolean trackIgnored) {
     String executionId = UUID.randomUUID().toString();
-    TestMongockRunner runner = TestMongockRunner.builder()
-        .setDriver(driver)
-        .addChangeLogsScanPackage(changeLogClass.getPackage().getName())
-        .withMetadata(metadata)
-        .setExecutionId(executionId)
-        .build();
-    runner.execute();
 
+    runChanges(driver, changeLogClass, executionId);
+
+    checkChanges(changeLogClass, chageLogCollectionName, ignoredChangeIds, trackIgnored, executionId);
+  }
+
+  private void checkChanges(Class changeLogClass, String chageLogCollectionName, Collection<String> ignoredOrRunAlwaysChangeIds, boolean trackIgnored, String executionId) {
     MongoCollection<Document> collection = this.getDataBase().getCollection(chageLogCollectionName);
-
-    FindIterable<Document> documents = this.getDataBase().getCollection(chageLogCollectionName).find(new Document()
-        .append(KEY_EXECUTION_ID, executionId));
-    MongoCursor<Document> iterator = documents.iterator();
-    while (iterator.hasNext()) {
-      Document next = iterator.next();
-      System.out.println(next);
-    }
-
     for (int i = 0; i < 5; i++) {
       Document change = collection.find(new Document()
           .append(KEY_EXECUTION_ID, executionId)
-          .append(KEY_AUTHOR, "testuser")
+          .append(KEY_AUTHOR, TEST_USER)
           .append(KEY_CHANGE_ID, "method_" + i)).first();
-      if(trackIgnored || !ignoredChangeIds.contains("method_" + i)) {
+      if(trackIgnored || !ignoredOrRunAlwaysChangeIds.contains("method_" + i)) {
 
         String executionIdChange = change.get(KEY_EXECUTION_ID, String.class);
         String changeId = change.get(KEY_CHANGE_ID, String.class);
@@ -284,8 +283,8 @@ public abstract class MongoDriverITestBase extends IntegrationTestBase {
         Map metadataResult = change.get(KEY_METADATA, Map.class);
         assertNotNull(executionIdChange);
         assertEquals("method_" + i, changeId);
-        assertEquals("testuser", author);
-        assertEquals((ignoredChangeIds.contains(changeId) ? ChangeState.IGNORED : ChangeState.EXECUTED).name(), state);
+        assertEquals(TEST_USER, author);
+        assertEquals((ignoredOrRunAlwaysChangeIds.contains(changeId) ? ChangeState.IGNORED : ChangeState.EXECUTED).name(), state);
         assertNotNull(timestamp);
         assertEquals(changeLogClass.getName(), changeLogClassInstance);
         assertEquals("method_" + i, changeSetMethod);
@@ -294,6 +293,16 @@ public abstract class MongoDriverITestBase extends IntegrationTestBase {
       }
 
     }
+  }
+
+  private void runChanges(ConnectionDriver driver, Class changeLogClass, String executionId) {
+    TestMongockRunner runner = TestMongockRunner.builder()
+        .setDriver(driver)
+        .addChangeLogsScanPackage(changeLogClass.getPackage().getName())
+        .withMetadata(getStringObjectMap())
+        .setExecutionId(executionId)
+        .build();
+    runner.execute();
   }
 
 
