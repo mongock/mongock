@@ -21,7 +21,7 @@ jobs:
           mvn clean install -Pno-test
 
       - name: Unit and Integration tests
-        run: mvn -B -Pit --file pom.xml
+        run: mvn -B -Pit verify
 
       - name: Build
         run: mvn -B package --file pom.xml
