@@ -1,10 +1,10 @@
-name: Release
+name: Deploy snapshot
 on:
   push:
     branches:
       - develop
 jobs:
-  release:
+  deploy-snapshot:
     runs-on: ubuntu-latest
 
     steps:
