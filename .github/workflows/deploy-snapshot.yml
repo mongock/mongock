@@ -40,14 +40,6 @@ jobs:
         env:
           GPG_SIGNING_PRIVATE_KEY: ${{ secrets.GPG_SIGNING_PRIVATE_KEY }}
 
-      - name: Build mongock-core locally(for snapshots)
-        run: |
-          cd ..
-          git clone https://github.com/cloudyrock/mongock-core.git
-          cd mongock-core
-          git checkout develop
-          mvn clean install -Pno-test
-
 # TODO append commit hash and date to snapshot version, so we can identify them easier
       - name: Deploy snpashot
         run:  |

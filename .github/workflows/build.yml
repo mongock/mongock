@@ -12,8 +12,16 @@ jobs:
         with:
           java-version: 1.8
 
+      - name: Build mongock-core locally(for snapshots)
+        run: |
+          cd ..
+          git clone https://github.com/cloudyrock/mongock-core.git
+          cd mongock-core
+          git checkout develop
+          mvn clean install -Pno-test
+
       - name: Unit and Integration tests
-        run: mvn -B verify --allow-snapshots --file pom.xml
+        run: mvn -B -Pit --file pom.xml
 
       - name: Build
         run: mvn -B package --file pom.xml
