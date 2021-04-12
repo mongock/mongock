@@ -36,6 +36,8 @@
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
     <maven.javadoc.failOnError>false</maven.javadoc.failOnError>
+
+    <project.scm.id>ossrh</project.scm.id>
   </properties>
 
   <licenses>
@@ -48,27 +50,20 @@
 
   <scm>
     <connection>scm:git:git@github.com:cloudyrock/mongock.git</connection>
-    <developerConnection>scm:git:git@github.com:cloudyrock/mongock.git</developerConnection>
+    <developerConnection>scm:git:https://github.com/cloudyrock/mongock.git</developerConnection>
     <url>https://github.com/cloudyrock/mongock</url>
-    <tag>mongock-1.13</tag>
+    <tag>mongock-5.0.0-SNAPSHOT</tag>
   </scm>
   <developers>
     <developer>
       <id>dieppa</id>
-      <name>dieppa</name>
+      <name>Antonio Perez Dieppa</name>
+    </developer>
+    <developer>
+      <id>osantana85</id>
+      <name>Oliver Santana Martín</name>
     </developer>
   </developers>
-
-  <repositories>
-    <repository>
-      <id>oss-sonatype</id>
-      <name>oss-sonatype</name>
-      <url> https://oss.sonatype.org/content/repositories/snapshots/ </url>
-      <snapshots>
-        <enabled>false</enabled>
-      </snapshots>
-    </repository>
-  </repositories>
 
   <distributionManagement>
     <snapshotRepository>
@@ -83,8 +78,6 @@
 
   <build>
     <plugins>
-
-
       <plugin>
         <artifactId>maven-deploy-plugin</artifactId>
         <version>2.8.2</version>
@@ -120,9 +113,9 @@
         <version>2.5.3</version>
         <configuration>
           <localCheckout>true</localCheckout>
-          <pushChanges>false</pushChanges>
+          <pushChanges>true</pushChanges>
           <mavenExecutorId>forked-path</mavenExecutorId>
-          <arguments>-Dgpg.passphrase=${gpg.passphrase}</arguments>
+          <arguments>-Dgpg.passphrase=${env.MAVEN_CENTRAL_TOKEN}</arguments>
         </configuration>
         <dependencies>
           <dependency>
@@ -165,52 +158,16 @@
           <target>${java.version}</target>
         </configuration>
       </plugin>
-
-
-
     </plugins>
   </build>
 
   <profiles>
 
     <profile>
-      <id>default</id>
+      <id>it</id>
       <activation>
         <activeByDefault>true</activeByDefault>
       </activation>
-      <build>
-        <plugins>
-          <plugin>
-            <groupId>org.apache.maven.plugins</groupId>
-            <artifactId>maven-surefire-plugin</artifactId>
-            <version>3.0.0-M4</version>
-            <configuration>
-              <skipTests>false</skipTests>
-              <excludes>
-                <exclude>**/*ITest.java</exclude>
-              </excludes>
-            </configuration>
-            <executions>
-              <execution>
-                <id>integration-test</id>
-                <goals>
-                  <goal>test</goal>
-                </goals>
-                <phase>integration-test</phase>
-                <configuration>
-                  <excludes>
-                    <exclude>**/*ITest.java</exclude>
-                  </excludes>
-                </configuration>
-              </execution>
-            </executions>
-          </plugin>
-        </plugins>
-      </build>
-    </profile>
-
-    <profile>
-      <id>it</id>
       <build>
         <plugins>
           <plugin>
@@ -237,6 +194,39 @@
                   <includes>
                     <include>**/*ITest.java</include>
                   </includes>
+                </configuration>
+              </execution>
+            </executions>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+
+    <profile>
+      <id>only-unit</id>
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-surefire-plugin</artifactId>
+            <version>3.0.0-M4</version>
+            <configuration>
+              <skipTests>false</skipTests>
+              <excludes>
+                <exclude>**/*ITest.java</exclude>
+              </excludes>
+            </configuration>
+            <executions>
+              <execution>
+                <id>integration-test</id>
+                <goals>
+                  <goal>test</goal>
+                </goals>
+                <phase>integration-test</phase>
+                <configuration>
+                  <excludes>
+                    <exclude>**/*ITest.java</exclude>
+                  </excludes>
                 </configuration>
               </execution>
             </executions>
@@ -284,6 +274,13 @@
                 <goals>
                   <goal>sign</goal>
                 </goals>
+                <configuration>
+                  <gpgArguments>
+                    <arg>--batch</arg>
+                    <arg>--pinentry-mode</arg>
+                    <arg>loopback</arg>
+                  </gpgArguments>
+                </configuration>
               </execution>
             </executions>
           </plugin>
