@@ -1,6 +1,6 @@
 package com.github.cloudyrock.mongock.driver.mongodb.v3.decorator;
 
-import io.changock.migration.api.annotations.NonLockGuarded;
+import com.github.cloudyrock.mongock.NonLockGuarded;
 import com.github.cloudyrock.mongock.driver.mongodb.v3.decorator.impl.FindIterableDecoratorImpl;
 import com.mongodb.CursorType;
 import com.mongodb.client.FindIterable;

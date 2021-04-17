@@ -1,6 +1,6 @@
 package com.github.cloudyrock.mongock.driver.mongodb.sync.v4.decorator;
 
-import io.changock.migration.api.annotations.NonLockGuarded;
+import com.github.cloudyrock.mongock.NonLockGuarded;
 import com.github.cloudyrock.mongock.driver.mongodb.sync.v4.decorator.impl.ListIndexesIterableDecoratorImpl;
 import com.mongodb.client.ListIndexesIterable;
 
