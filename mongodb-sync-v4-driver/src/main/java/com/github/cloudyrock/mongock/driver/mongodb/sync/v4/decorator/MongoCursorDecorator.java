@@ -1,6 +1,6 @@
 package com.github.cloudyrock.mongock.driver.mongodb.sync.v4.decorator;
 
-import io.changock.migration.api.annotations.NonLockGuarded;
+import com.github.cloudyrock.mongock.NonLockGuarded;
 import com.github.cloudyrock.mongock.driver.api.lock.guard.invoker.LockGuardInvoker;
 import com.mongodb.ServerAddress;
 import com.mongodb.ServerCursor;
