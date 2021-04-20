@@ -28,6 +28,9 @@ jobs:
           gpg-private-key: ${{ secrets.GPG_PRIVATE_KEY }}
           gpg-passphrase: GPG_PASSPHRASE
 
+      - name: Set up testcontainers
+        run: docker image pull testcontainers/ryuk:0.3.0
+
       - name: Configure Git User
         run: |
           git config user.email "actions@github.com"
@@ -49,7 +52,7 @@ jobs:
           GPG_PASSPHRASE: ${{ secrets.GPG_PASSPHRASE }}
           GPG_SIGNING_PRIVATE_KEY: ${{ secrets.GPG_SIGNING_PRIVATE_KEY }}
 
-      - name: synchronizing develop branch
+      - name: Synchronizing develop branch
         run: |
           git pull origin
           git checkout develop
