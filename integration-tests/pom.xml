@@ -23,7 +23,7 @@
     <mongodb.spring-data.v3.version>3.0.6.RELEASE</mongodb.spring-data.v3.version>
     <mongodb.driver-sync.version>4.0.5</mongodb.driver-sync.version>
 
-    <junit.version>4.13</junit.version>
+    <junit.version>4.13.1</junit.version>
     <junit.jupiter.version>5.6.2</junit.jupiter.version>
     <junit.vintage.version>5.6.2</junit.vintage.version>
   </properties>
