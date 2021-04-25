@@ -56,19 +56,19 @@ public abstract class MongoSync4DriverBase<CHANGE_ENTRY extends ChangeEntry>
 
   protected MongoSync4DriverBase(MongoClient mongoClient,
                                  String databaseName,
-                                 long lockAcquiredForMinutes,
-                                 long maxWaitingForLockMinutes,
-                                 int maxTries) {
-    this(mongoClient.getDatabase(databaseName), lockAcquiredForMinutes, maxWaitingForLockMinutes, maxTries);
+                                 long lockAcquiredForMillis,
+                                 long lockQuitTryingAfterMillis,
+                                 long lockTryFrequencyMillis) {
+    this(mongoClient.getDatabase(databaseName), lockAcquiredForMillis, lockQuitTryingAfterMillis, lockTryFrequencyMillis);
     this.mongoClient = mongoClient;
     this.transactionStrategy = TransactionStrategy.MIGRATION;
   }
 
   protected MongoSync4DriverBase(MongoDatabase mongoDatabase,
-                                 long lockAcquiredForMinutes,
-                                 long maxWaitingForLockMinutes,
-                                 int maxTries) {
-    super(lockAcquiredForMinutes, maxWaitingForLockMinutes, maxTries);
+                                 long lockAcquiredForMillis,
+                                 long lockQuitTryingAfterMillis,
+                                 long lockTryFrequencyMillis) {
+    super(lockAcquiredForMillis, lockQuitTryingAfterMillis, lockTryFrequencyMillis);
     this.mongoDatabase = mongoDatabase;
     this.transactionStrategy = TransactionStrategy.NONE;
   }

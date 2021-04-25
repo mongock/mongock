@@ -9,6 +9,7 @@ import com.github.cloudyrock.mongock.driver.api.lock.guard.invoker.LockGuardInvo
 import com.github.cloudyrock.mongock.driver.mongodb.springdata.v2.decorator.impl.MongockTemplate;
 import com.github.cloudyrock.mongock.driver.mongodb.v3.driver.MongoCore3Driver;
 import com.github.cloudyrock.mongock.exception.MongockException;
+import com.github.cloudyrock.mongock.utils.TimeService;
 import com.github.cloudyrock.mongock.utils.annotation.NotThreadSafe;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -25,6 +26,9 @@ public class SpringDataMongoV2Driver extends MongoCore3Driver {
   private static final Logger logger = LoggerFactory.getLogger(SpringDataMongoV2Driver.class);
   private static final ForbiddenParametersMap FORBIDDEN_PARAMETERS_MAP;
 
+  private static final TimeService TIME_SERVICE = new TimeService();
+
+
   static {
     FORBIDDEN_PARAMETERS_MAP = new ForbiddenParametersMap();
     FORBIDDEN_PARAMETERS_MAP.put(MongoTemplate.class, MongockTemplate.class);
@@ -33,22 +37,37 @@ public class SpringDataMongoV2Driver extends MongoCore3Driver {
   private final MongoTemplate mongoTemplate;
   private MongoTransactionManager txManager;
 
+
   public static SpringDataMongoV2Driver withDefaultLock(MongoTemplate mongoTemplate) {
-    return new SpringDataMongoV2Driver(mongoTemplate, 3L, 4L, 3);
+    return SpringDataMongoV2Driver.withLockStrategy(mongoTemplate, 60 * 1000L, 3 * 60 * 1000L, 1000L);
   }
 
+  /**
+   * @Deprecated Use withLockStrategy instead
+   */
+  @Deprecated
   public static SpringDataMongoV2Driver withLockSetting(MongoTemplate mongoTemplate,
                                                         long lockAcquiredForMinutes,
                                                         long maxWaitingForLockMinutes,
                                                         int maxTries) {
-    return new SpringDataMongoV2Driver(mongoTemplate, lockAcquiredForMinutes, maxWaitingForLockMinutes, maxTries);
+    long lockAcquiredForMillis = TIME_SERVICE.minutesToMillis(lockAcquiredForMinutes);
+    long lockQuitTryingAfterMillis = TIME_SERVICE.minutesToMillis(maxWaitingForLockMinutes * maxTries);
+    long tryFrequency = 1000L;// 1 second
+    return SpringDataMongoV2Driver.withLockStrategy(mongoTemplate, lockAcquiredForMillis, lockQuitTryingAfterMillis, tryFrequency);
+  }
+
+  public static SpringDataMongoV2Driver withLockStrategy(MongoTemplate mongoTemplate,
+                                                         long lockAcquiredForMillis,
+                                                         long lockQuitTryingAfterMillis,
+                                                         long lockTryFrequencyMillis) {
+    return new SpringDataMongoV2Driver(mongoTemplate, lockAcquiredForMillis, lockQuitTryingAfterMillis, lockTryFrequencyMillis);
   }
 
   protected SpringDataMongoV2Driver(MongoTemplate mongoTemplate,
-                                    long lockAcquiredForMinutes,
-                                    long maxWaitingForLockMinutes,
-                                    int maxTries) {
-    super(mongoTemplate.getDb(), lockAcquiredForMinutes, maxWaitingForLockMinutes, maxTries);
+                                    long lockAcquiredForMillis,
+                                    long lockQuitTryingAfterMillis,
+                                    long lockTryFrequencyMillis) {
+    super(mongoTemplate.getDb(), lockAcquiredForMillis, lockQuitTryingAfterMillis, lockTryFrequencyMillis);
     this.mongoTemplate = mongoTemplate;
   }
 

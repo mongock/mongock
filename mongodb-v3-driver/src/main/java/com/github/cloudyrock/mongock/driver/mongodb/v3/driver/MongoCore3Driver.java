@@ -6,6 +6,7 @@ import com.github.cloudyrock.mongock.driver.api.entry.ChangeEntryService;
 import com.github.cloudyrock.mongock.driver.mongodb.v3.changelogs.runalways.MongockV3LegacyMigrationChangeRunAlwaysLog;
 import com.github.cloudyrock.mongock.driver.mongodb.v3.changelogs.runonce.MongockV3LegacyMigrationChangeLog;
 import com.github.cloudyrock.mongock.driver.mongodb.v3.repository.Mongo3ChangeEntryRepository;
+import com.github.cloudyrock.mongock.utils.TimeService;
 import com.github.cloudyrock.mongock.utils.annotation.NotThreadSafe;
 import com.mongodb.client.MongoClient;
 import com.mongodb.client.MongoDatabase;
@@ -17,33 +18,53 @@ public class MongoCore3Driver extends MongoCore3DriverBase<ChangeEntry> {
 
   protected Mongo3ChangeEntryRepository<ChangeEntry> changeEntryRepository;
 
+  private static final TimeService TIME_SERVICE = new TimeService();
+
+
+  //TODO CENTRALIZE DEFAULT PROPERTIES
   public static MongoCore3Driver withDefaultLock(MongoClient mongoClient, String databaseName) {
-    return new MongoCore3Driver(mongoClient, databaseName, 3L, 4L, 3);
+    return MongoCore3Driver.withLockStrategy(mongoClient, databaseName, 60 * 1000L, 3 * 60 * 1000L, 1000L);
   }
 
+  public static MongoCore3Driver withLockStrategy(MongoClient mongoClient,
+                                                  String databaseName,
+                                                  long lockAcquiredForMillis,
+                                                  long lockQuitTryingAfterMillis,
+                                                  long lockTryFrequencyMillis) {
+    return new MongoCore3Driver(mongoClient, databaseName, lockAcquiredForMillis, lockQuitTryingAfterMillis, lockTryFrequencyMillis);
+  }
+
+
+  /**
+   * @Deprecated
+   * Use withLockStrategy instead
+   */
+  @Deprecated
   public static MongoCore3Driver withLockSetting(MongoClient mongoClient,
                                                  String databaseName,
                                                  long lockAcquiredForMinutes,
                                                  long maxWaitingForLockMinutes,
                                                  int maxTries) {
-    return new MongoCore3Driver(mongoClient, databaseName, lockAcquiredForMinutes, maxWaitingForLockMinutes, maxTries);
+    long lockAcquiredForMillis = TIME_SERVICE.minutesToMillis(lockAcquiredForMinutes);
+    long lockQuitTryingAfterMillis = TIME_SERVICE.minutesToMillis(maxWaitingForLockMinutes * maxTries);
+    long tryFrequency = 1000L;// 1 second
+    return MongoCore3Driver.withLockStrategy(mongoClient, databaseName, lockAcquiredForMillis, lockQuitTryingAfterMillis, tryFrequency);
   }
 
   // For children classes like SpringData drivers
   protected MongoCore3Driver(MongoDatabase mongoDatabase,
-                             long lockAcquiredForMinutes,
-                             long maxWaitingForLockMinutes,
-                             int maxTries) {
-    super(mongoDatabase, lockAcquiredForMinutes, maxWaitingForLockMinutes, maxTries);
+                             long lockAcquiredForMillis,
+                             long lockQuitTryingAfterMillis,
+                             long lockTryFrequencyMillis) {
+    super(mongoDatabase, lockAcquiredForMillis, lockQuitTryingAfterMillis, lockTryFrequencyMillis);
   }
-
 
   protected MongoCore3Driver(MongoClient mongoClient,
                              String databaseName,
-                             long lockAcquiredForMinutes,
-                             long maxWaitingForLockMinutes,
-                             int maxTries) {
-    super(mongoClient, databaseName, lockAcquiredForMinutes, maxWaitingForLockMinutes, maxTries);
+                             long lockAcquiredForMillis,
+                             long lockQuitTryingAfterMillis,
+                             long lockTryFrequencyMillis) {
+    super(mongoClient, databaseName, lockAcquiredForMillis, lockQuitTryingAfterMillis, lockTryFrequencyMillis);
   }
 
   @Override
