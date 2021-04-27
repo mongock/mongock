@@ -54,21 +54,21 @@ public abstract class MongoCore3DriverBase<CHANGE_ENTRY extends ChangeEntry>
   private ReadConcern readConcern;
   private ReadPreference readPreference;
 
-  MongoCore3DriverBase(MongoClient mongoClient,
-                       String databaseName,
-                       long lockAcquiredForMinutes,
-                       long maxWaitingForLockMinutes,
-                       int maxTries) {
-    this(mongoClient.getDatabase(databaseName), lockAcquiredForMinutes, maxWaitingForLockMinutes, maxTries);
+  protected MongoCore3DriverBase(MongoClient mongoClient,
+                                 String databaseName,
+                                 long lockAcquiredForMillis,
+                                 long lockQuitTryingAfterMillis,
+                                 long lockTryFrequencyMillis) {
+    this(mongoClient.getDatabase(databaseName), lockAcquiredForMillis, lockQuitTryingAfterMillis, lockTryFrequencyMillis);
     this.mongoClient = mongoClient;
     this.transactionStrategy = TransactionStrategy.MIGRATION;
   }
 
-  MongoCore3DriverBase(MongoDatabase mongoDatabase,
-                       long lockAcquiredForMinutes,
-                       long maxWaitingForLockMinutes,
-                       int maxTries) {
-    super(lockAcquiredForMinutes, maxWaitingForLockMinutes, maxTries);
+  protected MongoCore3DriverBase(MongoDatabase mongoDatabase,
+                                 long lockAcquiredForMillis,
+                                 long lockQuitTryingAfterMillis,
+                                 long lockTryFrequencyMillis) {
+    super(lockAcquiredForMillis, lockQuitTryingAfterMillis, lockTryFrequencyMillis);
     this.mongoDatabase = mongoDatabase;
     this.transactionStrategy = TransactionStrategy.NONE;
   }

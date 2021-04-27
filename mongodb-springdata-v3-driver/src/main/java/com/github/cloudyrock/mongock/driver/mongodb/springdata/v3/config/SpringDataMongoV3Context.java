@@ -32,11 +32,11 @@ public class SpringDataMongoV3Context {
                                               MongockConfiguration config,
                                               MongoDBConfiguration mongoDbConfig,
                                               Optional<MongoTransactionManager> txManagerOpt) {
-    SpringDataMongoV3Driver driver = SpringDataMongoV3Driver.withLockSetting(
+    SpringDataMongoV3Driver driver = SpringDataMongoV3Driver.withLockStrategy(
         mongoTemplate,
-        config.getLockAcquiredForMinutes(),
-        config.getMaxWaitingForLockMinutes(),
-        config.getMaxTries());
+        config.getLockAcquiredForMillis(),
+        config.getLockQuitTryingAfterMillis(),
+        config.getLockTryFrequencyMillis());
     setGenericDriverConfig(config, txManagerOpt, driver);
     setMongoDBConfig(mongoDbConfig, driver);
     return driver;
