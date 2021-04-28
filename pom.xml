@@ -9,7 +9,7 @@
 
   <groupId>com.github.cloudyrock.mongock</groupId>
   <artifactId>mongock</artifactId>
-  <version>5.0.2.BETA-SNAPSHOT</version>
+  <version>5.0.1.BETA-SNAPSHOT</version>
   <packaging>pom</packaging>
 
   <modules>
@@ -114,9 +114,9 @@
         <version>2.5.3</version>
         <configuration>
           <localCheckout>true</localCheckout>
-          <pushChanges>false</pushChanges>
+          <pushChanges>true</pushChanges>
           <mavenExecutorId>forked-path</mavenExecutorId>
-          <arguments>-Dgpg.passphrase=Quetefollen69veces+</arguments>
+          <arguments>-Dgpg.passphrase=${env.MAVEN_CENTRAL_TOKEN}</arguments>
         </configuration>
         <dependencies>
           <dependency>
