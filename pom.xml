@@ -9,7 +9,7 @@
 
   <groupId>com.github.cloudyrock.mongock</groupId>
   <artifactId>mongock</artifactId>
-  <version>5.0.1.BETA-SNAPSHOT</version>
+  <version>5.0.1.BETA</version>
   <packaging>pom</packaging>
 
   <modules>
@@ -53,7 +53,7 @@
     <connection>scm:git:git@github.com:cloudyrock/mongock.git</connection>
     <developerConnection>scm:git:https://github.com/cloudyrock/mongock.git</developerConnection>
     <url>https://github.com/cloudyrock/mongock</url>
-    <tag>mongock-5.0.0-SNAPSHOT</tag>
+    <tag>mongock-5.0.1.BETA</tag>
   </scm>
   <developers>
     <developer>
