@@ -116,7 +116,7 @@
           <localCheckout>true</localCheckout>
           <pushChanges>false</pushChanges>
           <mavenExecutorId>forked-path</mavenExecutorId>
-          <arguments>-Dgpg.passphrase=Quetefollen69veces+</arguments>
+          <arguments>-Dgpg.passphrase=${env.MAVEN_CENTRAL_TOKEN}</arguments>
         </configuration>
         <dependencies>
           <dependency>
