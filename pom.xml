@@ -28,7 +28,7 @@
     <!-- CORE
     TODO UPDATE THIS VERSION FOR CORE UPDATES
     -->
-    <mongock.core.version>5.0.1.BETA</mongock.core.version>
+    <mongock.core.version>5.0.2.BETA-SNAPSHOT</mongock.core.version>
 
 
     <java.version>1.8</java.version>
