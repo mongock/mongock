@@ -24,19 +24,12 @@ import org.springframework.transaction.support.DefaultTransactionDefinition;
 public class SpringDataMongoV2Driver extends MongoCore3Driver {
 
   private static final Logger logger = LoggerFactory.getLogger(SpringDataMongoV2Driver.class);
-  private static final ForbiddenParametersMap FORBIDDEN_PARAMETERS_MAP;
+  private static final ForbiddenParametersMap FORBIDDEN_PARAMETERS_MAP = new ForbiddenParametersMap();
 
   private static final TimeService TIME_SERVICE = new TimeService();
 
-
-  static {
-    FORBIDDEN_PARAMETERS_MAP = new ForbiddenParametersMap();
-    FORBIDDEN_PARAMETERS_MAP.put(MongoTemplate.class, MongockTemplate.class);
-  }
-
   private final MongoTemplate mongoTemplate;
   private MongoTransactionManager txManager;
-
 
   public static SpringDataMongoV2Driver withDefaultLock(MongoTemplate mongoTemplate) {
     return SpringDataMongoV2Driver.withLockStrategy(mongoTemplate, 60 * 1000L, 3 * 60 * 1000L, 1000L);
