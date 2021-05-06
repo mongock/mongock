@@ -4,7 +4,7 @@ package com.github.cloudyrock.mongock.integrationtests.spring5.springdata3;
 import com.github.cloudyrock.mongock.integrationtests.spring5.springdata3.client.ClientRepository;
 import com.github.cloudyrock.mongock.integrationtests.spring5.springdata3.spring.DateToZonedDateTimeConverter;
 import com.github.cloudyrock.mongock.integrationtests.spring5.springdata3.spring.ZonedDateTimeToDateConverter;
-import com.github.cloudyrock.springboot.v2_2.EnableMongock;
+import com.github.cloudyrock.springboot.v2_4.EnableMongock;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnExpression;
 import org.springframework.boot.builder.SpringApplicationBuilder;

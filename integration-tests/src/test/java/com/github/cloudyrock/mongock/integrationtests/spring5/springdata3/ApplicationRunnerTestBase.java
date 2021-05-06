@@ -3,7 +3,7 @@ package com.github.cloudyrock.mongock.integrationtests.spring5.springdata3;
 import com.github.cloudyrock.mongock.driver.mongodb.springdata.v3.SpringDataMongoV3Driver;
 import com.github.cloudyrock.mongock.integrationtests.spring5.springdata3.util.Constants;
 import com.github.cloudyrock.mongock.integrationtests.spring5.springdata3.util.MongoContainer;
-import com.github.cloudyrock.springboot.v2_2.MongockSpringbootV2_4;
+import com.github.cloudyrock.springboot.v2_4.MongockSpringbootV2_4;
 import com.mongodb.client.MongoClient;
 import com.mongodb.client.MongoClients;
 import org.mockito.Mockito;
