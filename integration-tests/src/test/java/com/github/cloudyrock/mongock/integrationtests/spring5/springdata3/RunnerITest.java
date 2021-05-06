@@ -4,7 +4,7 @@ import com.github.cloudyrock.mongock.integrationtests.spring5.springdata3.change
 import com.github.cloudyrock.mongock.integrationtests.spring5.springdata3.changelogs.general.MongockTestResource;
 import com.github.cloudyrock.mongock.integrationtests.spring5.springdata3.changelogs.withChangockAnnotations.ChangeLogwithChangockAnnotations;
 import com.github.cloudyrock.mongock.integrationtests.spring5.springdata3.util.Constants;
-import com.github.cloudyrock.springboot.v2_2.MongockSpringbootV2_4;
+import com.github.cloudyrock.springboot.v2_4.MongockSpringbootV2_4;
 import org.bson.Document;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
