@@ -1,6 +1,5 @@
 package com.github.cloudyrock.mongock.driver.mongodb.sync.v4.driver;
 
-import com.github.cloudyrock.mongock.driver.api.driver.ForbiddenParametersMap;
 import com.github.cloudyrock.mongock.driver.api.entry.ChangeEntry;
 import com.github.cloudyrock.mongock.driver.api.entry.ChangeEntryService;
 import com.github.cloudyrock.mongock.driver.mongodb.sync.v4.changelogs.runalways.MongockSync4LegacyMigrationChangeRunAlwaysLog;
@@ -13,8 +12,6 @@ import com.mongodb.client.MongoDatabase;
 
 @NotThreadSafe
 public class MongoSync4Driver extends MongoSync4DriverBase<ChangeEntry> {
-
-  private static final ForbiddenParametersMap FORBIDDEN_PARAMETERS_MAP = new ForbiddenParametersMap();
 
   protected MongoSync4ChangeEntryRepository<ChangeEntry> changeEntryRepository;
 
@@ -73,11 +70,6 @@ public class MongoSync4Driver extends MongoSync4DriverBase<ChangeEntry> {
       this.changeEntryRepository = new MongoSync4ChangeEntryRepository<>(mongoDatabase.getCollection(changeLogCollectionName), indexCreation, getReadWriteConfiguration());
     }
     return changeEntryRepository;
-  }
-
-  @Override
-  public ForbiddenParametersMap getForbiddenParameters() {
-    return FORBIDDEN_PARAMETERS_MAP;
   }
 
   @Override
