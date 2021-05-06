@@ -1,6 +1,5 @@
 package com.github.cloudyrock.mongock.driver.mongodb.v3.driver;
 
-import com.github.cloudyrock.mongock.driver.api.driver.ForbiddenParametersMap;
 import com.github.cloudyrock.mongock.driver.api.entry.ChangeEntry;
 import com.github.cloudyrock.mongock.driver.api.entry.ChangeEntryService;
 import com.github.cloudyrock.mongock.driver.mongodb.v3.changelogs.runalways.MongockV3LegacyMigrationChangeRunAlwaysLog;
@@ -13,8 +12,6 @@ import com.mongodb.client.MongoDatabase;
 
 @NotThreadSafe
 public class MongoCore3Driver extends MongoCore3DriverBase<ChangeEntry> {
-
-  private static final ForbiddenParametersMap FORBIDDEN_PARAMETERS_MAP = new ForbiddenParametersMap();
 
   protected Mongo3ChangeEntryRepository<ChangeEntry> changeEntryRepository;
 
@@ -73,11 +70,6 @@ public class MongoCore3Driver extends MongoCore3DriverBase<ChangeEntry> {
       this.changeEntryRepository = new Mongo3ChangeEntryRepository<>(mongoDatabase.getCollection(changeLogCollectionName), indexCreation, getReadWriteConfiguration());
     }
     return changeEntryRepository;
-  }
-
-  @Override
-  public ForbiddenParametersMap getForbiddenParameters() {
-    return FORBIDDEN_PARAMETERS_MAP;
   }
 
   @Override

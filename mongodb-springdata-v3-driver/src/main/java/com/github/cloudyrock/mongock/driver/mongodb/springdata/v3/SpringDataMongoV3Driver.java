@@ -1,7 +1,6 @@
 package com.github.cloudyrock.mongock.driver.mongodb.springdata.v3;
 
 import com.github.cloudyrock.mongock.driver.api.driver.ChangeSetDependency;
-import com.github.cloudyrock.mongock.driver.api.driver.ForbiddenParametersMap;
 import com.github.cloudyrock.mongock.driver.api.driver.TransactionStrategy;
 import com.github.cloudyrock.mongock.driver.api.entry.ChangeEntry;
 import com.github.cloudyrock.mongock.driver.api.entry.ChangeEntryService;
@@ -24,14 +23,7 @@ import org.springframework.transaction.support.DefaultTransactionDefinition;
 public class SpringDataMongoV3Driver extends MongoSync4Driver {
 
   private static final Logger logger = LoggerFactory.getLogger(SpringDataMongoV3Driver.class);
-  private static final ForbiddenParametersMap FORBIDDEN_PARAMETERS_MAP;
   private static final TimeService TIME_SERVICE = new TimeService();
-
-
-  static {
-    FORBIDDEN_PARAMETERS_MAP = new ForbiddenParametersMap();
-    FORBIDDEN_PARAMETERS_MAP.put(MongoTemplate.class, MongockTemplate.class);
-  }
 
   private final MongoTemplate mongoTemplate;
   private MongoTransactionManager txManager;
@@ -83,11 +75,6 @@ public class SpringDataMongoV3Driver extends MongoSync4Driver {
   public void specificInitialization() {
     super.specificInitialization();
     dependencies.add(new ChangeSetDependency(MongockTemplate.class, new MongockTemplate(mongoTemplate, new LockGuardInvokerImpl(this.getLockManager()))));
-  }
-
-  @Override
-  public ForbiddenParametersMap getForbiddenParameters() {
-    return FORBIDDEN_PARAMETERS_MAP;
   }
 
   public MongockTemplate getMongockTemplate() {
