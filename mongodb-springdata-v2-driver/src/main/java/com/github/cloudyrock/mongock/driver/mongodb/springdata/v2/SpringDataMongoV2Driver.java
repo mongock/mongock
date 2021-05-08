@@ -19,6 +19,8 @@ import org.springframework.transaction.TransactionDefinition;
 import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.DefaultTransactionDefinition;
 
+import static com.github.cloudyrock.mongock.TransactionStrategy.MIGRATION;
+
 @NotThreadSafe
 public class SpringDataMongoV2Driver extends MongoCore3Driver {
 
@@ -100,7 +102,7 @@ public class SpringDataMongoV2Driver extends MongoCore3Driver {
 
   public void enableTransactionWithTxManager(MongoTransactionManager txManager) {
     this.txManager = txManager;
-    this.transactionStrategy = TransactionStrategy.MIGRATION;
+    setTransactionStrategy(MIGRATION);
   }
 
   @Override

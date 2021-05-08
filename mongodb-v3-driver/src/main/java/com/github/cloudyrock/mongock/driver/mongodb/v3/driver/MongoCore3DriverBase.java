@@ -3,7 +3,6 @@ package com.github.cloudyrock.mongock.driver.mongodb.v3.driver;
 import com.github.cloudyrock.mongock.TransactionStrategy;
 import com.github.cloudyrock.mongock.driver.api.driver.ChangeSetDependency;
 import com.github.cloudyrock.mongock.driver.api.driver.ConnectionDriver;
-import com.github.cloudyrock.mongock.driver.api.driver.Transactionable;
 import com.github.cloudyrock.mongock.driver.api.entry.ChangeEntry;
 import com.github.cloudyrock.mongock.driver.api.entry.ChangeEntryService;
 import com.github.cloudyrock.mongock.driver.api.lock.guard.invoker.LockGuardInvokerImpl;
@@ -29,10 +28,13 @@ import org.bson.Document;
 import java.util.HashSet;
 import java.util.Set;
 
+import static com.github.cloudyrock.mongock.TransactionStrategy.MIGRATION;
+import static com.github.cloudyrock.mongock.TransactionStrategy.NONE;
+
 @NotThreadSafe
 public abstract class MongoCore3DriverBase<CHANGE_ENTRY extends ChangeEntry>
     extends ConnectionDriverBase<CHANGE_ENTRY>
-    implements ConnectionDriver<CHANGE_ENTRY>, Transactionable {
+    implements ConnectionDriver<CHANGE_ENTRY> {
 
   private static final String DEFAULT_CHANGELOG_COLLECTION_NAME = "mongockChangeLog";
   private static final String DEFAULT_LOCK_COLLECTION_NAME = "mongockLock";
@@ -47,7 +49,6 @@ public abstract class MongoCore3DriverBase<CHANGE_ENTRY extends ChangeEntry>
   protected boolean indexCreation = true;
   protected Mongo3LockRepository lockRepository;
   protected Set<ChangeSetDependency> dependencies;
-  protected TransactionStrategy transactionStrategy;
   protected MongoClient mongoClient;
   private TransactionOptions txOptions;
   private WriteConcern writeConcern;
@@ -61,7 +62,7 @@ public abstract class MongoCore3DriverBase<CHANGE_ENTRY extends ChangeEntry>
                                  long lockTryFrequencyMillis) {
     this(mongoClient.getDatabase(databaseName), lockAcquiredForMillis, lockQuitTryingAfterMillis, lockTryFrequencyMillis);
     this.mongoClient = mongoClient;
-    this.transactionStrategy = TransactionStrategy.MIGRATION;
+    setTransactionStrategy(MIGRATION);
   }
 
   protected MongoCore3DriverBase(MongoDatabase mongoDatabase,
@@ -70,7 +71,7 @@ public abstract class MongoCore3DriverBase<CHANGE_ENTRY extends ChangeEntry>
                                  long lockTryFrequencyMillis) {
     super(lockAcquiredForMillis, lockQuitTryingAfterMillis, lockTryFrequencyMillis);
     this.mongoDatabase = mongoDatabase;
-    this.transactionStrategy = TransactionStrategy.NONE;
+    setTransactionStrategy(NONE);
   }
 
   @Override
@@ -146,12 +147,7 @@ public abstract class MongoCore3DriverBase<CHANGE_ENTRY extends ChangeEntry>
 
   @Override
   public void disableTransaction() {
-    this.transactionStrategy = TransactionStrategy.NONE;
-  }
-
-  @Override
-  public TransactionStrategy getTransactionStrategy() {
-    return transactionStrategy;
+    setTransactionStrategy(NONE);
   }
 
   @Override
