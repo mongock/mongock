@@ -1,12 +1,11 @@
 package com.github.cloudyrock.mongock.driver.mongodb.springdata.v3;
 
-import com.github.cloudyrock.mongock.TransactionStrategy;
 import com.github.cloudyrock.mongock.driver.api.driver.ChangeSetDependency;
 import com.github.cloudyrock.mongock.driver.api.entry.ChangeEntry;
 import com.github.cloudyrock.mongock.driver.api.entry.ChangeEntryService;
 import com.github.cloudyrock.mongock.driver.api.lock.guard.invoker.LockGuardInvokerImpl;
 import com.github.cloudyrock.mongock.driver.mongodb.springdata.v3.decorator.impl.MongockTemplate;
-import com.github.cloudyrock.mongock.driver.mongodb.sync.v4.driver.MongoSync4Driver;
+import com.github.cloudyrock.mongock.driver.mongodb.sync.v4.driver.MongoSync4DriverBase;
 import com.github.cloudyrock.mongock.exception.MongockException;
 import com.github.cloudyrock.mongock.utils.TimeService;
 import com.github.cloudyrock.mongock.utils.annotation.NotThreadSafe;
@@ -19,40 +18,15 @@ import org.springframework.transaction.TransactionDefinition;
 import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.DefaultTransactionDefinition;
 
+import static com.github.cloudyrock.mongock.TransactionStrategy.MIGRATION;
+
 @NotThreadSafe
-public class SpringDataMongoV3Driver extends MongoSync4Driver {
+public class SpringDataMongoV3Driver  extends MongoSync4DriverBase<ChangeEntry> {
 
   private static final Logger logger = LoggerFactory.getLogger(SpringDataMongoV3Driver.class);
-  private static final TimeService TIME_SERVICE = new TimeService();
 
   private final MongoTemplate mongoTemplate;
   private MongoTransactionManager txManager;
-  private TransactionStrategy transactionStrategy = TransactionStrategy.NONE;
-
-  public static SpringDataMongoV3Driver withDefaultLock(MongoTemplate mongoTemplate) {
-    return SpringDataMongoV3Driver.withLockStrategy(mongoTemplate, 60 * 1000L, 3 * 60 * 1000L, 1000L);
-  }
-
-  /**
-   * @Deprecated Use withLockStrategy instead
-   */
-  @Deprecated
-  public static SpringDataMongoV3Driver withLockSetting(MongoTemplate mongoTemplate,
-                                                        long lockAcquiredForMinutes,
-                                                        long maxWaitingForLockMinutes,
-                                                        int maxTries) {
-    long lockAcquiredForMillis = TIME_SERVICE.minutesToMillis(lockAcquiredForMinutes);
-    long lockQuitTryingAfterMillis = TIME_SERVICE.minutesToMillis(maxWaitingForLockMinutes * maxTries);
-    long tryFrequency = 1000L;// 1 second
-    return SpringDataMongoV3Driver.withLockStrategy(mongoTemplate, lockAcquiredForMillis, lockQuitTryingAfterMillis, tryFrequency);
-  }
-
-  public static SpringDataMongoV3Driver withLockStrategy(MongoTemplate mongoTemplate,
-                                                         long lockAcquiredForMillis,
-                                                         long lockQuitTryingAfterMillis,
-                                                         long lockTryFrequencyMillis) {
-    return new SpringDataMongoV3Driver(mongoTemplate, lockAcquiredForMillis, lockQuitTryingAfterMillis, lockTryFrequencyMillis);
-  }
 
   protected SpringDataMongoV3Driver(MongoTemplate mongoTemplate,
                                     long lockAcquiredForMillis,
@@ -101,7 +75,7 @@ public class SpringDataMongoV3Driver extends MongoSync4Driver {
 
   public void enableTransactionWithTxManager(MongoTransactionManager txManager) {
     this.txManager = txManager;
-    this.transactionStrategy = TransactionStrategy.MIGRATION;
+    setTransactionStrategy(MIGRATION);
   }
 
   @Override
@@ -127,8 +101,37 @@ public class SpringDataMongoV3Driver extends MongoSync4Driver {
     return txManager.getTransaction(def);
   }
 
-  @Override
-  public TransactionStrategy getTransactionStrategy() {
-    return transactionStrategy;
+
+
+  ////////////////////////////////////////////////////////////
+  //BUILDER METHODS
+  ////////////////////////////////////////////////////////////
+
+
+  public static SpringDataMongoV3Driver withDefaultLock(MongoTemplate mongoTemplate) {
+    return SpringDataMongoV3Driver.withLockStrategy(mongoTemplate, 60 * 1000L, 3 * 60 * 1000L, 1000L);
+  }
+
+  public static SpringDataMongoV3Driver withLockStrategy(MongoTemplate mongoTemplate,
+                                                         long lockAcquiredForMillis,
+                                                         long lockQuitTryingAfterMillis,
+                                                         long lockTryFrequencyMillis) {
+    return new SpringDataMongoV3Driver(mongoTemplate, lockAcquiredForMillis, lockQuitTryingAfterMillis, lockTryFrequencyMillis);
+  }
+
+  /**
+   * @Deprecated Use withLockStrategy instead
+   */
+  @Deprecated
+  public static SpringDataMongoV3Driver withLockSetting(MongoTemplate mongoTemplate,
+                                                        long lockAcquiredForMinutes,
+                                                        long maxWaitingForLockMinutes,
+                                                        int maxTries) {
+    TimeService timeService = new TimeService();
+    return SpringDataMongoV3Driver.withLockStrategy(
+        mongoTemplate,
+        timeService.minutesToMillis(lockAcquiredForMinutes),
+        timeService.minutesToMillis(maxWaitingForLockMinutes * maxTries),
+        1000L);
   }
 }
