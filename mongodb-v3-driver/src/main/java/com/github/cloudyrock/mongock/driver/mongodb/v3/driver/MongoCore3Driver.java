@@ -1,21 +1,58 @@
 package com.github.cloudyrock.mongock.driver.mongodb.v3.driver;
 
 import com.github.cloudyrock.mongock.driver.api.entry.ChangeEntry;
-import com.github.cloudyrock.mongock.driver.api.entry.ChangeEntryService;
-import com.github.cloudyrock.mongock.driver.mongodb.v3.changelogs.runalways.MongockV3LegacyMigrationChangeRunAlwaysLog;
-import com.github.cloudyrock.mongock.driver.mongodb.v3.changelogs.runonce.MongockV3LegacyMigrationChangeLog;
-import com.github.cloudyrock.mongock.driver.mongodb.v3.repository.Mongo3ChangeEntryRepository;
+import com.github.cloudyrock.mongock.exception.MongockException;
 import com.github.cloudyrock.mongock.utils.TimeService;
 import com.github.cloudyrock.mongock.utils.annotation.NotThreadSafe;
+import com.mongodb.MongoClientException;
+import com.mongodb.client.ClientSession;
 import com.mongodb.client.MongoClient;
-import com.mongodb.client.MongoDatabase;
+import com.mongodb.client.TransactionBody;
+
+import static com.github.cloudyrock.mongock.TransactionStrategy.MIGRATION;
 
 @NotThreadSafe
 public class MongoCore3Driver extends MongoCore3DriverBase<ChangeEntry> {
 
-  protected Mongo3ChangeEntryRepository<ChangeEntry> changeEntryRepository;
+  private MongoClient mongoClient;
 
-  private static final TimeService TIME_SERVICE = new TimeService();
+  protected MongoCore3Driver(MongoClient mongoClient,
+                             String databaseName,
+                             long lockAcquiredForMillis,
+                             long lockQuitTryingAfterMillis,
+                             long lockTryFrequencyMillis) {
+    super(mongoClient.getDatabase(databaseName), lockAcquiredForMillis, lockQuitTryingAfterMillis, lockTryFrequencyMillis);
+    this.mongoClient = mongoClient;
+    setTransactionStrategy(MIGRATION);
+  }
+
+  @Override
+  public void executeInTransaction(Runnable operation) {
+    ClientSession clientSession;
+    try {
+      clientSession = mongoClient.startSession();
+    } catch (MongoClientException ex) {
+      throw new MongockException("ERROR starting session. If Mongock is connected to a MongoDB cluster which doesn't support transactions, you must to disable transactions", ex);
+    }
+    try {
+      clientSession.withTransaction(getTransactionBody(operation), txOptions);
+    } catch (Exception ex) {
+      throw new MongockException(ex);
+    } finally {
+      clientSession.close();
+    }
+  }
+
+  private TransactionBody<String> getTransactionBody(Runnable operation) {
+    return () -> {
+      operation.run();
+      return "Mongock transaction operation";
+    };
+  }
+
+  ////////////////////////////////////////////////////////////
+  //BUILDER METHODS
+  ////////////////////////////////////////////////////////////
 
 
   //TODO CENTRALIZE DEFAULT PROPERTIES
@@ -33,8 +70,7 @@ public class MongoCore3Driver extends MongoCore3DriverBase<ChangeEntry> {
 
 
   /**
-   * @Deprecated
-   * Use withLockStrategy instead
+   * @Deprecated Use withLockStrategy instead
    */
   @Deprecated
   public static MongoCore3Driver withLockSetting(MongoClient mongoClient,
@@ -42,38 +78,10 @@ public class MongoCore3Driver extends MongoCore3DriverBase<ChangeEntry> {
                                                  long lockAcquiredForMinutes,
                                                  long maxWaitingForLockMinutes,
                                                  int maxTries) {
-    long lockAcquiredForMillis = TIME_SERVICE.minutesToMillis(lockAcquiredForMinutes);
-    long lockQuitTryingAfterMillis = TIME_SERVICE.minutesToMillis(maxWaitingForLockMinutes * maxTries);
+    TimeService timeService = new TimeService();
+    long lockAcquiredForMillis = timeService.minutesToMillis(lockAcquiredForMinutes);
+    long lockQuitTryingAfterMillis = timeService.minutesToMillis(maxWaitingForLockMinutes * maxTries);
     long tryFrequency = 1000L;// 1 second
     return MongoCore3Driver.withLockStrategy(mongoClient, databaseName, lockAcquiredForMillis, lockQuitTryingAfterMillis, tryFrequency);
-  }
-
-  // For children classes like SpringData drivers
-  protected MongoCore3Driver(MongoDatabase mongoDatabase,
-                             long lockAcquiredForMillis,
-                             long lockQuitTryingAfterMillis,
-                             long lockTryFrequencyMillis) {
-    super(mongoDatabase, lockAcquiredForMillis, lockQuitTryingAfterMillis, lockTryFrequencyMillis);
-  }
-
-  protected MongoCore3Driver(MongoClient mongoClient,
-                             String databaseName,
-                             long lockAcquiredForMillis,
-                             long lockQuitTryingAfterMillis,
-                             long lockTryFrequencyMillis) {
-    super(mongoClient, databaseName, lockAcquiredForMillis, lockQuitTryingAfterMillis, lockTryFrequencyMillis);
-  }
-
-  @Override
-  public ChangeEntryService<ChangeEntry> getChangeEntryService() {
-    if (changeEntryRepository == null) {
-      this.changeEntryRepository = new Mongo3ChangeEntryRepository<>(mongoDatabase.getCollection(changeLogCollectionName), indexCreation, getReadWriteConfiguration());
-    }
-    return changeEntryRepository;
-  }
-
-  @Override
-  public Class getLegacyMigrationChangeLogClass(boolean runAlways) {
-    return runAlways ? MongockV3LegacyMigrationChangeRunAlwaysLog.class : MongockV3LegacyMigrationChangeLog.class;
   }
 }

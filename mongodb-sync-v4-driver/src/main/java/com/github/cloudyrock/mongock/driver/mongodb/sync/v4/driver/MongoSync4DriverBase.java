@@ -25,8 +25,6 @@ import org.bson.Document;
 import java.util.HashSet;
 import java.util.Set;
 
-import static com.github.cloudyrock.mongock.TransactionStrategy.NONE;
-
 @NotThreadSafe
 public abstract class MongoSync4DriverBase<CHANGE_ENTRY extends ChangeEntry> extends ConnectionDriverBase<CHANGE_ENTRY>{
 
@@ -158,11 +156,6 @@ public abstract class MongoSync4DriverBase<CHANGE_ENTRY extends ChangeEntry> ext
         .readConcern(ReadConcern.MAJORITY)
         .writeConcern(WriteConcern.MAJORITY)
         .build();
-  }
-
-  @Override
-  public void disableTransaction() {
-    setTransactionStrategy(NONE);
   }
 
   protected ReadWriteConfiguration getReadWriteConfiguration() {

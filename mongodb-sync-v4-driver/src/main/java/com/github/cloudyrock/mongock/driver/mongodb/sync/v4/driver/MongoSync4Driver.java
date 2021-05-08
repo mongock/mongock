@@ -9,6 +9,8 @@ import com.mongodb.client.ClientSession;
 import com.mongodb.client.MongoClient;
 import com.mongodb.client.TransactionBody;
 
+import static com.github.cloudyrock.mongock.TransactionStrategy.MIGRATION;
+
 @NotThreadSafe
 public class MongoSync4Driver extends MongoSync4DriverBase<ChangeEntry> {
 
@@ -21,6 +23,7 @@ public class MongoSync4Driver extends MongoSync4DriverBase<ChangeEntry> {
                              long lockTryFrequencyMillis) {
     super(mongoClient.getDatabase(databaseName), lockAcquiredForMillis, lockQuitTryingAfterMillis, lockTryFrequencyMillis);
     this.mongoClient = mongoClient;
+    setTransactionStrategy(MIGRATION);
   }
 
   @Override
@@ -40,8 +43,8 @@ public class MongoSync4Driver extends MongoSync4DriverBase<ChangeEntry> {
     }
   }
 
-  private TransactionBody getTransactionBody(Runnable operation) {
-    return (TransactionBody<String>) () -> {
+  private TransactionBody<String> getTransactionBody(Runnable operation) {
+    return () -> {
       operation.run();
       return "Mongock transaction operation";
     };
