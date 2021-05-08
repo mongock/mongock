@@ -1,5 +1,6 @@
 package com.github.cloudyrock.mongock.driver.mongodb.v3.driver;
 
+import com.github.cloudyrock.mongock.driver.api.driver.Transactioner;
 import com.github.cloudyrock.mongock.driver.api.entry.ChangeEntry;
 import com.github.cloudyrock.mongock.exception.MongockException;
 import com.github.cloudyrock.mongock.utils.TimeService;
@@ -9,12 +10,13 @@ import com.mongodb.client.ClientSession;
 import com.mongodb.client.MongoClient;
 import com.mongodb.client.TransactionBody;
 
-import static com.github.cloudyrock.mongock.TransactionStrategy.MIGRATION;
+import java.util.Optional;
 
 @NotThreadSafe
 public class MongoCore3Driver extends MongoCore3DriverBase<ChangeEntry> {
 
   private MongoClient mongoClient;
+  private boolean transactionEnabled = true;
 
   protected MongoCore3Driver(MongoClient mongoClient,
                              String databaseName,
@@ -23,7 +25,6 @@ public class MongoCore3Driver extends MongoCore3DriverBase<ChangeEntry> {
                              long lockTryFrequencyMillis) {
     super(mongoClient.getDatabase(databaseName), lockAcquiredForMillis, lockQuitTryingAfterMillis, lockTryFrequencyMillis);
     this.mongoClient = mongoClient;
-    setTransactionStrategy(MIGRATION);
   }
 
   @Override
@@ -83,5 +84,16 @@ public class MongoCore3Driver extends MongoCore3DriverBase<ChangeEntry> {
     long lockQuitTryingAfterMillis = timeService.minutesToMillis(maxWaitingForLockMinutes * maxTries);
     long tryFrequency = 1000L;// 1 second
     return MongoCore3Driver.withLockStrategy(mongoClient, databaseName, lockAcquiredForMillis, lockQuitTryingAfterMillis, tryFrequency);
+  }
+
+
+  @Override
+  public void disableTransaction() {
+    transactionEnabled = false;
+  }
+
+  @Override
+  public Optional<Transactioner> getTransactioner() {
+    return Optional.ofNullable(transactionEnabled ? this : null);
   }
 }

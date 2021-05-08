@@ -1,6 +1,7 @@
 package com.github.cloudyrock.mongock.driver.mongodb.springdata.v3;
 
 import com.github.cloudyrock.mongock.driver.api.driver.ChangeSetDependency;
+import com.github.cloudyrock.mongock.driver.api.driver.Transactioner;
 import com.github.cloudyrock.mongock.driver.api.entry.ChangeEntry;
 import com.github.cloudyrock.mongock.driver.api.entry.ChangeEntryService;
 import com.github.cloudyrock.mongock.driver.api.lock.guard.invoker.LockGuardInvokerImpl;
@@ -18,10 +19,10 @@ import org.springframework.transaction.TransactionDefinition;
 import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.DefaultTransactionDefinition;
 
-import static com.github.cloudyrock.mongock.TransactionStrategy.MIGRATION;
+import java.util.Optional;
 
 @NotThreadSafe
-public class SpringDataMongoV3Driver  extends MongoSync4DriverBase<ChangeEntry> {
+public class SpringDataMongoV3Driver extends MongoSync4DriverBase<ChangeEntry> {
 
   private static final Logger logger = LoggerFactory.getLogger(SpringDataMongoV3Driver.class);
 
@@ -73,9 +74,18 @@ public class SpringDataMongoV3Driver  extends MongoSync4DriverBase<ChangeEntry> 
     return changeEntryRepository;
   }
 
+  @Override
+  public void disableTransaction() {
+    this.txManager = null;
+  }
+
   public void enableTransactionWithTxManager(MongoTransactionManager txManager) {
     this.txManager = txManager;
-    setTransactionStrategy(MIGRATION);
+  }
+
+  @Override
+  public Optional<Transactioner> getTransactioner() {
+    return Optional.ofNullable(txManager != null ? this : null);
   }
 
   @Override
@@ -96,11 +106,10 @@ public class SpringDataMongoV3Driver  extends MongoSync4DriverBase<ChangeEntry> 
   private TransactionStatus getTxStatus(MongoTransactionManager txManager) {
     DefaultTransactionDefinition def = new DefaultTransactionDefinition();
 // explicitly setting the transaction name is something that can be done only programmatically
-    def.setName("SomeTxName");
+    def.setName("mongock-transaction-spring-data-3");
     def.setPropagationBehavior(TransactionDefinition.PROPAGATION_REQUIRED);
     return txManager.getTransaction(def);
   }
-
 
 
   ////////////////////////////////////////////////////////////
