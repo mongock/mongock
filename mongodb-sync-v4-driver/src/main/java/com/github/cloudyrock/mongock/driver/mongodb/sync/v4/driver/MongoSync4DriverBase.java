@@ -1,8 +1,8 @@
 package com.github.cloudyrock.mongock.driver.mongodb.sync.v4.driver;
 
+import com.github.cloudyrock.mongock.TransactionStrategy;
 import com.github.cloudyrock.mongock.driver.api.driver.ChangeSetDependency;
 import com.github.cloudyrock.mongock.driver.api.driver.ConnectionDriver;
-import com.github.cloudyrock.mongock.driver.api.driver.TransactionStrategy;
 import com.github.cloudyrock.mongock.driver.api.driver.Transactionable;
 import com.github.cloudyrock.mongock.driver.api.entry.ChangeEntry;
 import com.github.cloudyrock.mongock.driver.api.entry.ChangeEntryService;
