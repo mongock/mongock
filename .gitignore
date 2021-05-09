@@ -82,3 +82,6 @@ Vagrantfile
 .DS_Store
 
 **/tree
+
+#Factorypath files
+**/.factorypath

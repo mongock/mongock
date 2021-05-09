@@ -303,9 +303,9 @@ public abstract class MongoLockManagerITestBase extends IntegrationTestBase {
     return System.currentTimeMillis() + millis;
   }
 
-  private int millisToMinutes(long millis) {
-    return (int) (millis / (1000 * 60));
-  }
+//  private int millisToMinutes(long millis) {
+//    return (int) (millis / (1000 * 60));
+//  }
 
 
 

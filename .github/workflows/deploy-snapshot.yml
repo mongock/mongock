@@ -41,15 +41,13 @@ jobs:
           GPG_SIGNING_PRIVATE_KEY: ${{ secrets.GPG_SIGNING_PRIVATE_KEY }}
 
 # TODO append commit hash and date to snapshot version, so we can identify them easier
-      - name: Deploy snpashot
-        run:  |
-          cd ../mongock
-          mvn clean deploy
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          MAVEN_USERNAME: ${{ secrets.NEXUS_USER }}
-          MAVEN_CENTRAL_TOKEN: ${{ secrets.NEXUS_PASSWORD }}
-          GPG_PASSPHRASE: ${{ secrets.GPG_PASSPHRASE }}
-          GPG_SIGNING_PRIVATE_KEY: ${{ secrets.GPG_SIGNING_PRIVATE_KEY }}
-
-
+#      - name: Deploy snpashot
+#        run:  |
+#          cd ../mongock
+#          mvn clean deploy
+#        env:
+#          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+#          MAVEN_USERNAME: ${{ secrets.NEXUS_USER }}
+#          MAVEN_CENTRAL_TOKEN: ${{ secrets.NEXUS_PASSWORD }}
+#          GPG_PASSPHRASE: ${{ secrets.GPG_PASSPHRASE }}
+#          GPG_SIGNING_PRIVATE_KEY: ${{ secrets.GPG_SIGNING_PRIVATE_KEY }}
