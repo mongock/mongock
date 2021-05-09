@@ -14,9 +14,7 @@ import com.github.cloudyrock.mongock.driver.mongodb.test.template.util.Integrati
 import com.github.cloudyrock.mongock.driver.mongodb.test.template.util.MongoDBDriverTestAdapter;
 import com.github.cloudyrock.mongock.exception.MongockException;
 import com.github.cloudyrock.test.runner.TestMongockRunner;
-import com.mongodb.client.FindIterable;
 import com.mongodb.client.MongoCollection;
-import com.mongodb.client.MongoCursor;
 import com.mongodb.client.MongoDatabase;
 import org.bson.Document;
 import org.junit.Rule;
