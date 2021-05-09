@@ -3,7 +3,10 @@ package com.github.cloudyrock.mongock.driver.mongodb.springdata.v3.config;
 import com.github.cloudyrock.mongock.config.MongockConfiguration;
 import com.github.cloudyrock.mongock.driver.api.driver.ConnectionDriver;
 import com.github.cloudyrock.mongock.driver.mongodb.springdata.v3.SpringDataMongoV3Driver;
+import com.github.cloudyrock.mongock.exception.MongockException;
 import com.mongodb.ReadConcern;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnExpression;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -17,6 +20,7 @@ import java.util.Optional;
 @Import(MongoDBConfiguration.class)
 @ConditionalOnExpression("${mongock.enabled:true}")
 public class SpringDataMongoV3Context {
+  private static final Logger logger = LoggerFactory.getLogger(SpringDataMongoV3Context.class);
 
   @Bean
   public ConnectionDriver connectionDriver(MongoTemplate mongoTemplate,
@@ -59,20 +63,23 @@ public class SpringDataMongoV3Context {
   }
 
 
-
   private void setTransactionManager(MongockConfiguration config,
                                      Optional<MongoTransactionManager> txManagerOpt,
                                      SpringDataMongoV3Driver driver) {
-    txManagerOpt
-        .filter(tx-> config.isTransactionEnabled())
-        .map(tx-> {
-          driver.enableTransactionWithTxManager(tx);
-          return true;
-        }).orElseGet(()-> {
-          driver.disableTransaction();
-          return false;
-        });
-
+    //transaction-enabled explicitly set to true o false
+    if (config.getTransactionEnabled().isPresent()) {
+      boolean transactionEnabled = config.getTransactionEnabled().get();
+      if (transactionEnabled) {
+        MongoTransactionManager txManger = txManagerOpt.orElseThrow(() -> new MongockException("property transaction-enabled=true, but transactionManger not provided"));
+        driver.enableTransactionWithTxManager(txManger);
+      } else {
+        if (txManagerOpt.isPresent()) {
+          logger.warn("property transaction-enabled=false, but transactionManger is present");
+        }
+      }
+    } else { //transaction-enabled not set
+      txManagerOpt.ifPresent(driver::enableTransactionWithTxManager);
+    }
   }
 
 

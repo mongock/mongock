@@ -1,12 +1,12 @@
 package com.github.cloudyrock.mongock.driver.mongodb.springdata.v2;
 
 import com.github.cloudyrock.mongock.driver.api.driver.ChangeSetDependency;
-import com.github.cloudyrock.mongock.driver.api.driver.TransactionStrategy;
+import com.github.cloudyrock.mongock.driver.api.driver.Transactioner;
 import com.github.cloudyrock.mongock.driver.api.entry.ChangeEntry;
 import com.github.cloudyrock.mongock.driver.api.entry.ChangeEntryService;
 import com.github.cloudyrock.mongock.driver.api.lock.guard.invoker.LockGuardInvokerImpl;
 import com.github.cloudyrock.mongock.driver.mongodb.springdata.v2.decorator.impl.MongockTemplate;
-import com.github.cloudyrock.mongock.driver.mongodb.v3.driver.MongoCore3Driver;
+import com.github.cloudyrock.mongock.driver.mongodb.v3.driver.MongoCore3DriverBase;
 import com.github.cloudyrock.mongock.exception.MongockException;
 import com.github.cloudyrock.mongock.utils.TimeService;
 import com.github.cloudyrock.mongock.utils.annotation.NotThreadSafe;
@@ -19,40 +19,15 @@ import org.springframework.transaction.TransactionDefinition;
 import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.DefaultTransactionDefinition;
 
+import java.util.Optional;
+
 @NotThreadSafe
-public class SpringDataMongoV2Driver extends MongoCore3Driver {
+public class SpringDataMongoV2Driver extends MongoCore3DriverBase<ChangeEntry> {
 
   private static final Logger logger = LoggerFactory.getLogger(SpringDataMongoV2Driver.class);
 
-  private static final TimeService TIME_SERVICE = new TimeService();
-
   private final MongoTemplate mongoTemplate;
   private MongoTransactionManager txManager;
-
-  public static SpringDataMongoV2Driver withDefaultLock(MongoTemplate mongoTemplate) {
-    return SpringDataMongoV2Driver.withLockStrategy(mongoTemplate, 60 * 1000L, 3 * 60 * 1000L, 1000L);
-  }
-
-  /**
-   * @Deprecated Use withLockStrategy instead
-   */
-  @Deprecated
-  public static SpringDataMongoV2Driver withLockSetting(MongoTemplate mongoTemplate,
-                                                        long lockAcquiredForMinutes,
-                                                        long maxWaitingForLockMinutes,
-                                                        int maxTries) {
-    long lockAcquiredForMillis = TIME_SERVICE.minutesToMillis(lockAcquiredForMinutes);
-    long lockQuitTryingAfterMillis = TIME_SERVICE.minutesToMillis(maxWaitingForLockMinutes * maxTries);
-    long tryFrequency = 1000L;// 1 second
-    return SpringDataMongoV2Driver.withLockStrategy(mongoTemplate, lockAcquiredForMillis, lockQuitTryingAfterMillis, tryFrequency);
-  }
-
-  public static SpringDataMongoV2Driver withLockStrategy(MongoTemplate mongoTemplate,
-                                                         long lockAcquiredForMillis,
-                                                         long lockQuitTryingAfterMillis,
-                                                         long lockTryFrequencyMillis) {
-    return new SpringDataMongoV2Driver(mongoTemplate, lockAcquiredForMillis, lockQuitTryingAfterMillis, lockTryFrequencyMillis);
-  }
 
   protected SpringDataMongoV2Driver(MongoTemplate mongoTemplate,
                                     long lockAcquiredForMillis,
@@ -62,10 +37,10 @@ public class SpringDataMongoV2Driver extends MongoCore3Driver {
     this.mongoTemplate = mongoTemplate;
   }
 
+
   @Override
   public void runValidation() throws MongockException {
     super.runValidation();
-
     if (this.mongoTemplate == null) {
       throw new MongockException("MongoTemplate must not be null");
     }
@@ -88,6 +63,7 @@ public class SpringDataMongoV2Driver extends MongoCore3Driver {
         .map(instance -> (MongockTemplate) instance)
         .findAny()
         .orElseThrow(() -> new MongockException("Mongock Driver hasn't been initialized yet"));
+
   }
 
   @Override
@@ -98,9 +74,18 @@ public class SpringDataMongoV2Driver extends MongoCore3Driver {
     return changeEntryRepository;
   }
 
+  @Override
+  public void disableTransaction() {
+    this.txManager = null;
+  }
+
   public void enableTransactionWithTxManager(MongoTransactionManager txManager) {
     this.txManager = txManager;
-    this.transactionStrategy = TransactionStrategy.MIGRATION;
+  }
+
+  @Override
+  public Optional<Transactioner> getTransactioner() {
+    return Optional.ofNullable(txManager != null ? this : null);
   }
 
   @Override
@@ -115,12 +100,47 @@ public class SpringDataMongoV2Driver extends MongoCore3Driver {
       txManager.rollback(txStatus);
       throw new MongockException(ex);
     }
+
   }
 
   private TransactionStatus getTxStatus(MongoTransactionManager txManager) {
     DefaultTransactionDefinition def = new DefaultTransactionDefinition();
-    def.setName("SomeTxName");
+// explicitly setting the transaction name is something that can be done only programmatically
+    def.setName("mongock-transaction-spring-data-3");
     def.setPropagationBehavior(TransactionDefinition.PROPAGATION_REQUIRED);
     return txManager.getTransaction(def);
+  }
+
+
+  ////////////////////////////////////////////////////////////
+  //BUILDER METHODS
+  ////////////////////////////////////////////////////////////
+
+
+  public static SpringDataMongoV2Driver withDefaultLock(MongoTemplate mongoTemplate) {
+    return SpringDataMongoV2Driver.withLockStrategy(mongoTemplate, 60 * 1000L, 3 * 60 * 1000L, 1000L);
+  }
+
+  public static SpringDataMongoV2Driver withLockStrategy(MongoTemplate mongoTemplate,
+                                                         long lockAcquiredForMillis,
+                                                         long lockQuitTryingAfterMillis,
+                                                         long lockTryFrequencyMillis) {
+    return new SpringDataMongoV2Driver(mongoTemplate, lockAcquiredForMillis, lockQuitTryingAfterMillis, lockTryFrequencyMillis);
+  }
+
+  /**
+   * @Deprecated Use withLockStrategy instead
+   */
+  @Deprecated
+  public static SpringDataMongoV2Driver withLockSetting(MongoTemplate mongoTemplate,
+                                                        long lockAcquiredForMinutes,
+                                                        long maxWaitingForLockMinutes,
+                                                        int maxTries) {
+    TimeService timeService = new TimeService();
+    return SpringDataMongoV2Driver.withLockStrategy(
+        mongoTemplate,
+        timeService.minutesToMillis(lockAcquiredForMinutes),
+        timeService.minutesToMillis(maxWaitingForLockMinutes * maxTries),
+        1000L);
   }
 }

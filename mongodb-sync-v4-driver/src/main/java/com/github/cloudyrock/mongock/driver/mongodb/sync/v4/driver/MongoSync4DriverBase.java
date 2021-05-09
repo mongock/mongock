@@ -1,38 +1,33 @@
 package com.github.cloudyrock.mongock.driver.mongodb.sync.v4.driver;
 
 import com.github.cloudyrock.mongock.driver.api.driver.ChangeSetDependency;
-import com.github.cloudyrock.mongock.driver.api.driver.ConnectionDriver;
-import com.github.cloudyrock.mongock.driver.api.driver.TransactionStrategy;
-import com.github.cloudyrock.mongock.driver.api.driver.Transactionable;
+import com.github.cloudyrock.mongock.driver.api.driver.Transactioner;
 import com.github.cloudyrock.mongock.driver.api.entry.ChangeEntry;
 import com.github.cloudyrock.mongock.driver.api.entry.ChangeEntryService;
 import com.github.cloudyrock.mongock.driver.api.lock.guard.invoker.LockGuardInvokerImpl;
 import com.github.cloudyrock.mongock.driver.core.driver.ConnectionDriverBase;
 import com.github.cloudyrock.mongock.driver.core.lock.LockRepository;
+import com.github.cloudyrock.mongock.driver.mongodb.sync.v4.changelogs.runalways.MongockSync4LegacyMigrationChangeRunAlwaysLog;
+import com.github.cloudyrock.mongock.driver.mongodb.sync.v4.changelogs.runonce.MongockSync4LegacyMigrationChangeLog;
 import com.github.cloudyrock.mongock.driver.mongodb.sync.v4.decorator.impl.MongoDataBaseDecoratorImpl;
+import com.github.cloudyrock.mongock.driver.mongodb.sync.v4.repository.MongoSync4ChangeEntryRepository;
 import com.github.cloudyrock.mongock.driver.mongodb.sync.v4.repository.MongoSync4LockRepository;
 import com.github.cloudyrock.mongock.driver.mongodb.sync.v4.repository.ReadWriteConfiguration;
 import com.github.cloudyrock.mongock.exception.MongockException;
 import com.github.cloudyrock.mongock.utils.annotation.NotThreadSafe;
-import com.mongodb.MongoClientException;
 import com.mongodb.ReadConcern;
 import com.mongodb.ReadPreference;
 import com.mongodb.TransactionOptions;
 import com.mongodb.WriteConcern;
-import com.mongodb.client.ClientSession;
-import com.mongodb.client.MongoClient;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
-import com.mongodb.client.TransactionBody;
 import org.bson.Document;
 
 import java.util.HashSet;
 import java.util.Set;
 
 @NotThreadSafe
-public abstract class MongoSync4DriverBase<CHANGE_ENTRY extends ChangeEntry>
-    extends ConnectionDriverBase<CHANGE_ENTRY>
-    implements ConnectionDriver<CHANGE_ENTRY>, Transactionable {
+public abstract class MongoSync4DriverBase<CHANGE_ENTRY extends ChangeEntry> extends ConnectionDriverBase<CHANGE_ENTRY> implements Transactioner {
 
   private static final String DEFAULT_CHANGELOG_COLLECTION_NAME = "mongockChangeLog";
   private static final String DEFAULT_LOCK_COLLECTION_NAME = "mongockLock";
@@ -41,28 +36,18 @@ public abstract class MongoSync4DriverBase<CHANGE_ENTRY extends ChangeEntry>
   private static final ReadConcern DEFAULT_READ_CONCERN = ReadConcern.MAJORITY;
   private static final ReadPreference DEFAULT_READ_PREFERENCE = ReadPreference.primary();
 
-  protected final MongoDatabase mongoDatabase;
   protected String changeLogCollectionName = DEFAULT_CHANGELOG_COLLECTION_NAME;
   protected String lockCollectionName = DEFAULT_LOCK_COLLECTION_NAME;
   protected boolean indexCreation = true;
+
+  protected MongoSync4ChangeEntryRepository<CHANGE_ENTRY> changeEntryRepository;
   protected MongoSync4LockRepository lockRepository;
   protected Set<ChangeSetDependency> dependencies;
-  protected TransactionStrategy transactionStrategy;
-  protected MongoClient mongoClient;
-  private TransactionOptions txOptions;
+  protected TransactionOptions txOptions;
   private WriteConcern writeConcern;
   private ReadConcern readConcern;
   private ReadPreference readPreference;
-
-  protected MongoSync4DriverBase(MongoClient mongoClient,
-                                 String databaseName,
-                                 long lockAcquiredForMillis,
-                                 long lockQuitTryingAfterMillis,
-                                 long lockTryFrequencyMillis) {
-    this(mongoClient.getDatabase(databaseName), lockAcquiredForMillis, lockQuitTryingAfterMillis, lockTryFrequencyMillis);
-    this.mongoClient = mongoClient;
-    this.transactionStrategy = TransactionStrategy.MIGRATION;
-  }
+  protected final MongoDatabase mongoDatabase;
 
   protected MongoSync4DriverBase(MongoDatabase mongoDatabase,
                                  long lockAcquiredForMillis,
@@ -70,7 +55,6 @@ public abstract class MongoSync4DriverBase<CHANGE_ENTRY extends ChangeEntry>
                                  long lockTryFrequencyMillis) {
     super(lockAcquiredForMillis, lockQuitTryingAfterMillis, lockTryFrequencyMillis);
     this.mongoDatabase = mongoDatabase;
-    this.transactionStrategy = TransactionStrategy.NONE;
   }
 
   @Override
@@ -139,6 +123,19 @@ public abstract class MongoSync4DriverBase<CHANGE_ENTRY extends ChangeEntry>
   }
 
   @Override
+  public ChangeEntryService<CHANGE_ENTRY> getChangeEntryService() {
+    if (changeEntryRepository == null) {
+      this.changeEntryRepository = new MongoSync4ChangeEntryRepository<>(mongoDatabase.getCollection(changeLogCollectionName), indexCreation, getReadWriteConfiguration());
+    }
+    return changeEntryRepository;
+  }
+
+  @Override
+  public Class getLegacyMigrationChangeLogClass(boolean runAlways) {
+    return runAlways ? MongockSync4LegacyMigrationChangeRunAlwaysLog.class : MongockSync4LegacyMigrationChangeLog.class;
+  }
+
+  @Override
   public Set<ChangeSetDependency> getDependencies() {
     if (dependencies == null) {
       throw new MongockException("Driver not initialized");
@@ -154,41 +151,6 @@ public abstract class MongoSync4DriverBase<CHANGE_ENTRY extends ChangeEntry>
     this.txOptions = txOptions != null ? txOptions : buildDefaultTxOptions();
   }
 
-  @Override
-  public void disableTransaction() {
-    this.transactionStrategy = TransactionStrategy.NONE;
-  }
-
-  @Override
-  public TransactionStrategy getTransactionStrategy() {
-    return transactionStrategy;
-  }
-
-  @Override
-  public void executeInTransaction(Runnable operation) {
-    ClientSession clientSession;
-    try {
-      clientSession = mongoClient.startSession();
-    } catch (MongoClientException ex) {
-      throw new MongockException("ERROR starting session. If Mongock is connected to a MongoDB cluster which doesn't support transactions, you must to disable transactions", ex);
-    }
-    try {
-      clientSession.withTransaction(getTransactionBody(operation), txOptions);
-    } catch (Exception ex) {
-      throw new MongockException(ex);
-    } finally {
-      clientSession.close();
-    }
-  }
-
-  protected ReadWriteConfiguration getReadWriteConfiguration() {
-    return new ReadWriteConfiguration(
-        writeConcern != null ? writeConcern : DEFAULT_WRITE_CONCERN,
-        readConcern != null ? readConcern : DEFAULT_READ_CONCERN,
-        readPreference != null ? readPreference : DEFAULT_READ_PREFERENCE
-    );
-  }
-
   private TransactionOptions buildDefaultTxOptions() {
     return TransactionOptions.builder()
         .readPreference(ReadPreference.primary())
@@ -197,11 +159,12 @@ public abstract class MongoSync4DriverBase<CHANGE_ENTRY extends ChangeEntry>
         .build();
   }
 
-  private TransactionBody getTransactionBody(Runnable operation) {
-    return (TransactionBody<String>) () -> {
-      operation.run();
-      return "Mongock transaction operation";
-    };
+  protected ReadWriteConfiguration getReadWriteConfiguration() {
+    return new ReadWriteConfiguration(
+        writeConcern != null ? writeConcern : DEFAULT_WRITE_CONCERN,
+        readConcern != null ? readConcern : DEFAULT_READ_CONCERN,
+        readPreference != null ? readPreference : DEFAULT_READ_PREFERENCE
+    );
   }
 
 }
