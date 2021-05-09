@@ -52,6 +52,12 @@
       <groupId>com.github.cloudyrock.mongock</groupId>
       <artifactId>mongodb-v3-driver</artifactId>
     </dependency>
+    
+    <!-- SPRING -->
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-autoconfigure</artifactId>
+    </dependency>
 
     <!-- MONGODB-->
     <dependency>

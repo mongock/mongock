@@ -53,6 +53,11 @@
       <artifactId>mongodb-sync-v4-driver</artifactId>
     </dependency>
 
+    <!-- SPRING -->
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-autoconfigure</artifactId>
+    </dependency>
 
     <!-- MONGO & SPRING DEPENDENCIES -->
     <dependency>
