@@ -151,4 +151,10 @@ public interface FindIterableDecorator<T> extends MongoIterableDecorator<T>, Fin
   default FindIterable<T> snapshot(boolean snapshot) {
     return new FindIterableDecoratorImpl<>(getImpl().snapshot(snapshot), getInvoker());
   }
+
+  @Override
+  @NonLockGuarded
+  default FindIterable<T> hintString(String s) {
+    return new FindIterableDecoratorImpl<>(getImpl().hintString(s), getInvoker());
+  }
 }

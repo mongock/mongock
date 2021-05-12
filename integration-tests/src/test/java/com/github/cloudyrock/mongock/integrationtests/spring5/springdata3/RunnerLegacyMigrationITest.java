@@ -4,7 +4,7 @@ import com.github.cloudyrock.mongock.config.LegacyMigration;
 import com.github.cloudyrock.mongock.integrationtests.spring5.springdata3.changelogs.empty.EmptyChangeLog;
 import com.github.cloudyrock.mongock.integrationtests.spring5.springdata3.util.Constants;
 import com.github.cloudyrock.mongock.integrationtests.spring5.springdata3.util.LegacyMigrationUtils;
-import com.github.cloudyrock.springboot.v2_4.MongockSpringbootV2_4;
+import com.github.cloudyrock.springboot.MongockSpringboot;
 import com.mongodb.client.MongoCollection;
 import org.bson.Document;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -58,7 +58,7 @@ class RunnerLegacyMigrationITest extends ApplicationRunnerTestBase {
 //                : MongockSync4LegacyMigrationChangeLog.class.getPackage().getName();
         LegacyMigration legacyMigration = new LegacyMigration(LegacyMigrationUtils.LEGACY_CHANGELOG_COLLECTION_NAME);
         legacyMigration.setRunAlways(runAlways);
-        MongockSpringbootV2_4.MongockApplicationRunner runner = getBasicBuilder(EmptyChangeLog.class.getPackage().getName())
+        MongockSpringboot.MongockApplicationRunner runner = getBasicBuilder(EmptyChangeLog.class.getPackage().getName())
                 .setLegacyMigration(legacyMigration)
                 .buildApplicationRunner();
 

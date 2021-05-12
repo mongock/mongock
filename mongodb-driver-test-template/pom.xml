@@ -49,9 +49,19 @@
     <dependency>
       <groupId>org.mongodb</groupId>
       <artifactId>mongo-java-driver</artifactId>
-      <version>3.12.1</version>
+      <version>[3.0.0, 4.0.0)</version>
+      <scope>provided</scope>
+      <optional>true</optional>
     </dependency>
 
+
+    <dependency>
+      <groupId>org.mongodb</groupId>
+      <artifactId>mongodb-driver-sync</artifactId>
+      <version>[4.0.0, 5.0.0]</version>
+      <scope>provided</scope>
+      <optional>true</optional>
+    </dependency>
     <!-- TEST DEPENDENCIES -->
     <dependency>
       <groupId>junit</groupId>

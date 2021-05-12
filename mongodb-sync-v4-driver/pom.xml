@@ -16,6 +16,7 @@
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
     <maven.javadoc.failOnError>false</maven.javadoc.failOnError>
+    <mongodb.version>[4.0.0, 5.0.0)</mongodb.version>
   </properties>
 
   <dependencyManagement>
@@ -24,13 +25,6 @@
         <groupId>com.github.cloudyrock.mongock</groupId>
         <artifactId>mongock-bom</artifactId>
         <version>${project.version}</version>
-        <type>pom</type>
-        <scope>import</scope>
-      </dependency>
-      <dependency>
-        <groupId>com.github.cloudyrock.mongock</groupId>
-        <artifactId>mongock-springboot-v2.4-dependencies</artifactId>
-        <version>${mongock.core.version}</version>
         <type>pom</type>
         <scope>import</scope>
       </dependency>
@@ -53,6 +47,7 @@
     <dependency>
       <groupId>org.mongodb</groupId>
       <artifactId>mongodb-driver-sync</artifactId>
+      <version>${mongodb.version}</version>
       <scope>provided</scope>
     </dependency>
 

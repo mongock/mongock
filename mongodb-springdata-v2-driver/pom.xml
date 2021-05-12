@@ -16,6 +16,9 @@
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
     <maven.javadoc.failOnError>false</maven.javadoc.failOnError>
+    <maven.javadoc.failOnError>false</maven.javadoc.failOnError>
+    <spring-boot.version>[2.0.0, 3.0.0)</spring-boot.version>
+    <spring-data.version>2.2.13.RELEASE</spring-data.version>
   </properties>
 
   <dependencyManagement>
@@ -24,13 +27,6 @@
         <groupId>com.github.cloudyrock.mongock</groupId>
         <artifactId>mongock-bom</artifactId>
         <version>${project.version}</version>
-        <type>pom</type>
-        <scope>import</scope>
-      </dependency>
-      <dependency>
-        <groupId>com.github.cloudyrock.mongock</groupId>
-        <artifactId>mongock-springboot-v2.2-dependencies</artifactId>
-        <version>${mongock.core.version}</version>
         <type>pom</type>
         <scope>import</scope>
       </dependency>
@@ -57,12 +53,13 @@
     <dependency>
       <groupId>org.springframework.boot</groupId>
       <artifactId>spring-boot-autoconfigure</artifactId>
+      <version>${spring-boot.version}</version>
+      <scope>provided</scope>
     </dependency>
-
-    <!-- MONGODB-->
     <dependency>
       <groupId>org.springframework.data</groupId>
       <artifactId>spring-data-mongodb</artifactId>
+      <version>${spring-data.version}</version>
       <scope>provided</scope>
     </dependency>
 

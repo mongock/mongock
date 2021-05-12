@@ -3,8 +3,10 @@ package com.github.cloudyrock.mongock.driver.mongodb.sync.v4.decorator;
 import com.github.cloudyrock.mongock.NonLockGuarded;
 import com.github.cloudyrock.mongock.driver.mongodb.sync.v4.decorator.impl.FindIterableDecoratorImpl;
 import com.mongodb.CursorType;
+import com.mongodb.ExplainVerbosity;
 import com.mongodb.client.FindIterable;
 import com.mongodb.client.model.Collation;
+import org.bson.Document;
 import org.bson.conversions.Bson;
 
 import java.util.concurrent.TimeUnit;
@@ -140,12 +142,35 @@ public interface FindIterableDecorator<T> extends MongoIterableDecorator<T>, Fin
     return new FindIterableDecoratorImpl<>(getImpl().hintString(s), getInvoker());
   }
 
-
   //from v4.1.2
   @Override
   @NonLockGuarded
   default FindIterable<T> allowDiskUse(Boolean aBoolean) {
     return new FindIterableDecoratorImpl<>(getImpl().allowDiskUse(aBoolean), getInvoker());
+  }
+
+  @Override
+  @NonLockGuarded
+  default Document explain() {
+    return getImpl().explain();
+  }
+
+  @Override
+  @NonLockGuarded
+  default Document explain(ExplainVerbosity explainVerbosity) {
+    return getImpl().explain(explainVerbosity);
+  }
+
+  @Override
+  @NonLockGuarded
+  default <E> E explain(Class<E> aClass) {
+    return getImpl().explain(aClass);
+  }
+
+  @Override
+  @NonLockGuarded
+  default <E> E explain(Class<E> aClass, ExplainVerbosity explainVerbosity) {
+    return getImpl().explain(aClass, explainVerbosity);
   }
 
 }

@@ -2,7 +2,9 @@ package com.github.cloudyrock.mongock.driver.mongodb.sync.v4.decorator.impl;
 
 import com.github.cloudyrock.mongock.driver.api.lock.guard.invoker.LockGuardInvoker;
 import com.github.cloudyrock.mongock.driver.mongodb.sync.v4.decorator.AggregateIterableDecorator;
+import com.mongodb.ExplainVerbosity;
 import com.mongodb.client.AggregateIterable;
+import org.bson.Document;
 
 public class AggregateIterableDecoratorImpl<T> implements AggregateIterableDecorator<T> {
 

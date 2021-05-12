@@ -5,6 +5,7 @@
     <groupId>com.github.cloudyrock.mongock</groupId>
     <version>5.0.3.BETA-SNAPSHOT</version>
   </parent>
+
   <modelVersion>4.0.0</modelVersion>
 
   <name>Mongock driver for spring-data-mongodb v3</name>
@@ -16,6 +17,9 @@
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
     <maven.javadoc.failOnError>false</maven.javadoc.failOnError>
+    <spring-boot.version>[2.0.0, 3.0.0)</spring-boot.version>
+    <spring-data.version>3.2.0</spring-data.version>
+    <mongodb.version>4.2.3</mongodb.version>
   </properties>
 
   <dependencyManagement>
@@ -24,13 +28,6 @@
         <groupId>com.github.cloudyrock.mongock</groupId>
         <artifactId>mongock-bom</artifactId>
         <version>${project.version}</version>
-        <type>pom</type>
-        <scope>import</scope>
-      </dependency>
-      <dependency>
-        <groupId>com.github.cloudyrock.mongock</groupId>
-        <artifactId>mongock-springboot-v2.4-dependencies</artifactId>
-        <version>${mongock.core.version}</version>
         <type>pom</type>
         <scope>import</scope>
       </dependency>
@@ -57,21 +54,24 @@
     <dependency>
       <groupId>org.springframework.boot</groupId>
       <artifactId>spring-boot-autoconfigure</artifactId>
-    </dependency>
-
-    <!-- MONGO & SPRING DEPENDENCIES -->
-    <dependency>
-      <groupId>org.mongodb</groupId>
-      <artifactId>mongodb-driver-sync</artifactId>
+      <version>${spring-boot.version}</version>
       <scope>provided</scope>
     </dependency>
     <dependency>
       <groupId>org.springframework.data</groupId>
       <artifactId>spring-data-mongodb</artifactId>
+      <version>${spring-data.version}</version>
+      <scope>provided</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.mongodb</groupId>
+      <artifactId>mongodb-driver-sync</artifactId>
+      <version>${mongodb.version}</version>
       <scope>provided</scope>
     </dependency>
 
     <!-- TEST -->
+
     <dependency>
       <groupId>com.github.cloudyrock.mongock</groupId>
       <artifactId>mongodb-driver-test-template</artifactId>
