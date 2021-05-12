@@ -7,7 +7,7 @@ import com.github.cloudyrock.mongock.integrationtests.spring5.springdata3.change
 import com.github.cloudyrock.mongock.integrationtests.spring5.springdata3.changelogs.transaction.successful.TransactionSuccessfulChangeLog;
 import com.github.cloudyrock.mongock.integrationtests.spring5.springdata3.client.ClientRepository;
 import com.github.cloudyrock.mongock.integrationtests.spring5.springdata3.util.MongoContainer;
-import com.github.cloudyrock.springboot.v2_4.MongockSpringbootV2_4;
+import com.github.cloudyrock.springboot.MongockSpringboot;
 import com.mongodb.client.MongoClients;
 import com.mongodb.client.MongoCollection;
 import org.junit.jupiter.api.AfterEach;
@@ -58,7 +58,7 @@ class SpringApplicationITest {
   @ValueSource(strings = {"mongo:4.2.6"})
   void ApplicationRunnerShouldBeInjected(String mongoVersion) {
     ctx = RuntimeTestUtil.startSpringAppWithMongoDbVersionAndDefaultPackage(mongoVersion);
-    ctx.getBean(MongockSpringbootV2_4.MongockApplicationRunner.class);
+    ctx.getBean(MongockSpringboot.MongockApplicationRunner.class);
   }
 
 
@@ -72,9 +72,9 @@ class SpringApplicationITest {
     ctx = RuntimeTestUtil.startSpringAppWithMongoDbVersionAndParameters(mongoVersion, parameters);
     Exception ex = assertThrows(
         NoSuchBeanDefinitionException.class,
-        () -> ctx.getBean(MongockSpringbootV2_4.MongockApplicationRunner.class));
+        () -> ctx.getBean(MongockSpringboot.MongockApplicationRunner.class));
     assertEquals(
-        "No qualifying bean of type 'com.github.cloudyrock.springboot.v2_4.MongockSpringbootV2_4$MongockApplicationRunner' available",
+        "No qualifying bean of type 'com.github.cloudyrock.springboot.MongockSpringboot$MongockApplicationRunner' available",
         ex.getMessage()
     );
   }
@@ -86,10 +86,10 @@ class SpringApplicationITest {
     ctx = RuntimeTestUtil.startSpringAppWithMongoDbVersionAndDefaultPackage(mongoVersion);
     Exception ex = assertThrows(
         NoSuchBeanDefinitionException.class,
-        () -> ctx.getBean(MongockSpringbootV2_4.MongockInitializingBeanRunner.class),
+        () -> ctx.getBean(MongockSpringboot.MongockInitializingBeanRunner.class),
         "MongockInitializingBeanRunner should not be injected to the context as runner-type is not set");
     assertEquals(
-        "No qualifying bean of type 'com.github.cloudyrock.springboot.v2_4.MongockSpringbootV2_4$MongockInitializingBeanRunner' available",
+        "No qualifying bean of type 'com.github.cloudyrock.springboot.MongockSpringboot$MongockInitializingBeanRunner' available",
         ex.getMessage()
     );
   }

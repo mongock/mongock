@@ -530,6 +530,11 @@ public class MongockTemplate extends DecoratorBase<MongoTemplate> implements Mon
   }
 
   @Override
+  public IndexOperations indexOps(String s, Class<?> aClass) {
+    return getInvoker().invoke(() -> new IndexOperationsDecoratorImpl(getImpl().indexOps(s, aClass), getInvoker()));
+  }
+
+  @Override
   public IndexOperations indexOps(Class<?> entityClass) {
     return getInvoker().invoke(() -> new IndexOperationsDecoratorImpl(getImpl().indexOps(entityClass), getInvoker()));
   }

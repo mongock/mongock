@@ -2,8 +2,10 @@ package com.github.cloudyrock.mongock.driver.mongodb.sync.v4.decorator;
 
 import com.github.cloudyrock.mongock.NonLockGuarded;
 import com.github.cloudyrock.mongock.driver.mongodb.sync.v4.decorator.impl.AggregateIterableDecoratorImpl;
+import com.mongodb.ExplainVerbosity;
 import com.mongodb.client.AggregateIterable;
 import com.mongodb.client.model.Collation;
+import org.bson.Document;
 import org.bson.conversions.Bson;
 
 import java.util.concurrent.TimeUnit;
@@ -65,5 +67,29 @@ public interface AggregateIterableDecorator<T> extends MongoIterableDecorator<T>
   @NonLockGuarded
   default AggregateIterable<T> hint(Bson bson) {
     return new AggregateIterableDecoratorImpl<>(getImpl().hint(bson), getInvoker());
+  }
+
+  @Override
+  @NonLockGuarded
+  default Document explain() {
+    return getImpl().explain();
+  }
+
+  @Override
+  @NonLockGuarded
+  default Document explain(ExplainVerbosity explainVerbosity) {
+    return getImpl().explain(explainVerbosity);
+  }
+
+  @Override
+  @NonLockGuarded
+  default <E> E explain(Class<E> aClass) {
+    return getImpl().explain(aClass);
+  }
+
+  @Override
+  @NonLockGuarded
+  default <E> E explain(Class<E> aClass, ExplainVerbosity explainVerbosity) {
+    return getImpl().explain(aClass, explainVerbosity);
   }
 }

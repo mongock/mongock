@@ -4,7 +4,7 @@ import com.github.cloudyrock.mongock.integrationtests.spring5.springdata3.change
 import com.github.cloudyrock.mongock.integrationtests.spring5.springdata3.changelogs.general.MongockTestResource;
 import com.github.cloudyrock.mongock.integrationtests.spring5.springdata3.changelogs.withChangockAnnotations.ChangeLogwithChangockAnnotations;
 import com.github.cloudyrock.mongock.integrationtests.spring5.springdata3.util.Constants;
-import com.github.cloudyrock.springboot.v2_4.MongockSpringbootV2_4;
+import com.github.cloudyrock.springboot.MongockSpringboot;
 import org.bson.Document;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
@@ -72,7 +72,7 @@ class RunnerITest extends ApplicationRunnerTestBase{
     void shouldTwoExecutedChangeSet_whenRunningTwice_ifRunAlways(String mongoVersion) throws Exception {
         start(mongoVersion);
         // given
-        MongockSpringbootV2_4.MongockApplicationRunner runner = getBasicBuilder(TEST_RESOURCE_CLASSPATH).buildApplicationRunner();
+        MongockSpringboot.MongockApplicationRunner runner = getBasicBuilder(TEST_RESOURCE_CLASSPATH).buildApplicationRunner();
 
         // when
         runner.run(null);
@@ -94,7 +94,7 @@ class RunnerITest extends ApplicationRunnerTestBase{
     void shouldOneExecutedAndOneIgnoredChangeSet_whenRunningTwice_ifNotRunAlwaysAndTrackIgnore(String mongoVersion) throws Exception {
         start(mongoVersion);
         // given
-        MongockSpringbootV2_4.MongockApplicationRunner runner = getBasicBuilder(TEST_RESOURCE_CLASSPATH)
+        MongockSpringboot.MongockApplicationRunner runner = getBasicBuilder(TEST_RESOURCE_CLASSPATH)
                 .setTrackIgnored(true)
                 .buildApplicationRunner();
 
@@ -122,7 +122,7 @@ class RunnerITest extends ApplicationRunnerTestBase{
     void shouldOneExecutedAndNoIgnoredChangeSet_whenRunningTwice_ifNotRunAlwaysAndNotTrackIgnore(String mongoVersion) throws Exception {
         start(mongoVersion);
         // given
-        MongockSpringbootV2_4.MongockApplicationRunner runner = getBasicBuilder(TEST_RESOURCE_CLASSPATH)
+        MongockSpringboot.MongockApplicationRunner runner = getBasicBuilder(TEST_RESOURCE_CLASSPATH)
                 .buildApplicationRunner();
 
 

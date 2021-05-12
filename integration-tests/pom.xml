@@ -18,8 +18,6 @@
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
     <maven.javadoc.failOnError>false</maven.javadoc.failOnError>
-    <mongodb.spring-data.v3.version>3.0.6.RELEASE</mongodb.spring-data.v3.version>
-    <mongodb.driver-sync.version>4.0.5</mongodb.driver-sync.version>
 
     <junit.version>4.13</junit.version>
     <junit.jupiter.version>5.6.2</junit.jupiter.version>
@@ -36,13 +34,7 @@
         <type>pom</type>
         <scope>import</scope>
       </dependency>
-      <dependency>
-        <groupId>com.github.cloudyrock.mongock</groupId>
-        <artifactId>mongock-springboot-v2.4-dependencies</artifactId>
-        <version>${mongock.core.version}</version>
-        <type>pom</type>
-        <scope>import</scope>
-      </dependency>
+
     </dependencies>
   </dependencyManagement>
 
@@ -50,11 +42,12 @@
     <dependency>
       <groupId>org.springframework.boot</groupId>
       <artifactId>spring-boot-starter-web</artifactId>
+      <version>${spring-boot.version}</version>
     </dependency>
 
     <dependency>
       <groupId>com.github.cloudyrock.mongock</groupId>
-      <artifactId>mongock-springboot-v2.4</artifactId>
+      <artifactId>mongock-springboot</artifactId>
     </dependency>
 
     <dependency>
@@ -64,12 +57,18 @@
     <dependency>
       <groupId>org.mongodb</groupId>
       <artifactId>mongodb-driver-sync</artifactId>
-      <version>${mongodb.driver-sync.version}</version>
+      <version>${mongodb-sync-4.version}</version>
     </dependency>
     <dependency>
       <groupId>org.springframework.data</groupId>
       <artifactId>spring-data-mongodb</artifactId>
-      <version>${mongodb.spring-data.v3.version}</version>
+      <version>${spring-data-3.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>com.google.code.gson</groupId>
+      <artifactId>gson</artifactId>
+      <version>2.8.5</version>
+      <scope>provided</scope>
     </dependency>
 
     <!--    Test dependencies-->
@@ -77,6 +76,7 @@
     <dependency>
       <groupId>org.springframework.boot</groupId>
       <artifactId>spring-boot-starter-test</artifactId>
+      <version>${spring-boot.version}</version>
     </dependency>
     <dependency>
       <groupId>org.mockito</groupId>

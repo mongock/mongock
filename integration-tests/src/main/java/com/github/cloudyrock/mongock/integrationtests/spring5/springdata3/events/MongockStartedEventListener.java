@@ -1,6 +1,6 @@
 package com.github.cloudyrock.mongock.integrationtests.spring5.springdata3.events;
 
-import com.github.cloudyrock.springboot.v2_4.base.events.SpringMigrationStartedEvent;
+import com.github.cloudyrock.springboot.base.events.SpringMigrationStartedEvent;
 import org.springframework.context.ApplicationListener;
 import org.springframework.stereotype.Component;
 
