@@ -17,9 +17,6 @@
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
     <maven.javadoc.failOnError>false</maven.javadoc.failOnError>
-    <spring-boot.version>[2.0.0, 3.0.0)</spring-boot.version>
-    <spring-data.version>3.2.0</spring-data.version>
-    <mongodb.version>4.2.3</mongodb.version>
   </properties>
 
   <dependencyManagement>
@@ -60,13 +57,13 @@
     <dependency>
       <groupId>org.springframework.data</groupId>
       <artifactId>spring-data-mongodb</artifactId>
-      <version>${spring-data.version}</version>
+      <version>${spring-data-3.version}</version>
       <scope>provided</scope>
     </dependency>
     <dependency>
       <groupId>org.mongodb</groupId>
       <artifactId>mongodb-driver-sync</artifactId>
-      <version>${mongodb.version}</version>
+      <version>${mongodb-sync-4.version}</version>
       <scope>provided</scope>
     </dependency>
 

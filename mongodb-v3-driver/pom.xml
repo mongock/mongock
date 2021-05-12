@@ -16,7 +16,7 @@
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
     <maven.javadoc.failOnError>false</maven.javadoc.failOnError>
-    <mongodb.version>3.12.8</mongodb.version>
+
   </properties>
 
   <dependencyManagement>
@@ -47,7 +47,7 @@
     <dependency>
       <groupId>org.mongodb</groupId>
       <artifactId>mongo-java-driver</artifactId>
-      <version>${mongodb.version}</version>
+      <version>${mongodb-driver-3.version}</version>
       <scope>provided</scope>
     </dependency>
 

@@ -16,7 +16,6 @@
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
     <maven.javadoc.failOnError>false</maven.javadoc.failOnError>
-    <mongodb.version>[4.0.0, 5.0.0)</mongodb.version>
   </properties>
 
   <dependencyManagement>
@@ -47,7 +46,7 @@
     <dependency>
       <groupId>org.mongodb</groupId>
       <artifactId>mongodb-driver-sync</artifactId>
-      <version>${mongodb.version}</version>
+      <version>${mongodb-sync-4.version}</version>
       <scope>provided</scope>
     </dependency>
 
