@@ -129,7 +129,7 @@ public class SpringDataMongoV3Driver extends MongoSync4DriverBase<ChangeEntry> {
   }
 
   /**
-   * @Deprecated Use withLockStrategy instead
+   * @deprecated Use withLockStrategy instead
    */
   @Deprecated
   public static SpringDataMongoV3Driver withLockSetting(MongoTemplate mongoTemplate,

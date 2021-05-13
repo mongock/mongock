@@ -72,7 +72,7 @@ public class MongoSync4Driver extends MongoSync4DriverBase<ChangeEntry> {
 
 
   /**
-   * @Deprecated Use withLockStrategy instead
+   * @deprecated Use withLockStrategy instead
    */
   @Deprecated
   public static MongoSync4Driver withLockSetting(MongoClient mongoClient,
