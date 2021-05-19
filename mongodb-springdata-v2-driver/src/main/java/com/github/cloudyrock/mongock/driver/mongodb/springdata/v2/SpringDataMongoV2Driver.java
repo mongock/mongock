@@ -129,7 +129,7 @@ public class SpringDataMongoV2Driver extends MongoCore3DriverBase<ChangeEntry> {
   }
 
   /**
-   * @Deprecated Use withLockStrategy instead
+   * @deprecated Use withLockStrategy instead
    */
   @Deprecated
   public static SpringDataMongoV2Driver withLockSetting(MongoTemplate mongoTemplate,

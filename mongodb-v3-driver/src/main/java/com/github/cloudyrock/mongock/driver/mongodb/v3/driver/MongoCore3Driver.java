@@ -71,7 +71,7 @@ public class MongoCore3Driver extends MongoCore3DriverBase<ChangeEntry> {
 
 
   /**
-   * @Deprecated Use withLockStrategy instead
+   * @deprecated Use withLockStrategy instead
    */
   @Deprecated
   public static MongoCore3Driver withLockSetting(MongoClient mongoClient,
