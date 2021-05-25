@@ -4,6 +4,7 @@ import com.github.cloudyrock.mongock.driver.mongodb.springdata.v3.SpringDataMong
 import com.github.cloudyrock.mongock.integrationtests.spring5.springdata3.util.Constants;
 import com.github.cloudyrock.mongock.integrationtests.spring5.springdata3.util.MongoContainer;
 import com.github.cloudyrock.springboot.MongockSpringboot;
+import com.github.cloudyrock.springboot.base.builder.migration.MigrationSpringbootBuilder;
 import com.mongodb.client.MongoClient;
 import com.mongodb.client.MongoClients;
 import org.mockito.Mockito;
@@ -28,7 +29,7 @@ abstract class ApplicationRunnerTestBase {
         return driver;
     }
 
-    protected MongockSpringboot.Builder getBasicBuilder(String packagePath) {
+    protected MigrationSpringbootBuilder getBasicBuilder(String packagePath) {
         return MongockSpringboot.builder()
                 .setDriver(buildDriver())
                 .addChangeLogsScanPackage(packagePath)
