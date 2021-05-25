@@ -5,6 +5,7 @@ import com.github.cloudyrock.mongock.integrationtests.spring5.springdata3.change
 import com.github.cloudyrock.mongock.integrationtests.spring5.springdata3.changelogs.withChangockAnnotations.ChangeLogwithChangockAnnotations;
 import com.github.cloudyrock.mongock.integrationtests.spring5.springdata3.util.Constants;
 import com.github.cloudyrock.springboot.MongockSpringboot;
+import com.github.cloudyrock.springboot.base.MongockApplicationRunner;
 import org.bson.Document;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
@@ -72,7 +73,7 @@ class RunnerITest extends ApplicationRunnerTestBase{
     void shouldTwoExecutedChangeSet_whenRunningTwice_ifRunAlways(String mongoVersion) throws Exception {
         start(mongoVersion);
         // given
-        MongockSpringboot.MongockApplicationRunner runner = getBasicBuilder(TEST_RESOURCE_CLASSPATH).buildApplicationRunner();
+        MongockApplicationRunner runner = getBasicBuilder(TEST_RESOURCE_CLASSPATH).buildApplicationRunner();
 
         // when
         runner.run(null);
@@ -94,7 +95,7 @@ class RunnerITest extends ApplicationRunnerTestBase{
     void shouldOneExecutedAndOneIgnoredChangeSet_whenRunningTwice_ifNotRunAlwaysAndTrackIgnore(String mongoVersion) throws Exception {
         start(mongoVersion);
         // given
-        MongockSpringboot.MongockApplicationRunner runner = getBasicBuilder(TEST_RESOURCE_CLASSPATH)
+        MongockApplicationRunner runner = getBasicBuilder(TEST_RESOURCE_CLASSPATH)
                 .setTrackIgnored(true)
                 .buildApplicationRunner();
 
@@ -122,7 +123,7 @@ class RunnerITest extends ApplicationRunnerTestBase{
     void shouldOneExecutedAndNoIgnoredChangeSet_whenRunningTwice_ifNotRunAlwaysAndNotTrackIgnore(String mongoVersion) throws Exception {
         start(mongoVersion);
         // given
-        MongockSpringboot.MongockApplicationRunner runner = getBasicBuilder(TEST_RESOURCE_CLASSPATH)
+        MongockApplicationRunner runner = getBasicBuilder(TEST_RESOURCE_CLASSPATH)
                 .buildApplicationRunner();
 
 
