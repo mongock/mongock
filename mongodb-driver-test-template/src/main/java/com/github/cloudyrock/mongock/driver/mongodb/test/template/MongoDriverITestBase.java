@@ -13,7 +13,8 @@ import com.github.cloudyrock.mongock.driver.mongodb.test.template.util.CallVerif
 import com.github.cloudyrock.mongock.driver.mongodb.test.template.util.IntegrationTestBase;
 import com.github.cloudyrock.mongock.driver.mongodb.test.template.util.MongoDBDriverTestAdapter;
 import com.github.cloudyrock.mongock.exception.MongockException;
-import com.github.cloudyrock.test.runner.TestMongockRunner;
+import com.github.cloudyrock.mongock.runner.core.executor.MongockRunner;
+import com.github.cloudyrock.test.runner.TestMongock;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
 import org.bson.Document;
@@ -132,23 +133,22 @@ public abstract class MongoDriverITestBase extends IntegrationTestBase {
 
   @Test
   public void shouldFail_WhenRunningChangeLog_IfChangeSetIdDuplicated() {
-    TestMongockRunner runner = TestMongockRunner.builder()
-        .setDriver(getDriverWithTransactionDisabled())
-        .addChangeLogsScanPackage(ChangeLogFailure.class.getPackage().getName())
-        .build();
     exceptionRule.expect(MongockException.class);
     exceptionRule.expectMessage("Duplicated changeset id found: 'id_duplicated'");
-    runner.execute();
+    MongockRunner<Boolean> runner = TestMongock.builder()
+        .setDriver(getDriverWithTransactionDisabled())
+        .addChangeLogsScanPackage(ChangeLogFailure.class.getPackage().getName())
+        .buildRunner();
   }
 
   @Test
   public void shouldPassMongoDatabaseDecoratorToChangeSet() {
     CallVerifierImpl callVerifier = new CallVerifierImpl();
-    TestMongockRunner.builder()
+    TestMongock.builder()
         .setDriver(getDriverWithTransactionDisabled())
         .addChangeLogsScanPackage(ChangeLogEnsureDecorator.class.getPackage().getName())
         .addDependency(CallVerifier.class, callVerifier)
-        .build()
+        .buildRunner()
         .execute();
     assertEquals(1, callVerifier.getCounter());
   }
@@ -156,12 +156,12 @@ public abstract class MongoDriverITestBase extends IntegrationTestBase {
   @Test
   public void shouldPrioritizeConnectorOverStandardDependencies_WhenThereIsConflict() {
     CallVerifierImpl callVerifier = new CallVerifierImpl();
-    TestMongockRunner.builder()
+    TestMongock.builder()
         .setDriver(getDriverWithTransactionDisabled())
         .addChangeLogsScanPackage(ChangeLogEnsureDecorator.class.getPackage().getName())
         .addDependency(CallVerifier.class, callVerifier)
         .addDependency(MongoDatabase.class, mock(MongoDatabase.class))// shouldn't use this, the one from the connector instead
-        .build()
+        .buildRunner()
         .execute();
     assertEquals(1, callVerifier.getCounter());
   }
@@ -177,10 +177,10 @@ public abstract class MongoDriverITestBase extends IntegrationTestBase {
     exceptionRule.expectMessage("Index creation not allowed, but not created or wrongly created");
 
     //when
-    TestMongockRunner.builder()
+    TestMongock.builder()
         .setDriver(driver)
         .addChangeLogsScanPackage(ChangeLogSuccess.class.getPackage().getName())
-        .build()
+        .buildRunner()
         .execute();
   }
 
@@ -194,10 +194,10 @@ public abstract class MongoDriverITestBase extends IntegrationTestBase {
     getAdapter(LOCK_COLLECTION_NAME).createUniqueIndex("key");
 
     //when
-    TestMongockRunner.builder()
+    TestMongock.builder()
         .setDriver(driver)
         .addChangeLogsScanPackage(ChangeLogSuccess.class.getPackage().getName())
-        .build()
+        .buildRunner()
         .execute();
   }
 
@@ -216,10 +216,10 @@ public abstract class MongoDriverITestBase extends IntegrationTestBase {
     exceptionRule.expectMessage("Index creation not allowed, but not created or wrongly created");
 
     //when
-    TestMongockRunner.builder()
+    TestMongock.builder()
         .setDriver(driver)
         .addChangeLogsScanPackage(ChangeLogSuccess.class.getPackage().getName())
-        .build()
+        .buildRunner()
         .execute();
   }
 
@@ -237,10 +237,10 @@ public abstract class MongoDriverITestBase extends IntegrationTestBase {
     exceptionRule.expectMessage("Index creation not allowed, but not created or wrongly created");
 
     //when
-    TestMongockRunner.builder()
+    TestMongock.builder()
         .setDriver(driver)
         .addChangeLogsScanPackage(ChangeLogSuccess.class.getPackage().getName())
-        .build()
+        .buildRunner()
         .execute();
   }
 
@@ -294,12 +294,12 @@ public abstract class MongoDriverITestBase extends IntegrationTestBase {
   }
 
   private void runChanges(ConnectionDriver driver, Class changeLogClass, String executionId) {
-    TestMongockRunner runner = TestMongockRunner.builder()
+    MongockRunner<Boolean> runner = TestMongock.builder()
         .setDriver(driver)
         .addChangeLogsScanPackage(changeLogClass.getPackage().getName())
         .withMetadata(getStringObjectMap())
         .setExecutionId(executionId)
-        .build();
+        .buildRunner();
     runner.execute();
   }
 
