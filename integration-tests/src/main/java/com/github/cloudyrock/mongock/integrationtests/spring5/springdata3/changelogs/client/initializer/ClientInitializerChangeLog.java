@@ -5,8 +5,6 @@ import com.github.cloudyrock.mongock.ChangeSet;
 import com.github.cloudyrock.mongock.integrationtests.spring5.springdata3.client.Client;
 import com.github.cloudyrock.mongock.integrationtests.spring5.springdata3.client.ClientRepository;
 
-
-
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;

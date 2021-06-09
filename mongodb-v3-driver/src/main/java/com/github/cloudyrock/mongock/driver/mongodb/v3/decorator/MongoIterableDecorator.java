@@ -1,11 +1,11 @@
 package com.github.cloudyrock.mongock.driver.mongodb.v3.decorator;
 
-import com.github.cloudyrock.mongock.internal.DecoratorDiverted;
 import com.github.cloudyrock.mongock.NonLockGuarded;
 import com.github.cloudyrock.mongock.NonLockGuardedType;
 import com.github.cloudyrock.mongock.driver.api.lock.guard.invoker.LockGuardInvoker;
 import com.github.cloudyrock.mongock.driver.mongodb.v3.decorator.impl.MongoCursorDecoratorImpl;
 import com.github.cloudyrock.mongock.driver.mongodb.v3.decorator.impl.MongoIterableDecoratorImpl;
+import com.github.cloudyrock.mongock.internal.DecoratorDiverted;
 import com.mongodb.Block;
 import com.mongodb.Function;
 import com.mongodb.client.MongoCursor;
