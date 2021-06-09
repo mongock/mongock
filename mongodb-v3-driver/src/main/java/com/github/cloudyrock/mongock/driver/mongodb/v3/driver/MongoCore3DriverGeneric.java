@@ -1,4 +1,4 @@
-package com.github.cloudyrock.mongock.driver.mongodb.sync.v4.driver;
+package com.github.cloudyrock.mongock.driver.mongodb.v3.driver;
 
 import com.github.cloudyrock.mongock.driver.api.driver.ChangeSetDependency;
 import com.github.cloudyrock.mongock.driver.api.driver.Transactioner;
@@ -7,12 +7,12 @@ import com.github.cloudyrock.mongock.driver.api.entry.ChangeEntryService;
 import com.github.cloudyrock.mongock.driver.api.lock.guard.invoker.LockGuardInvokerImpl;
 import com.github.cloudyrock.mongock.driver.core.driver.ConnectionDriverBase;
 import com.github.cloudyrock.mongock.driver.core.lock.LockRepository;
-import com.github.cloudyrock.mongock.driver.mongodb.sync.v4.changelogs.runalways.MongockSync4LegacyMigrationChangeRunAlwaysLog;
-import com.github.cloudyrock.mongock.driver.mongodb.sync.v4.changelogs.runonce.MongockSync4LegacyMigrationChangeLog;
-import com.github.cloudyrock.mongock.driver.mongodb.sync.v4.decorator.impl.MongoDataBaseDecoratorImpl;
-import com.github.cloudyrock.mongock.driver.mongodb.sync.v4.repository.MongoSync4ChangeEntryRepository;
-import com.github.cloudyrock.mongock.driver.mongodb.sync.v4.repository.MongoSync4LockRepository;
-import com.github.cloudyrock.mongock.driver.mongodb.sync.v4.repository.ReadWriteConfiguration;
+import com.github.cloudyrock.mongock.driver.mongodb.v3.changelogs.runalways.MongockV3LegacyMigrationChangeRunAlwaysLog;
+import com.github.cloudyrock.mongock.driver.mongodb.v3.changelogs.runonce.MongockV3LegacyMigrationChangeLog;
+import com.github.cloudyrock.mongock.driver.mongodb.v3.decorator.impl.MongoDataBaseDecoratorImpl;
+import com.github.cloudyrock.mongock.driver.mongodb.v3.repository.Mongo3ChangeEntryRepository;
+import com.github.cloudyrock.mongock.driver.mongodb.v3.repository.Mongo3LockRepository;
+import com.github.cloudyrock.mongock.driver.mongodb.v3.repository.ReadWriteConfiguration;
 import com.github.cloudyrock.mongock.exception.MongockException;
 import com.github.cloudyrock.mongock.utils.annotation.NotThreadSafe;
 import com.mongodb.ReadConcern;
@@ -27,7 +27,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 @NotThreadSafe
-public abstract class MongoSync4DriverGeneric<CHANGE_ENTRY extends ChangeEntry> extends ConnectionDriverBase<CHANGE_ENTRY> implements Transactioner {
+public abstract class MongoCore3DriverGeneric<CHANGE_ENTRY extends ChangeEntry> extends ConnectionDriverBase<CHANGE_ENTRY> implements Transactioner {
 
   private static final String DEFAULT_CHANGELOG_COLLECTION_NAME = "mongockChangeLog";
   private static final String DEFAULT_LOCK_COLLECTION_NAME = "mongockLock";
@@ -40,8 +40,8 @@ public abstract class MongoSync4DriverGeneric<CHANGE_ENTRY extends ChangeEntry> 
   protected String lockCollectionName = DEFAULT_LOCK_COLLECTION_NAME;
   protected boolean indexCreation = true;
 
-  protected MongoSync4ChangeEntryRepository<CHANGE_ENTRY> changeEntryRepository;
-  protected MongoSync4LockRepository lockRepository;
+  protected Mongo3ChangeEntryRepository<CHANGE_ENTRY> changeEntryRepository;
+  protected Mongo3LockRepository lockRepository;
   protected Set<ChangeSetDependency> dependencies;
   protected TransactionOptions txOptions;
   private WriteConcern writeConcern;
@@ -49,7 +49,7 @@ public abstract class MongoSync4DriverGeneric<CHANGE_ENTRY extends ChangeEntry> 
   private ReadPreference readPreference;
   protected final MongoDatabase mongoDatabase;
 
-  protected MongoSync4DriverGeneric(MongoDatabase mongoDatabase,
+  protected MongoCore3DriverGeneric(MongoDatabase mongoDatabase,
                                  long lockAcquiredForMillis,
                                  long lockQuitTryingAfterMillis,
                                  long lockTryFrequencyMillis) {
@@ -117,7 +117,7 @@ public abstract class MongoSync4DriverGeneric<CHANGE_ENTRY extends ChangeEntry> 
   protected LockRepository getLockRepository() {
     if (lockRepository == null) {
       MongoCollection<Document> collection = mongoDatabase.getCollection(lockCollectionName);
-      this.lockRepository = new MongoSync4LockRepository(collection, indexCreation, getReadWriteConfiguration());
+      this.lockRepository = new Mongo3LockRepository(collection, indexCreation, getReadWriteConfiguration());
     }
     return lockRepository;
   }
@@ -125,14 +125,14 @@ public abstract class MongoSync4DriverGeneric<CHANGE_ENTRY extends ChangeEntry> 
   @Override
   public ChangeEntryService<CHANGE_ENTRY> getChangeEntryService() {
     if (changeEntryRepository == null) {
-      this.changeEntryRepository = new MongoSync4ChangeEntryRepository<>(mongoDatabase.getCollection(changeLogCollectionName), indexCreation, getReadWriteConfiguration());
+      this.changeEntryRepository = new Mongo3ChangeEntryRepository<>(mongoDatabase.getCollection(changeLogCollectionName), indexCreation, getReadWriteConfiguration());
     }
     return changeEntryRepository;
   }
 
   @Override
   public Class getLegacyMigrationChangeLogClass(boolean runAlways) {
-    return runAlways ? MongockSync4LegacyMigrationChangeRunAlwaysLog.class : MongockSync4LegacyMigrationChangeLog.class;
+    return runAlways ? MongockV3LegacyMigrationChangeRunAlwaysLog.class : MongockV3LegacyMigrationChangeLog.class;
   }
 
   @Override
@@ -166,5 +166,6 @@ public abstract class MongoSync4DriverGeneric<CHANGE_ENTRY extends ChangeEntry> 
         readPreference != null ? readPreference : DEFAULT_READ_PREFERENCE
     );
   }
+
 
 }
