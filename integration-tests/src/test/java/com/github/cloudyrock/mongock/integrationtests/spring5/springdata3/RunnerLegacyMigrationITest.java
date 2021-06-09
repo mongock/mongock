@@ -4,7 +4,6 @@ import com.github.cloudyrock.mongock.config.LegacyMigration;
 import com.github.cloudyrock.mongock.integrationtests.spring5.springdata3.changelogs.empty.EmptyChangeLog;
 import com.github.cloudyrock.mongock.integrationtests.spring5.springdata3.util.Constants;
 import com.github.cloudyrock.mongock.integrationtests.spring5.springdata3.util.LegacyMigrationUtils;
-import com.github.cloudyrock.springboot.MongockSpringboot;
 import com.github.cloudyrock.springboot.base.MongockApplicationRunner;
 import com.mongodb.client.MongoCollection;
 import org.bson.Document;
