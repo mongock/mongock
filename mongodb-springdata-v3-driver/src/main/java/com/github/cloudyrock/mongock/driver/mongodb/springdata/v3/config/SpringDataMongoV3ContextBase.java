@@ -34,7 +34,7 @@ public abstract class SpringDataMongoV3ContextBase<CHANGE_ENTRY extends ChangeEn
                                         MongoDBConfiguration mongoDbConfig,
                                         Optional<MongoTransactionManager> txManagerOpt);
 
-  protected final void setGenericDriverConfig(CONFIG config,
+  private void setGenericDriverConfig(CONFIG config,
                                               Optional<MongoTransactionManager> txManagerOpt,
                                               DRIVER driver) {
     setTransactionManager(config, txManagerOpt, driver);
@@ -43,7 +43,7 @@ public abstract class SpringDataMongoV3ContextBase<CHANGE_ENTRY extends ChangeEn
     driver.setIndexCreation(config.isIndexCreation());
   }
 
-  protected final void setMongoDBConfig(MongoDBConfiguration mongoDbConfig, DRIVER driver) {
+  private void setMongoDBConfig(MongoDBConfiguration mongoDbConfig, DRIVER driver) {
     driver.setWriteConcern(mongoDbConfig.getBuiltMongoDBWriteConcern());
     driver.setReadConcern(new ReadConcern(mongoDbConfig.getReadConcern()));
     driver.setReadPreference(mongoDbConfig.getReadPreference().getValue());
