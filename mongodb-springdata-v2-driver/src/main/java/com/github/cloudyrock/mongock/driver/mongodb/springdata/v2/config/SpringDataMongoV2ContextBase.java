@@ -4,7 +4,6 @@ import com.github.cloudyrock.mongock.config.MongockConfiguration;
 import com.github.cloudyrock.mongock.driver.api.driver.ConnectionDriver;
 import com.github.cloudyrock.mongock.driver.api.entry.ChangeEntry;
 import com.github.cloudyrock.mongock.driver.mongodb.springdata.v2.SpringDataMongoV2DriverBase;
-import com.github.cloudyrock.mongock.exception.MongockException;
 import com.mongodb.ReadConcern;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
