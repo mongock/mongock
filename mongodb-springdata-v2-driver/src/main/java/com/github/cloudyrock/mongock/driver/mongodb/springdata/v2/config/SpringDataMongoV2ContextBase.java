@@ -37,7 +37,7 @@ public abstract class SpringDataMongoV2ContextBase<CHANGE_ENTRY extends ChangeEn
   private void setGenericDriverConfig(CONFIG config,
                                               Optional<MongoTransactionManager> txManagerOpt,
                                               DRIVER driver) {
-    setTransactionManager(config, txManagerOpt, driver);
+    txManagerOpt.ifPresent(driver::enableTransactionWithTxManager);
     driver.setChangeLogRepositoryName(config.getChangeLogRepositoryName());
     driver.setLockRepositoryName(config.getLockRepositoryName());
     driver.setIndexCreation(config.isIndexCreation());
@@ -47,25 +47,6 @@ public abstract class SpringDataMongoV2ContextBase<CHANGE_ENTRY extends ChangeEn
     driver.setWriteConcern(mongoDbConfig.getBuiltMongoDBWriteConcern());
     driver.setReadConcern(new ReadConcern(mongoDbConfig.getReadConcern()));
     driver.setReadPreference(mongoDbConfig.getReadPreference().getValue());
-  }
-
-  private void setTransactionManager(CONFIG config,
-                                    Optional<MongoTransactionManager> txManagerOpt,
-                                    DRIVER driver) {
-    //transaction-enabled explicitly set to true o false
-    if (config.getTransactionEnabled().isPresent()) {
-      boolean transactionEnabled = config.getTransactionEnabled().get();
-      if (transactionEnabled) {
-        MongoTransactionManager txManager = txManagerOpt.orElseThrow(() -> new MongockException("property transaction-enabled=true, but transactionManger not provided"));
-        driver.enableTransactionWithTxManager(txManager);
-      } else {
-        if (txManagerOpt.isPresent()) {
-          logger.warn("property transaction-enabled=false, but transactionManger is present");
-        }
-      }
-    } else { //transaction-enabled not set
-      txManagerOpt.ifPresent(driver::enableTransactionWithTxManager);
-    }
   }
 
 }
