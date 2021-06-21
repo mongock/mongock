@@ -4,7 +4,6 @@ import com.github.cloudyrock.mongock.config.MongockConfiguration;
 import com.github.cloudyrock.mongock.driver.api.driver.ConnectionDriver;
 import com.github.cloudyrock.mongock.driver.api.entry.ChangeEntry;
 import com.github.cloudyrock.mongock.driver.mongodb.springdata.v3.SpringDataMongoV3DriverBase;
-import com.github.cloudyrock.mongock.exception.MongockException;
 import com.mongodb.ReadConcern;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -19,25 +18,25 @@ public abstract class SpringDataMongoV3ContextBase<CHANGE_ENTRY extends ChangeEn
 
   @Bean
   public ConnectionDriver<CHANGE_ENTRY> connectionDriver(MongoTemplate mongoTemplate,
-                                                        CONFIG config,
-                                                        MongoDBConfiguration mongoDbConfig,
-                                                        Optional<MongoTransactionManager> txManagerOpt) {
+                                                         CONFIG config,
+                                                         MongoDBConfiguration mongoDbConfig,
+                                                         Optional<MongoTransactionManager> txManagerOpt) {
     DRIVER driver = buildDriver(mongoTemplate, config, mongoDbConfig, txManagerOpt);
     setGenericDriverConfig(config, txManagerOpt, driver);
     setMongoDBConfig(mongoDbConfig, driver);
     driver.initialize();
     return driver;
   }
-  
+
   protected abstract DRIVER buildDriver(MongoTemplate mongoTemplate,
                                         CONFIG config,
                                         MongoDBConfiguration mongoDbConfig,
                                         Optional<MongoTransactionManager> txManagerOpt);
 
   private void setGenericDriverConfig(CONFIG config,
-                                              Optional<MongoTransactionManager> txManagerOpt,
-                                              DRIVER driver) {
-    setTransactionManager(config, txManagerOpt, driver);
+                                      Optional<MongoTransactionManager> txManagerOpt,
+                                      DRIVER driver) {
+    txManagerOpt.ifPresent(driver::enableTransactionWithTxManager);
     driver.setChangeLogRepositoryName(config.getChangeLogRepositoryName());
     driver.setLockRepositoryName(config.getLockRepositoryName());
     driver.setIndexCreation(config.isIndexCreation());
@@ -49,23 +48,5 @@ public abstract class SpringDataMongoV3ContextBase<CHANGE_ENTRY extends ChangeEn
     driver.setReadPreference(mongoDbConfig.getReadPreference().getValue());
   }
 
-  private void setTransactionManager(CONFIG config,
-                                    Optional<MongoTransactionManager> txManagerOpt,
-                                    DRIVER driver) {
-    //transaction-enabled explicitly set to true o false
-    if (config.getTransactionEnabled().isPresent()) {
-      boolean transactionEnabled = config.getTransactionEnabled().get();
-      if (transactionEnabled) {
-        MongoTransactionManager txManager = txManagerOpt.orElseThrow(() -> new MongockException("property transaction-enabled=true, but transactionManger not provided"));
-        driver.enableTransactionWithTxManager(txManager);
-      } else {
-        if (txManagerOpt.isPresent()) {
-          logger.warn("property transaction-enabled=false, but transactionManger is present");
-        }
-      }
-    } else { //transaction-enabled not set
-      txManagerOpt.ifPresent(driver::enableTransactionWithTxManager);
-    }
-  }
 
 }
