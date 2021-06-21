@@ -6,6 +6,7 @@ import com.github.cloudyrock.mongock.driver.core.entry.ChangeEntryRepository;
 import com.github.cloudyrock.mongock.exception.MongockException;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.model.Filters;
+import com.mongodb.client.model.UpdateOptions;
 import org.bson.Document;
 import org.bson.conversions.Bson;
 
@@ -13,10 +14,10 @@ import java.lang.reflect.Field;
 
 public class MongoSync4ChangeEntryRepository<CHANGE_ENTRY extends ChangeEntry> extends MongoSync4RepositoryBase<CHANGE_ENTRY> implements ChangeEntryRepository<CHANGE_ENTRY, Document> {
 
-  private static String KEY_EXECUTION_ID;
-  private static String KEY_CHANGE_ID;
-  private static String KEY_STATE;
-  private static String KEY_AUTHOR;
+  protected static String KEY_EXECUTION_ID;
+  protected static String KEY_CHANGE_ID;
+  protected static String KEY_STATE;
+  protected static String KEY_AUTHOR;
 
   static {
     try {
@@ -61,6 +62,22 @@ public class MongoSync4ChangeEntryRepository<CHANGE_ENTRY extends ChangeEntry> e
     collection.insertOne(toEntity(changeEntry));
   }
 
+  @Override
+  public void saveOrUpdate(CHANGE_ENTRY changeEntry) throws MongockException {
+    Bson filter = Filters.and(
+        Filters.eq(KEY_EXECUTION_ID, changeEntry.getExecutionId()),
+        Filters.eq(KEY_CHANGE_ID, changeEntry.getChangeId()),
+        Filters.eq(KEY_AUTHOR, changeEntry.getAuthor())
+    );
+
+    Document document = collection.find(filter).first();
+    if (document != null) {
+      toEntity(changeEntry).forEach(document::put);
+      collection.updateOne(filter, document, new UpdateOptions().upsert(true));
+    } else {
+      save(changeEntry);
+    }
+  }
 
   /**
    * Check if a changeSet with given changeSetId and author and
