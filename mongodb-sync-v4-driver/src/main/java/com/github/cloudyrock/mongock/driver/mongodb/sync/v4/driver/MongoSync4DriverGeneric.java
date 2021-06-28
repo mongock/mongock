@@ -6,7 +6,7 @@ import com.github.cloudyrock.mongock.driver.api.entry.ChangeEntry;
 import com.github.cloudyrock.mongock.driver.api.entry.ChangeEntryService;
 import com.github.cloudyrock.mongock.driver.api.lock.guard.invoker.LockGuardInvokerImpl;
 import com.github.cloudyrock.mongock.driver.core.driver.ConnectionDriverBase;
-import com.github.cloudyrock.mongock.driver.core.lock.LockRepository;
+import com.github.cloudyrock.mongock.driver.core.lock.LockRepositoryWithEntity;
 import com.github.cloudyrock.mongock.driver.mongodb.sync.v4.changelogs.runalways.MongockSync4LegacyMigrationChangeRunAlwaysLog;
 import com.github.cloudyrock.mongock.driver.mongodb.sync.v4.changelogs.runonce.MongockSync4LegacyMigrationChangeLog;
 import com.github.cloudyrock.mongock.driver.mongodb.sync.v4.decorator.impl.MongoDataBaseDecoratorImpl;
@@ -50,9 +50,9 @@ public abstract class MongoSync4DriverGeneric<CHANGE_ENTRY extends ChangeEntry> 
   protected final MongoDatabase mongoDatabase;
 
   protected MongoSync4DriverGeneric(MongoDatabase mongoDatabase,
-                                 long lockAcquiredForMillis,
-                                 long lockQuitTryingAfterMillis,
-                                 long lockTryFrequencyMillis) {
+                                    long lockAcquiredForMillis,
+                                    long lockQuitTryingAfterMillis,
+                                    long lockTryFrequencyMillis) {
     super(lockAcquiredForMillis, lockQuitTryingAfterMillis, lockTryFrequencyMillis);
     this.mongoDatabase = mongoDatabase;
   }
@@ -85,6 +85,7 @@ public abstract class MongoSync4DriverGeneric<CHANGE_ENTRY extends ChangeEntry> 
   /**
    * When using Java MongoDB driver directly, it sets the transaction options for all the Mongock's transactions.
    * Default: readPreference: primary, readConcern and writeConcern: majority
+   *
    * @param txOptions transaction options
    */
   public void setTransactionOptions(TransactionOptions txOptions) {
@@ -114,7 +115,7 @@ public abstract class MongoSync4DriverGeneric<CHANGE_ENTRY extends ChangeEntry> 
   }
 
   @Override
-  protected LockRepository getLockRepository() {
+  protected LockRepositoryWithEntity getLockRepository() {
     if (lockRepository == null) {
       MongoCollection<Document> collection = mongoDatabase.getCollection(lockCollectionName);
       this.lockRepository = new MongoSync4LockRepository(collection, indexCreation, getReadWriteConfiguration());

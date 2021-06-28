@@ -5,6 +5,7 @@ import com.github.cloudyrock.mongock.driver.api.lock.LockManager;
 import com.github.cloudyrock.mongock.driver.core.lock.DefaultLockManager;
 import com.github.cloudyrock.mongock.driver.core.lock.LockEntry;
 import com.github.cloudyrock.mongock.driver.core.lock.LockRepository;
+import com.github.cloudyrock.mongock.driver.core.lock.LockRepositoryWithEntity;
 import com.github.cloudyrock.mongock.driver.core.lock.LockStatus;
 import com.github.cloudyrock.mongock.driver.mongodb.test.template.util.IntegrationTestBase;
 import com.github.cloudyrock.mongock.utils.TimeService;
@@ -30,7 +31,7 @@ public abstract class MongoLockManagerITestBase extends IntegrationTestBase {
 
 
   protected LockManager lockManager;
-  protected LockRepository<Document> repository;
+  protected LockRepositoryWithEntity<Document> repository;
 
   @Before
   public void setUp() {
