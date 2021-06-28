@@ -3,6 +3,7 @@ package com.github.cloudyrock.mongock.driver.mongodb.sync.v4.repository;
 import com.github.cloudyrock.mongock.driver.api.entry.ChangeEntry;
 import com.github.cloudyrock.mongock.driver.api.entry.ChangeState;
 import com.github.cloudyrock.mongock.driver.core.entry.ChangeEntryRepository;
+import com.github.cloudyrock.mongock.driver.core.entry.ChangeEntryRepositoryWithEntity;
 import com.github.cloudyrock.mongock.exception.MongockException;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.model.Filters;
@@ -12,7 +13,7 @@ import org.bson.conversions.Bson;
 
 import java.lang.reflect.Field;
 
-public class MongoSync4ChangeEntryRepository<CHANGE_ENTRY extends ChangeEntry> extends MongoSync4RepositoryBase<CHANGE_ENTRY> implements ChangeEntryRepository<CHANGE_ENTRY, Document> {
+public class MongoSync4ChangeEntryRepository<CHANGE_ENTRY extends ChangeEntry> extends MongoSync4RepositoryBase<CHANGE_ENTRY> implements ChangeEntryRepositoryWithEntity<CHANGE_ENTRY, Document> {
 
   protected static String KEY_EXECUTION_ID;
   protected static String KEY_CHANGE_ID;
