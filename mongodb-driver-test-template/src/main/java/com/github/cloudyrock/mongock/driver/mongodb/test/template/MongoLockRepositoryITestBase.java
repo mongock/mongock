@@ -4,6 +4,7 @@ package com.github.cloudyrock.mongock.driver.mongodb.test.template;
 import com.github.cloudyrock.mongock.driver.core.lock.LockEntry;
 import com.github.cloudyrock.mongock.driver.core.lock.LockPersistenceException;
 import com.github.cloudyrock.mongock.driver.core.lock.LockRepository;
+import com.github.cloudyrock.mongock.driver.core.lock.LockRepositoryWithEntity;
 import com.github.cloudyrock.mongock.driver.core.lock.LockStatus;
 import com.github.cloudyrock.mongock.driver.mongodb.test.template.util.IntegrationTestBase;
 import com.github.cloudyrock.mongock.exception.MongockException;
@@ -26,7 +27,7 @@ public abstract class MongoLockRepositoryITestBase extends IntegrationTestBase {
   private static final String LOCK_COLLECTION_NAME = "mongockLock";
   private static final String LOCK_KEY = "LOCK_KEY";
 
-  protected LockRepository<Document> repository;
+  protected LockRepositoryWithEntity<Document> repository;
 
 
   @Test

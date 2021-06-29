@@ -3,6 +3,7 @@ package com.github.cloudyrock.mongock.driver.mongodb.sync.v4.repository;
 import com.github.cloudyrock.mongock.driver.core.lock.LockEntry;
 import com.github.cloudyrock.mongock.driver.core.lock.LockPersistenceException;
 import com.github.cloudyrock.mongock.driver.core.lock.LockRepository;
+import com.github.cloudyrock.mongock.driver.core.lock.LockRepositoryWithEntity;
 import com.github.cloudyrock.mongock.driver.core.lock.LockStatus;
 import com.mongodb.DuplicateKeyException;
 import com.mongodb.ErrorCategory;
@@ -17,7 +18,7 @@ import org.bson.conversions.Bson;
 
 import java.util.Date;
 
-public class MongoSync4LockRepository extends MongoSync4RepositoryBase<LockEntry> implements LockRepository<Document> {
+public class MongoSync4LockRepository extends MongoSync4RepositoryBase<LockEntry> implements LockRepositoryWithEntity<Document> {
 
   private static final String KEY_FIELD = "key";
   private static final String STATUS_FIELD = "status";

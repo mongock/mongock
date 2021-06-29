@@ -2,6 +2,7 @@ package com.github.cloudyrock.mongock.driver.mongodb.springdata.v2;
 
 import com.github.cloudyrock.mongock.driver.api.entry.ChangeEntry;
 import com.github.cloudyrock.mongock.driver.core.entry.ChangeEntryRepository;
+import com.github.cloudyrock.mongock.driver.core.entry.ChangeEntryRepositoryWithEntity;
 import com.github.cloudyrock.mongock.driver.mongodb.v3.repository.Mongo3ChangeEntryRepository;
 import com.github.cloudyrock.mongock.driver.mongodb.v3.repository.ReadWriteConfiguration;
 import com.github.cloudyrock.mongock.exception.MongockException;
@@ -11,7 +12,7 @@ import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.data.mongodb.core.query.Update;
 
-public class SpringDataMongoV2ChangeEntryRepository<CHANGE_ENTRY extends ChangeEntry> extends Mongo3ChangeEntryRepository<CHANGE_ENTRY> implements ChangeEntryRepository<CHANGE_ENTRY, Document> {
+public class SpringDataMongoV2ChangeEntryRepository<CHANGE_ENTRY extends ChangeEntry> extends Mongo3ChangeEntryRepository<CHANGE_ENTRY> implements ChangeEntryRepositoryWithEntity<CHANGE_ENTRY, Document> {
 
   private final MongoTemplate mongoTemplate;
 

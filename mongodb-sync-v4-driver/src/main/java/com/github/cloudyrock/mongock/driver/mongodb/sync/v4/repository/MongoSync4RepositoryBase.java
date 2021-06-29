@@ -1,6 +1,6 @@
 package com.github.cloudyrock.mongock.driver.mongodb.sync.v4.repository;
 
-import com.github.cloudyrock.mongock.driver.core.common.Repository;
+import com.github.cloudyrock.mongock.driver.core.common.EntityRepository;
 import com.github.cloudyrock.mongock.exception.MongockException;
 import com.github.cloudyrock.mongock.utils.field.FieldInstance;
 import com.mongodb.client.MongoCollection;
@@ -15,7 +15,7 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
-public abstract class MongoSync4RepositoryBase<DOMAIN_CLASS> implements Repository<DOMAIN_CLASS, Document> {
+public abstract class MongoSync4RepositoryBase<DOMAIN_CLASS> implements EntityRepository<DOMAIN_CLASS, Document> {
 
   private final static Logger logger = LoggerFactory.getLogger(MongoSync4RepositoryBase.class);
   private final static int INDEX_ENSURE_MAX_TRIES = 3;

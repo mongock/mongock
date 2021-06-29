@@ -6,7 +6,6 @@ import com.github.cloudyrock.mongock.driver.api.entry.ChangeEntry;
 import com.github.cloudyrock.mongock.driver.api.entry.ChangeEntryService;
 import com.github.cloudyrock.mongock.driver.api.lock.guard.invoker.LockGuardInvokerImpl;
 import com.github.cloudyrock.mongock.driver.core.driver.ConnectionDriverBase;
-import com.github.cloudyrock.mongock.driver.core.lock.LockRepository;
 import com.github.cloudyrock.mongock.driver.mongodb.v3.changelogs.runalways.MongockV3LegacyMigrationChangeRunAlwaysLog;
 import com.github.cloudyrock.mongock.driver.mongodb.v3.changelogs.runonce.MongockV3LegacyMigrationChangeLog;
 import com.github.cloudyrock.mongock.driver.mongodb.v3.decorator.impl.MongoDataBaseDecoratorImpl;
@@ -22,6 +21,8 @@ import com.mongodb.WriteConcern;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
 import org.bson.Document;
+
+import com.github.cloudyrock.mongock.driver.core.lock.LockRepositoryWithEntity;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -114,7 +115,7 @@ public abstract class MongoCore3DriverGeneric<CHANGE_ENTRY extends ChangeEntry> 
   }
 
   @Override
-  protected LockRepository getLockRepository() {
+  protected LockRepositoryWithEntity getLockRepository() {
     if (lockRepository == null) {
       MongoCollection<Document> collection = mongoDatabase.getCollection(lockCollectionName);
       this.lockRepository = new Mongo3LockRepository(collection, indexCreation, getReadWriteConfiguration());
