@@ -152,6 +152,11 @@ public abstract class MongoCore3DriverGeneric<CHANGE_ENTRY extends ChangeEntry> 
     this.txOptions = txOptions != null ? txOptions : buildDefaultTxOptions();
   }
 
+  @Override
+  public void close()  {
+    //Does not need to be closed
+  }
+
   private TransactionOptions buildDefaultTxOptions() {
     return TransactionOptions.builder()
         .readPreference(ReadPreference.primary())
