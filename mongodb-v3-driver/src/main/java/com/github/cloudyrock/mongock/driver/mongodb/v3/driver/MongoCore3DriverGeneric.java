@@ -68,15 +68,6 @@ public abstract class MongoCore3DriverGeneric<CHANGE_ENTRY extends ChangeEntry> 
     this.lockCollectionName = lockCollectionName;
   }
 
-  @Override
-  public String getChangeLogRepositoryName() {
-    return changeLogCollectionName;
-  }
-
-  @Override
-  public String getLockRepositoryName() {
-    return lockCollectionName;
-  }
 
   @Override
   public void setIndexCreation(boolean indexCreation) {

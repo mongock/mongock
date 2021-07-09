@@ -68,16 +68,6 @@ public abstract class MongoSync4DriverGeneric<CHANGE_ENTRY extends ChangeEntry> 
   }
 
   @Override
-  public String getChangeLogRepositoryName() {
-    return changeLogCollectionName;
-  }
-
-  @Override
-  public String getLockRepositoryName() {
-    return lockCollectionName;
-  }
-
-  @Override
   public void setIndexCreation(boolean indexCreation) {
     this.indexCreation = indexCreation;
   }
