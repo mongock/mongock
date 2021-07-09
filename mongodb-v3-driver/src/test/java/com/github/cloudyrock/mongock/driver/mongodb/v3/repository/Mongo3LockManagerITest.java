@@ -8,6 +8,7 @@ public class Mongo3LockManagerITest extends MongoLockManagerITestBase {
 
   protected void initializeRepository() {
     repository = new Mongo3LockRepository(getDataBase().getCollection(LOCK_COLLECTION_NAME), true);
+    repository.setIndexCreation(true);
     repository.initialize();
   }
 

@@ -8,6 +8,7 @@ public class MongoSync4LockManagerITest extends MongoLockManagerITestBase {
 
   protected void initializeRepository() {
     repository = new MongoSync4LockRepository(getDataBase().getCollection(LOCK_COLLECTION_NAME), true);
+    repository.setIndexCreation(true);
     repository.initialize();
   }
 

@@ -39,7 +39,6 @@ public abstract class MongoCore3DriverGeneric<CHANGE_ENTRY extends ChangeEntry> 
 
   protected String changeLogCollectionName = DEFAULT_CHANGELOG_COLLECTION_NAME;
   protected String lockCollectionName = DEFAULT_LOCK_COLLECTION_NAME;
-  protected boolean indexCreation = true;
 
   protected Mongo3ChangeEntryRepository<CHANGE_ENTRY> changeEntryRepository;
   protected Mongo3LockRepository lockRepository;
@@ -66,12 +65,6 @@ public abstract class MongoCore3DriverGeneric<CHANGE_ENTRY extends ChangeEntry> 
   @Override
   public void setLockRepositoryName(String lockCollectionName) {
     this.lockCollectionName = lockCollectionName;
-  }
-
-
-  @Override
-  public void setIndexCreation(boolean indexCreation) {
-    this.indexCreation = indexCreation;
   }
 
   /**
@@ -109,7 +102,7 @@ public abstract class MongoCore3DriverGeneric<CHANGE_ENTRY extends ChangeEntry> 
   protected LockRepositoryWithEntity getLockRepository() {
     if (lockRepository == null) {
       MongoCollection<Document> collection = mongoDatabase.getCollection(lockCollectionName);
-      this.lockRepository = new Mongo3LockRepository(collection, indexCreation, getReadWriteConfiguration());
+      this.lockRepository = new Mongo3LockRepository(collection, isIndexCreation(), getReadWriteConfiguration());
     }
     return lockRepository;
   }
@@ -117,7 +110,7 @@ public abstract class MongoCore3DriverGeneric<CHANGE_ENTRY extends ChangeEntry> 
   @Override
   public ChangeEntryService<CHANGE_ENTRY> getChangeEntryService() {
     if (changeEntryRepository == null) {
-      this.changeEntryRepository = new Mongo3ChangeEntryRepository<>(mongoDatabase.getCollection(changeLogCollectionName), indexCreation, getReadWriteConfiguration());
+      this.changeEntryRepository = new Mongo3ChangeEntryRepository<>(mongoDatabase.getCollection(changeLogCollectionName), isIndexCreation(), getReadWriteConfiguration());
     }
     return changeEntryRepository;
   }

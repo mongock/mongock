@@ -90,7 +90,9 @@ public class MongoSync4LockRepositoryITest extends MongoLockRepositoryITestBase 
 
   @Override
   protected void initializeRepository() {
-    repository = Mockito.spy(new MongoSync4LockRepository(getDataBase().getCollection(LOCK_COLLECTION_NAME), true));
+    MongoSync4LockRepository repo = new MongoSync4LockRepository(getDataBase().getCollection(LOCK_COLLECTION_NAME), true);
+    repo.setIndexCreation(true);
+    repository = Mockito.spy(repo);
     repository.initialize();
   }
 
