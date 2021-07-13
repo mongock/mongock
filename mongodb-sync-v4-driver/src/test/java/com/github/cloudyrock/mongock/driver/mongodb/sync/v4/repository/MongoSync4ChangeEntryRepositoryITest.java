@@ -1,5 +1,6 @@
 package com.github.cloudyrock.mongock.driver.mongodb.sync.v4.repository;
 
+import com.github.cloudyrock.mongock.driver.api.entry.ChangeEntry;
 import com.github.cloudyrock.mongock.driver.mongodb.sync.v4.MongoDbSync4DriverTestAdapterImpl;
 import com.github.cloudyrock.mongock.driver.mongodb.sync.v4.repository.util.RepositoryAccessorHelper;
 import com.github.cloudyrock.mongock.driver.mongodb.test.template.MongoChangeEntryRepositoryITestBase;
@@ -24,7 +25,9 @@ public class MongoSync4ChangeEntryRepositoryITest extends MongoChangeEntryReposi
 
 
   protected void initializeRepository(boolean indexCreation) {
-    repository = Mockito.spy(new MongoSync4ChangeEntryRepository<>(getDataBase().getCollection(CHANGELOG_COLLECTION_NAME), indexCreation));
+    MongoSync4ChangeEntryRepository<ChangeEntry> repo = new MongoSync4ChangeEntryRepository<>(getDataBase().getCollection(CHANGELOG_COLLECTION_NAME), indexCreation);
+    repo.setIndexCreation(indexCreation);
+    repository = Mockito.spy(repo);
     repository.initialize();
   }
 

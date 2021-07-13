@@ -1,5 +1,6 @@
 package com.github.cloudyrock.mongock.driver.mongodb.v3.repository;
 
+import com.github.cloudyrock.mongock.driver.api.entry.ChangeEntry;
 import com.github.cloudyrock.mongock.driver.mongodb.test.template.MongoChangeEntryRepositoryITestBase;
 import com.github.cloudyrock.mongock.driver.mongodb.test.template.util.MongoDBDriverTestAdapter;
 import com.github.cloudyrock.mongock.driver.mongodb.v3.MongoDb3DriverTestAdapterImpl;
@@ -18,7 +19,9 @@ public class Mongo3ChangeEntryRepositoryITest extends MongoChangeEntryRepository
 
 
   protected void initializeRepository(boolean indexCreation) {
-    repository = Mockito.spy(new Mongo3ChangeEntryRepository<>(getDataBase().getCollection(CHANGELOG_COLLECTION_NAME), indexCreation));
+    Mongo3ChangeEntryRepository<ChangeEntry> repo = new Mongo3ChangeEntryRepository<>(getDataBase().getCollection(CHANGELOG_COLLECTION_NAME), indexCreation);
+    repo.setIndexCreation(indexCreation);
+    repository = Mockito.spy(repo);
     repository.initialize();
   }
 

@@ -68,7 +68,7 @@ public abstract class SpringDataMongoV3DriverBase<CHANGE_ENTRY extends ChangeEnt
   @Override
   public ChangeEntryService<CHANGE_ENTRY> getChangeEntryService() {
     if (changeEntryRepository == null) {
-      this.changeEntryRepository = new SpringDataMongoV3ChangeEntryRepository<>(mongoTemplate, changeLogCollectionName, indexCreation, getReadWriteConfiguration());
+      this.changeEntryRepository = new SpringDataMongoV3ChangeEntryRepository<>(mongoTemplate, changeLogCollectionName, isIndexCreation(), getReadWriteConfiguration());
     }
     return changeEntryRepository;
   }

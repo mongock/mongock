@@ -1,6 +1,7 @@
 package com.github.cloudyrock.mongock.driver.mongodb.v3.repository;
 
-import com.github.cloudyrock.mongock.driver.core.common.EntityRepository;
+import com.github.cloudyrock.mongock.driver.api.common.EntityRepository;
+import com.github.cloudyrock.mongock.driver.api.common.RepositoryIndexable;
 import com.github.cloudyrock.mongock.exception.MongockException;
 import com.github.cloudyrock.mongock.utils.field.FieldInstance;
 import com.mongodb.client.MongoCollection;
@@ -15,13 +16,13 @@ import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
 
-public abstract class Mongo3RepositoryBase<DOMAIN_CLASS> implements EntityRepository<DOMAIN_CLASS, Document> {
+public  abstract class Mongo3RepositoryBase<DOMAIN_CLASS> implements EntityRepository<DOMAIN_CLASS, Document>, RepositoryIndexable {
 
   private final static Logger logger = LoggerFactory.getLogger(Mongo3RepositoryBase.class);
   private final static int INDEX_ENSURE_MAX_TRIES = 3;
 
   private final String[] uniqueFields;
-  private final boolean indexCreation;
+  private boolean indexCreation;
   private boolean ensuredCollectionIndex = false;
   protected MongoCollection<Document> collection;
 
@@ -34,7 +35,7 @@ public abstract class Mongo3RepositoryBase<DOMAIN_CLASS> implements EntityReposi
         .withReadPreference(readWriteConfiguration.getReadPreference())
         .withWriteConcern(readWriteConfiguration.getWriteConcern());
     this.uniqueFields = uniqueFields;
-    this.indexCreation = indexCreation;
+//    this.indexCreation = indexCreation;
   }
 
   @Override
@@ -127,5 +128,8 @@ public abstract class Mongo3RepositoryBase<DOMAIN_CLASS> implements EntityReposi
     return document;
   }
 
-
+  @Override
+  public void setIndexCreation(boolean indexCreation) {
+    this.indexCreation = indexCreation;
+  }
 }

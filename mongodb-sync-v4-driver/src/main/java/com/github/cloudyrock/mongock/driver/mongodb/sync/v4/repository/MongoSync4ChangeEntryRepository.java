@@ -42,6 +42,7 @@ public class MongoSync4ChangeEntryRepository<CHANGE_ENTRY extends ChangeEntry> e
     }
   }
 
+  //todo remove indexCreation from all repositories. It's already set in with the setter in the driver initialization
   public MongoSync4ChangeEntryRepository(MongoCollection<Document> collection, boolean indexCreation) {
     this(collection, indexCreation, ReadWriteConfiguration.getDefault());
   }
@@ -99,4 +100,5 @@ public class MongoSync4ChangeEntryRepository<CHANGE_ENTRY extends ChangeEntry> e
         executedStateOrNoExisting
     );
   }
+
 }
