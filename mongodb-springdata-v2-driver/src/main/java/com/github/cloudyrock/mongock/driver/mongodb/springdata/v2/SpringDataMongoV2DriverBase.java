@@ -73,7 +73,6 @@ public abstract class SpringDataMongoV2DriverBase<CHANGE_ENTRY extends ChangeEnt
     return changeEntryRepository;
   }
 
-  @Override
   public void disableTransaction() {
     this.txManager = null;
   }

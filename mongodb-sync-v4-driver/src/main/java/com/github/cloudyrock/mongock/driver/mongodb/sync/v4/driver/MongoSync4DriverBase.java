@@ -50,7 +50,6 @@ public abstract class MongoSync4DriverBase<CHANGE_ENTRY extends ChangeEntry> ext
     };
   }
 
-  @Override
   public void disableTransaction() {
     transactionEnabled = false;
   }

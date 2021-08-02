@@ -4,6 +4,7 @@ package com.github.cloudyrock.mongock.driver.mongodb.test.template;
 import com.github.cloudyrock.mongock.ChangeSet;
 import com.github.cloudyrock.mongock.driver.api.driver.ConnectionDriver;
 import com.github.cloudyrock.mongock.driver.api.entry.ChangeState;
+import com.github.cloudyrock.mongock.driver.core.driver.ConnectionDriverBase;
 import com.github.cloudyrock.mongock.driver.mongodb.test.template.integration.test1.withnorunalways.ChangeLogSuccess;
 import com.github.cloudyrock.mongock.driver.mongodb.test.template.integration.test1.withrunalways.WithRunAlways;
 import com.github.cloudyrock.mongock.driver.mongodb.test.template.integration.test2.ChangeLogFailure;
@@ -111,7 +112,7 @@ public abstract class MongoDriverITestBase extends IntegrationTestBase {
   @Test
   public void shouldUseDifferentChangeLogCollectionName_whenSettingChangeLogCollectionName() {
     String newChangeLogCollectionName = "newChangeLogCollectionName";
-    ConnectionDriver driver = getDriverWithTransactionDisabled();
+    ConnectionDriverBase driver = getDriverWithTransactionDisabled();
     driver.setChangeLogRepositoryName(newChangeLogCollectionName);
     runChangesAndCheck(driver, ChangeLogSuccess.class, newChangeLogCollectionName, Collections.emptyList(), false);
   }
@@ -169,7 +170,7 @@ public abstract class MongoDriverITestBase extends IntegrationTestBase {
   @Test
   public void shouldThrowException_WhenNotIndexCreation_IfNotCreatedBefore() {
     // given
-    ConnectionDriver driver = getDriverWithTransactionDisabled();
+    ConnectionDriverBase driver = getDriverWithTransactionDisabled();
     driver.setIndexCreation(false);
 
     //then
@@ -187,7 +188,7 @@ public abstract class MongoDriverITestBase extends IntegrationTestBase {
   @Test
   public void shouldBeOk_WhenNotIndexCreation_IfCreatedBefore() {
     // given
-    ConnectionDriver driver = getDriverWithTransactionDisabled();
+    ConnectionDriverBase driver = getDriverWithTransactionDisabled();
     driver.setIndexCreation(false);
     getAdapter(CHANGELOG_COLLECTION_NAME).createUniqueIndex("executionId", "author", "changeId");
     driver.setLockRepositoryName(LOCK_COLLECTION_NAME);
@@ -205,7 +206,7 @@ public abstract class MongoDriverITestBase extends IntegrationTestBase {
   @Test
   public void shouldThrowException_WhenNotIndexCreation_IfWrongLockIndexCreated() {
     // given
-    ConnectionDriver driver = getDriverWithTransactionDisabled();
+    ConnectionDriverBase driver = getDriverWithTransactionDisabled();
     driver.setIndexCreation(false);
     getAdapter(CHANGELOG_COLLECTION_NAME).createUniqueIndex("executionId", "author", "changeId");
     driver.setLockRepositoryName(LOCK_COLLECTION_NAME);
@@ -226,7 +227,7 @@ public abstract class MongoDriverITestBase extends IntegrationTestBase {
   @Test
   public void shouldThrowException_WhenNotIndexCreation_IfChangeLogIndexPartiallyCreated() {
     // given
-    ConnectionDriver driver = getDriverWithTransactionDisabled();
+    ConnectionDriverBase driver = getDriverWithTransactionDisabled();
     driver.setIndexCreation(false);
     getAdapter(CHANGELOG_COLLECTION_NAME).createUniqueIndex("executionId_wrong", "author", "changeId");
     driver.setLockRepositoryName(LOCK_COLLECTION_NAME);
@@ -325,7 +326,7 @@ public abstract class MongoDriverITestBase extends IntegrationTestBase {
     assertEquals(true, metadataResult.get("boolean_key"));
   }
 
-  protected abstract ConnectionDriver getDriverWithTransactionDisabled();
+  protected abstract ConnectionDriverBase getDriverWithTransactionDisabled();
 
 
 }
