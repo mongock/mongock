@@ -1,7 +1,9 @@
 package com.github.cloudyrock.mongock.driver.mongodb.v3.driver;
 
+import com.github.cloudyrock.mongock.driver.api.driver.ChangeSetDependency;
 import com.github.cloudyrock.mongock.driver.api.driver.Transactioner;
 import com.github.cloudyrock.mongock.driver.api.entry.ChangeEntry;
+import com.github.cloudyrock.mongock.driver.api.lock.guard.invoker.LockGuardInvokerImpl;
 import com.github.cloudyrock.mongock.exception.MongockException;
 import com.github.cloudyrock.mongock.utils.annotation.NotThreadSafe;
 import com.mongodb.MongoClientException;
@@ -12,9 +14,10 @@ import com.mongodb.client.TransactionBody;
 import java.util.Optional;
 
 @NotThreadSafe
-public abstract class MongoCore3DriverBase<CHANGE_ENTRY extends ChangeEntry> extends MongoCore3DriverGeneric<CHANGE_ENTRY> {
+public abstract  class MongoCore3DriverBase<CHANGE_ENTRY extends ChangeEntry> extends MongoCore3DriverGeneric<CHANGE_ENTRY> {
 
   private final MongoClient mongoClient;
+  protected ClientSession clientSession;
   private boolean transactionEnabled = true;
 
   protected MongoCore3DriverBase(MongoClient mongoClient,
@@ -27,13 +30,26 @@ public abstract class MongoCore3DriverBase<CHANGE_ENTRY extends ChangeEntry> ext
   }
 
   @Override
-  public void executeInTransaction(Runnable operation) {
-    ClientSession clientSession;
+  public Transactioner prepareForTransaction() {
     try {
       clientSession = mongoClient.startSession();
     } catch (MongoClientException ex) {
       throw new MongockException("ERROR starting session. If Mongock is connected to a MongoDB cluster which doesn't support transactions, you must to disable transactions", ex);
     }
+    return this;
+  }
+
+  @Override
+  public void specificInitialization() {
+    super.specificInitialization();
+    if(transactionEnabled) {
+      dependencies.add(new ChangeSetDependency(ClientSession.class, clientSession));
+    }
+  }
+
+  @Override
+  public void executeInTransaction(Runnable operation) {
+
     try {
       clientSession.withTransaction(getTransactionBody(operation), txOptions);
     } catch (Exception ex) {
