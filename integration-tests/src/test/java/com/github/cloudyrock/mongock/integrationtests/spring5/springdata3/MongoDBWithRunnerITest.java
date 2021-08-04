@@ -36,7 +36,6 @@ class MongoDBWithRunnerITest extends ApplicationRunnerTestBase {
 
     //then
     assertEquals("com.github.cloudyrock.mongock.exception.MongockException: Error in method[MongoDBRollbackWithNoClientSessionChangeLog.methodFailing] : Transaction error", ex.getMessage());
-
     MongoCollection<Document> clientCollection = database.getCollection(Mongock4Spring5SpringData3App.CLIENTS_COLLECTION_NAME);
     FindIterable<Document> clients = clientCollection.find();
     Set<Document> clientsSet = new HashSet<>();
