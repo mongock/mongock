@@ -11,6 +11,7 @@ import com.mongodb.client.MongoClient;
 import com.mongodb.client.TransactionBody;
 
 import java.util.Optional;
+import java.util.Set;
 
 @NotThreadSafe
 public  class MongoSync4DriverBase<CHANGE_ENTRY extends ChangeEntry> extends MongoSync4DriverGeneric<CHANGE_ENTRY> {
@@ -39,11 +40,10 @@ public  class MongoSync4DriverBase<CHANGE_ENTRY extends ChangeEntry> extends Mon
   }
 
   @Override
-  public void specificInitialization() {
-    super.specificInitialization();
-    if(transactionEnabled) {
-      dependencies.add(new ChangeSetDependency(ClientSession.class, clientSession));
-    }
+  public Set<ChangeSetDependency> getDependencies() {
+    Set<ChangeSetDependency> dependencies = super.getDependencies();
+    dependencies.add(new ChangeSetDependency(ClientSession.class, clientSession));
+    return dependencies;
   }
 
   @Override

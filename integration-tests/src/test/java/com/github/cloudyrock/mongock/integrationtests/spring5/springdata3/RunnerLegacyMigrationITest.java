@@ -58,7 +58,7 @@ class RunnerLegacyMigrationITest extends ApplicationRunnerTestBase {
 //                : MongockSync4LegacyMigrationChangeLog.class.getPackage().getName();
         LegacyMigration legacyMigration = new LegacyMigration(LegacyMigrationUtils.LEGACY_CHANGELOG_COLLECTION_NAME);
         legacyMigration.setRunAlways(runAlways);
-        MongockApplicationRunner runner = getBasicBuilder(EmptyChangeLog.class.getPackage().getName())
+        MongockApplicationRunner runner = getSpringBootBuilderWithSpringData(EmptyChangeLog.class.getPackage().getName())
                 .setLegacyMigration(legacyMigration)
                 .buildApplicationRunner();
 

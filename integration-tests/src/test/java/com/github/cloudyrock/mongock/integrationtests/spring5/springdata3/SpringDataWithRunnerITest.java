@@ -20,7 +20,7 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @Testcontainers
-class RunnerITest extends ApplicationRunnerTestBase {
+class SpringDataWithRunnerITest extends ApplicationRunnerTestBase {
 
   private static final String TEST_RESOURCE_CLASSPATH = MongockTestResource.class.getPackage().getName();
 
@@ -29,7 +29,7 @@ class RunnerITest extends ApplicationRunnerTestBase {
   void shouldExecuteAllChangeSets(String mongoVersion) throws Exception {
     start(mongoVersion);
     // given, then
-    getBasicBuilder(TEST_RESOURCE_CLASSPATH).buildApplicationRunner().run(null);
+    getSpringBootBuilderWithSpringData(TEST_RESOURCE_CLASSPATH).buildApplicationRunner().run(null);
 
     // db changelog collection checking
     long change1 = this.mongoTemplate.getDb().getCollection(Constants.CHANGELOG_COLLECTION_NAME)
@@ -51,7 +51,7 @@ class RunnerITest extends ApplicationRunnerTestBase {
     metadata.put("boolean_key", true);
 
     // then
-    getBasicBuilder(TEST_RESOURCE_CLASSPATH)
+    getSpringBootBuilderWithSpringData(TEST_RESOURCE_CLASSPATH)
         .withMetadata(metadata)
         .buildApplicationRunner()
         .run(null);
@@ -72,7 +72,7 @@ class RunnerITest extends ApplicationRunnerTestBase {
   void shouldTwoExecutedChangeSet_whenRunningTwice_ifRunAlways(String mongoVersion) throws Exception {
     start(mongoVersion);
     // given
-    MongockApplicationRunner runner = getBasicBuilder(TEST_RESOURCE_CLASSPATH).buildApplicationRunner();
+    MongockApplicationRunner runner = getSpringBootBuilderWithSpringData(TEST_RESOURCE_CLASSPATH).buildApplicationRunner();
 
     // when
     runner.run(null);
@@ -94,13 +94,13 @@ class RunnerITest extends ApplicationRunnerTestBase {
   void shouldOneExecutedAndOneIgnoredChangeSet_whenRunningTwice_ifNotRunAlwaysAndTrackIgnore(String mongoVersion) throws Exception {
     start(mongoVersion);
     // given
-    getBasicBuilder(TEST_RESOURCE_CLASSPATH)
+    getSpringBootBuilderWithSpringData(TEST_RESOURCE_CLASSPATH)
         .setTrackIgnored(true)
         .buildApplicationRunner()
         .run(null);
 
     // when
-    getBasicBuilder(TEST_RESOURCE_CLASSPATH)
+    getSpringBootBuilderWithSpringData(TEST_RESOURCE_CLASSPATH)
         .setTrackIgnored(true)
         .buildApplicationRunner()
         .run(null);
@@ -124,7 +124,7 @@ class RunnerITest extends ApplicationRunnerTestBase {
   void shouldOneExecutedAndNoIgnoredChangeSet_whenRunningTwice_ifNotRunAlwaysAndNotTrackIgnore(String mongoVersion) throws Exception {
     start(mongoVersion);
     // given
-    MongockApplicationRunner runner = getBasicBuilder(TEST_RESOURCE_CLASSPATH)
+    MongockApplicationRunner runner = getSpringBootBuilderWithSpringData(TEST_RESOURCE_CLASSPATH)
         .buildApplicationRunner();
 
 
@@ -150,7 +150,7 @@ class RunnerITest extends ApplicationRunnerTestBase {
   void shouldExecuteChangockAnnotations(String mongoVersion) throws Exception {
     start(mongoVersion);
     // given, then
-    getBasicBuilder(ChangeLogwithChangockAnnotations.class.getPackage().getName()).buildApplicationRunner().run(null);
+    getSpringBootBuilderWithSpringData(ChangeLogwithChangockAnnotations.class.getPackage().getName()).buildApplicationRunner().run(null);
 
     // then
     long changeWithChangockAnnotations = mongoTemplate.getDb().getCollection(Constants.CHANGELOG_COLLECTION_NAME).countDocuments(new Document()

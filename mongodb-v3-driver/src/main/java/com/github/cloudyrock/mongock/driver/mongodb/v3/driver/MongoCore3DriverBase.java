@@ -12,6 +12,7 @@ import com.mongodb.client.MongoClient;
 import com.mongodb.client.TransactionBody;
 
 import java.util.Optional;
+import java.util.Set;
 
 @NotThreadSafe
 public abstract  class MongoCore3DriverBase<CHANGE_ENTRY extends ChangeEntry> extends MongoCore3DriverGeneric<CHANGE_ENTRY> {
@@ -40,11 +41,10 @@ public abstract  class MongoCore3DriverBase<CHANGE_ENTRY extends ChangeEntry> ex
   }
 
   @Override
-  public void specificInitialization() {
-    super.specificInitialization();
-    if(transactionEnabled) {
-      dependencies.add(new ChangeSetDependency(ClientSession.class, clientSession));
-    }
+  public Set<ChangeSetDependency> getDependencies() {
+    Set<ChangeSetDependency> dependencies = super.getDependencies();
+    dependencies.add(new ChangeSetDependency(ClientSession.class, clientSession));
+    return dependencies;
   }
 
   @Override
