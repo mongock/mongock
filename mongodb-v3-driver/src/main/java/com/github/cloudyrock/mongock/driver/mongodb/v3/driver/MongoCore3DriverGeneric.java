@@ -6,6 +6,7 @@ import com.github.cloudyrock.mongock.driver.api.entry.ChangeEntry;
 import com.github.cloudyrock.mongock.driver.api.entry.ChangeEntryService;
 import com.github.cloudyrock.mongock.driver.api.lock.guard.invoker.LockGuardInvokerImpl;
 import com.github.cloudyrock.mongock.driver.core.driver.ConnectionDriverBase;
+import com.github.cloudyrock.mongock.driver.core.lock.LockRepositoryWithEntity;
 import com.github.cloudyrock.mongock.driver.mongodb.v3.changelogs.runalways.MongockV3LegacyMigrationChangeRunAlwaysLog;
 import com.github.cloudyrock.mongock.driver.mongodb.v3.changelogs.runonce.MongockV3LegacyMigrationChangeLog;
 import com.github.cloudyrock.mongock.driver.mongodb.v3.decorator.impl.MongoDataBaseDecoratorImpl;
@@ -21,8 +22,6 @@ import com.mongodb.WriteConcern;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
 import org.bson.Document;
-
-import com.github.cloudyrock.mongock.driver.core.lock.LockRepositoryWithEntity;
 
 import java.util.HashSet;
 import java.util.Set;

@@ -2,7 +2,6 @@ package com.github.cloudyrock.mongock.driver.mongodb.v3.repository;
 
 import com.github.cloudyrock.mongock.driver.api.entry.ChangeEntry;
 import com.github.cloudyrock.mongock.driver.api.entry.ChangeState;
-import com.github.cloudyrock.mongock.driver.core.entry.ChangeEntryRepository;
 import com.github.cloudyrock.mongock.driver.core.entry.ChangeEntryRepositoryWithEntity;
 import com.github.cloudyrock.mongock.exception.MongockException;
 import com.mongodb.client.MongoCollection;

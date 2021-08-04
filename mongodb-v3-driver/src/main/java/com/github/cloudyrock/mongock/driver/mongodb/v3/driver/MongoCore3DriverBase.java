@@ -3,7 +3,6 @@ package com.github.cloudyrock.mongock.driver.mongodb.v3.driver;
 import com.github.cloudyrock.mongock.driver.api.driver.ChangeSetDependency;
 import com.github.cloudyrock.mongock.driver.api.driver.Transactioner;
 import com.github.cloudyrock.mongock.driver.api.entry.ChangeEntry;
-import com.github.cloudyrock.mongock.driver.api.lock.guard.invoker.LockGuardInvokerImpl;
 import com.github.cloudyrock.mongock.exception.MongockException;
 import com.github.cloudyrock.mongock.utils.annotation.NotThreadSafe;
 import com.mongodb.MongoClientException;

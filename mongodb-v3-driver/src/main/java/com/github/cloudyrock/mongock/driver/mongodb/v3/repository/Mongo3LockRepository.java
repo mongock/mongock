@@ -2,7 +2,6 @@ package com.github.cloudyrock.mongock.driver.mongodb.v3.repository;
 
 import com.github.cloudyrock.mongock.driver.core.lock.LockEntry;
 import com.github.cloudyrock.mongock.driver.core.lock.LockPersistenceException;
-import com.github.cloudyrock.mongock.driver.core.lock.LockRepository;
 import com.github.cloudyrock.mongock.driver.core.lock.LockRepositoryWithEntity;
 import com.github.cloudyrock.mongock.driver.core.lock.LockStatus;
 import com.mongodb.DuplicateKeyException;

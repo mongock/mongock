@@ -1,7 +1,6 @@
 package com.github.cloudyrock.mongock.driver.mongodb.springdata.v2;
 
 import com.github.cloudyrock.mongock.driver.api.entry.ChangeEntry;
-import com.github.cloudyrock.mongock.driver.core.entry.ChangeEntryRepository;
 import com.github.cloudyrock.mongock.driver.core.entry.ChangeEntryRepositoryWithEntity;
 import com.github.cloudyrock.mongock.driver.mongodb.v3.repository.Mongo3ChangeEntryRepository;
 import com.github.cloudyrock.mongock.driver.mongodb.v3.repository.ReadWriteConfiguration;
