@@ -29,6 +29,8 @@ public abstract  class MongoCore3DriverBase<CHANGE_ENTRY extends ChangeEntry> ex
     this.mongoClient = mongoClient;
   }
 
+  //todo change this for prepareForMigrationBlock, which can be a changeLog(default) or the entire migration
+  //todo reflects it in the MigrationExecutor
   @Override
   public Transactioner prepareForTransaction() {
     try {
@@ -42,7 +44,9 @@ public abstract  class MongoCore3DriverBase<CHANGE_ENTRY extends ChangeEntry> ex
   @Override
   public Set<ChangeSetDependency> getDependencies() {
     Set<ChangeSetDependency> dependencies = super.getDependencies();
-    dependencies.add(new ChangeSetDependency(ClientSession.class, clientSession));
+    if(clientSession != null) {
+      dependencies.add(new ChangeSetDependency(ClientSession.class, clientSession));
+    }
     return dependencies;
   }
 
