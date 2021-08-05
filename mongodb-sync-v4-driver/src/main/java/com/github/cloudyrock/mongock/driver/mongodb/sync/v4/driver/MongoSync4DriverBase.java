@@ -14,7 +14,7 @@ import java.util.Optional;
 import java.util.Set;
 
 @NotThreadSafe
-public  class MongoSync4DriverBase<CHANGE_ENTRY extends ChangeEntry> extends MongoSync4DriverGeneric<CHANGE_ENTRY> {
+public abstract class MongoSync4DriverBase<CHANGE_ENTRY extends ChangeEntry> extends MongoSync4DriverGeneric<CHANGE_ENTRY> {
 
   private final MongoClient mongoClient;
   protected ClientSession clientSession;
