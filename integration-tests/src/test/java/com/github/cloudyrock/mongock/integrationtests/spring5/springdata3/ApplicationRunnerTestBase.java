@@ -1,10 +1,13 @@
 package com.github.cloudyrock.mongock.integrationtests.spring5.springdata3;
 
 import com.github.cloudyrock.mongock.driver.mongodb.springdata.v3.SpringDataMongoV3Driver;
+import com.github.cloudyrock.mongock.driver.mongodb.sync.v4.driver.MongoSync4Driver;
 import com.github.cloudyrock.mongock.integrationtests.spring5.springdata3.util.Constants;
 import com.github.cloudyrock.mongock.integrationtests.spring5.springdata3.util.MongoContainer;
 import com.github.cloudyrock.springboot.MigrationSpringbootBuilder;
 import com.github.cloudyrock.springboot.MongockSpringboot;
+import com.github.cloudyrock.standalone.MigrationStandaloneBuilder;
+import com.github.cloudyrock.standalone.MongockStandalone;
 import com.mongodb.client.MongoClient;
 import com.mongodb.client.MongoClients;
 import org.mockito.Mockito;
@@ -23,17 +26,23 @@ abstract class ApplicationRunnerTestBase {
     mongoTemplate = new MongoTemplate(mongoClient, RuntimeTestUtil.DEFAULT_DATABASE_NAME);
   }
 
-  protected SpringDataMongoV3Driver buildDriver() {
+
+  protected MigrationSpringbootBuilder getSpringBootBuilderWithSpringData(String packagePath) {
     SpringDataMongoV3Driver driver = SpringDataMongoV3Driver.withDefaultLock(mongoTemplate);
     driver.setChangeLogRepositoryName(Constants.CHANGELOG_COLLECTION_NAME);
-    return driver;
-  }
-
-  protected MigrationSpringbootBuilder getBasicBuilder(String packagePath) {
     return MongockSpringboot.builder()
-        .setDriver(buildDriver())
+        .setDriver(driver)
         .addChangeLogsScanPackage(packagePath)
         .setSpringContext(getApplicationContext());
+  }
+
+
+  protected MigrationStandaloneBuilder getStandaloneBuilderWithMongoDBSync4(String packagePath) {
+    MongoSync4Driver driver = MongoSync4Driver.withDefaultLock(mongoClient, RuntimeTestUtil.DEFAULT_DATABASE_NAME);
+    driver.setChangeLogRepositoryName(Constants.CHANGELOG_COLLECTION_NAME);
+    return MongockStandalone.builder()
+        .setDriver(driver)
+        .addChangeLogsScanPackage(packagePath);
   }
 
   protected ApplicationContext getApplicationContext() {

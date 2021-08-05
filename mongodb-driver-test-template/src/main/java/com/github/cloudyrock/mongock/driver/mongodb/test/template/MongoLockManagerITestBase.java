@@ -4,7 +4,6 @@ import com.github.cloudyrock.mongock.driver.api.lock.LockCheckException;
 import com.github.cloudyrock.mongock.driver.api.lock.LockManager;
 import com.github.cloudyrock.mongock.driver.core.lock.DefaultLockManager;
 import com.github.cloudyrock.mongock.driver.core.lock.LockEntry;
-import com.github.cloudyrock.mongock.driver.core.lock.LockRepository;
 import com.github.cloudyrock.mongock.driver.core.lock.LockRepositoryWithEntity;
 import com.github.cloudyrock.mongock.driver.core.lock.LockStatus;
 import com.github.cloudyrock.mongock.driver.mongodb.test.template.util.IntegrationTestBase;

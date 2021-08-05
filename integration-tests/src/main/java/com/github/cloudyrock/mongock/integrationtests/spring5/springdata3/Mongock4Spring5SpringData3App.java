@@ -34,7 +34,7 @@ public class Mongock4Spring5SpringData3App {
         return new SpringApplicationBuilder().sources(Mongock4Spring5SpringData3App.class);
     }
 
-    // It requires MongoDb with a replicaSet
+    // TODO do it with beforeChangeLog
     @Bean
     @ConditionalOnExpression("${mongock.transactionable:false}")
     MongoTransactionManager transactionManager(MongoTemplate mongoTemplate) {

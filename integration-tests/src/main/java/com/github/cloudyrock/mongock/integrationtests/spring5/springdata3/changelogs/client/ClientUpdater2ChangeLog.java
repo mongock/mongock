@@ -4,7 +4,7 @@ package com.github.cloudyrock.mongock.integrationtests.spring5.springdata3.chang
 import com.github.cloudyrock.mongock.ChangeLog;
 import com.github.cloudyrock.mongock.ChangeSet;
 import com.github.cloudyrock.mongock.driver.mongodb.springdata.v3.decorator.impl.MongockTemplate;
-import com.github.cloudyrock.mongock.integrationtests.spring5.springdata3.client.Client;
+import com.github.cloudyrock.mongock.integrationtests.spring5.springdata3.client.ClientExtended;
 
 import java.util.List;
 
@@ -19,7 +19,7 @@ public class ClientUpdater2ChangeLog {
     @ChangeSet(id = "data-updater-with-mongockTemplate-2", order = "001", author = "mongock")
     public void dataUpdater(MongockTemplate template) {
 
-        List<Client> clients = template.findAll(Client.class, CLIENTS_COLLECTION_NAME);
+        List<ClientExtended> clients = template.findAll(ClientExtended.class, CLIENTS_COLLECTION_NAME);
 
         clients.stream()
                 .map(client -> client.setName(client.getName() + "_updated_2"))
