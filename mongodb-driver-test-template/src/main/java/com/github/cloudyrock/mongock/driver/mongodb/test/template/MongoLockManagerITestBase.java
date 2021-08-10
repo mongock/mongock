@@ -195,10 +195,7 @@ public abstract class MongoLockManagerITestBase extends IntegrationTestBase {
   @Test
   public void shouldReleaseLock_WhenHeldBySameOwner() {
     //given
-    getDataBase().getCollection(LOCK_COLLECTION_NAME).updateMany(
-        new Document(),
-        new Document().append("$set", getLockDbBody(lockManager.getOwner(), currentTimePlusMinutes(10))),
-        new UpdateOptions().upsert(true));
+    lockManager.acquireLockDefault();
     FindIterable<Document> resultBefore = getDataBase().getCollection(LOCK_COLLECTION_NAME)
         .find(new Document().append("key", lockManager.getDefaultKey()));
     assertNotNull("Precondition: Lock should be in database", resultBefore.first());
@@ -235,10 +232,7 @@ public abstract class MongoLockManagerITestBase extends IntegrationTestBase {
   @Test
   public void releaseLockShouldBeIdempotent_WhenHeldBySameOwner() {
     //given
-    getDataBase().getCollection(LOCK_COLLECTION_NAME).updateMany(
-        new Document(),
-        new Document().append("$set", getLockDbBody(lockManager.getOwner(), currentTimePlusMinutes(10))),
-        new UpdateOptions().upsert(true));
+    lockManager.acquireLockDefault();
     FindIterable<Document> resultBefore = getDataBase().getCollection(LOCK_COLLECTION_NAME)
         .find(new Document().append("key", lockManager.getDefaultKey()));
     assertNotNull("Precondition: Lock should be in database", resultBefore.first());

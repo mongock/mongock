@@ -32,13 +32,12 @@ public abstract  class MongoCore3DriverBase<CHANGE_ENTRY extends ChangeEntry> ex
   //todo change this for prepareForMigrationBlock, which can be a changeLog(default) or the entire migration
   //todo reflects it in the MigrationExecutor
   @Override
-  public Transactioner prepareForTransaction() {
+  public void prepareForChangelogExecution() {
     try {
       clientSession = mongoClient.startSession();
     } catch (MongoClientException ex) {
       throw new MongockException("ERROR starting session. If Mongock is connected to a MongoDB cluster which doesn't support transactions, you must to disable transactions", ex);
     }
-    return this;
   }
 
   @Override
