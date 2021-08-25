@@ -1,4 +1,4 @@
-package com.github.cloudyrock.mongock.integrationtests.spring5.springdata3.changelogs.withRollback;
+package com.github.cloudyrock.mongock.integrationtests.spring5.springdata3.changelogs.withRollback.mongoDB;
 
 import com.github.cloudyrock.mongock.integrationtests.spring5.springdata3.client.Client;
 import com.github.cloudyrock.mongock.interfaces.ChangeLog;
@@ -15,9 +15,9 @@ import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 
-public class AdvanceChangeLogWithBeforeAndChangeSetFailing implements ChangeLog {
+public class AdvanceChangeLogWithChangeSetFailing implements ChangeLog {
 
-  public static final String COLLECTION_NAME = "AdvanceChangeLogWithBeforeAndChangeSetFailing";
+  public static final String COLLECTION_NAME = "AdvanceChangeLogWithBeforeAndChangeSetFailingCollection";
 
   public static boolean rollbackCalled = false;
   public static boolean rollbackBeforeCalled = false;
@@ -25,7 +25,12 @@ public class AdvanceChangeLogWithBeforeAndChangeSetFailing implements ChangeLog 
   private final MongoDatabase db;
   private final ClientSession session;
 
-  public AdvanceChangeLogWithBeforeAndChangeSetFailing(ClientSession session, MongoDatabase db) {
+  public static void clear() {
+    rollbackCalled = false;
+    rollbackBeforeCalled = false;
+  }
+
+  public AdvanceChangeLogWithChangeSetFailing(ClientSession session, MongoDatabase db) {
     this.session = session;
     this.db = db;
   }
@@ -59,7 +64,7 @@ public class AdvanceChangeLogWithBeforeAndChangeSetFailing implements ChangeLog 
   @Override
   public void changeSet() {
     CodecRegistry pojoCodecRegistry = org.bson.codecs.configuration.CodecRegistries.fromRegistries(MongoClientSettings.getDefaultCodecRegistry(), org.bson.codecs.configuration.CodecRegistries.fromProviders(PojoCodecProvider.builder().automatic(true).build()));
-    MongoCollection<Client> clientCollection = db.withCodecRegistry(pojoCodecRegistry).getCollection(AdvanceChangeLogWithBeforeAndChangeSetFailing.COLLECTION_NAME, Client.class);
+    MongoCollection<Client> clientCollection = db.withCodecRegistry(pojoCodecRegistry).getCollection(AdvanceChangeLogWithChangeSetFailing.COLLECTION_NAME, Client.class);
 
     List<Client> clients = IntStream.range(0, 10)
         .mapToObj(i -> new Client("name-" + i, "email-" + i, "phone" + i, "country" + i))
@@ -67,7 +72,7 @@ public class AdvanceChangeLogWithBeforeAndChangeSetFailing implements ChangeLog 
     clientCollection.insertMany(session, clients);
     rollbackCalled = false;
     rollbackBeforeCalled = false;
-    if(true) throw new RuntimeException("Expected exception in " + AdvanceChangeLogWithBeforeAndChangeSetFailing.class + " changeLog[ChangeSet]");
+    if(true) throw new RuntimeException("Expected exception in " + AdvanceChangeLogWithChangeSetFailing.class + " changeLog[ChangeSet]");
   }
 
   @Override
@@ -79,7 +84,9 @@ public class AdvanceChangeLogWithBeforeAndChangeSetFailing implements ChangeLog 
 
   @Override
   public void before() {
-    System.currentTimeMillis();
+    //creates the collection
+    CodecRegistry pojoCodecRegistry = org.bson.codecs.configuration.CodecRegistries.fromRegistries(MongoClientSettings.getDefaultCodecRegistry(), org.bson.codecs.configuration.CodecRegistries.fromProviders(PojoCodecProvider.builder().automatic(true).build()));
+    MongoCollection<Client> clientCollection = db.withCodecRegistry(pojoCodecRegistry).getCollection(AdvanceChangeLogWithChangeSetFailing.COLLECTION_NAME, Client.class);
   }
 
   @Override
