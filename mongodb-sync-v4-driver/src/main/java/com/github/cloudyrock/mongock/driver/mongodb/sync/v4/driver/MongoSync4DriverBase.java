@@ -21,10 +21,10 @@ public abstract class MongoSync4DriverBase<CHANGE_ENTRY extends ChangeEntry> ext
   private boolean transactionEnabled = true;
 
   protected MongoSync4DriverBase(MongoClient mongoClient,
-                             String databaseName,
-                             long lockAcquiredForMillis,
-                             long lockQuitTryingAfterMillis,
-                             long lockTryFrequencyMillis) {
+                                 String databaseName,
+                                 long lockAcquiredForMillis,
+                                 long lockQuitTryingAfterMillis,
+                                 long lockTryFrequencyMillis) {
     super(mongoClient.getDatabase(databaseName), lockAcquiredForMillis, lockQuitTryingAfterMillis, lockTryFrequencyMillis);
     this.mongoClient = mongoClient;
   }
@@ -43,9 +43,12 @@ public abstract class MongoSync4DriverBase<CHANGE_ENTRY extends ChangeEntry> ext
   @Override
   public Set<ChangeSetDependency> getDependencies() {
     Set<ChangeSetDependency> dependencies = super.getDependencies();
-    if(clientSession != null) {
-      dependencies.add(new ChangeSetDependency(ClientSession.class, clientSession));
+    if (clientSession != null) {
+      ChangeSetDependency clientSessionDependency = new ChangeSetDependency(ClientSession.class, clientSession);
+      dependencies.remove(clientSessionDependency);
+      dependencies.add(clientSessionDependency);
     }
+
     return dependencies;
   }
 

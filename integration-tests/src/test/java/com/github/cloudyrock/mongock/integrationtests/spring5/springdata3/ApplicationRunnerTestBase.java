@@ -15,6 +15,9 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.core.env.Environment;
 import org.springframework.data.mongodb.core.MongoTemplate;
 
+import java.util.Arrays;
+import java.util.stream.Stream;
+
 abstract class ApplicationRunnerTestBase {
 
   protected MongoClient mongoClient;
@@ -27,23 +30,24 @@ abstract class ApplicationRunnerTestBase {
   }
 
 
-  protected MigrationSpringbootBuilder getSpringBootBuilderWithSpringData(String packagePath) {
+  protected MigrationSpringbootBuilder getSpringBootBuilderWithSpringData(String... packagePath) {
     SpringDataMongoV3Driver driver = SpringDataMongoV3Driver.withDefaultLock(mongoTemplate);
     driver.setChangeLogRepositoryName(Constants.CHANGELOG_COLLECTION_NAME);
     return MongockSpringboot.builder()
         .setDriver(driver)
-        .addChangeLogsScanPackage(packagePath)
+        .addChangeLogsScanPackages(Arrays.asList(packagePath))
         .setSpringContext(getApplicationContext());
   }
 
 
-  protected MigrationStandaloneBuilder getStandaloneBuilderWithMongoDBSync4(String packagePath) {
+  protected MigrationStandaloneBuilder getStandaloneBuilderWithMongoDBSync4(String... packagePath) {
     MongoSync4Driver driver = MongoSync4Driver.withDefaultLock(mongoClient, RuntimeTestUtil.DEFAULT_DATABASE_NAME);
     driver.setChangeLogRepositoryName(Constants.CHANGELOG_COLLECTION_NAME);
-    return MongockStandalone.builder()
+    return  MongockStandalone.builder()
         .setDriver(driver)
-        .addChangeLogsScanPackage(packagePath);
+        .addChangeLogsScanPackages(Arrays.asList(packagePath));
   }
+
 
   protected ApplicationContext getApplicationContext() {
     ApplicationContext context = Mockito.mock(ApplicationContext.class);
