@@ -40,7 +40,7 @@ public class AdvanceChangeLogWithBeforeFailing implements ChangeLog {
 
   @Override
   public String geId() {
-    return AdvanceChangeLogWithBeforeFailing.class.getSimpleName();
+    return getClass().getSimpleName();
   }
 
   @Override

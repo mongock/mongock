@@ -41,15 +41,16 @@ class MongoDBWithRunnerITest extends ApplicationRunnerTestBase {
     start(mongoVersion);
     // given
     MongoDatabase database = mongoClient.getDatabase(RuntimeTestUtil.DEFAULT_DATABASE_NAME);
-    database.createCollection(Mongock4Spring5SpringData3App.CLIENTS_COLLECTION_NAME);
+    database.createCollection(MongoDBRollbackWithNoClientSessionChangeLog.COLLECTION_NAME);
     MongockException ex = Assertions.assertThrows(MongockException.class,
-        () -> getStandaloneBuilderWithMongoDBSync4(MongoDBRollbackWithNoClientSessionChangeLog.class.getPackage().getName())
+        () -> getStandaloneBuilderWithMongoDBSync4(MongoDBRollbackWithNoClientSessionChangeLog.class.getName())
+            .setTransactionEnabled(true)
             .buildRunner()
             .execute());
 
     //then
-    assertEquals("com.github.cloudyrock.mongock.exception.MongockException: Error in method[MongoDBRollbackWithNoClientSessionChangeLog.methodFailing] : Transaction error", ex.getMessage());
-    MongoCollection<Document> clientCollection = database.getCollection(Mongock4Spring5SpringData3App.CLIENTS_COLLECTION_NAME);
+    assertTrue( ex.getMessage().contains("Expected exception in changeLog[Before]"));
+    MongoCollection<Document> clientCollection = database.getCollection(MongoDBRollbackWithNoClientSessionChangeLog.COLLECTION_NAME);
     FindIterable<Document> clients = clientCollection.find();
     Set<Document> clientsSet = new HashSet<>();
     clients.forEach(clientsSet::add);
@@ -99,16 +100,16 @@ class MongoDBWithRunnerITest extends ApplicationRunnerTestBase {
     changeEntryIterator.forEach(changeEntryList::add);
     assertEquals(4, changeEntryList.size());
 
-    assertEquals("AdvanceChangeLogWithBefore_before", changeEntryList.get(0).getString("changeId"));
+    assertEquals(AdvanceChangeLog.class.getSimpleName() + "_before", changeEntryList.get(0).getString("changeId"));
     assertEquals(ChangeState.EXECUTED.name(), changeEntryList.get(0).getString("state"));
 
-    assertEquals("AdvanceChangeLogWithBefore", changeEntryList.get(1).getString("changeId"));
+    assertEquals(AdvanceChangeLog.class.getSimpleName(), changeEntryList.get(1).getString("changeId"));
     assertEquals(ChangeState.EXECUTED.name(), changeEntryList.get(1).getString("state"));
 
-    assertEquals("AdvanceChangeLogWithBeforeAndChangeSetFailing_before", changeEntryList.get(2).getString("changeId"));
+    assertEquals(AdvanceChangeLogWithChangeSetFailing.class.getSimpleName() + "_before", changeEntryList.get(2).getString("changeId"));
     assertEquals(ChangeState.ROLLED_BACK.name(), changeEntryList.get(2).getString("state"));
 
-    assertEquals("AdvanceChangeLogWithBeforeAndChangeSetFailing", changeEntryList.get(3).getString("changeId"));
+    assertEquals(AdvanceChangeLogWithChangeSetFailing.class.getSimpleName(), changeEntryList.get(3).getString("changeId"));
     assertEquals(ChangeState.FAILED.name(), changeEntryList.get(3).getString("state"));
 
     MongoCollection<Document> dataCollection = database.getCollection(AdvanceChangeLogWithChangeSetFailing.COLLECTION_NAME);
@@ -162,16 +163,16 @@ class MongoDBWithRunnerITest extends ApplicationRunnerTestBase {
 
     assertEquals(4, changeEntryList.size());
 
-    assertEquals("AdvanceChangeLogWithBefore_before", changeEntryList.get(0).getString("changeId"));
+    assertEquals(AdvanceChangeLog.class.getSimpleName() + "_before", changeEntryList.get(0).getString("changeId"));
     assertEquals(ChangeState.ROLLED_BACK.name(), changeEntryList.get(0).getString("state"));
 
-    assertEquals("AdvanceChangeLogWithBefore", changeEntryList.get(1).getString("changeId"));
+    assertEquals(AdvanceChangeLog.class.getSimpleName(), changeEntryList.get(1).getString("changeId"));
     assertEquals(ChangeState.ROLLED_BACK.name(), changeEntryList.get(1).getString("state"));
 
-    assertEquals("AdvanceChangeLogWithBeforeAndChangeSetFailing_before", changeEntryList.get(2).getString("changeId"));
+    assertEquals(AdvanceChangeLogWithChangeSetFailing.class.getSimpleName() + "_before", changeEntryList.get(2).getString("changeId"));
     assertEquals(ChangeState.ROLLED_BACK.name(), changeEntryList.get(2).getString("state"));
 
-    assertEquals("AdvanceChangeLogWithBeforeAndChangeSetFailing", changeEntryList.get(3).getString("changeId"));
+    assertEquals(AdvanceChangeLogWithChangeSetFailing.class.getSimpleName(), changeEntryList.get(3).getString("changeId"));
     assertEquals(ChangeState.ROLLED_BACK.name(), changeEntryList.get(3).getString("state"));
 
   }
@@ -218,16 +219,16 @@ class MongoDBWithRunnerITest extends ApplicationRunnerTestBase {
 
     assertEquals(4, changeEntryList.size());
 
-    assertEquals("AdvanceChangeLogWithBefore_before", changeEntryList.get(0).getString("changeId"));
+    assertEquals(AdvanceChangeLog.class.getSimpleName() + "_before", changeEntryList.get(0).getString("changeId"));
     assertEquals(ChangeState.EXECUTED.name(), changeEntryList.get(0).getString("state"));
 
-    assertEquals("AdvanceChangeLogWithBefore", changeEntryList.get(1).getString("changeId"));
+    assertEquals(AdvanceChangeLog.class.getSimpleName(), changeEntryList.get(1).getString("changeId"));
     assertEquals(ChangeState.EXECUTED.name(), changeEntryList.get(1).getString("state"));
 
-    assertEquals("AdvanceChangeLogWithBeforeAndChangeSetFailing_before", changeEntryList.get(2).getString("changeId"));
+    assertEquals(AdvanceChangeLogWithChangeSetFailing.class.getSimpleName() + "_before", changeEntryList.get(2).getString("changeId"));
     assertEquals(ChangeState.ROLLED_BACK.name(), changeEntryList.get(2).getString("state"));
 
-    assertEquals("AdvanceChangeLogWithBeforeAndChangeSetFailing", changeEntryList.get(3).getString("changeId"));
+    assertEquals(AdvanceChangeLogWithChangeSetFailing.class.getSimpleName(), changeEntryList.get(3).getString("changeId"));
     assertEquals(ChangeState.ROLLED_BACK.name(), changeEntryList.get(3).getString("state"));
 
   }
@@ -310,10 +311,10 @@ class MongoDBWithRunnerITest extends ApplicationRunnerTestBase {
     changeEntryIterator.forEach(changeEntryList::add);
     assertEquals(2, changeEntryList.size());
 
-    assertEquals("AdvanceChangeLogWithBefore_before", changeEntryList.get(0).getString("changeId"));
+    assertEquals(AdvanceChangeLog.class.getSimpleName() + "_before", changeEntryList.get(0).getString("changeId"));
     assertEquals(ChangeState.EXECUTED.name(), changeEntryList.get(0).getString("state"));
 
-    assertEquals("AdvanceChangeLogWithBefore", changeEntryList.get(1).getString("changeId"));
+    assertEquals(AdvanceChangeLog.class.getSimpleName(), changeEntryList.get(1).getString("changeId"));
     assertEquals(ChangeState.EXECUTED.name(), changeEntryList.get(1).getString("state"));
 
     MongoCollection<Document> dataCollection = database.getCollection(AdvanceChangeLog.COLLECTION_NAME);
@@ -360,7 +361,7 @@ class MongoDBWithRunnerITest extends ApplicationRunnerTestBase {
     changeEntryIterator.forEach(changeEntryList::add);
     assertEquals(1, changeEntryList.size());
 
-    assertEquals("AdvanceChangeLogWithBeforeFailing_before", changeEntryList.get(0).getString("changeId"));
+    assertEquals(AdvanceChangeLogWithBeforeFailing.class.getSimpleName() + "_before", changeEntryList.get(0).getString("changeId"));
     assertEquals(ChangeState.ROLLED_BACK.name(), changeEntryList.get(0).getString("state"));
 
     MongoCollection<Document> dataCollection = database.getCollection(AdvanceChangeLog.COLLECTION_NAME);

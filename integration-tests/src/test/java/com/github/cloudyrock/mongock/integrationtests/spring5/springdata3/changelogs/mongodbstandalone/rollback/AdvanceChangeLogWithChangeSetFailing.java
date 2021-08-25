@@ -17,7 +17,7 @@ import java.util.stream.IntStream;
 
 public class AdvanceChangeLogWithChangeSetFailing implements ChangeLog {
 
-  public static final String COLLECTION_NAME = "AdvanceChangeLogWithBeforeAndChangeSetFailingCollection";
+  public static final String COLLECTION_NAME = AdvanceChangeLogWithChangeSetFailing.class.getSimpleName() + "Collection";
 
   public static boolean rollbackCalled = false;
   public static boolean rollbackBeforeCalled = false;
@@ -38,9 +38,8 @@ public class AdvanceChangeLogWithChangeSetFailing implements ChangeLog {
 
   @Override
   public String geId() {
-    return "AdvanceChangeLogWithBeforeAndChangeSetFailing";
+    return getClass().getSimpleName();
   }
-
   @Override
   public String getAuthor() {
     return "mongock_test";

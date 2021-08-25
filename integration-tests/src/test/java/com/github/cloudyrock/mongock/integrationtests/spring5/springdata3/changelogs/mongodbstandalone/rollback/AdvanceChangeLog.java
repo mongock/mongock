@@ -16,7 +16,7 @@ import java.util.stream.IntStream;
 
 
 public class AdvanceChangeLog implements ChangeLog {
-  public static final String COLLECTION_NAME = "AdvanceChangeLogCollection";
+  public static final String COLLECTION_NAME = AdvanceChangeLog.class.getSimpleName() + "Collection";
 
 
   public static boolean rollbackCalled = false;
@@ -36,12 +36,10 @@ public class AdvanceChangeLog implements ChangeLog {
     this.session = session;
     this.db = db;
   }
-
   @Override
   public String geId() {
-    return "AdvanceChangeLogWithBefore";
+    return getClass().getSimpleName();
   }
-
   @Override
   public String getAuthor() {
     return "mongock_test";

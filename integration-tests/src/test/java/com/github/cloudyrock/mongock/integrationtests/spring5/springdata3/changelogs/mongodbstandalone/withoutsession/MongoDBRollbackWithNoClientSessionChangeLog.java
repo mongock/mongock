@@ -1,9 +1,7 @@
 package com.github.cloudyrock.mongock.integrationtests.spring5.springdata3.changelogs.mongodbstandalone.withoutsession;
 
-import com.github.cloudyrock.mongock.ChangeLog;
-import com.github.cloudyrock.mongock.ChangeSet;
-import com.github.cloudyrock.mongock.integrationtests.spring5.springdata3.Mongock4Spring5SpringData3App;
 import com.github.cloudyrock.mongock.integrationtests.spring5.springdata3.client.Client;
+import com.github.cloudyrock.mongock.interfaces.ChangeLog;
 import com.mongodb.MongoClientSettings;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
@@ -14,26 +12,60 @@ import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
-@ChangeLog(order = "2")
-public class MongoDBRollbackWithNoClientSessionChangeLog {
+public class MongoDBRollbackWithNoClientSessionChangeLog implements ChangeLog {
+  public static final String COLLECTION_NAME = MongoDBRollbackWithNoClientSessionChangeLog.class.getSimpleName() + "Collection";
+  private final MongoDatabase db;
 
-  @ChangeSet(id = "method-successful", order = "001", author = "mongock")
-  public void methodSuccessful(MongoDatabase db) {
+  public MongoDBRollbackWithNoClientSessionChangeLog(MongoDatabase db) {
+    this.db = db;
+  }
+  @Override
+  public String geId() {
+    return getClass().getSimpleName();
+  }
+  @Override
+  public String getAuthor() {
+    return "mongock_test";
+  }
+
+  @Override
+  public String getOrder() {
+    return "1";
+  }
+
+  @Override
+  public boolean isFailFast() {
+    return true;
+  }
+
+  @Override
+  public String getSystemVersion() {
+    return "1";
+  }
+
+  @Override
+  public void changeSet() {
 
     CodecRegistry pojoCodecRegistry = org.bson.codecs.configuration.CodecRegistries.fromRegistries(MongoClientSettings.getDefaultCodecRegistry(), org.bson.codecs.configuration.CodecRegistries.fromProviders(PojoCodecProvider.builder().automatic(true).build()));
-    MongoCollection<Client> clientCollection = db.withCodecRegistry(pojoCodecRegistry).getCollection(Mongock4Spring5SpringData3App.CLIENTS_COLLECTION_NAME, Client.class);
+    MongoCollection<Client> clientCollection = db.withCodecRegistry(pojoCodecRegistry).getCollection(MongoDBRollbackWithNoClientSessionChangeLog.COLLECTION_NAME, Client.class);
     List<Client> clients = IntStream.range(0, 10)
         .mapToObj(i -> new Client("name-" + i, "email-" + i, "phone" + i, "country" + i))
         .collect(Collectors.toList());
     clientCollection.insertMany(clients);
+    throw new RuntimeException("Expected exception in changeLog[Before]");
   }
 
-  @ChangeSet(id = "method-failing", order = "002", author = "mongock")
-  public void methodFailing() {
-    if (true) {
-      throw new RuntimeException("Transaction error");
-    }
+  @Override
+  public void before() {
   }
 
+  @Override
+  public void rollbackBefore() {
 
+  }
+
+  @Override
+  public void rollback() {
+
+  }
 }
