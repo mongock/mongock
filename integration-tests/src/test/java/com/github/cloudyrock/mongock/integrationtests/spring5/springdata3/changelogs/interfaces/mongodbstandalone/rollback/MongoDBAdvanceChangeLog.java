@@ -1,4 +1,4 @@
-package com.github.cloudyrock.mongock.integrationtests.spring5.springdata3.changelogs.mongodbstandalone.rollback;
+package com.github.cloudyrock.mongock.integrationtests.spring5.springdata3.changelogs.interfaces.mongodbstandalone.rollback;
 
 import com.github.cloudyrock.mongock.integrationtests.spring5.springdata3.client.Client;
 import com.github.cloudyrock.mongock.interfaces.ChangeLog;
@@ -15,8 +15,8 @@ import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 
-public class AdvanceChangeLog implements ChangeLog {
-  public static final String COLLECTION_NAME = AdvanceChangeLog.class.getSimpleName() + "Collection";
+public class MongoDBAdvanceChangeLog implements ChangeLog {
+  public static final String COLLECTION_NAME = MongoDBAdvanceChangeLog.class.getSimpleName() + "Collection";
 
 
   public static boolean rollbackCalled = false;
@@ -32,7 +32,7 @@ public class AdvanceChangeLog implements ChangeLog {
     rollbackBeforeCalled = false;
   }
 
-  public AdvanceChangeLog(ClientSession session, MongoDatabase db) {
+  public MongoDBAdvanceChangeLog(ClientSession session, MongoDatabase db) {
     this.session = session;
     this.db = db;
   }
@@ -81,7 +81,7 @@ public class AdvanceChangeLog implements ChangeLog {
   public void before() {
     //creates the collection
     CodecRegistry pojoCodecRegistry = org.bson.codecs.configuration.CodecRegistries.fromRegistries(MongoClientSettings.getDefaultCodecRegistry(), org.bson.codecs.configuration.CodecRegistries.fromProviders(PojoCodecProvider.builder().automatic(true).build()));
-    clientCollection = db.withCodecRegistry(pojoCodecRegistry).getCollection(AdvanceChangeLog.COLLECTION_NAME, Client.class);
+    clientCollection = db.withCodecRegistry(pojoCodecRegistry).getCollection(MongoDBAdvanceChangeLog.COLLECTION_NAME, Client.class);
     //this is required, otherwise collection doesn't get created and throws an exception in the changeSet
     clientCollection.insertOne(new Client("name-DUMMY", "email-DUMMY", "phone-DUMMY", "country-DUMMY"));
   }

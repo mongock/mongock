@@ -1,4 +1,4 @@
-package com.github.cloudyrock.mongock.integrationtests.spring5.springdata3.changelogs.mongodbstandalone.rollback;
+package com.github.cloudyrock.mongock.integrationtests.spring5.springdata3.changelogs.interfaces.mongodbstandalone.rollback;
 
 import com.github.cloudyrock.mongock.integrationtests.spring5.springdata3.client.Client;
 import com.github.cloudyrock.mongock.interfaces.ChangeLog;
@@ -15,9 +15,9 @@ import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 
-public class AdvanceChangeLogWithBeforeFailing implements ChangeLog {
+public class MongoDBAdvanceChangeLogWithBeforeFailing implements ChangeLog {
 
-  public static final String COLLECTION_NAME = AdvanceChangeLogWithBeforeFailing.class.getSimpleName() + "Collection";
+  public static final String COLLECTION_NAME = MongoDBAdvanceChangeLogWithBeforeFailing.class.getSimpleName() + "Collection";
 
   public static boolean changeSetCalled = false;
   public static boolean rollbackCalled = false;
@@ -32,7 +32,7 @@ public class AdvanceChangeLogWithBeforeFailing implements ChangeLog {
     rollbackBeforeCalled = false;
   }
 
-  public AdvanceChangeLogWithBeforeFailing(ClientSession session, MongoDatabase db) {
+  public MongoDBAdvanceChangeLogWithBeforeFailing(ClientSession session, MongoDatabase db) {
     this.session = session;
     this.db = db;
   }
@@ -70,7 +70,7 @@ public class AdvanceChangeLogWithBeforeFailing implements ChangeLog {
     rollbackBeforeCalled = false;
 
     CodecRegistry pojoCodecRegistry = org.bson.codecs.configuration.CodecRegistries.fromRegistries(MongoClientSettings.getDefaultCodecRegistry(), org.bson.codecs.configuration.CodecRegistries.fromProviders(PojoCodecProvider.builder().automatic(true).build()));
-    MongoCollection<Client> clientCollection = db.withCodecRegistry(pojoCodecRegistry).getCollection(AdvanceChangeLogWithBeforeFailing.COLLECTION_NAME, Client.class);
+    MongoCollection<Client> clientCollection = db.withCodecRegistry(pojoCodecRegistry).getCollection(MongoDBAdvanceChangeLogWithBeforeFailing.COLLECTION_NAME, Client.class);
 
     List<Client> clients = IntStream.range(0, 10)
         .mapToObj(i -> new Client("name-" + i, "email-" + i, "phone" + i, "country" + i))
@@ -87,7 +87,7 @@ public class AdvanceChangeLogWithBeforeFailing implements ChangeLog {
 
   @Override
   public void before() {
-    throw new RuntimeException("Expected exception in " + AdvanceChangeLogWithBeforeFailing.class + " changeLog[Before]");
+    throw new RuntimeException("Expected exception in " + MongoDBAdvanceChangeLogWithBeforeFailing.class + " changeLog[Before]");
   }
 
   @Override

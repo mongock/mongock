@@ -30,12 +30,12 @@ abstract class ApplicationRunnerTestBase {
   }
 
 
-  protected MigrationSpringbootBuilder getSpringBootBuilderWithSpringData(String packagePath) {
+  protected MigrationSpringbootBuilder getSpringBootBuilderWithSpringData(String... packagePath) {
     SpringDataMongoV3Driver driver = SpringDataMongoV3Driver.withDefaultLock(mongoTemplate);
     driver.setChangeLogRepositoryName(Constants.CHANGELOG_COLLECTION_NAME);
     return MongockSpringboot.builder()
         .setDriver(driver)
-        .addChangeLogsScanPackage(packagePath)
+        .addChangeLogsScanPackages(Arrays.asList(packagePath))
         .setSpringContext(getApplicationContext());
   }
 

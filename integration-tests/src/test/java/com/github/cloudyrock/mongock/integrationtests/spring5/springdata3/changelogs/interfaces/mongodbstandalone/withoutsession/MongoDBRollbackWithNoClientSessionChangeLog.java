@@ -1,4 +1,4 @@
-package com.github.cloudyrock.mongock.integrationtests.spring5.springdata3.changelogs.mongodbstandalone.withoutsession;
+package com.github.cloudyrock.mongock.integrationtests.spring5.springdata3.changelogs.interfaces.mongodbstandalone.withoutsession;
 
 import com.github.cloudyrock.mongock.integrationtests.spring5.springdata3.client.Client;
 import com.github.cloudyrock.mongock.interfaces.ChangeLog;
