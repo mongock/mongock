@@ -297,5 +297,51 @@ class MongoDBWithRunnerITest extends ApplicationRunnerTestBase {
     assertEquals(0, clientsSet.size());
   }
 
+  @ParameterizedTest
+  @ValueSource(strings = {"mongo:4.2.6"})
+  @DisplayName("SHOULD not rollback " +
+      "WHEN changeSet runs normally " +
+      "IF strategy is changeLog and  transactional")
+  public void shouldNotRollback_WhenChangeSetRunsNormally_IfStrategyChangeLogAndTransactional(String mongoVersion) {
+    start(mongoVersion);
+
+    // given
+    MongoDatabase database = mongoClient.getDatabase(RuntimeTestUtil.DEFAULT_DATABASE_NAME);
+
+    MongockConfiguration config = new MongockConfiguration();
+    config.setServiceIdentifier("myService");
+    config.setTrackIgnored(false);
+    config.setChangeLogsScanPackage(Arrays.asList(AdvanceChangeLog.class.getName()));
+
+    // checks the four rollbacks were called
+    AdvanceChangeLog.clear();
+    getStandaloneBuilderWithMongoDBSync4( )
+        .setConfig(config)
+        .setTransactionEnabled(true)
+        .buildRunner()
+        .execute();
+
+
+    Assertions.assertFalse(AdvanceChangeLog.rollbackBeforeCalled, "(1)AdvanceChangeLogWithBefore's Rollback before method wasn't executed");
+    Assertions.assertFalse(AdvanceChangeLog.rollbackCalled, "(2)AdvanceChangeLogWithBefore's Rollback method wasn't executed");
+
+    MongoCollection<Document> changeEntryCollection = database.getCollection(config.getChangeLogRepositoryName());
+    FindIterable<Document> changeEntryIterator = changeEntryCollection.find();
+    List<Document> changeEntryList = new ArrayList<>();
+    changeEntryIterator.forEach(changeEntryList::add);
+    assertEquals(2, changeEntryList.size());
+
+    assertEquals("AdvanceChangeLogWithBefore_before", changeEntryList.get(0).getString("changeId"));
+    assertEquals(ChangeState.EXECUTED.name(), changeEntryList.get(0).getString("state"));
+
+    assertEquals("AdvanceChangeLogWithBefore", changeEntryList.get(1).getString("changeId"));
+    assertEquals(ChangeState.EXECUTED.name(), changeEntryList.get(1).getString("state"));
+
+    MongoCollection<Document> dataCollection = database.getCollection(AdvanceChangeLog.COLLECTION_NAME);
+    FindIterable<Document> clients = dataCollection.find();
+    Set<Document> clientsSet = new HashSet<>();
+    clients.forEach(clientsSet::add);
+    assertEquals(11, clientsSet.size());
+  }
 
 }
