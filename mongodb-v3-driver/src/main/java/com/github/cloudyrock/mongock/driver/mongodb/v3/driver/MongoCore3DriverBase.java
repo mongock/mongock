@@ -53,10 +53,12 @@ public abstract  class MongoCore3DriverBase<CHANGE_ENTRY extends ChangeEntry> ex
   public void executeInTransaction(Runnable operation) {
 
     try {
+      changeEntryRepository.setClientSession(clientSession);
       clientSession.withTransaction(getTransactionBody(operation), txOptions);
     } catch (Exception ex) {
       throw new MongockException(ex);
     } finally {
+      changeEntryRepository.clearClientSession();
       clientSession.close();
     }
   }

@@ -98,7 +98,7 @@ class MongoDBWithRunnerITest extends ApplicationRunnerTestBase {
     FindIterable<Document> changeEntryIterator = changeEntryCollection.find();
     List<Document> changeEntryList = new ArrayList<>();
     changeEntryIterator.forEach(changeEntryList::add);
-    assertEquals(4, changeEntryList.size());
+    assertEquals(3, changeEntryList.size());
 
     assertEquals(MongoDBAdvanceChangeLog.class.getSimpleName() + "_before", changeEntryList.get(0).getString("changeId"));
     assertEquals(ChangeState.EXECUTED.name(), changeEntryList.get(0).getString("state"));
@@ -109,8 +109,6 @@ class MongoDBWithRunnerITest extends ApplicationRunnerTestBase {
     assertEquals(MongoDBAdvanceChangeLogWithChangeSetFailing.class.getSimpleName() + "_before", changeEntryList.get(2).getString("changeId"));
     assertEquals(ChangeState.ROLLED_BACK.name(), changeEntryList.get(2).getString("state"));
 
-    assertEquals(MongoDBAdvanceChangeLogWithChangeSetFailing.class.getSimpleName(), changeEntryList.get(3).getString("changeId"));
-    assertEquals(ChangeState.FAILED.name(), changeEntryList.get(3).getString("state"));
 
     MongoCollection<Document> dataCollection = database.getCollection(MongoDBAdvanceChangeLogWithChangeSetFailing.COLLECTION_NAME);
     FindIterable<Document> clients = dataCollection.find();
@@ -316,7 +314,7 @@ class MongoDBWithRunnerITest extends ApplicationRunnerTestBase {
     FindIterable<Document> changeEntryIterator = clientCollection.find();
     List<Document> changeEntryList = new ArrayList<>();
     changeEntryIterator.forEach(changeEntryList::add);
-    assertEquals(4, changeEntryList.size());
+    assertEquals(0, changeEntryList.size());
 
     //CHANGELOG 1
     MongoCollection<Document> dataCollection1 = database.getCollection(MongoDBAdvanceChangeLog.COLLECTION_NAME);
