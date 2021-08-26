@@ -29,10 +29,8 @@ public abstract  class MongoCore3DriverBase<CHANGE_ENTRY extends ChangeEntry> ex
     this.mongoClient = mongoClient;
   }
 
-  //todo change this for prepareForMigrationBlock, which can be a changeLog(default) or the entire migration
-  //todo reflects it in the MigrationExecutor
   @Override
-  public void prepareForChangelogExecution() {
+  public void prepareForExecutionBlock() {
     try {
       clientSession = mongoClient.startSession();
     } catch (MongoClientException ex) {
