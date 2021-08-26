@@ -117,6 +117,20 @@ class MongoDBWithRunnerITest extends ApplicationRunnerTestBase {
     Set<Document> clientsSet = new HashSet<>();
     clients.forEach(clientsSet::add);
     assertEquals(0, clientsSet.size());
+
+    //CHANGELOG 1
+    MongoCollection<Document> dataCollection1 = database.getCollection(MongoDBAdvanceChangeLog.COLLECTION_NAME);
+    FindIterable<Document> clients1 = dataCollection1.find();
+    Set<Document> clientsSet1 = new HashSet<>();
+    clients1.forEach(clientsSet1::add);
+    assertEquals(11, clientsSet1.size());
+
+    //CHANGELOG2
+    MongoCollection<Document> dataCollection2 = database.getCollection(MongoDBAdvanceChangeLogWithChangeSetFailing.COLLECTION_NAME);
+    FindIterable<Document> clients2 = dataCollection2.find();
+    Set<Document> clientsSet2 = new HashSet<>();
+    clients2.forEach(clientsSet2::add);
+    assertEquals(0, clientsSet2.size());
   }
 
   @ParameterizedTest
@@ -175,6 +189,19 @@ class MongoDBWithRunnerITest extends ApplicationRunnerTestBase {
     assertEquals(MongoDBAdvanceChangeLogWithChangeSetFailing.class.getSimpleName(), changeEntryList.get(3).getString("changeId"));
     assertEquals(ChangeState.ROLLED_BACK.name(), changeEntryList.get(3).getString("state"));
 
+    //CHANGELOG 1
+    MongoCollection<Document> dataCollection1 = database.getCollection(MongoDBAdvanceChangeLog.COLLECTION_NAME);
+    FindIterable<Document> clients1 = dataCollection1.find();
+    Set<Document> clientsSet1 = new HashSet<>();
+    clients1.forEach(clientsSet1::add);
+    assertEquals(11, clientsSet1.size());
+
+    //CHANGELOG2
+    MongoCollection<Document> dataCollection2 = database.getCollection(MongoDBAdvanceChangeLogWithChangeSetFailing.COLLECTION_NAME);
+    FindIterable<Document> clients2 = dataCollection2.find();
+    Set<Document> clientsSet2 = new HashSet<>();
+    clients2.forEach(clientsSet2::add);
+    assertEquals(10, clientsSet2.size());
   }
 
   @ParameterizedTest
@@ -231,6 +258,20 @@ class MongoDBWithRunnerITest extends ApplicationRunnerTestBase {
     assertEquals(MongoDBAdvanceChangeLogWithChangeSetFailing.class.getSimpleName(), changeEntryList.get(3).getString("changeId"));
     assertEquals(ChangeState.ROLLED_BACK.name(), changeEntryList.get(3).getString("state"));
 
+    //CHANGELOG 1
+    MongoCollection<Document> dataCollection1 = database.getCollection(MongoDBAdvanceChangeLog.COLLECTION_NAME);
+    FindIterable<Document> clients1 = dataCollection1.find();
+    Set<Document> clientsSet1 = new HashSet<>();
+    clients1.forEach(clientsSet1::add);
+    assertEquals(11, clientsSet1.size());
+
+    //CHANGELOG2
+    MongoCollection<Document> dataCollection2 = database.getCollection(MongoDBAdvanceChangeLogWithChangeSetFailing.COLLECTION_NAME);
+    FindIterable<Document> clients2 = dataCollection2.find();
+    Set<Document> clientsSet2 = new HashSet<>();
+    clients2.forEach(clientsSet2::add);
+    assertEquals(10, clientsSet2.size());
+
   }
 
   @ParameterizedTest
@@ -270,11 +311,28 @@ class MongoDBWithRunnerITest extends ApplicationRunnerTestBase {
     Assertions.assertFalse(MongoDBAdvanceChangeLogWithChangeSetFailing.rollbackBeforeCalled, "AdvanceChangeLogWithBeforeAndChangeSetFailing's Rollback before method wasn't executed");
     Assertions.assertFalse(MongoDBAdvanceChangeLogWithChangeSetFailing.rollbackCalled, "AdvanceChangeLogWithBeforeAndChangeSetFailing's Rollback method wasn't executed");
 
+    //CHANGE ENTRIES
     MongoCollection<Document> clientCollection = database.getCollection(config.getChangeLogRepositoryName());
     FindIterable<Document> changeEntryIterator = clientCollection.find();
     List<Document> changeEntryList = new ArrayList<>();
     changeEntryIterator.forEach(changeEntryList::add);
-    assertEquals(0, changeEntryList.size());
+    assertEquals(4, changeEntryList.size());
+
+    //CHANGELOG 1
+    MongoCollection<Document> dataCollection1 = database.getCollection(MongoDBAdvanceChangeLog.COLLECTION_NAME);
+    FindIterable<Document> clients1 = dataCollection1.find();
+    Set<Document> clientsSet1 = new HashSet<>();
+    clients1.forEach(clientsSet1::add);
+    assertEquals(1, clientsSet1.size());
+
+    //CHANGELOG2
+    MongoCollection<Document> dataCollection2 = database.getCollection(MongoDBAdvanceChangeLogWithChangeSetFailing.COLLECTION_NAME);
+    FindIterable<Document> clients2 = dataCollection2.find();
+    Set<Document> clientsSet2 = new HashSet<>();
+    clients2.forEach(clientsSet2::add);
+    assertEquals(0, clientsSet2.size());
+
+
   }
 
   @ParameterizedTest
@@ -317,18 +375,20 @@ class MongoDBWithRunnerITest extends ApplicationRunnerTestBase {
     assertEquals(MongoDBAdvanceChangeLog.class.getSimpleName(), changeEntryList.get(1).getString("changeId"));
     assertEquals(ChangeState.EXECUTED.name(), changeEntryList.get(1).getString("state"));
 
-    MongoCollection<Document> dataCollection = database.getCollection(MongoDBAdvanceChangeLog.COLLECTION_NAME);
-    FindIterable<Document> clients = dataCollection.find();
-    Set<Document> clientsSet = new HashSet<>();
-    clients.forEach(clientsSet::add);
-    assertEquals(11, clientsSet.size());
+    //CHANGELOG 1
+    MongoCollection<Document> dataCollection1 = database.getCollection(MongoDBAdvanceChangeLog.COLLECTION_NAME);
+    FindIterable<Document> clients1 = dataCollection1.find();
+    Set<Document> clientsSet1 = new HashSet<>();
+    clients1.forEach(clientsSet1::add);
+    assertEquals(11, clientsSet1.size());
+
   }
 
   @ParameterizedTest
   @ValueSource(strings = {"mongo:4.2.6"})
   @DisplayName("SHOULD not run changeSet " +
-      "WHEN strategy is changeLog and  transactional " +
-      "IF before throws exception")
+      "WHEN before throws exception " +
+      "IF strategy is changeLog and  transactional ")
   public void shouldNotRunChangeSet_WhenStrategyIsChangeLogAndTransactional_IfBeforeThrowsException(String mongoVersion) {
     start(mongoVersion);
 
@@ -355,6 +415,7 @@ class MongoDBWithRunnerITest extends ApplicationRunnerTestBase {
     Assertions.assertTrue(MongoDBAdvanceChangeLogWithBeforeFailing.rollbackBeforeCalled, "AdvanceChangeLogWithBeforeFailing's rollback before is expected to be called");
     Assertions.assertFalse(MongoDBAdvanceChangeLogWithBeforeFailing.rollbackCalled, "AdvanceChangeLogWithBeforeFailing's rollback is not expected to be called");
     Assertions.assertFalse(MongoDBAdvanceChangeLogWithBeforeFailing.changeSetCalled, "AdvanceChangeLogWithBeforeFailing's changeSet is not expected to be called");
+
     MongoCollection<Document> changeEntryCollection = database.getCollection(config.getChangeLogRepositoryName());
     FindIterable<Document> changeEntryIterator = changeEntryCollection.find();
     List<Document> changeEntryList = new ArrayList<>();
