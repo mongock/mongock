@@ -53,10 +53,12 @@ public abstract class MongoSync4DriverBase<CHANGE_ENTRY extends ChangeEntry> ext
   @Override
   public void executeInTransaction(Runnable operation) {
     try {
+      changeEntryRepository.setClientSession(clientSession);
       clientSession.withTransaction(getTransactionBody(operation), txOptions);
     } catch (Exception ex) {
       throw new MongockException(ex);
     } finally {
+      changeEntryRepository.clearClientSession();
       clientSession.close();
     }
   }
