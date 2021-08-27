@@ -2,7 +2,7 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <parent>
     <artifactId>mongock</artifactId>
-    <groupId>com.github.cloudyrock.mongock</groupId>
+    <groupId>io.mongock</groupId>
     <version>5.0.3.BETA-SNAPSHOT</version>
   </parent>
   <modelVersion>4.0.0</modelVersion>
@@ -22,7 +22,7 @@
   <dependencyManagement>
     <dependencies>
       <dependency>
-        <groupId>com.github.cloudyrock.mongock</groupId>
+        <groupId>io.mongock</groupId>
         <artifactId>mongock-bom</artifactId>
         <version>${project.version}</version>
         <type>pom</type>
@@ -34,11 +34,11 @@
   <dependencies>
     <!-- CORE DEPENDENCIES -->
     <dependency>
-      <groupId>com.github.cloudyrock.mongock</groupId>
+      <groupId>io.mongock</groupId>
       <artifactId>mongock-driver-core</artifactId>
     </dependency>
     <dependency>
-      <groupId>com.github.cloudyrock.mongock</groupId>
+      <groupId>io.mongock</groupId>
       <artifactId>mongock-api</artifactId>
     </dependency>
 
@@ -53,7 +53,7 @@
 
     <!-- TEST -->
     <dependency>
-      <groupId>com.github.cloudyrock.mongock</groupId>
+      <groupId>io.mongock</groupId>
       <artifactId>mongodb-driver-test-template</artifactId>
       <scope>test</scope>
     </dependency>

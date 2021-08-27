@@ -49,14 +49,14 @@ as it's already imported out of the box.
 ```xml
 <!-- To use standalone -->
 <dependency>
-  <groupId>com.github.cloudyrock.mongock</groupId>
+  <groupId>io.mongock</groupId>
   <artifactId>mongock-core</artifactId>
   <version>{LATEST_VERSION}</version>
 </dependency>
 
 <!-- To use with Spring -->
 <dependency>
-  <groupId>com.github.cloudyrock.mongock</groupId>
+  <groupId>io.mongock</groupId>
   <artifactId>mongock-spring</artifactId>
   <version>{LATEST_VERSION}</version>
 </dependency>
