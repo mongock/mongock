@@ -7,7 +7,7 @@
   <description>MongoDB tool for tracking, managing and applying database schema changes</description>
   <url>https://github.com/cloudyrock/mongock</url>
 
-  <groupId>com.github.cloudyrock.mongock</groupId>
+  <groupId>io.mongock</groupId>
   <artifactId>mongock</artifactId>
   <version>5.0.3.BETA-SNAPSHOT</version>
   <packaging>pom</packaging>
