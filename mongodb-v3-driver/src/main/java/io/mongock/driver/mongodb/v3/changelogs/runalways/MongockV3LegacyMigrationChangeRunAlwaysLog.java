@@ -2,7 +2,7 @@ package io.mongock.driver.mongodb.v3.changelogs.runalways;
 
 import com.github.cloudyrock.mongock.ChangeLog;
 import com.github.cloudyrock.mongock.ChangeSet;
-import com.github.cloudyrock.mongock.NonLockGuarded;
+import io.changock.migration.api.annotations.NonLockGuarded;
 import com.github.cloudyrock.mongock.NonLockGuardedType;
 import io.mongock.config.LegacyMigration;
 import io.mongock.driver.api.entry.ChangeEntry;

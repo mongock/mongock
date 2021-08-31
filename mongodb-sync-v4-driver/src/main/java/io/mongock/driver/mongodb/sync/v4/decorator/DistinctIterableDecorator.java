@@ -1,6 +1,6 @@
 package io.mongock.driver.mongodb.sync.v4.decorator;
 
-import com.github.cloudyrock.mongock.NonLockGuarded;
+import io.changock.migration.api.annotations.NonLockGuarded;
 import io.mongock.driver.mongodb.sync.v4.decorator.impl.DistinctIterableDecoratorImpl;
 import com.mongodb.client.DistinctIterable;
 import com.mongodb.client.model.Collation;

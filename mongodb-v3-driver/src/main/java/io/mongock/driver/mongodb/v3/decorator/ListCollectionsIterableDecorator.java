@@ -1,6 +1,6 @@
 package io.mongock.driver.mongodb.v3.decorator;
 
-import com.github.cloudyrock.mongock.NonLockGuarded;
+import io.changock.migration.api.annotations.NonLockGuarded;
 import com.github.cloudyrock.mongock.NonLockGuardedType;
 import io.mongock.driver.mongodb.v3.decorator.impl.ListCollectionsIterableDecoratorImpl;
 import com.mongodb.client.ListCollectionsIterable;

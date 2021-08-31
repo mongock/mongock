@@ -1,6 +1,6 @@
 package io.mongock.driver.mongodb.sync.v4.decorator;
 
-import com.github.cloudyrock.mongock.NonLockGuarded;
+import io.changock.migration.api.annotations.NonLockGuarded;
 import io.mongock.driver.mongodb.sync.v4.decorator.impl.MapReduceIterableDecoratorImpl;
 import com.mongodb.client.MapReduceIterable;
 import com.mongodb.client.model.Collation;

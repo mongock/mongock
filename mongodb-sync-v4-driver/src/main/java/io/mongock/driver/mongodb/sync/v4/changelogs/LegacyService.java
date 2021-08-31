@@ -1,6 +1,6 @@
 package io.mongock.driver.mongodb.sync.v4.changelogs;
 
-import com.github.cloudyrock.mongock.NonLockGuarded;
+import io.changock.migration.api.annotations.NonLockGuarded;
 import com.github.cloudyrock.mongock.NonLockGuardedType;
 import io.mongock.config.LegacyMigration;
 import io.mongock.config.LegacyMigrationMappingFields;

@@ -52,9 +52,9 @@ jobs:
           GPG_PASSPHRASE: ${{ secrets.GPG_PASSPHRASE }}
           GPG_SIGNING_PRIVATE_KEY: ${{ secrets.GPG_SIGNING_PRIVATE_KEY }}
 
-      - name: Synchronizing develop branch
-        run: |
-          git pull origin
-          git checkout develop
-          git merge -X theirs master --allow-unrelated-histories
-          git push origin develop
+#      - name: Synchronizing develop branch
+#        run: |
+#          git pull origin
+#          git checkout develop
+#          git merge -X theirs master --allow-unrelated-histories
+#          git push origin develop
