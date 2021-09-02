@@ -2,7 +2,7 @@ package io.mongock.integrationtests.spring5.springdata3.changelogs.client.update
 
 import com.github.cloudyrock.mongock.ChangeLog;
 import com.github.cloudyrock.mongock.ChangeSet;
-import io.mongock.driver.mongodb.springdata.v3.decorator.impl.MongockTemplate;
+import com.github.cloudyrock.mongock.driver.mongodb.springdata.v3.decorator.impl.MongockTemplate;
 import io.mongock.integrationtests.spring5.springdata3.Mongock4Spring5SpringData3App;
 import io.mongock.integrationtests.spring5.springdata3.client.ClientExtended;
 

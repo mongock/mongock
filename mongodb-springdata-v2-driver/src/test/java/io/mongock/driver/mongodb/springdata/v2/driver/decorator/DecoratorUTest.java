@@ -2,7 +2,7 @@ package io.mongock.driver.mongodb.springdata.v2.driver.decorator;
 
 import io.mongock.driver.api.lock.LockManager;
 import io.mongock.driver.api.lock.guard.invoker.LockGuardInvokerImpl;
-import io.mongock.driver.mongodb.springdata.v2.decorator.impl.MongockTemplate;
+import com.github.cloudyrock.mongock.driver.mongodb.springdata.v2.decorator.impl.MongockTemplate;
 import io.mongock.test.util.decorator.DecoratorMethodFailure;
 import io.mongock.test.util.decorator.DecoratorTestCollection;
 import io.mongock.test.util.decorator.DecoratorValidator;
