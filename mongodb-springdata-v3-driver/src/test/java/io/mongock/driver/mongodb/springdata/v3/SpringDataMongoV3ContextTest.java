@@ -1,7 +1,7 @@
 package io.mongock.driver.mongodb.springdata.v3;
 
 
-import io.mongock.config.MongockConfiguration;
+import io.mongock.api.config.MongockConfiguration;
 import io.mongock.driver.mongodb.springdata.v3.config.MongoDBConfiguration;
 import io.mongock.driver.mongodb.springdata.v3.config.SpringDataMongoV3Context;
 import io.mongock.driver.mongodb.sync.v4.repository.MongoSync4RepositoryBase;

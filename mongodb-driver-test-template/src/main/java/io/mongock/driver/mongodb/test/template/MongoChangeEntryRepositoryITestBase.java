@@ -3,7 +3,7 @@ package io.mongock.driver.mongodb.test.template;
 import io.mongock.driver.api.entry.ChangeState;
 import io.mongock.driver.core.entry.ChangeEntryRepository;
 import io.mongock.driver.mongodb.test.template.util.IntegrationTestBase;
-import io.mongock.exception.MongockException;
+import io.mongock.api.exception.MongockException;
 import com.mongodb.client.model.IndexOptions;
 import org.bson.Document;
 import org.junit.Assert;

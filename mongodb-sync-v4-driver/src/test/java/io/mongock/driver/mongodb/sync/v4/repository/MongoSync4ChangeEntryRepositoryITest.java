@@ -5,7 +5,7 @@ import io.mongock.driver.mongodb.sync.v4.MongoDbSync4DriverTestAdapterImpl;
 import io.mongock.driver.mongodb.sync.v4.repository.util.RepositoryAccessorHelper;
 import io.mongock.driver.mongodb.test.template.MongoChangeEntryRepositoryITestBase;
 import io.mongock.driver.mongodb.test.template.util.MongoDBDriverTestAdapter;
-import io.mongock.exception.MongockException;
+import io.mongock.api.exception.MongockException;
 import com.mongodb.ReadConcern;
 import com.mongodb.ReadPreference;
 import com.mongodb.WriteConcern;

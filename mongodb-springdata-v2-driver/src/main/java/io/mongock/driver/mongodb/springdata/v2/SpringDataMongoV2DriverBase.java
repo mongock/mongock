@@ -7,7 +7,7 @@ import io.mongock.driver.api.entry.ChangeEntryService;
 import io.mongock.driver.api.lock.guard.invoker.LockGuardInvokerImpl;
 import com.github.cloudyrock.mongock.driver.mongodb.springdata.v2.decorator.impl.MongockTemplate;
 import io.mongock.driver.mongodb.v3.driver.MongoCore3DriverGeneric;
-import io.mongock.exception.MongockException;
+import io.mongock.api.exception.MongockException;
 import io.mongock.utils.annotation.NotThreadSafe;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

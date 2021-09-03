@@ -1,6 +1,6 @@
 package io.mongock.integrationtests.spring5.springdata3;
 
-import io.mongock.config.LegacyMigration;
+import io.mongock.api.config.LegacyMigration;
 import io.mongock.integrationtests.spring5.springdata3.changelogs.empty.EmptyChangeLog;
 import io.mongock.integrationtests.spring5.springdata3.util.Constants;
 import io.mongock.integrationtests.spring5.springdata3.util.LegacyMigrationUtils;

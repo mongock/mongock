@@ -1,7 +1,7 @@
 package io.mongock.integrationtests.spring5.springdata3.changelogs.interfaces.mongodbstandalone.rollback;
 
 import io.mongock.integrationtests.spring5.springdata3.client.Client;
-import io.mongock.interfaces.ChangeLog;
+import io.mongock.api.ChangeLog;
 import com.mongodb.MongoClientSettings;
 import com.mongodb.client.ClientSession;
 import com.mongodb.client.MongoCollection;

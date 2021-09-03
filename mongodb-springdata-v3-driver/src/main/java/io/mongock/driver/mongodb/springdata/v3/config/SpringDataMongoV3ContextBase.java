@@ -1,6 +1,6 @@
 package io.mongock.driver.mongodb.springdata.v3.config;
 
-import io.mongock.config.MongockConfiguration;
+import io.mongock.api.config.MongockConfiguration;
 import io.mongock.driver.api.driver.ConnectionDriver;
 import io.mongock.driver.api.entry.ChangeEntry;
 import io.mongock.driver.mongodb.springdata.v3.SpringDataMongoV3DriverBase;

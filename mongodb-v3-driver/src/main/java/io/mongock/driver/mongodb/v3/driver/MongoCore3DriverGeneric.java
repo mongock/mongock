@@ -13,7 +13,7 @@ import io.mongock.driver.mongodb.v3.decorator.impl.MongoDataBaseDecoratorImpl;
 import io.mongock.driver.mongodb.v3.repository.Mongo3ChangeEntryRepository;
 import io.mongock.driver.mongodb.v3.repository.Mongo3LockRepository;
 import io.mongock.driver.mongodb.v3.repository.ReadWriteConfiguration;
-import io.mongock.exception.MongockException;
+import io.mongock.api.exception.MongockException;
 import io.mongock.utils.annotation.NotThreadSafe;
 import com.mongodb.ReadConcern;
 import com.mongodb.ReadPreference;

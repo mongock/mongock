@@ -1,7 +1,7 @@
 package io.mongock.integrationtests.spring5.springdata3;
 
 import io.mongock.driver.api.entry.ChangeState;
-import io.mongock.exception.MongockException;
+import io.mongock.api.exception.MongockException;
 import io.mongock.integrationtests.spring5.springdata3.changelogs.client.initializer.ClientInitializerChangeLog;
 import io.mongock.integrationtests.spring5.springdata3.changelogs.interfaces.springdata.rollback.SpringDataAdvanceChangeLog;
 import io.mongock.integrationtests.spring5.springdata3.changelogs.interfaces.springdata.rollback.SpringDataAdvanceChangeLogWithBeforeFailing;

@@ -1,9 +1,9 @@
 package io.mongock.integrationtests.spring5.springdata3;
 
-import io.mongock.config.MongockConfiguration;
-import io.mongock.config.TransactionStrategy;
+import io.mongock.api.config.MongockConfiguration;
+import io.mongock.api.config.TransactionStrategy;
 import io.mongock.driver.api.entry.ChangeState;
-import io.mongock.exception.MongockException;
+import io.mongock.api.exception.MongockException;
 import io.mongock.integrationtests.spring5.springdata3.changelogs.interfaces.mongodbstandalone.rollback.MongoDBAdvanceChangeLog;
 import io.mongock.integrationtests.spring5.springdata3.changelogs.interfaces.mongodbstandalone.rollback.MongoDBAdvanceChangeLogWithBeforeFailing;
 import io.mongock.integrationtests.spring5.springdata3.changelogs.interfaces.mongodbstandalone.rollback.MongoDBAdvanceChangeLogWithChangeSetFailing;

@@ -13,7 +13,7 @@ import io.mongock.driver.mongodb.test.template.util.CallVerifier;
 import io.mongock.driver.mongodb.test.template.util.CallVerifierImpl;
 import io.mongock.driver.mongodb.test.template.util.IntegrationTestBase;
 import io.mongock.driver.mongodb.test.template.util.MongoDBDriverTestAdapter;
-import io.mongock.exception.MongockException;
+import io.mongock.api.exception.MongockException;
 import io.mongock.runner.core.executor.MongockRunner;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;

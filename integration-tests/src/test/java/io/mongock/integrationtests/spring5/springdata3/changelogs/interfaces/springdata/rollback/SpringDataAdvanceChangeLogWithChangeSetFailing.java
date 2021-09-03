@@ -1,7 +1,7 @@
 package io.mongock.integrationtests.spring5.springdata3.changelogs.interfaces.springdata.rollback;
 
 import io.mongock.integrationtests.spring5.springdata3.client.ClientRepository;
-import io.mongock.interfaces.ChangeLog;
+import io.mongock.api.ChangeLog;
 import com.mongodb.client.MongoCollection;
 import org.bson.Document;
 import org.springframework.data.mongodb.core.MongoTemplate;
