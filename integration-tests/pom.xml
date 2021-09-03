@@ -50,6 +50,7 @@
       <artifactId>mongock-springboot</artifactId>
     </dependency>
 
+
     <dependency>
       <groupId>io.mongock</groupId>
       <artifactId>mongock-standalone</artifactId>
