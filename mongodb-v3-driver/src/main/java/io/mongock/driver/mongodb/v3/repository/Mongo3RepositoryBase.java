@@ -2,7 +2,7 @@ package io.mongock.driver.mongodb.v3.repository;
 
 import io.mongock.driver.api.common.EntityRepository;
 import io.mongock.driver.api.common.RepositoryIndexable;
-import io.mongock.exception.MongockException;
+import io.mongock.api.exception.MongockException;
 import io.mongock.utils.field.FieldInstance;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.model.IndexOptions;

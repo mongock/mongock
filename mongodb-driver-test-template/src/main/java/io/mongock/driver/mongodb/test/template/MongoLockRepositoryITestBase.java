@@ -6,7 +6,7 @@ import io.mongock.driver.core.lock.LockPersistenceException;
 import io.mongock.driver.core.lock.LockRepositoryWithEntity;
 import io.mongock.driver.core.lock.LockStatus;
 import io.mongock.driver.mongodb.test.template.util.IntegrationTestBase;
-import io.mongock.exception.MongockException;
+import io.mongock.api.exception.MongockException;
 import com.mongodb.ErrorCategory;
 import com.mongodb.MongoWriteException;
 import com.mongodb.client.FindIterable;

@@ -1,6 +1,6 @@
 package io.mongock.driver.mongodb.springdata.v2.config;
 
-import io.mongock.config.MongockConfiguration;
+import io.mongock.api.config.MongockConfiguration;
 import io.mongock.driver.api.entry.ChangeEntry;
 import io.mongock.driver.mongodb.springdata.v2.SpringDataMongoV2Driver;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnExpression;

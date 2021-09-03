@@ -4,7 +4,7 @@ import io.mongock.driver.api.entry.ChangeEntry;
 import io.mongock.driver.mongodb.test.template.MongoChangeEntryRepositoryITestBase;
 import io.mongock.driver.mongodb.test.template.util.MongoDBDriverTestAdapter;
 import io.mongock.driver.mongodb.v3.MongoDb3DriverTestAdapterImpl;
-import io.mongock.exception.MongockException;
+import io.mongock.api.exception.MongockException;
 import org.bson.Document;
 import org.junit.Test;
 import org.mockito.Mockito;

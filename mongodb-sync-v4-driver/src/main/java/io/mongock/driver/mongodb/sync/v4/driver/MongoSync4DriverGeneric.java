@@ -13,7 +13,7 @@ import io.mongock.driver.mongodb.sync.v4.decorator.impl.MongoDataBaseDecoratorIm
 import io.mongock.driver.mongodb.sync.v4.repository.MongoSync4ChangeEntryRepository;
 import io.mongock.driver.mongodb.sync.v4.repository.MongoSync4LockRepository;
 import io.mongock.driver.mongodb.sync.v4.repository.ReadWriteConfiguration;
-import io.mongock.exception.MongockException;
+import io.mongock.api.exception.MongockException;
 import io.mongock.utils.annotation.NotThreadSafe;
 import com.mongodb.ReadConcern;
 import com.mongodb.ReadPreference;

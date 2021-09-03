@@ -2,7 +2,7 @@ package io.mongock.integrationtests.spring5.springdata3.changelogs.testConfigura
 
 import com.github.cloudyrock.mongock.ChangeLog;
 import com.github.cloudyrock.mongock.ChangeSet;
-import io.mongock.driver.mongodb.springdata.v3.decorator.impl.MongockTemplate;
+import com.github.cloudyrock.mongock.driver.mongodb.springdata.v3.decorator.impl.MongockTemplate;
 import org.bson.Document;
 
 @ChangeLog(order = "2")

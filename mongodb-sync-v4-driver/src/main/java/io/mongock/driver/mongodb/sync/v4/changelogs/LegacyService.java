@@ -1,13 +1,13 @@
 package io.mongock.driver.mongodb.sync.v4.changelogs;
 
 import io.changock.migration.api.annotations.NonLockGuarded;
-import com.github.cloudyrock.mongock.NonLockGuardedType;
-import io.mongock.config.LegacyMigration;
-import io.mongock.config.LegacyMigrationMappingFields;
+import io.changock.migration.api.annotations.NonLockGuardedType;
+import io.mongock.api.config.LegacyMigration;
+import io.mongock.api.config.LegacyMigrationMappingFields;
 import io.mongock.driver.api.entry.ChangeEntry;
 import io.mongock.driver.api.entry.ChangeEntryService;
 import io.mongock.driver.api.entry.ChangeState;
-import io.mongock.exception.MongockException;
+import io.mongock.api.exception.MongockException;
 import com.mongodb.client.FindIterable;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;

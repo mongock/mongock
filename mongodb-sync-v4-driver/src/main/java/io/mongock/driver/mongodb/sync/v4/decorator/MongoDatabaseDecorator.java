@@ -1,7 +1,7 @@
 package io.mongock.driver.mongodb.sync.v4.decorator;
 
 import io.changock.migration.api.annotations.NonLockGuarded;
-import com.github.cloudyrock.mongock.NonLockGuardedType;
+import io.changock.migration.api.annotations.NonLockGuardedType;
 import io.mongock.driver.api.lock.guard.invoker.LockGuardInvoker;
 import io.mongock.driver.mongodb.sync.v4.decorator.impl.AggregateIterableDecoratorImpl;
 import io.mongock.driver.mongodb.sync.v4.decorator.impl.ChangeStreamIterableDecoratorImpl;

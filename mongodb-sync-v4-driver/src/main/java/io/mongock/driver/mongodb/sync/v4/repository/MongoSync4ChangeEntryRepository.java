@@ -4,7 +4,7 @@ import io.mongock.driver.api.entry.ChangeEntry;
 import io.mongock.driver.api.entry.ChangeState;
 import io.mongock.driver.api.entry.ExecutedChangeEntry;
 import io.mongock.driver.core.entry.ChangeEntryRepositoryWithEntity;
-import io.mongock.exception.MongockException;
+import io.mongock.api.exception.MongockException;
 import com.mongodb.client.ClientSession;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.model.Accumulators;

@@ -3,7 +3,7 @@ package io.mongock.driver.mongodb.sync.v4.driver;
 import io.mongock.driver.api.driver.ChangeSetDependency;
 import io.mongock.driver.api.driver.Transactioner;
 import io.mongock.driver.api.entry.ChangeEntry;
-import io.mongock.exception.MongockException;
+import io.mongock.api.exception.MongockException;
 import io.mongock.utils.annotation.NotThreadSafe;
 import com.mongodb.MongoClientException;
 import com.mongodb.client.ClientSession;
