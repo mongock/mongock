@@ -3,7 +3,7 @@
   <parent>
     <artifactId>mongock</artifactId>
     <groupId>io.mongock</groupId>
-    <version>5.0.6.BETA-SNAPSHOT</version>
+    <version>5.0.6.RC-SNAPSHOT</version>
   </parent>
   <modelVersion>4.0.0</modelVersion>
 
