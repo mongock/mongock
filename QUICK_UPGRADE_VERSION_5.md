@@ -7,8 +7,6 @@ where you will find a proper guide to have your project running with Mongock 5, 
 ### Pom changes
 - groupId has change from `com.github.cloudyrock.mongock` to `io.mongock`
 - BOM version to latest version: [![Maven Central](https://maven-badges.herokuapp.com/maven-central/io.mongock/mongock/badge.png)](https://search.maven.org/artifact/io.mongock/mongock)
-- If using Spring, replace `mongock-spring-v5` to `mongock-springboot`
-
 
 ```xml
 <dependencyManagement>
@@ -22,25 +20,15 @@ where you will find a proper guide to have your project running with Mongock 5, 
        </dependency>
  <!--...-->
 </dependencyManagement>
-<!--...-->
-<dependencies>
-<!--IF USING SPRING RUNNER-->
-   <dependency>
+```
+- If using Spring, replace `mongock-spring-v5` to `mongock-springboot`
+
+```xml
+
+<dependency>
        <groupId>io.mongock</groupId>
        <artifactId>mongock-springboot</artifactId>
    </dependency>
-<!--IF USING STANDALONE RUNNER-->
-   <dependency>
-       <groupId>io.mongock</groupId>
-       <artifactId>mongock-standalone</artifactId>
-   </dependency>
-   <dependency>
-       <groupId>io.mongock</groupId>
-       <artifactId>mongodb-springdata-v3-driver</artifactId>
-   </dependency>
-<!--...-->
-</dependencies>
-<!--...-->
 ```
 
 ### Mongock packages
@@ -64,12 +52,14 @@ where you will find a proper guide to have your project running with Mongock 5, 
 | Spring runner        | com.github.cloudyrock.spring.v5.MongockSpring5.MongockInitializingBeanRunner              | io.mongock.runner.springboot.base.MongockInitializingBeanRunner |
 
 
-### ChangeLogs/ChangeSets
-From version 5, annotations `@ChangeLog` and `@ChangeSet` are deprecated, but it will always remain in code for backwards compatibility
+### Deprecations
+
+#### ChangeLogs/ChangeSets
+From version 5, annotations `@ChangeLog` and `@ChangeSet` are deprecated, but it will always remain in code for backwards compatibility.
 Once the official documentation for the Version 5 is released, we'll explain how to proceed and why is the motivation for such a change.
 
-### MongockTemplate
-From version 5, annotations `MongockTemplate`is deprecated, but it will always remain in code for backwards compatibility.
+#### MongockTemplate
+From version 5, class `MongockTemplate`is deprecated, but it will always remain in code for backwards compatibility.
 We recommend leaving  old changeLogs  untouched (using with the deprecated MongockTemplate), but use Spring MongoTemplate for new
 changeLogs.
 
