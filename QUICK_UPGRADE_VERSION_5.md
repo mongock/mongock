@@ -1,5 +1,9 @@
 # Version 5 upgrade steps
 
+### Scope
+This document is a temporally guide to upgrade your current project from using Mongock version 4.x.x to 5.0.x.RC, while the official documentation is released,
+where you will find a proper guide to have your project running with Mongock 5, examples, explanation for our decisions and how they can benefit you, etc.
+
 ### Pom changes
 - groupId has change from `com.github.cloudyrock.mongock` to `io.mongock`
 - BOM version to latest version: [![Maven Central](https://maven-badges.herokuapp.com/maven-central/io.mongock/mongock/badge.png)](https://search.maven.org/artifact/io.mongock/mongock)
@@ -20,9 +24,15 @@
 </dependencyManagement>
 <!--...-->
 <dependencies>
+<!--IF USING SPRING RUNNER-->
    <dependency>
        <groupId>io.mongock</groupId>
        <artifactId>mongock-springboot</artifactId>
+   </dependency>
+<!--IF USING STANDALONE RUNNER-->
+   <dependency>
+       <groupId>io.mongock</groupId>
+       <artifactId>mongock-standalone</artifactId>
    </dependency>
    <dependency>
        <groupId>io.mongock</groupId>
@@ -55,11 +65,13 @@
 
 
 ### ChangeLogs/ChangeSets
-From version 5, annotations `@ChangeLog` and `@ChangeSet` are deprecated and shouldn't be used (remains in code for backwards compatibility).
+From version 5, annotations `@ChangeLog` and `@ChangeSet` are deprecated, but it will always remain in code for backwards compatibility
+Once the official documentation for the Version 5 is released, we'll explain how to proceed and why is the motivation for such a change.
 
-Please follow one of the recommended approaches depending on your use case:
- - For existing changeLogs/changeSets created prior version 5: leave them untouched (use with the deprecated annotation)
- - For new changeLogs/changeSets created  from version 5: ChangeLogs/changeSets implement your changelogs by  implementing the interfaces ChangeLog or BasicChangeLog
+### MongockTemplate
+From version 5, annotations `MongockTemplate`is deprecated, but it will always remain in code for backwards compatibility.
+We recommend leaving  old changeLogs  untouched (using with the deprecated MongockTemplate), but use Spring MongoTemplate for new
+changeLogs.
 
 
 
