@@ -9,7 +9,7 @@
 
   <groupId>io.mongock</groupId>
   <artifactId>mongock</artifactId>
-  <version>5.0.7.RC-SNAPSHOT</version>
+  <version>5.0.8.RC-SNAPSHOT</version>
   <packaging>pom</packaging>
 
   <modules>
@@ -28,7 +28,7 @@
     <!-- CORE
     TODO UPDATE THIS VERSION FOR CORE UPDATES
     -->
-    <mongock.core.version>5.0.7.RC</mongock.core.version>
+    <mongock.core.version>5.0.8.RC-SNAPSHOT</mongock.core.version>
 
     <spring-boot.version>[2.0.0, 3.0.0)</spring-boot.version>
     <spring-data-3.version>3.2.0</spring-data-3.version>
