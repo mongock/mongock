@@ -5,7 +5,7 @@ import io.changock.migration.api.annotations.NonLockGuardedType;
 import io.mongock.driver.api.lock.guard.invoker.LockGuardInvoker;
 import com.github.cloudyrock.mongock.driver.mongodb.springdata.v3.decorator.impl.ClientSessionDecoratorImpl;
 import com.github.cloudyrock.mongock.driver.mongodb.springdata.v3.decorator.impl.SessionCallbackDecoratorImpl;
-import io.mongock.api.internal.DecoratorDiverted;
+import io.changock.migration.api.annotations.DecoratorDiverted;
 import com.mongodb.client.ClientSession;
 import org.springframework.data.mongodb.core.SessionCallback;
 import org.springframework.data.mongodb.core.SessionScoped;

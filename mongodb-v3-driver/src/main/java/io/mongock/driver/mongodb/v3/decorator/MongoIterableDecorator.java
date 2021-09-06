@@ -5,7 +5,7 @@ import io.changock.migration.api.annotations.NonLockGuardedType;
 import io.mongock.driver.api.lock.guard.invoker.LockGuardInvoker;
 import io.mongock.driver.mongodb.v3.decorator.impl.MongoCursorDecoratorImpl;
 import io.mongock.driver.mongodb.v3.decorator.impl.MongoIterableDecoratorImpl;
-import io.mongock.api.internal.DecoratorDiverted;
+import io.changock.migration.api.annotations.DecoratorDiverted;
 import com.mongodb.Block;
 import com.mongodb.Function;
 import com.mongodb.client.MongoCursor;
