@@ -7,9 +7,9 @@ import io.mongock.integrationtests.spring5.springdata3.util.MongoContainer;
 
 import com.mongodb.client.MongoClient;
 import com.mongodb.client.MongoClients;
-import io.mongock.runner.springboot.MigrationSpringbootBuilder;
+import io.mongock.runner.springboot.RunnerSpringbootBuilder;
 import io.mongock.runner.springboot.MongockSpringboot;
-import io.mongock.runner.standalone.MigrationStandaloneBuilder;
+import io.mongock.runner.standalone.RunnerStandaloneBuilder;
 import io.mongock.runner.standalone.MongockStandalone;
 import org.mockito.Mockito;
 import org.springframework.context.ApplicationContext;
@@ -30,7 +30,7 @@ abstract class ApplicationRunnerTestBase {
   }
 
 
-  protected MigrationSpringbootBuilder getSpringBootBuilderWithSpringData(String... packagePath) {
+  protected RunnerSpringbootBuilder getSpringBootBuilderWithSpringData(String... packagePath) {
     SpringDataMongoV3Driver driver = SpringDataMongoV3Driver.withDefaultLock(mongoTemplate);
     driver.setChangeLogRepositoryName(Constants.CHANGELOG_COLLECTION_NAME);
     return MongockSpringboot.builder()
@@ -40,7 +40,7 @@ abstract class ApplicationRunnerTestBase {
   }
 
 
-  protected MigrationStandaloneBuilder getStandaloneBuilderWithMongoDBSync4(String... packagePath) {
+  protected RunnerStandaloneBuilder getStandaloneBuilderWithMongoDBSync4(String... packagePath) {
     MongoSync4Driver driver = MongoSync4Driver.withDefaultLock(mongoClient, RuntimeTestUtil.DEFAULT_DATABASE_NAME);
     driver.setChangeLogRepositoryName(Constants.CHANGELOG_COLLECTION_NAME);
     return  MongockStandalone.builder()
