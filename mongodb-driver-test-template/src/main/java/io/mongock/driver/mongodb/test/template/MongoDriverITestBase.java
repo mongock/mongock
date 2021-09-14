@@ -136,7 +136,7 @@ public abstract class MongoDriverITestBase extends IntegrationTestBase {
   public void shouldFail_WhenRunningChangeLog_IfChangeSetIdDuplicated() {
     exceptionRule.expect(MongockException.class);
     exceptionRule.expectMessage("Duplicated changeset id found: 'id_duplicated'");
-    MongockRunner<Boolean> runner = TestMongock.builder()
+    MongockRunner runner = TestMongock.builder()
         .setDriver(getDriverWithTransactionDisabled())
         .addChangeLogsScanPackage(ChangeLogFailure.class.getPackage().getName())
         .buildRunner();
@@ -295,7 +295,7 @@ public abstract class MongoDriverITestBase extends IntegrationTestBase {
   }
 
   private void runChanges(ConnectionDriver driver, Class changeLogClass, String executionId) {
-    MongockRunner<Boolean> runner = TestMongock.builder()
+    MongockRunner runner = TestMongock.builder()
         .setDriver(driver)
         .addChangeLogsScanPackage(changeLogClass.getPackage().getName())
         .withMetadata(getStringObjectMap())
