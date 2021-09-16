@@ -22,6 +22,7 @@ abstract class ApplicationRunnerTestBase {
 
   protected MongoClient mongoClient;
   protected MongoTemplate mongoTemplate;
+  private Environment envMock = Mockito.mock(Environment.class);
 
   protected void start(String mongoVersion) {
     MongoContainer mongoDBContainer = RuntimeTestUtil.startMongoDbContainer(mongoVersion);
@@ -51,7 +52,8 @@ abstract class ApplicationRunnerTestBase {
 
   protected ApplicationContext getApplicationContext() {
     ApplicationContext context = Mockito.mock(ApplicationContext.class);
-    Mockito.when(context.getBean(Environment.class)).thenReturn(Mockito.mock(Environment.class));
+    Mockito.when(context.getEnvironment()).thenReturn(envMock);
+    Mockito.when(context.getBean(Environment.class)).thenReturn(envMock);
     return context;
   }
 }
