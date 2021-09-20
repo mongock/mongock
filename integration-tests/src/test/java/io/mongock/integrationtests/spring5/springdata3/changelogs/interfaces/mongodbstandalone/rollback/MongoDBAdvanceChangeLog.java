@@ -1,5 +1,6 @@
 package io.mongock.integrationtests.spring5.springdata3.changelogs.interfaces.mongodbstandalone.rollback;
 
+import io.mongock.api.ChangeLogInfo;
 import io.mongock.integrationtests.spring5.springdata3.client.Client;
 import io.mongock.api.ChangeLog;
 import com.mongodb.MongoClientSettings;
@@ -14,7 +15,7 @@ import java.util.concurrent.CountDownLatch;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
-
+@ChangeLogInfo(id="MongoDBAdvanceChangeLog", order = "1", author = "mongock_test", systemVersion = "1")
 public class MongoDBAdvanceChangeLog implements ChangeLog {
   public static final String COLLECTION_NAME = MongoDBAdvanceChangeLog.class.getSimpleName() + "Collection";
 
@@ -35,29 +36,6 @@ public class MongoDBAdvanceChangeLog implements ChangeLog {
   public MongoDBAdvanceChangeLog(ClientSession session, MongoDatabase db) {
     this.session = session;
     this.db = db;
-  }
-  @Override
-  public String geId() {
-    return getClass().getSimpleName();
-  }
-  @Override
-  public String getAuthor() {
-    return "mongock_test";
-  }
-
-  @Override
-  public String getOrder() {
-    return "1";
-  }
-
-  @Override
-  public boolean isFailFast() {
-    return true;
-  }
-
-  @Override
-  public String getSystemVersion() {
-    return "1";
   }
 
   @Override
