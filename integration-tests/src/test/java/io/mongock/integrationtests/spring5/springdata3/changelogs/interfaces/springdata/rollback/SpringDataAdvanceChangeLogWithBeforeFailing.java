@@ -1,7 +1,12 @@
 package io.mongock.integrationtests.spring5.springdata3.changelogs.interfaces.springdata.rollback;
 
-import io.mongock.api.ChangeLog;
 import com.mongodb.client.MongoCollection;
+
+import io.mongock.api.annotations.BeforeExecution;
+import io.mongock.api.annotations.ChangeUnit;
+import io.mongock.api.annotations.Execution;
+import io.mongock.api.annotations.RollbackBeforeExecution;
+import io.mongock.api.annotations.RollbackExecution;
 import org.bson.Document;
 import org.springframework.data.mongodb.core.MongoTemplate;
 
@@ -10,8 +15,8 @@ import java.util.concurrent.CountDownLatch;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
-
-public class SpringDataAdvanceChangeLogWithBeforeFailing implements ChangeLog {
+@ChangeUnit(id="SpringDataAdvanceChangeLogWithBeforeFailing", order = "2", author = "mongock_test", systemVersion = "1")
+public class SpringDataAdvanceChangeLogWithBeforeFailing {
 
   public static final String COLLECTION_NAME = SpringDataAdvanceChangeLogWithBeforeFailing.class.getSimpleName() + "Collection";
 
@@ -34,57 +39,26 @@ public class SpringDataAdvanceChangeLogWithBeforeFailing implements ChangeLog {
     this.template = template;
   }
 
-
-  @Override
-  public String geId() {
-    return getClass().getSimpleName();
-  }
-
-  @Override
-  public String getAuthor() {
-    return "mongock_test";
-  }
-
-  @Override
-  public String getOrder() {
-    return "2";
-  }
-
-  @Override
-  public boolean isFailFast() {
-    return true;
-  }
-
-  @Override
-  public String getSystemVersion() {
-    return "1";
-  }
-
-  @Override
+  @Execution
   public void changeSet() {
     changeSetCalled = true;
     rollbackCalled = false;
     rollbackBeforeCalled = false;
-
-    List<Document> clients = IntStream.range(0, 10)
-        .mapToObj(i -> new Document().append("name","name-" + i).append("email", "email-" + i).append("phone", "phone" + i).append("country", "country" + i))
-        .collect(Collectors.toList());
-    clientCollection.insertMany(clients);
   }
 
-  @Override
+  @RollbackExecution
   public void rollback() {
     rollbackCalled = true;
     rollbackCalledLatch.countDown();
   }
 
 
-  @Override
+  @BeforeExecution
   public void before() {
     throw new RuntimeException("Expected exception in " + SpringDataAdvanceChangeLogWithBeforeFailing.class + " changeLog[Before]");
   }
 
-  @Override
+  @RollbackBeforeExecution
   public void rollbackBefore() {
     rollbackBeforeCalled = true;
     rollbackCalledLatch.countDown();

@@ -1,8 +1,13 @@
 package io.mongock.integrationtests.spring5.springdata3.changelogs.interfaces.springdata.rollback;
 
-import io.mongock.integrationtests.spring5.springdata3.client.ClientRepository;
-import io.mongock.api.ChangeLog;
 import com.mongodb.client.MongoCollection;
+
+import io.mongock.api.annotations.BeforeExecution;
+import io.mongock.api.annotations.ChangeUnit;
+import io.mongock.api.annotations.Execution;
+import io.mongock.api.annotations.RollbackBeforeExecution;
+import io.mongock.api.annotations.RollbackExecution;
+import io.mongock.integrationtests.spring5.springdata3.client.ClientRepository;
 import org.bson.Document;
 import org.springframework.data.mongodb.core.MongoTemplate;
 
@@ -11,8 +16,8 @@ import java.util.concurrent.CountDownLatch;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
-
-public class SpringDataAdvanceChangeLogWithChangeSetFailing implements ChangeLog {
+@ChangeUnit(id="SpringDataAdvanceChangeLogWithChangeSetFailing", order = "2", author = "mongock_test", systemVersion = "1")
+public class SpringDataAdvanceChangeLogWithChangeSetFailing {
 
   public static final String COLLECTION_NAME = SpringDataAdvanceChangeLogWithChangeSetFailing.class.getSimpleName() + "Collection";
 
@@ -35,32 +40,7 @@ public class SpringDataAdvanceChangeLogWithChangeSetFailing implements ChangeLog
     this.clientRepository = clientRepository;
   }
 
-
-  @Override
-  public String geId() {
-    return getClass().getSimpleName();
-  }
-  @Override
-  public String getAuthor() {
-    return "mongock_test";
-  }
-
-  @Override
-  public String getOrder() {
-    return "2";
-  }
-
-  @Override
-  public boolean isFailFast() {
-    return true;
-  }
-
-  @Override
-  public String getSystemVersion() {
-    return "1";
-  }
-
-  @Override
+  @Execution
   public void changeSet() {
     rollbackCalled = false;
     rollbackBeforeCalled = false;
@@ -71,20 +51,19 @@ public class SpringDataAdvanceChangeLogWithChangeSetFailing implements ChangeLog
     if(true) throw new RuntimeException("Expected exception in " + SpringDataAdvanceChangeLogWithChangeSetFailing.class + " changeLog[ChangeSet]");
   }
 
-  @Override
+  @RollbackExecution
   public void rollback() {
     rollbackCalled = true;
     rollbackCalledLatch.countDown();
   }
 
-
-  @Override
+  @BeforeExecution
   public void before() {
     //creates the collection
     clientCollection = template.createCollection(SpringDataAdvanceChangeLogWithChangeSetFailing.COLLECTION_NAME);
   }
 
-  @Override
+  @RollbackBeforeExecution
   public void rollbackBefore() {
     rollbackBeforeCalled = true;
     rollbackCalledLatch.countDown();

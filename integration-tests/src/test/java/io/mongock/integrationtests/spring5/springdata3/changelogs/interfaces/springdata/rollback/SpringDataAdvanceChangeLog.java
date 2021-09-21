@@ -1,7 +1,12 @@
 package io.mongock.integrationtests.spring5.springdata3.changelogs.interfaces.springdata.rollback;
 
-import io.mongock.api.ChangeLog;
 import com.mongodb.client.MongoCollection;
+
+import io.mongock.api.annotations.BeforeExecution;
+import io.mongock.api.annotations.ChangeUnit;
+import io.mongock.api.annotations.Execution;
+import io.mongock.api.annotations.RollbackBeforeExecution;
+import io.mongock.api.annotations.RollbackExecution;
 import org.bson.Document;
 import org.springframework.data.mongodb.core.MongoTemplate;
 
@@ -10,8 +15,8 @@ import java.util.concurrent.CountDownLatch;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
-
-public class SpringDataAdvanceChangeLog implements ChangeLog {
+@ChangeUnit(id="SpringDataAdvanceChangeLog", order = "1", author = "mongock_test", systemVersion = "1")
+public class SpringDataAdvanceChangeLog {
   public static final String COLLECTION_NAME = SpringDataAdvanceChangeLog.class.getSimpleName() + "Collection";
 
 
@@ -30,31 +35,9 @@ public class SpringDataAdvanceChangeLog implements ChangeLog {
   public SpringDataAdvanceChangeLog(MongoTemplate template) {
     this.template = template;
   }
-  @Override
-  public String geId() {
-    return getClass().getSimpleName();
-  }
-  @Override
-  public String getAuthor() {
-    return "mongock_test";
-  }
 
-  @Override
-  public String getOrder() {
-    return "1";
-  }
 
-  @Override
-  public boolean isFailFast() {
-    return true;
-  }
-
-  @Override
-  public String getSystemVersion() {
-    return "1";
-  }
-
-  @Override
+  @Execution
   public void changeSet() {
     rollbackCalled = false;
     rollbackBeforeCalled = false;
@@ -65,13 +48,13 @@ public class SpringDataAdvanceChangeLog implements ChangeLog {
     clientCollection.insertMany(clients);
   }
 
-  @Override
+  @RollbackExecution
   public void rollback() {
     rollbackCalled = true;
     rollbackCalledLatch.countDown();
   }
 
-  @Override
+  @BeforeExecution
   public void before() {
     //creates the collection
     clientCollection = template.createCollection(SpringDataAdvanceChangeLog.COLLECTION_NAME);
@@ -79,7 +62,7 @@ public class SpringDataAdvanceChangeLog implements ChangeLog {
     clientCollection.insertOne(new Document().append("name","name-DUMMY").append("email", "email--DUMMY").append("phone", "phone-DUMMY").append("country", "country-DUMMY"));
   }
 
-  @Override
+  @RollbackBeforeExecution
   public void rollbackBefore() {
     rollbackBeforeCalled = true;
     rollbackCalledLatch.countDown();

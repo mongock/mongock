@@ -1,11 +1,15 @@
 package io.mongock.integrationtests.spring5.springdata3.changelogs.interfaces.mongodbstandalone.rollback;
 
-import io.mongock.integrationtests.spring5.springdata3.client.Client;
-import io.mongock.api.ChangeLog;
 import com.mongodb.MongoClientSettings;
 import com.mongodb.client.ClientSession;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
+import io.mongock.api.annotations.BeforeExecution;
+import io.mongock.api.annotations.ChangeUnit;
+import io.mongock.api.annotations.Execution;
+import io.mongock.api.annotations.RollbackBeforeExecution;
+import io.mongock.api.annotations.RollbackExecution;
+import io.mongock.integrationtests.spring5.springdata3.client.Client;
 import org.bson.codecs.configuration.CodecRegistry;
 import org.bson.codecs.pojo.PojoCodecProvider;
 
@@ -14,8 +18,8 @@ import java.util.concurrent.CountDownLatch;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
-
-public class MongoDBAdvanceChangeLog implements ChangeLog {
+@ChangeUnit(id="MongoDBAdvanceChangeLog", order = "1", author = "mongock_test", systemVersion = "1")
+public class MongoDBAdvanceChangeLog {
   public static final String COLLECTION_NAME = MongoDBAdvanceChangeLog.class.getSimpleName() + "Collection";
 
 
@@ -36,31 +40,8 @@ public class MongoDBAdvanceChangeLog implements ChangeLog {
     this.session = session;
     this.db = db;
   }
-  @Override
-  public String geId() {
-    return getClass().getSimpleName();
-  }
-  @Override
-  public String getAuthor() {
-    return "mongock_test";
-  }
 
-  @Override
-  public String getOrder() {
-    return "1";
-  }
-
-  @Override
-  public boolean isFailFast() {
-    return true;
-  }
-
-  @Override
-  public String getSystemVersion() {
-    return "1";
-  }
-
-  @Override
+  @Execution
   public void changeSet() {
     rollbackCalled = false;
     rollbackBeforeCalled = false;
@@ -71,13 +52,13 @@ public class MongoDBAdvanceChangeLog implements ChangeLog {
     clientCollection.insertMany(session, clients);
   }
 
-  @Override
+  @RollbackExecution
   public void rollback() {
     rollbackCalled = true;
     rollbackCalledLatch.countDown();
   }
 
-  @Override
+  @BeforeExecution
   public void before() {
     //creates the collection
     CodecRegistry pojoCodecRegistry = org.bson.codecs.configuration.CodecRegistries.fromRegistries(MongoClientSettings.getDefaultCodecRegistry(), org.bson.codecs.configuration.CodecRegistries.fromProviders(PojoCodecProvider.builder().automatic(true).build()));
@@ -86,7 +67,7 @@ public class MongoDBAdvanceChangeLog implements ChangeLog {
     clientCollection.insertOne(new Client("name-DUMMY", "email-DUMMY", "phone-DUMMY", "country-DUMMY"));
   }
 
-  @Override
+  @RollbackBeforeExecution
   public void rollbackBefore() {
     rollbackBeforeCalled = true;
     rollbackCalledLatch.countDown();

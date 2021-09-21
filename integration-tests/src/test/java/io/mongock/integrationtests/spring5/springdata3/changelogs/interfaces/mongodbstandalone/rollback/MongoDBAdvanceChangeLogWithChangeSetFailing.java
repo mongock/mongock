@@ -1,7 +1,12 @@
 package io.mongock.integrationtests.spring5.springdata3.changelogs.interfaces.mongodbstandalone.rollback;
 
+import io.mongock.api.annotations.BeforeExecution;
+import io.mongock.api.annotations.ChangeUnit;
+import io.mongock.api.annotations.Execution;
+import io.mongock.api.annotations.RollbackBeforeExecution;
+import io.mongock.api.annotations.RollbackExecution;
 import io.mongock.integrationtests.spring5.springdata3.client.Client;
-import io.mongock.api.ChangeLog;
+
 import com.mongodb.MongoClientSettings;
 import com.mongodb.client.ClientSession;
 import com.mongodb.client.MongoCollection;
@@ -14,8 +19,8 @@ import java.util.concurrent.CountDownLatch;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
-
-public class MongoDBAdvanceChangeLogWithChangeSetFailing implements ChangeLog {
+@ChangeUnit(id="MongoDBAdvanceChangeLogWithChangeSetFailing", order = "2", author = "mongock_test", systemVersion = "1")
+public class MongoDBAdvanceChangeLogWithChangeSetFailing {
 
   public static final String COLLECTION_NAME = MongoDBAdvanceChangeLogWithChangeSetFailing.class.getSimpleName() + "Collection";
 
@@ -35,32 +40,7 @@ public class MongoDBAdvanceChangeLogWithChangeSetFailing implements ChangeLog {
     this.db = db;
   }
 
-
-  @Override
-  public String geId() {
-    return getClass().getSimpleName();
-  }
-  @Override
-  public String getAuthor() {
-    return "mongock_test";
-  }
-
-  @Override
-  public String getOrder() {
-    return "2";
-  }
-
-  @Override
-  public boolean isFailFast() {
-    return true;
-  }
-
-  @Override
-  public String getSystemVersion() {
-    return "1";
-  }
-
-  @Override
+  @Execution
   public void changeSet() {
     CodecRegistry pojoCodecRegistry = org.bson.codecs.configuration.CodecRegistries.fromRegistries(MongoClientSettings.getDefaultCodecRegistry(), org.bson.codecs.configuration.CodecRegistries.fromProviders(PojoCodecProvider.builder().automatic(true).build()));
     MongoCollection<Client> clientCollection = db.withCodecRegistry(pojoCodecRegistry).getCollection(MongoDBAdvanceChangeLogWithChangeSetFailing.COLLECTION_NAME, Client.class);
@@ -74,21 +54,21 @@ public class MongoDBAdvanceChangeLogWithChangeSetFailing implements ChangeLog {
     if(true) throw new RuntimeException("Expected exception in " + MongoDBAdvanceChangeLogWithChangeSetFailing.class + " changeLog[ChangeSet]");
   }
 
-  @Override
+  @RollbackExecution
   public void rollback() {
     rollbackCalled = true;
     rollbackCalledLatch.countDown();
   }
 
 
-  @Override
+  @BeforeExecution
   public void before() {
     //creates the collection
     CodecRegistry pojoCodecRegistry = org.bson.codecs.configuration.CodecRegistries.fromRegistries(MongoClientSettings.getDefaultCodecRegistry(), org.bson.codecs.configuration.CodecRegistries.fromProviders(PojoCodecProvider.builder().automatic(true).build()));
     MongoCollection<Client> clientCollection = db.withCodecRegistry(pojoCodecRegistry).getCollection(MongoDBAdvanceChangeLogWithChangeSetFailing.COLLECTION_NAME, Client.class);
   }
 
-  @Override
+  @RollbackBeforeExecution
   public void rollbackBefore() {
     rollbackBeforeCalled = true;
     rollbackCalledLatch.countDown();
