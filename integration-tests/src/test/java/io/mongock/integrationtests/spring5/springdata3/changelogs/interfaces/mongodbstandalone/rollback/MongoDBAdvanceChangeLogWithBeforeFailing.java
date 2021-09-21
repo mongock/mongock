@@ -1,8 +1,12 @@
 package io.mongock.integrationtests.spring5.springdata3.changelogs.interfaces.mongodbstandalone.rollback;
 
-import io.mongock.api.ChangeLogInfo;
+import io.mongock.api.annotations.BeforeExecution;
+import io.mongock.api.annotations.ChangeUnit;
+import io.mongock.api.annotations.Execution;
+import io.mongock.api.annotations.RollBackBeforeExecution;
+import io.mongock.api.annotations.RollBackExecution;
 import io.mongock.integrationtests.spring5.springdata3.client.Client;
-import io.mongock.api.ChangeLog;
+
 import com.mongodb.MongoClientSettings;
 import com.mongodb.client.ClientSession;
 import com.mongodb.client.MongoCollection;
@@ -15,8 +19,8 @@ import java.util.concurrent.CountDownLatch;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
-@ChangeLogInfo(id="MongoDBAdvanceChangeLogWithBeforeFailing", order = "2", author = "mongock_test", systemVersion = "1")
-public class MongoDBAdvanceChangeLogWithBeforeFailing implements ChangeLog {
+@ChangeUnit(id="MongoDBAdvanceChangeLogWithBeforeFailing", order = "2", author = "mongock_test", systemVersion = "1")
+public class MongoDBAdvanceChangeLogWithBeforeFailing {
 
   public static final String COLLECTION_NAME = MongoDBAdvanceChangeLogWithBeforeFailing.class.getSimpleName() + "Collection";
 
@@ -38,7 +42,7 @@ public class MongoDBAdvanceChangeLogWithBeforeFailing implements ChangeLog {
     this.db = db;
   }
 
-  @Override
+  @Execution
   public void changeSet() {
     changeSetCalled = true;
     rollbackCalled = false;
@@ -53,19 +57,19 @@ public class MongoDBAdvanceChangeLogWithBeforeFailing implements ChangeLog {
     clientCollection.insertMany(session, clients);
   }
 
-  @Override
+  @RollBackExecution
   public void rollback() {
     rollbackCalled = true;
     rollbackCalledLatch.countDown();
   }
 
 
-  @Override
+  @BeforeExecution
   public void before() {
     throw new RuntimeException("Expected exception in " + MongoDBAdvanceChangeLogWithBeforeFailing.class + " changeLog[Before]");
   }
 
-  @Override
+  @RollBackBeforeExecution
   public void rollbackBefore() {
     rollbackBeforeCalled = true;
     rollbackCalledLatch.countDown();
