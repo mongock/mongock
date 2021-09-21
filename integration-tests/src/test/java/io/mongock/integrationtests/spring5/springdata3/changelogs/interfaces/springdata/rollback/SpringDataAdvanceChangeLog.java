@@ -5,8 +5,8 @@ import com.mongodb.client.MongoCollection;
 import io.mongock.api.annotations.BeforeExecution;
 import io.mongock.api.annotations.ChangeUnit;
 import io.mongock.api.annotations.Execution;
-import io.mongock.api.annotations.RollBackBeforeExecution;
-import io.mongock.api.annotations.RollBackExecution;
+import io.mongock.api.annotations.RollbackBeforeExecution;
+import io.mongock.api.annotations.RollbackExecution;
 import org.bson.Document;
 import org.springframework.data.mongodb.core.MongoTemplate;
 
@@ -48,7 +48,7 @@ public class SpringDataAdvanceChangeLog {
     clientCollection.insertMany(clients);
   }
 
-  @RollBackExecution
+  @RollbackExecution
   public void rollback() {
     rollbackCalled = true;
     rollbackCalledLatch.countDown();
@@ -62,7 +62,7 @@ public class SpringDataAdvanceChangeLog {
     clientCollection.insertOne(new Document().append("name","name-DUMMY").append("email", "email--DUMMY").append("phone", "phone-DUMMY").append("country", "country-DUMMY"));
   }
 
-  @RollBackBeforeExecution
+  @RollbackBeforeExecution
   public void rollbackBefore() {
     rollbackBeforeCalled = true;
     rollbackCalledLatch.countDown();

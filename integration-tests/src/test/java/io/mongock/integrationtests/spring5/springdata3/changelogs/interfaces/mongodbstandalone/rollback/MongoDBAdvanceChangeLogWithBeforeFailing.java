@@ -3,8 +3,8 @@ package io.mongock.integrationtests.spring5.springdata3.changelogs.interfaces.mo
 import io.mongock.api.annotations.BeforeExecution;
 import io.mongock.api.annotations.ChangeUnit;
 import io.mongock.api.annotations.Execution;
-import io.mongock.api.annotations.RollBackBeforeExecution;
-import io.mongock.api.annotations.RollBackExecution;
+import io.mongock.api.annotations.RollbackBeforeExecution;
+import io.mongock.api.annotations.RollbackExecution;
 import io.mongock.integrationtests.spring5.springdata3.client.Client;
 
 import com.mongodb.MongoClientSettings;
@@ -57,7 +57,7 @@ public class MongoDBAdvanceChangeLogWithBeforeFailing {
     clientCollection.insertMany(session, clients);
   }
 
-  @RollBackExecution
+  @RollbackExecution
   public void rollback() {
     rollbackCalled = true;
     rollbackCalledLatch.countDown();
@@ -69,7 +69,7 @@ public class MongoDBAdvanceChangeLogWithBeforeFailing {
     throw new RuntimeException("Expected exception in " + MongoDBAdvanceChangeLogWithBeforeFailing.class + " changeLog[Before]");
   }
 
-  @RollBackBeforeExecution
+  @RollbackBeforeExecution
   public void rollbackBefore() {
     rollbackBeforeCalled = true;
     rollbackCalledLatch.countDown();

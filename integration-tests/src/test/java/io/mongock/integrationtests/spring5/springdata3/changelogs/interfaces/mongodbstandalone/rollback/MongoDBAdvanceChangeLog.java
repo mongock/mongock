@@ -7,8 +7,8 @@ import com.mongodb.client.MongoDatabase;
 import io.mongock.api.annotations.BeforeExecution;
 import io.mongock.api.annotations.ChangeUnit;
 import io.mongock.api.annotations.Execution;
-import io.mongock.api.annotations.RollBackBeforeExecution;
-import io.mongock.api.annotations.RollBackExecution;
+import io.mongock.api.annotations.RollbackBeforeExecution;
+import io.mongock.api.annotations.RollbackExecution;
 import io.mongock.integrationtests.spring5.springdata3.client.Client;
 import org.bson.codecs.configuration.CodecRegistry;
 import org.bson.codecs.pojo.PojoCodecProvider;
@@ -52,7 +52,7 @@ public class MongoDBAdvanceChangeLog {
     clientCollection.insertMany(session, clients);
   }
 
-  @RollBackExecution
+  @RollbackExecution
   public void rollback() {
     rollbackCalled = true;
     rollbackCalledLatch.countDown();
@@ -67,7 +67,7 @@ public class MongoDBAdvanceChangeLog {
     clientCollection.insertOne(new Client("name-DUMMY", "email-DUMMY", "phone-DUMMY", "country-DUMMY"));
   }
 
-  @RollBackBeforeExecution
+  @RollbackBeforeExecution
   public void rollbackBefore() {
     rollbackBeforeCalled = true;
     rollbackCalledLatch.countDown();

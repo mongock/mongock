@@ -3,8 +3,8 @@ package io.mongock.integrationtests.spring5.springdata3.changelogs.interfaces.mo
 import io.mongock.api.annotations.BeforeExecution;
 import io.mongock.api.annotations.ChangeUnit;
 import io.mongock.api.annotations.Execution;
-import io.mongock.api.annotations.RollBackBeforeExecution;
-import io.mongock.api.annotations.RollBackExecution;
+import io.mongock.api.annotations.RollbackBeforeExecution;
+import io.mongock.api.annotations.RollbackExecution;
 import io.mongock.integrationtests.spring5.springdata3.client.Client;
 
 import com.mongodb.MongoClientSettings;
@@ -54,7 +54,7 @@ public class MongoDBAdvanceChangeLogWithChangeSetFailing {
     if(true) throw new RuntimeException("Expected exception in " + MongoDBAdvanceChangeLogWithChangeSetFailing.class + " changeLog[ChangeSet]");
   }
 
-  @RollBackExecution
+  @RollbackExecution
   public void rollback() {
     rollbackCalled = true;
     rollbackCalledLatch.countDown();
@@ -68,7 +68,7 @@ public class MongoDBAdvanceChangeLogWithChangeSetFailing {
     MongoCollection<Client> clientCollection = db.withCodecRegistry(pojoCodecRegistry).getCollection(MongoDBAdvanceChangeLogWithChangeSetFailing.COLLECTION_NAME, Client.class);
   }
 
-  @RollBackBeforeExecution
+  @RollbackBeforeExecution
   public void rollbackBefore() {
     rollbackBeforeCalled = true;
     rollbackCalledLatch.countDown();

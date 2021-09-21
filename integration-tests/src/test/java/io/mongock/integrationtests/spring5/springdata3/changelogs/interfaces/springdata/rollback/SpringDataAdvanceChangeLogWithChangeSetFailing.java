@@ -5,8 +5,8 @@ import com.mongodb.client.MongoCollection;
 import io.mongock.api.annotations.BeforeExecution;
 import io.mongock.api.annotations.ChangeUnit;
 import io.mongock.api.annotations.Execution;
-import io.mongock.api.annotations.RollBackBeforeExecution;
-import io.mongock.api.annotations.RollBackExecution;
+import io.mongock.api.annotations.RollbackBeforeExecution;
+import io.mongock.api.annotations.RollbackExecution;
 import io.mongock.integrationtests.spring5.springdata3.client.ClientRepository;
 import org.bson.Document;
 import org.springframework.data.mongodb.core.MongoTemplate;
@@ -51,7 +51,7 @@ public class SpringDataAdvanceChangeLogWithChangeSetFailing {
     if(true) throw new RuntimeException("Expected exception in " + SpringDataAdvanceChangeLogWithChangeSetFailing.class + " changeLog[ChangeSet]");
   }
 
-  @RollBackExecution
+  @RollbackExecution
   public void rollback() {
     rollbackCalled = true;
     rollbackCalledLatch.countDown();
@@ -63,7 +63,7 @@ public class SpringDataAdvanceChangeLogWithChangeSetFailing {
     clientCollection = template.createCollection(SpringDataAdvanceChangeLogWithChangeSetFailing.COLLECTION_NAME);
   }
 
-  @RollBackBeforeExecution
+  @RollbackBeforeExecution
   public void rollbackBefore() {
     rollbackBeforeCalled = true;
     rollbackCalledLatch.countDown();
