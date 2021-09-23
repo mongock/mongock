@@ -150,7 +150,7 @@ class MongoDBWithRunnerITest extends ApplicationRunnerTestBase {
         MongoDBAdvanceChangeLog.class.getName(),
         MongoDBAdvanceChangeLogWithChangeSetFailing.class.getName()
     ));
-    config.setTransactionStrategy(TransactionStrategy.MIGRATION);
+    config.setTransactionStrategy(TransactionStrategy.EXECUTION);
 
     // checks the four rollbacks were called
     MongoDBAdvanceChangeLog.clear();
@@ -290,7 +290,7 @@ class MongoDBWithRunnerITest extends ApplicationRunnerTestBase {
         MongoDBAdvanceChangeLog.class.getName(),
         MongoDBAdvanceChangeLogWithChangeSetFailing.class.getName()
     ));
-    config.setTransactionStrategy(TransactionStrategy.MIGRATION);
+    config.setTransactionStrategy(TransactionStrategy.EXECUTION);
 
     // checks the four rollbacks were called
     MongoDBAdvanceChangeLog.clear();
