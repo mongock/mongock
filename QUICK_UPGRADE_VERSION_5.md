@@ -6,14 +6,14 @@ where you will find a proper guide to have your project running with Mongock 5, 
 
 ### Pom changes
 - groupId has change from `com.github.cloudyrock.mongock` to `io.mongock`
-- BOM version to latest version: [![Maven Central](https://maven-badges.herokuapp.com/maven-central/io.mongock/mongock/badge.png)](https://search.maven.org/artifact/io.mongock/mongock)
+- BOM version to latest version: [![Maven Central](https://maven-badges.herokuapp.com/maven-central/io.mongock/mongock/badge.png)](https://search.maven.org/artifact/io.mongock/mongock-driver-mongodb)
 
 ```xml
 <dependencyManagement>
    <dependencies>
        <dependency>
            <groupId>io.mongock</groupId>
-           <artifactId>mongock-driver-mongodb-bom</artifactId>
+           <artifactId>mongock-bom</artifactId>
            <version>${latest_version}</version>
            <type>pom</type>
            <scope>import</scope>
