@@ -13,7 +13,7 @@ where you will find a proper guide to have your project running with Mongock 5, 
    <dependencies>
        <dependency>
            <groupId>io.mongock</groupId>
-           <artifactId>mongock-bom</artifactId>
+           <artifactId>mongock-driver-mongodb-bom</artifactId>
            <version>${latest_version}</version>
            <type>pom</type>
            <scope>import</scope>

@@ -13,7 +13,7 @@
   <packaging>pom</packaging>
 
   <modules>
-    <module>mongock-bom</module>
+    <module>mongock-driver-mongodb-bom</module>
     <module>mongodb-v3-driver</module>
     <module>mongodb-sync-v4-driver</module>
     <module>mongodb-springdata-v2-driver</module>

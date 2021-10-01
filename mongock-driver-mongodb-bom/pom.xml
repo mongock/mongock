@@ -6,11 +6,11 @@
     <version>5.0.13.RC-SNAPSHOT</version>
   </parent>
   <modelVersion>4.0.0</modelVersion>
+  <artifactId>mongock-driver-mongodb-bom</artifactId>
 
-  <name>Mongock main BOM for mongodb</name>
-  <artifactId>mongock-bom</artifactId>
-  <packaging>pom</packaging>
+  <name>Mongock BOM for mongoDB driver</name>
   <description>Mongock for MongoDB dependency management</description>
+  <packaging>pom</packaging>
 
   <dependencyManagement>
     <dependencies>

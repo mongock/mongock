@@ -22,7 +22,7 @@
     <dependencies>
       <dependency>
         <groupId>io.mongock</groupId>
-        <artifactId>mongock-bom</artifactId>
+        <artifactId>mongock-driver-mongodb-bom</artifactId>
         <version>${project.version}</version>
         <type>pom</type>
         <scope>import</scope>

@@ -14,7 +14,7 @@ A clear and concise description of what the change is.
 Add any other context about the problem here.
 
 ## Modules affected
-- [ ] mongock-bom
+- [ ] mongock-driver-mongodb-bom
 - [ ] mongodb-sync-v4-driver
 - [ ] mongodb-springdata-v3-driver
 - [ ] mongodb-v3-driver
