@@ -9,7 +9,7 @@
 
   <groupId>io.mongock</groupId>
   <artifactId>mongock-driver-mongodb</artifactId>
-  <version>5.0.12.RC-SNAPSHOT</version>
+  <version>5.0.13.RC-SNAPSHOT</version>
   <packaging>pom</packaging>
 
   <modules>
