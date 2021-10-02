@@ -207,7 +207,7 @@ class SpringApplicationITest {
       SpringDataAdvanceChangeLog.clear();
       SpringDataAdvanceChangeLogWithChangeSetFailing.clear();
       Map<String, String> parameters = new HashMap<>();
-      parameters.put("mongock.transactionStrategy", "MIGRATION");
+      parameters.put("mongock.transactionStrategy", "EXECUTION");
       parameters.put("mongock.transactionEnabled", "false");
       parameters.put("mongock.changeLogsScanPackage", String.format("%s,%s", SpringDataAdvanceChangeLog.class.getName(), SpringDataAdvanceChangeLogWithChangeSetFailing.class.getName()));
       IllegalStateException  ex = Assertions.assertThrows(IllegalStateException.class,
@@ -299,7 +299,7 @@ class SpringApplicationITest {
     SpringDataAdvanceChangeLog.clear();
     SpringDataAdvanceChangeLogWithChangeSetFailing.clear();
     Map<String, String> parameters = new HashMap<>();
-    parameters.put("mongock.transactionStrategy", "MIGRATION");
+    parameters.put("mongock.transactionStrategy", "EXECUTION");
     parameters.put("mongock.changeLogsScanPackage", String.format("%s,%s", SpringDataAdvanceChangeLog.class.getName(), SpringDataAdvanceChangeLogWithChangeSetFailing.class.getName()));
     IllegalStateException  ex = Assertions.assertThrows(IllegalStateException.class,
         () -> ctx = RuntimeTestUtil.startSpringAppWithParameters(mongoContainer, parameters)
