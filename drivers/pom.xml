@@ -1,37 +1,32 @@
 <?xml version="1.0" encoding="UTF-8"?>
-
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <parent>
+    <groupId>io.mongock</groupId>
+    <artifactId>mongock</artifactId>
+    <version>5.0.15.RC-SNAPSHOT</version>
+  </parent>
+
   <modelVersion>4.0.0</modelVersion>
 
-  <name>Mongock community</name>
-  <description>Mongock community parent project</description>
+  <name>Mongock community drivers</name>
+  <description>Mongock parent project for community drivers</description>
   <url>https://github.com/cloudyrock/mongock</url>
 
-  <groupId>io.mongock</groupId>
-  <artifactId>mongock</artifactId>
-  <version>5.0.15.RC-SNAPSHOT</version>
+  <artifactId>drivers</artifactId>
   <packaging>pom</packaging>
 
   <modules>
-    <module>drivers</module>
+    <module>mongock-driver-mongodb</module>
   </modules>
 
 
   <properties>
-    <spring-boot.version>[2.0.0, 3.0.0)</spring-boot.version>
-    <spring-data-3.version>3.2.0</spring-data-3.version>
-    <spring-data-2.version>2.2.13.RELEASE</spring-data-2.version>
-    <mongodb-sync-4.version>4.2.3</mongodb-sync-4.version>
-    <mongodb-driver-3.version>3.12.8</mongodb-driver-3.version>
-
     <java.version>1.8</java.version>
     <maven.compiler.target>1.8</maven.compiler.target>
     <maven.compiler.source>1.8</maven.compiler.source>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
     <maven.javadoc.failOnError>false</maven.javadoc.failOnError>
-
-    <project.scm.id>ossrh</project.scm.id>
   </properties>
 
   <licenses>
