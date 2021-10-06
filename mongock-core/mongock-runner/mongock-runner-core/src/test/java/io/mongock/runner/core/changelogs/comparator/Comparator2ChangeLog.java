@@ -7,7 +7,7 @@ import com.github.cloudyrock.mongock.ChangeSet;
 public class Comparator2ChangeLog {
 
 
-  @ChangeSet(author = "executor", id = "newChangeSet", order = "1")
+  @ChangeSet(author = "executor", id = "newChangeSet2", order = "1")
   public void comparatorChangeSet1() {
   }
 

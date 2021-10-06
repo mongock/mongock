@@ -117,12 +117,23 @@ public abstract class ChangeLogServiceBase<CHANGELOG extends ChangeLogItem<CHANG
   }
 
   public SortedSet<CHANGELOG> fetchChangeLogs() {
-    return mergeChangeLogClassesAndPackages()
+    TreeSet<CHANGELOG> changeLogs = mergeChangeLogClassesAndPackages()
         .stream()
         .filter(changeLogClass -> this.profileFilter != null ? this.profileFilter.apply(changeLogClass) : true)
         .map(this::buildChangeLogObject)
         .collect(Collectors.toCollection(() -> new TreeSet<>(new ChangeLogComparator())));
+    validateDuplications(changeLogs);
+    return changeLogs;
   }
+
+  private void validateDuplications(Set<CHANGELOG> changeLogs) {
+    ThrowableHashSet allChangeSets = new ThrowableHashSet();
+    changeLogs.stream()
+        .map(CHANGELOG::getAllChangeItems)
+        .flatMap(List::stream)
+        .forEach(allChangeSets::add);
+  }
+
 
   private Set<Class<?>> mergeChangeLogClassesAndPackages() {
     //the following check is needed because reflection library will bring the entire classpath in case the changeLogsBasePackageList is empty
@@ -262,5 +273,14 @@ public abstract class ChangeLogServiceBase<CHANGELOG extends ChangeLogItem<CHANG
     return fetchChangeSetMethodsSorted(type)
         .stream()
         .filter(changeSet -> this.profileFilter != null ? this.profileFilter.apply(changeSet.getMethod()) : true);
+  }
+
+  private class ThrowableHashSet extends HashSet<ChangeSetItem> {
+
+    @Override
+    public boolean add(ChangeSetItem  e) {
+      if(contains(e)) throw new MongockException("Change with id[%s] duplicated", e.getId());
+      return super.add(e);
+    }
   }
 }

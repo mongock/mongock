@@ -26,6 +26,7 @@ import java.util.Collection;
 import java.util.Deque;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.SortedSet;
 
 import static io.mongock.driver.api.entry.ChangeState.EXECUTED;
@@ -44,7 +45,7 @@ public abstract class MigrationExecutorBase<CONFIG extends ChangeExecutorConfigu
   protected final ConnectionDriver<ChangeEntry> driver;
   protected final String serviceIdentifier;
   protected final boolean trackIgnored;
-  protected final SortedSet<ChangeLogItem<ChangeSetItem>> changeLogs;
+  protected final Set<ChangeLogItem<ChangeSetItem>> changeLogs;
   protected final Map<String, Object> metadata;
   private final ChangeLogRuntime changeLogRuntime;
   private final String defaultAuthor;
@@ -55,7 +56,7 @@ public abstract class MigrationExecutorBase<CONFIG extends ChangeExecutorConfigu
 
 
   public MigrationExecutorBase(String executionId,
-                               SortedSet<ChangeLogItem<ChangeSetItem>> changeLogs,
+                               Set<ChangeLogItem<ChangeSetItem>> changeLogs,
                                ConnectionDriver<ChangeEntry> driver,
                                ChangeLogRuntime changeLogRuntime,
                                CONFIG config) {

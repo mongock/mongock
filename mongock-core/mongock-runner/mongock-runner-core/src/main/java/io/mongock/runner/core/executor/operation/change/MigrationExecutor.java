@@ -8,6 +8,7 @@ import io.mongock.driver.api.entry.ChangeEntry;
 import io.mongock.runner.core.executor.changelog.ChangeLogRuntime;
 
 import javax.annotation.concurrent.NotThreadSafe;
+import java.util.Set;
 import java.util.SortedSet;
 
 @NotThreadSafe
@@ -15,7 +16,7 @@ public class MigrationExecutor extends MigrationExecutorBase<ChangeExecutorConfi
 
 
   public MigrationExecutor(String executionId,
-                           SortedSet<ChangeLogItem<ChangeSetItem>> changeLogs,
+                           Set<ChangeLogItem<ChangeSetItem>> changeLogs,
                            ConnectionDriver<ChangeEntry> driver,
                            ChangeLogRuntime changeLogRuntime,
                            ChangeExecutorConfiguration config) {
