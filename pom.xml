@@ -9,12 +9,13 @@
 
   <groupId>io.mongock</groupId>
   <artifactId>mongock</artifactId>
-  <version>5.0.15.RC-SNAPSHOT</version>
+  <version>5.0.17.RC-SNAPSHOT</version>
   <packaging>pom</packaging>
 
   <modules>
-    <module>core</module>
+    <module>mongock-core</module>
     <module>drivers</module>
+    <module>mongock-bom</module>
   </modules>
 
 
