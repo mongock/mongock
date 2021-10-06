@@ -131,7 +131,7 @@ public abstract class ChangeLogServiceBase<CHANGELOG extends ChangeLogItem<CHANG
     changeLogs.stream()
         .map(CHANGELOG::getAllChangeItems)
         .flatMap(List::stream)
-        .forEach(allChangeSets::add);
+        .forEach(allChangeSets::addAndThrow);
   }
 
 
@@ -276,11 +276,8 @@ public abstract class ChangeLogServiceBase<CHANGELOG extends ChangeLogItem<CHANG
   }
 
   private class ThrowableHashSet extends HashSet<ChangeSetItem> {
-
-    @Override
-    public boolean add(ChangeSetItem  e) {
-      if(contains(e)) throw new MongockException("Change with id[%s] duplicated", e.getId());
-      return super.add(e);
+    public void addAndThrow(ChangeSetItem  e) {
+      if(!add(e)) throw new MongockException("Change with id[%s] duplicated", e.getId());
     }
   }
 }
