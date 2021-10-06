@@ -17,9 +17,11 @@ import io.mongock.runner.core.changelogs.multipackage.package2.ChangeLogMultiPac
 import io.mongock.runner.core.changelogs.systemversion.ChangeLogSystemVersion;
 import io.mongock.runner.core.changelogs.test1.ChangeLogSuccess11;
 import io.mongock.runner.core.changelogs.test1.ChangeLogSuccess12;
+import io.mongock.runner.core.changelogs.withDuplications.changesetsduplicated.ChangeLogDuplicated1;
 import io.mongock.runner.core.changelogs.withRollback.BasicChangeLogWithRollback;
 import io.mongock.runner.core.changelogs.withnoannotations.ChangeLogNormal;
 import io.mongock.runner.core.executor.changelog.ChangeLogService;
+import org.junit.Assert;
 import org.junit.Test;
 
 import java.lang.reflect.InvocationTargetException;
@@ -62,6 +64,22 @@ public class ChangeLogServiceTest {
         throw new MongockException(e);
       }
     };
+  }
+
+  @Test
+  public void shouldThrowException_WhenValidatingChangeLogs_IfDuplicatedChangeSets() {
+
+    MongockException ex = Assert.assertThrows(MongockException.class, () ->
+        new ArrayList<>(new ChangeLogService(
+          Collections.singletonList(ChangeLogDuplicated1.class.getPackage().getName()),
+          Collections.emptyList(),
+          "0",
+          "9999"
+      ).fetchChangeLogs())
+    );
+
+    assertTrue(ex.getMessage().contains("duplicated"));
+
   }
 
   @Test

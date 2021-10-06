@@ -87,12 +87,12 @@ public class ChangeSetItem {
     if (this == o) return true;
     if (o == null || getClass() != o.getClass()) return false;
     ChangeSetItem that = (ChangeSetItem) o;
-    return Objects.equals(id, that.id);
+    return id.equals(that.id) && Objects.equals(author, that.author);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(id);
+    return Objects.hash(id, author);
   }
 
   @Override
