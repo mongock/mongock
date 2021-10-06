@@ -46,7 +46,7 @@
       <dependency>
         <groupId>io.mongock</groupId>
         <artifactId>mongock-core-bom</artifactId>
-        <version>${mongock.core.version}</version>
+        <version>${project.version}</version>
         <type>pom</type>
         <scope>import</scope>
       </dependency>
