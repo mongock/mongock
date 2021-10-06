@@ -3,16 +3,15 @@ package io.mongock.runner.core.builder;
 import io.mongock.api.config.MongockConfiguration;
 import io.mongock.driver.api.entry.ChangeEntry;
 import io.mongock.runner.core.builder.roles.ChangeLogScanner;
-import io.mongock.runner.core.builder.roles.MigrationWriter;
 import io.mongock.runner.core.builder.roles.DependencyInjectable;
 import io.mongock.runner.core.builder.roles.DriverConnectable;
 import io.mongock.runner.core.builder.roles.LegacyMigrator;
+import io.mongock.runner.core.builder.roles.MigrationWriter;
 import io.mongock.runner.core.builder.roles.MongockRunnable;
 import io.mongock.runner.core.builder.roles.ServiceIdentificable;
 import io.mongock.runner.core.builder.roles.SystemVersionable;
 import io.mongock.runner.core.builder.roles.TransactionStrategiable;
 import io.mongock.runner.core.builder.roles.Transactionable;
-import io.mongock.runner.core.builder.roles.Typeable;
 
 @SuppressWarnings("all")
 public interface RunnerBuilder<
@@ -29,6 +28,5 @@ public interface RunnerBuilder<
 		ServiceIdentificable<SELF, CONFIG>,
     MongockRunnable<SELF, CONFIG>,
 		Transactionable<SELF, CONFIG>,
-		TransactionStrategiable<SELF, CONFIG>,
-    Typeable<SELF, CONFIG> {
+		TransactionStrategiable<SELF, CONFIG> {
 }

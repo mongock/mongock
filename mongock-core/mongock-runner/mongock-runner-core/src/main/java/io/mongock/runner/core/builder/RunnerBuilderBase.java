@@ -21,7 +21,8 @@ import io.mongock.runner.core.executor.changelog.ChangeLogServiceBase;
 import io.mongock.runner.core.executor.dependency.DependencyManager;
 import io.mongock.runner.core.executor.operation.Operation;
 import io.mongock.runner.core.executor.operation.change.MigrationOp;
-import io.mongock.utils.MongockProperties;
+import io.mongock.utils.Constants;
+import io.mongock.utils.MongockCommunityProperties;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -72,6 +73,12 @@ public abstract class RunnerBuilderBase<
 
   public BuilderType getType() {
     return type;
+  }
+
+
+  //Default implementation. It should override in the professional libs
+  public String getVersion() {
+    return MongockCommunityProperties.VERSION;
   }
 
   ///////////////////////////////////////////////////////////////////////////////////
@@ -133,7 +140,7 @@ public abstract class RunnerBuilderBase<
 
 
   protected MongockRunner buildRunner(Operation operation, ConnectionDriver<CHANGE_ENTRY> driver) {
-    logger.info("Mongock runner {} version[{}]", type, MongockProperties.getVersion());
+    logger.info("Mongock runner {} version[{}]", getType(), getVersion());
     validateConfigurationAndInjections(driver);
     try {
       beforeBuildRunner();

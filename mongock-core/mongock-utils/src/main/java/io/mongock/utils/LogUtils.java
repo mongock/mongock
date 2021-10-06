@@ -21,7 +21,7 @@ public final class LogUtils {
 
   private static String getParameterType(Object obj) {
     String className = obj != null ? obj.getClass().getName() : "{null argument}";
-    int mongockProxyPrefixIndex = className.indexOf(MongockProperties.PROXY_MONGOCK_PREFIX);
+    int mongockProxyPrefixIndex = className.indexOf(Constants.PROXY_MONGOCK_PREFIX);
     if(mongockProxyPrefixIndex > 0) {
       return className.substring(0, mongockProxyPrefixIndex);
     } else {

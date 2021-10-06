@@ -2,7 +2,7 @@ package io.mongock.driver.api.lock.guard.proxy;
 
 import io.changock.migration.api.annotations.NonLockGuarded;
 import io.mongock.driver.api.lock.LockManager;
-import io.mongock.utils.MongockProperties;
+import io.mongock.utils.Constants;
 import io.mongock.utils.Utils;
 import javassist.util.proxy.ProxyFactory;
 import org.objenesis.ObjenesisStd;
@@ -24,7 +24,7 @@ public class LockGuardProxyFactory {
 
   static {
     ProxyFactory.nameGenerator = new ProxyFactory.UniqueName() {
-      private final String sep = MongockProperties.PROXY_MONGOCK_PREFIX + Integer.toHexString(this.hashCode() & 0xfff) + "_";
+      private final String sep = Constants.PROXY_MONGOCK_PREFIX + Integer.toHexString(this.hashCode() & 0xfff) + "_";
       private int counter = 0;
 
       @Override

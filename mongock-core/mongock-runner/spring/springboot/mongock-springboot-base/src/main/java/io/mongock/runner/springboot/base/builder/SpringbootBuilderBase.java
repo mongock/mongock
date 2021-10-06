@@ -36,7 +36,7 @@ import java.util.List;
 import java.util.function.Function;
 import java.util.stream.Stream;
 
-import static io.mongock.utils.MongockProperties.CLI_PROFILE;
+import static io.mongock.utils.Constants.CLI_PROFILE;
 
 public abstract class SpringbootBuilderBase<
     SELF extends SpringbootBuilderBase<SELF,  CHANGELOG, CHANGESET, CHANGE_ENTRY, CONFIG>,
