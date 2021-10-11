@@ -1,5 +1,7 @@
 package io.mongock.runner.core.internal;
 
+import io.mongock.api.exception.MongockException;
+
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -84,6 +86,9 @@ public class ChangeLogItem<CHANGESET extends ChangeSetItem> {
                        boolean failFast,
                        List<CHANGESET> changeSetElements,
                        List<CHANGESET> beforeChangeSetsItems) {
+    if (id == null || id.trim().isEmpty()) {
+      throw new MongockException("id cannot be null or empty.");
+    }
     this.id = id;
     this.type = type;
     this.order = order;
@@ -127,11 +132,11 @@ public class ChangeLogItem<CHANGESET extends ChangeSetItem> {
     if (this == o) return true;
     if (o == null || getClass() != o.getClass()) return false;
     ChangeLogItem<?> that = (ChangeLogItem<?>) o;
-    return type.equals(that.type);
+    return id.equals(that.id);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(type);
+    return Objects.hash(id);
   }
 }

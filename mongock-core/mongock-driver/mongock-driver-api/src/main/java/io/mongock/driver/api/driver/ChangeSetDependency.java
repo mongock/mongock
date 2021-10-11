@@ -11,6 +11,7 @@ public class ChangeSetDependency {
   private String name;
   private Class<?> type;
   private Object instance;
+  private boolean proxeable;
 
 
   public ChangeSetDependency(Object instance) {
@@ -18,14 +19,23 @@ public class ChangeSetDependency {
   }
 
   public ChangeSetDependency(Class<?> type, Object instance) {
-    this(DEFAULT_NAME, type, instance);
+    this(type, instance, true);
+  }
+  
+  public ChangeSetDependency(Class<?> type, Object instance, boolean proxeable) {
+    this(DEFAULT_NAME, type, instance, proxeable);
+  }
+  
+  public ChangeSetDependency(String name, Class<?> type, Object instance) {
+    this(name, type, instance, true);
   }
 
-  public ChangeSetDependency(String name, Class<?> type, Object instance) {
+  public ChangeSetDependency(String name, Class<?> type, Object instance, boolean proxeable) {
     checkParameters(name, type, instance);
     this.name = name;
     this.type = type;
     this.instance = instance;
+    this.proxeable = proxeable;
   }
 
   private void checkParameters(String name, Class<?> type, Object instance) {
@@ -54,6 +64,10 @@ public class ChangeSetDependency {
 
   public boolean isDefaultNamed() {
     return DEFAULT_NAME.equals(name);
+  }
+  
+  public boolean isProxeable() {
+    return proxeable;
   }
 
   @Override

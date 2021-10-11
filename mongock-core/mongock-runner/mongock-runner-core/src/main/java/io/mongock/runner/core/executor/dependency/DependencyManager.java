@@ -28,21 +28,19 @@ public class DependencyManager implements Validable {
   public Optional<Object> getDependency(Class type, boolean lockGuarded) throws ForbiddenParameterException {
     return getDependency(type, null, lockGuarded);
   }
-
+  
   public Optional<Object> getDependency(Class type, String name, boolean lockGuarded) throws ForbiddenParameterException {
-    Optional<Object> dependencyOpt = getDependencyFromStore(connectorDependencies, type, name);
-    return dependencyOpt.isPresent() ? dependencyOpt : getStandardDependency(type, name, lockGuarded);
-  }
-
-  private Optional<Object> getStandardDependency(Class type, String name, boolean lockGuarded) {
-    Optional<Object> dependencyOpt = getDependencyFromStore(standardDependencies, type, name);
-    return dependencyOpt.isPresent() && lockGuarded
-        ? dependencyOpt.map(instance -> lockGuardProxyFactory.getRawProxy(instance, type))
-        : dependencyOpt;
+    Optional<ChangeSetDependency> dependencyOpt = getDependencyFromStore(connectorDependencies, type, name);
+    if (!dependencyOpt.isPresent()) {
+      dependencyOpt = getDependencyFromStore(standardDependencies, type, name);
+    }
+    return dependencyOpt.isPresent() && dependencyOpt.get().isProxeable() && lockGuarded
+        ? dependencyOpt.map(dependency -> lockGuardProxyFactory.getRawProxy(dependency.getInstance(), type))
+        : dependencyOpt.map(ChangeSetDependency::getInstance);
   }
 
   @SuppressWarnings("unchecked")
-  private Optional<Object> getDependencyFromStore(Collection<ChangeSetDependency> dependencyStore, Class<?> type, String name) {
+  private Optional<ChangeSetDependency> getDependencyFromStore(Collection<ChangeSetDependency> dependencyStore, Class<?> type, String name) {
     boolean byName = name != null && !name.isEmpty() && !ChangeSetDependency.DEFAULT_NAME.equals(name);
     Predicate<ChangeSetDependency> filter = byName
         ? dependency -> name.equals(dependency.getName())
@@ -50,10 +48,9 @@ public class DependencyManager implements Validable {
 
     Stream<ChangeSetDependency> stream = dependencyStore.stream().filter(filter);
     if (byName) {
-      return stream.map(ChangeSetDependency::getInstance).findFirst();
+      return stream.findFirst();
     } else {
-      return stream.reduce((dependency1, dependency2) -> !dependency1.isDefaultNamed() && dependency2.isDefaultNamed() ? dependency2 : dependency1)
-          .map(ChangeSetDependency::getInstance);
+      return stream.reduce((dependency1, dependency2) -> !dependency1.isDefaultNamed() && dependency2.isDefaultNamed() ? dependency2 : dependency1);
     }
   }
 
