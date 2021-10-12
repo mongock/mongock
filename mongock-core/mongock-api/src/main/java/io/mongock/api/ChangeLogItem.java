@@ -1,8 +1,5 @@
 package io.mongock.api;
 
-import io.mongock.api.annotations.ChangeUnit;
-import io.mongock.api.exception.MongockException;
-
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -11,8 +8,6 @@ import java.util.Objects;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import static io.mongock.api.ChangeLogItemType.LEGACY_ANNOTATION;
-import static io.mongock.api.ChangeLogItemType.NEW_CHANGE_ANNOTATION;
 
 public class ChangeLogItem<CHANGESET extends ChangeSetItem> {
 
