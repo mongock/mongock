@@ -1,6 +1,5 @@
 package io.mongock.driver.api.entry;
 
-import io.mongock.api.ChangeSetItem;
 import io.mongock.utils.StringUtils;
 import io.mongock.utils.field.Field;
 
@@ -69,18 +68,20 @@ public class ChangeEntry {
   public static ChangeEntry createInstance(String executionId,
                                            String author,
                                            ChangeState state,
-                                           ChangeSetItem changeSet,
+                                           String changeSetId,
+                                           String changeSetClassName,
+                                           String changeSetName,
                                            long executionMillis,
                                            String executionHostname,
                                            Object metadata) {
     return new ChangeEntry(
         executionId,
-        changeSet.getId(),
+        changeSetId,
         author,
         new Date(),
         state,
-        changeSet.getMethod().getDeclaringClass().getName(),
-        changeSet.getMethod().getName(),
+        changeSetClassName,
+        changeSetName,
         executionMillis,
         executionHostname,
         metadata);

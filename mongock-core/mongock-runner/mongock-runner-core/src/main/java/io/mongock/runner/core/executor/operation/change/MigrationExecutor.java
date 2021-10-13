@@ -1,7 +1,7 @@
 package io.mongock.runner.core.executor.operation.change;
 
-import io.mongock.api.ChangeLogItem;
-import io.mongock.api.ChangeSetItem;
+import io.mongock.runner.core.internal.ChangeLogItem;
+import io.mongock.runner.core.internal.ChangeSetItem;
 import io.mongock.api.config.executor.ChangeExecutorConfiguration;
 import io.mongock.driver.api.driver.ConnectionDriver;
 import io.mongock.driver.api.entry.ChangeEntry;
@@ -9,7 +9,6 @@ import io.mongock.runner.core.executor.changelog.ChangeLogRuntime;
 
 import javax.annotation.concurrent.NotThreadSafe;
 import java.util.Set;
-import java.util.SortedSet;
 
 @NotThreadSafe
 public class MigrationExecutor extends MigrationExecutorBase<ChangeExecutorConfiguration> {

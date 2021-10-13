@@ -1,7 +1,7 @@
 package io.mongock.runner.core.annotation;
 
 import com.github.cloudyrock.mongock.ChangeSet;
-import io.mongock.api.ChangeSetItem;
+import io.mongock.runner.core.internal.ChangeSetItem;
 
 import java.lang.reflect.Method;
 
