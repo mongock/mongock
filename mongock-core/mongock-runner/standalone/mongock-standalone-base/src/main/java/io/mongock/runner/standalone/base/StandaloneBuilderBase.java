@@ -1,7 +1,7 @@
 package io.mongock.runner.standalone.base;
 
-import io.mongock.api.ChangeLogItem;
-import io.mongock.api.ChangeSetItem;
+import io.mongock.runner.core.internal.ChangeLogItem;
+import io.mongock.runner.core.internal.ChangeSetItem;
 import io.mongock.api.config.MongockConfiguration;
 import io.mongock.driver.api.entry.ChangeEntry;
 import io.mongock.runner.core.builder.BuilderType;
@@ -13,7 +13,6 @@ import io.mongock.runner.core.event.MigrationSuccessEvent;
 import io.mongock.runner.core.executor.ExecutorFactory;
 import io.mongock.runner.core.executor.changelog.ChangeLogServiceBase;
 import io.mongock.runner.core.executor.dependency.DependencyManager;
-import io.mongock.runner.core.executor.operation.Operation;
 
 import java.util.function.Consumer;
 

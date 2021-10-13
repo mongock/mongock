@@ -1,8 +1,8 @@
 package io.mongock.runner.springboot.core;
 
 
-import io.mongock.api.ChangeLogItem;
-import io.mongock.api.ChangeSetItem;
+import io.mongock.runner.core.internal.ChangeLogItem;
+import io.mongock.runner.core.internal.ChangeSetItem;
 import io.mongock.runner.core.executor.changelog.ChangeLogService;
 import io.mongock.runner.spring.base.util.ProfileUtil;
 import io.mongock.runner.springboot.profiles.defaultprofiled.DefaultProfiledChangerLog;

@@ -1,8 +1,8 @@
 package io.mongock.runner.core.executor;
 
 
-import io.mongock.api.ChangeLogItem;
-import io.mongock.api.ChangeSetItem;
+import io.mongock.runner.core.internal.ChangeLogItem;
+import io.mongock.runner.core.internal.ChangeSetItem;
 import io.mongock.api.config.LegacyMigration;
 import io.mongock.api.config.LegacyMigrationMappingFields;
 import io.mongock.api.config.MongockConfiguration;

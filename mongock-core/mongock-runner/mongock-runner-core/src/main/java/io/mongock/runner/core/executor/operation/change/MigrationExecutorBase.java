@@ -1,7 +1,7 @@
 package io.mongock.runner.core.executor.operation.change;
 
-import io.mongock.api.ChangeLogItem;
-import io.mongock.api.ChangeSetItem;
+import io.mongock.runner.core.internal.ChangeLogItem;
+import io.mongock.runner.core.internal.ChangeSetItem;
 import io.mongock.api.config.TransactionStrategy;
 import io.mongock.api.config.executor.ChangeExecutorConfiguration;
 import io.mongock.api.exception.MongockException;
@@ -27,7 +27,6 @@ import java.util.Deque;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.SortedSet;
 
 import static io.mongock.driver.api.entry.ChangeState.EXECUTED;
 import static io.mongock.driver.api.entry.ChangeState.FAILED;
@@ -303,7 +302,9 @@ public abstract class MigrationExecutorBase<CONFIG extends ChangeExecutorConfigu
         executionId,
         StringUtils.isNotEmpty(changeSetItem.getAuthor()) ? changeSetItem.getAuthor() : defaultAuthor,
         state,
-        changeSetItem,
+        changeSetItem.getId(),
+        changeSetItem.getMethod().getDeclaringClass().getName(),
+        changeSetItem.getMethod().getName(),
         executionTimeMillis,
         executionHostname,
         metadata);

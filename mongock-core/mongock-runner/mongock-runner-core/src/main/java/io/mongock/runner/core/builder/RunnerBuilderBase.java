@@ -1,7 +1,7 @@
 package io.mongock.runner.core.builder;
 
-import io.mongock.api.ChangeLogItem;
-import io.mongock.api.ChangeSetItem;
+import io.mongock.runner.core.internal.ChangeLogItem;
+import io.mongock.runner.core.internal.ChangeSetItem;
 import io.mongock.api.config.LegacyMigration;
 import io.mongock.api.config.MongockConfiguration;
 import io.mongock.api.config.MongockConstants;
@@ -21,7 +21,6 @@ import io.mongock.runner.core.executor.changelog.ChangeLogServiceBase;
 import io.mongock.runner.core.executor.dependency.DependencyManager;
 import io.mongock.runner.core.executor.operation.Operation;
 import io.mongock.runner.core.executor.operation.change.MigrationOp;
-import io.mongock.utils.Constants;
 import io.mongock.utils.MongockCommunityProperties;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

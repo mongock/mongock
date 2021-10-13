@@ -1,4 +1,4 @@
-package io.mongock.api;
+package io.mongock.runner.core.internal;
 
 import java.lang.reflect.Method;
 import java.util.ArrayList;

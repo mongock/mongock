@@ -1,8 +1,6 @@
 package io.mongock.runner.core;
 
 
-import io.mongock.api.ChangeLogItem;
-import io.mongock.api.ChangeSetItem;
 import io.mongock.api.exception.MongockException;
 import io.mongock.runner.core.changelogs.comparator.Comparator1ChangeLog;
 import io.mongock.runner.core.changelogs.comparator.Comparator2ChangeLog;
@@ -21,6 +19,8 @@ import io.mongock.runner.core.changelogs.withDuplications.changesetsduplicated.C
 import io.mongock.runner.core.changelogs.withRollback.BasicChangeLogWithRollback;
 import io.mongock.runner.core.changelogs.withnoannotations.ChangeLogNormal;
 import io.mongock.runner.core.executor.changelog.ChangeLogService;
+import io.mongock.runner.core.internal.ChangeLogItem;
+import io.mongock.runner.core.internal.ChangeSetItem;
 import org.junit.Assert;
 import org.junit.Test;
 
