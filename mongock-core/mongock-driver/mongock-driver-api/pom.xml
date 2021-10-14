@@ -4,7 +4,7 @@
   <parent>
     <groupId>io.mongock</groupId>
     <artifactId>mongock-driver</artifactId>
-    <version>5.0.18.RC-SNAPSHOT</version>
+    <version>5.0.19.RC-SNAPSHOT</version>
   </parent>
   <modelVersion>4.0.0</modelVersion>
 
