@@ -1,5 +1,6 @@
 package io.mongock.runner.core.internal;
 
+import io.mongock.api.exception.MongockException;
 import java.lang.reflect.Method;
 import java.util.Objects;
 import java.util.Optional;
@@ -34,6 +35,12 @@ public class ChangeSetItem {
                        Method changeSetMethod,
                        Method rollbackMethod,
                        boolean beforeChangeSets) {
+    if (id == null || id.trim().isEmpty()) {
+      throw new MongockException("id cannot be null or empty.");
+    }
+    else if (author == null || author.trim().isEmpty()) {
+      throw new MongockException("author cannot be null or empty.");
+    }
     this.id = id;
     this.author = author;
     this.order = order;

@@ -48,7 +48,7 @@ public class SpringMongockInitializingBeanRunnerBaseTest {
 
     callVerifier = new CallVerifier();
     Set<ChangeSetDependency> dependencySet = new HashSet<>();
-    dependencySet.add(new ChangeSetDependency(CallVerifier.class, callVerifier));
+    dependencySet.add(new ChangeSetDependency(CallVerifier.class, callVerifier, false));
     when(driver.getDependencies()).thenReturn(dependencySet);
 
     Environment environment = mock(Environment.class);
@@ -108,8 +108,8 @@ public class SpringMongockInitializingBeanRunnerBaseTest {
     when(changeEntryService.getExecuted()).thenReturn(Collections.emptyList());
     callVerifier = new CallVerifier();
     Set<ChangeSetDependency> dependencySet = new HashSet<>();
-    dependencySet.add(new ChangeSetDependency(CallVerifier.class, callVerifier));
-    dependencySet.add(new ChangeSetDependency(TemplateForTestImpl.class, new TemplateForTestImplChild()));
+    dependencySet.add(new ChangeSetDependency(CallVerifier.class, callVerifier, false));
+    dependencySet.add(new ChangeSetDependency(TemplateForTestImpl.class, new TemplateForTestImplChild(), false));
     when(driver.getDependencies()).thenReturn(dependencySet);
 
     Environment environment = mock(Environment.class);

@@ -48,7 +48,8 @@ public abstract class SpringDataMongoV3DriverBase<CHANGE_ENTRY extends ChangeEnt
   @Override
   public void specificInitialization() {
     super.specificInitialization();
-    dependencies.add(new ChangeSetDependency(MongockTemplate.class, new MongockTemplate(mongoTemplate, new LockGuardInvokerImpl(this.getLockManager()))));
+    dependencies.add(new ChangeSetDependency(MongockTemplate.class, new MongockTemplate(mongoTemplate, new LockGuardInvokerImpl(this.getLockManager())), false));
+    dependencies.add(new ChangeSetDependency(MongoTemplate.class, this.mongoTemplate));
   }
 
   public MongockTemplate getMongockTemplate() {

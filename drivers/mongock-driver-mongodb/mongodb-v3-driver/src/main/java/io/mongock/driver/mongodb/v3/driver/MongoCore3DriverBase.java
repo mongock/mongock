@@ -42,7 +42,7 @@ public abstract  class MongoCore3DriverBase<CHANGE_ENTRY extends ChangeEntry> ex
   public Set<ChangeSetDependency> getDependencies() {
     Set<ChangeSetDependency> dependencies = super.getDependencies();
     if(clientSession != null) {
-      ChangeSetDependency clientSessionDependency = new ChangeSetDependency(ClientSession.class, clientSession);
+      ChangeSetDependency clientSessionDependency = new ChangeSetDependency(ClientSession.class, clientSession, false);
       dependencies.remove(clientSessionDependency);
       dependencies.add(clientSessionDependency);
     }

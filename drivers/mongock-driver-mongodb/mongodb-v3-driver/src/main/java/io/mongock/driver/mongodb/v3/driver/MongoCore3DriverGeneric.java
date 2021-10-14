@@ -130,8 +130,8 @@ public abstract class MongoCore3DriverGeneric<CHANGE_ENTRY extends ChangeEntry> 
   @Override
   public void specificInitialization() {
     dependencies = new HashSet<>();
-    dependencies.add(new ChangeSetDependency(MongoDatabase.class, new MongoDataBaseDecoratorImpl(mongoDatabase, new LockGuardInvokerImpl(getLockManager()))));
-    dependencies.add(new ChangeSetDependency(ChangeEntryService.class, getChangeEntryService()));
+    dependencies.add(new ChangeSetDependency(MongoDatabase.class, new MongoDataBaseDecoratorImpl(mongoDatabase, new LockGuardInvokerImpl(getLockManager())), false));
+    dependencies.add(new ChangeSetDependency(ChangeEntryService.class, getChangeEntryService(), false));
     this.txOptions = txOptions != null ? txOptions : buildDefaultTxOptions();
   }
 
