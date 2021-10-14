@@ -5,7 +5,7 @@
   <parent>
     <artifactId>mongock-runner</artifactId>
     <groupId>io.mongock</groupId>
-    <version>5.0.19.RC-SNAPSHOT</version>
+    <version>5.0.20.RC-SNAPSHOT</version>
   </parent>
   <modelVersion>4.0.0</modelVersion>
 

@@ -6,7 +6,7 @@
   <parent>
     <artifactId>standalone</artifactId>
     <groupId>io.mongock</groupId>
-    <version>5.0.19.RC-SNAPSHOT</version>
+    <version>5.0.20.RC-SNAPSHOT</version>
   </parent>
 
   <artifactId>mongock-standalone</artifactId>
