@@ -36,7 +36,7 @@ abstract class ApplicationRunnerTestBase {
     driver.setChangeLogRepositoryName(Constants.CHANGELOG_COLLECTION_NAME);
     return MongockSpringboot.builder()
         .setDriver(driver)
-        .addChangeLogsScanPackages(Arrays.asList(packagePath))
+        .addMigrationScanPackages(Arrays.asList(packagePath))
         .setSpringContext(getApplicationContext());
   }
 
@@ -46,7 +46,7 @@ abstract class ApplicationRunnerTestBase {
     driver.setChangeLogRepositoryName(Constants.CHANGELOG_COLLECTION_NAME);
     return  MongockStandalone.builder()
         .setDriver(driver)
-        .addChangeLogsScanPackages(Arrays.asList(packagePath));
+        .addMigrationScanPackages(Arrays.asList(packagePath));
   }
 
 
