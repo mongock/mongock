@@ -1,5 +1,5 @@
 mongock:
-  change-logs-scan-package:
+  migration-scan-package:
     - io.mongock.integrationtests.spring5.springdata3.changelogs.client
   trackIgnored: true
   transactionable: false
