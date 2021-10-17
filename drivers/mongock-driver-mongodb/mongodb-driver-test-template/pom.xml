@@ -45,6 +45,13 @@
     </dependency>
 
 
+    <dependency>
+      <groupId>io.mongock</groupId>
+      <artifactId>mongock-test-util</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+
+
     <!-- MONGODB DEPENDENCIES -->
     <dependency>
       <groupId>org.mongodb</groupId>

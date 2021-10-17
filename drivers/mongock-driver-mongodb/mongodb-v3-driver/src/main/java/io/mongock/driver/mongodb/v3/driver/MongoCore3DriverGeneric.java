@@ -9,7 +9,6 @@ import io.mongock.driver.core.driver.ConnectionDriverBase;
 import io.mongock.driver.core.lock.LockRepositoryWithEntity;
 import io.mongock.driver.mongodb.v3.changelogs.runalways.MongockV3LegacyMigrationChangeRunAlwaysLog;
 import io.mongock.driver.mongodb.v3.changelogs.runonce.MongockV3LegacyMigrationChangeLog;
-import io.mongock.driver.mongodb.v3.decorator.impl.MongoDataBaseDecoratorImpl;
 import io.mongock.driver.mongodb.v3.repository.Mongo3ChangeEntryRepository;
 import io.mongock.driver.mongodb.v3.repository.Mongo3LockRepository;
 import io.mongock.driver.mongodb.v3.repository.ReadWriteConfiguration;
@@ -130,7 +129,7 @@ public abstract class MongoCore3DriverGeneric<CHANGE_ENTRY extends ChangeEntry> 
   @Override
   public void specificInitialization() {
     dependencies = new HashSet<>();
-    dependencies.add(new ChangeSetDependency(MongoDatabase.class, new MongoDataBaseDecoratorImpl(mongoDatabase, new LockGuardInvokerImpl(getLockManager())), false));
+    dependencies.add(new ChangeSetDependency(MongoDatabase.class, mongoDatabase, true));
     dependencies.add(new ChangeSetDependency(ChangeEntryService.class, getChangeEntryService(), false));
     this.txOptions = txOptions != null ? txOptions : buildDefaultTxOptions();
   }
