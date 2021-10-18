@@ -1,26 +1,24 @@
 package io.mongock.driver.mongodb.sync.v4.driver;
 
-import io.mongock.driver.api.driver.ChangeSetDependency;
-import io.mongock.driver.api.driver.Transactioner;
-import io.mongock.driver.api.entry.ChangeEntry;
-import io.mongock.driver.api.entry.ChangeEntryService;
-import io.mongock.driver.api.lock.guard.invoker.LockGuardInvokerImpl;
-import io.mongock.driver.core.driver.ConnectionDriverBase;
-import io.mongock.driver.core.lock.LockRepositoryWithEntity;
-import io.mongock.driver.mongodb.sync.v4.changelogs.runalways.MongockSync4LegacyMigrationChangeRunAlwaysLog;
-import io.mongock.driver.mongodb.sync.v4.changelogs.runonce.MongockSync4LegacyMigrationChangeLog;
-import io.mongock.driver.mongodb.sync.v4.decorator.impl.MongoDataBaseDecoratorImpl;
-import io.mongock.driver.mongodb.sync.v4.repository.MongoSync4ChangeEntryRepository;
-import io.mongock.driver.mongodb.sync.v4.repository.MongoSync4LockRepository;
-import io.mongock.driver.mongodb.sync.v4.repository.ReadWriteConfiguration;
-import io.mongock.api.exception.MongockException;
-import io.mongock.utils.annotation.NotThreadSafe;
 import com.mongodb.ReadConcern;
 import com.mongodb.ReadPreference;
 import com.mongodb.TransactionOptions;
 import com.mongodb.WriteConcern;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
+import io.mongock.api.exception.MongockException;
+import io.mongock.driver.api.driver.ChangeSetDependency;
+import io.mongock.driver.api.driver.Transactioner;
+import io.mongock.driver.api.entry.ChangeEntry;
+import io.mongock.driver.api.entry.ChangeEntryService;
+import io.mongock.driver.core.driver.ConnectionDriverBase;
+import io.mongock.driver.core.lock.LockRepositoryWithEntity;
+import io.mongock.driver.mongodb.sync.v4.changelogs.runalways.MongockSync4LegacyMigrationChangeRunAlwaysLog;
+import io.mongock.driver.mongodb.sync.v4.changelogs.runonce.MongockSync4LegacyMigrationChangeLog;
+import io.mongock.driver.mongodb.sync.v4.repository.MongoSync4ChangeEntryRepository;
+import io.mongock.driver.mongodb.sync.v4.repository.MongoSync4LockRepository;
+import io.mongock.driver.mongodb.sync.v4.repository.ReadWriteConfiguration;
+import io.mongock.utils.annotation.NotThreadSafe;
 import org.bson.Document;
 
 import java.util.HashSet;
@@ -131,7 +129,7 @@ public abstract class MongoSync4DriverGeneric<CHANGE_ENTRY extends ChangeEntry> 
   @Override
   public void specificInitialization() {
     dependencies = new HashSet<>();
-    dependencies.add(new ChangeSetDependency(MongoDatabase.class, new MongoDataBaseDecoratorImpl(mongoDatabase, new LockGuardInvokerImpl(getLockManager())), false));
+    dependencies.add(new ChangeSetDependency(MongoDatabase.class, mongoDatabase, true));
     dependencies.add(new ChangeSetDependency(ChangeEntryService.class, getChangeEntryService(), false));
     this.txOptions = txOptions != null ? txOptions : buildDefaultTxOptions();
   }
