@@ -9,7 +9,6 @@ public class MongockSuccessEventListener implements ApplicationListener<SpringMi
 
     @Override
     public void onApplicationEvent(SpringMigrationSuccessEvent event) {
-        System.out.println("[EVENT LISTENER] - Mongock finished successfully");
     }
 
 }

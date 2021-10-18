@@ -1,10 +1,10 @@
 package io.mongock.driver.mongodb.springdata.v3;
 
 import io.mongock.driver.api.driver.ChangeSetDependency;
+import io.mongock.driver.api.driver.ChangeSetDependencyBuildable;
 import io.mongock.driver.api.driver.Transactioner;
 import io.mongock.driver.api.entry.ChangeEntry;
 import io.mongock.driver.api.entry.ChangeEntryService;
-import io.mongock.driver.api.lock.guard.invoker.LockGuardInvokerImpl;
 import com.github.cloudyrock.mongock.driver.mongodb.springdata.v3.decorator.impl.MongockTemplate;
 import io.mongock.driver.mongodb.sync.v4.driver.MongoSync4DriverGeneric;
 import io.mongock.api.exception.MongockException;
@@ -45,10 +45,16 @@ public abstract class SpringDataMongoV3DriverBase<CHANGE_ENTRY extends ChangeEnt
     }
   }
 
+
+
   @Override
   public void specificInitialization() {
     super.specificInitialization();
-    dependencies.add(new ChangeSetDependency(MongockTemplate.class, new MongockTemplate(mongoTemplate, new LockGuardInvokerImpl(this.getLockManager())), false));
+    dependencies.add(new ChangeSetDependencyBuildable(
+        MongockTemplate.class,
+        MongoTemplate.class,
+        impl -> new MongockTemplate((MongoTemplate) impl),
+        true));
     dependencies.add(new ChangeSetDependency(MongoTemplate.class, this.mongoTemplate));
   }
 

@@ -16,7 +16,7 @@ public class EnsureDecoratorChangerLog {
       CallVerifier callVerifier,
       TemplateForTestImpl templateForTest) {
     callVerifier.counter++;
-    System.out.println("invoked ensureDecoratorChangeSet");
+    //System.out.println("invoked ensureDecoratorChangeSet");
 
     if (templateForTest == null) {
       throw new RuntimeException("Must pass dependency");

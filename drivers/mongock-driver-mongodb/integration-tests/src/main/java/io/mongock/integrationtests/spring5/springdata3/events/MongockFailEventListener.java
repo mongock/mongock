@@ -8,7 +8,6 @@ public class MongockFailEventListener implements ApplicationListener<SpringMigra
 //
     @Override
     public void onApplicationEvent(SpringMigrationFailureEvent event) {
-        System.out.println("[EVENT LISTENER] - Mongock finished with failures");
     }
 
 }

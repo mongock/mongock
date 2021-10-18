@@ -4,6 +4,7 @@ import io.mongock.api.exception.MongockException;
 import io.mongock.driver.api.common.ForbiddenParameterException;
 import io.mongock.driver.api.common.Validable;
 import io.mongock.driver.api.driver.ChangeSetDependency;
+import io.mongock.driver.api.driver.ChangeSetDependencyBuildable;
 import io.mongock.driver.api.lock.guard.proxy.LockGuardProxyFactory;
 import io.mongock.utils.annotation.NotThreadSafe;
 
@@ -34,9 +35,25 @@ public class DependencyManager implements Validable {
     if (!dependencyOpt.isPresent()) {
       dependencyOpt = getDependencyFromStore(standardDependencies, type, name);
     }
-    return dependencyOpt.isPresent() && dependencyOpt.get().isProxeable() && lockGuarded
-        ? dependencyOpt.map(dependency -> lockGuardProxyFactory.getRawProxy(dependency.getInstance(), type))
-        : dependencyOpt.map(ChangeSetDependency::getInstance);
+    if(!dependencyOpt.isPresent()) {
+      return Optional.empty();
+    }
+    ChangeSetDependency dependency = dependencyOpt.get();
+    if(ChangeSetDependencyBuildable.class.isAssignableFrom(dependency.getClass())) {
+      ChangeSetDependencyBuildable buildable = (ChangeSetDependencyBuildable)dependency;
+      Optional<Object> implOpt = getDependency(buildable.getImplType(), buildable.isProxeable());
+      if(!implOpt.isPresent()) {
+        return Optional.empty();
+      }
+      return implOpt.map(buildable.getDecoratorFunction());
+    } else {
+
+      return dependency.isProxeable() && lockGuarded
+          ? Optional.of(lockGuardProxyFactory.getRawProxy(dependency.getInstance(), type))
+          : Optional.ofNullable(dependency.getInstance());
+    }
+
+
   }
 
   @SuppressWarnings("unchecked")

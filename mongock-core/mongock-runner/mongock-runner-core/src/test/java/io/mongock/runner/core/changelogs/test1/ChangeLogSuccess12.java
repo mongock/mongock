@@ -13,7 +13,6 @@ public class ChangeLogSuccess12 {
       runAlways = true,
       systemVersion = "2")
   public void method_121() {
-    System.out.println(ChangeLogSuccess12.class.getCanonicalName() + ".method_121()");
   }
 
 
