@@ -42,6 +42,10 @@
       <artifactId>mongock-spring-base</artifactId>
     </dependency>
 
+    <dependency>
+      <groupId>io.mongock</groupId>
+      <artifactId>mongock-utils</artifactId>
+    </dependency>
 
     <!-- SPRING BOOT -->
 
