@@ -10,8 +10,8 @@ public class ChangeSetDependency {
 
   private String name;
   private Class<?> type;
-  private Object instance;
   private boolean proxeable;
+  protected Object instance;
 
 
   public ChangeSetDependency(Object instance) {
@@ -31,22 +31,27 @@ public class ChangeSetDependency {
   }
 
   public ChangeSetDependency(String name, Class<?> type, Object instance, boolean proxeable) {
-    checkParameters(name, type, instance);
+    this(name, type, proxeable);
+    if (instance == null) {
+      throw new MongockException("dependency instance cannot be null");
+    }
+    this.instance = instance;
+  }
+
+  protected ChangeSetDependency(String name, Class<?> type, boolean proxeable) {
+    checkParameters(name, type);
     this.name = name;
     this.type = type;
-    this.instance = instance;
     this.proxeable = proxeable;
   }
 
-  private void checkParameters(String name, Class<?> type, Object instance) {
+
+  private void checkParameters(String name, Class<?> type) {
     if (name == null || name.isEmpty()) {
       throw new MongockException("dependency name cannot be null/empty");
     }
     if (type == null) {
       throw new MongockException("dependency type cannot be null");
-    }
-    if (instance == null) {
-      throw new MongockException("dependency instance cannot be null");
     }
   }
 

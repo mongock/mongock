@@ -144,6 +144,7 @@ public abstract class MongoDriverITestBase extends IntegrationTestBase {
 
   @Test
   public void shouldPassMongoDatabaseDecoratorToChangeSet() {
+
     CallVerifierImpl callVerifier = new CallVerifierImpl();
     TestMongock.builder()
         .setDriver(getDriverWithTransactionDisabled())

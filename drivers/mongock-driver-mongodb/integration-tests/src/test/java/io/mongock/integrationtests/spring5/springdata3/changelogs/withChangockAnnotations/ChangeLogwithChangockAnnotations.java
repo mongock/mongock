@@ -13,7 +13,6 @@ public class ChangeLogwithChangockAnnotations {
 
   @ChangeSet(author = "testuser", id = "withChangockAnnotations", order = "01", systemVersion = "0.1")
   public void withChangockAnnotations() {
-    System.out.println("invoked 1");
   }
 
 

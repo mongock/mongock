@@ -9,7 +9,6 @@ public class MongockStartedEventListener implements ApplicationListener<SpringMi
 
     @Override
     public void onApplicationEvent(SpringMigrationStartedEvent event) {
-        System.out.println("[EVENT LISTENER] - Mongock STARTED successfully");
     }
 
 }

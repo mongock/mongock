@@ -220,11 +220,7 @@ public class ChangeLogServiceTest {
     assertEquals(2, changeLogPackage.getChangeSetItems().size());
     ChangeSetItem changeSet2 = changeLogPackage.getChangeSetItems().get(0);
     ChangeSetItem changeSet3 = changeLogPackage.getChangeSetItems().get(1);
-    
-    System.out.println("\n\n\n******** " + changeLogPackage.getChangeSetItems().size());
-    System.out.println("\n\n\n******** " + changeSet2.getId());
-    System.out.println("\n\n\n******** " + changeSet3.getId());
-    System.out.println("\n\n\n");
+
     
     assertEquals("no_package", changeSet2.getId());
     assertEquals("noPackage", changeSet2.getMethod().getName());
