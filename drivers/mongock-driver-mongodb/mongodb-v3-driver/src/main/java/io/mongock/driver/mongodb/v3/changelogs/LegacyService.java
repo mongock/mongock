@@ -11,6 +11,7 @@ import io.mongock.api.exception.MongockException;
 import com.mongodb.client.FindIterable;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
+import io.mongock.driver.api.entry.ChangeType;
 import org.bson.Document;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -85,6 +86,7 @@ public class LegacyService {
           getDocumentStringValue(changeDocument, mappingFields.getAuthor()),
           getDocumentDateValue(changeDocument, mappingFields.getTimestamp()),
           ChangeState.EXECUTED,
+          ChangeType.EXECUTION,
           getDocumentStringValue(changeDocument, mappingFields.getChangeLogClass()),
           getDocumentStringValue(changeDocument, mappingFields.getChangeSetMethod()),
           -1L,

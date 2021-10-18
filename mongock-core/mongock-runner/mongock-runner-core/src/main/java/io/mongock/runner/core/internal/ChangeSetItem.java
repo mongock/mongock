@@ -1,6 +1,8 @@
 package io.mongock.runner.core.internal;
 
 import io.mongock.api.exception.MongockException;
+import io.mongock.driver.api.entry.ChangeType;
+
 import java.lang.reflect.Method;
 import java.util.Objects;
 import java.util.Optional;
@@ -88,6 +90,7 @@ public class ChangeSetItem {
   public boolean isBeforeChangeSets() {
     return beforeChangeSets;
   }
+
 
   @Override
   public boolean equals(Object o) {
