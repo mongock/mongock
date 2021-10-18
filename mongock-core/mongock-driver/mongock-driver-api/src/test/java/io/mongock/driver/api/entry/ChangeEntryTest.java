@@ -60,6 +60,7 @@ public class ChangeEntryTest {
 		fieldExpectation.put("author", "changeAuthor");
 		fieldExpectation.put("timestamp", null);
 		fieldExpectation.put("state", "EXECUTED");
+    fieldExpectation.put("type", "EXECUTION");
 		fieldExpectation.put("changeLogClass", ChangeEntryTest.class.getName());
 		fieldExpectation.put("changeSetMethod", "changeSetMethod");
 		fieldExpectation.put("metadata", metadata);
