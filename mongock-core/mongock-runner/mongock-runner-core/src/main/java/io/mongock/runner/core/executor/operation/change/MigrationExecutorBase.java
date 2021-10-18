@@ -1,5 +1,6 @@
 package io.mongock.runner.core.executor.operation.change;
 
+import io.mongock.driver.api.entry.ChangeType;
 import io.mongock.runner.core.internal.ChangeLogItem;
 import io.mongock.runner.core.internal.ChangeSetItem;
 import io.mongock.api.config.TransactionStrategy;
@@ -33,6 +34,8 @@ import static io.mongock.driver.api.entry.ChangeState.FAILED;
 import static io.mongock.driver.api.entry.ChangeState.IGNORED;
 import static io.mongock.driver.api.entry.ChangeState.ROLLBACK_FAILED;
 import static io.mongock.driver.api.entry.ChangeState.ROLLED_BACK;
+import static io.mongock.driver.api.entry.ChangeType.BEFORE_EXECUTION;
+import static io.mongock.driver.api.entry.ChangeType.EXECUTION;
 
 @NotThreadSafe
 public abstract class MigrationExecutorBase<CONFIG extends ChangeExecutorConfiguration> implements Executor {
@@ -221,20 +224,21 @@ public abstract class MigrationExecutorBase<CONFIG extends ChangeExecutorConfigu
   protected void executeAndLogChangeSet(String executionId, String executionHostname, Object changelogInstance, ChangeSetItem changeSetItem) throws IllegalAccessException, InvocationTargetException {
     ChangeEntry changeEntry = null;
     boolean alreadyExecuted = false;
+    ChangeType type = changeSetItem.isBeforeChangeSets() ? BEFORE_EXECUTION : EXECUTION;
     try {
       if (!(alreadyExecuted = isAlreadyExecuted(changeSetItem)) || changeSetItem.isRunAlways()) {
         logger.debug("executing changeSet[{}]", changeSetItem.getId());
         final long executionTimeMillis = executeChangeSetMethod(changeSetItem.getMethod(), changelogInstance);
-        changeEntry = createChangeEntryInstance(executionId, executionHostname, changeSetItem, executionTimeMillis, EXECUTED);
+        changeEntry = createChangeEntryInstance(executionId, executionHostname, changeSetItem, executionTimeMillis, EXECUTED, type);
         logger.debug("successfully executed changeSet[{}]", changeSetItem.getId());
 
       } else {
-        changeEntry = createChangeEntryInstance(executionId, executionHostname, changeSetItem, -1L, IGNORED);
+        changeEntry = createChangeEntryInstance(executionId, executionHostname, changeSetItem, -1L, IGNORED, type);
 
       }
     } catch (Exception ex) {
       logger.debug("failure when executing changeSet[{}]", changeSetItem.getId());
-      changeEntry = createChangeEntryInstance(executionId, executionHostname, changeSetItem, -1L, FAILED);
+      changeEntry = createChangeEntryInstance(executionId, executionHostname, changeSetItem, -1L, FAILED, type);
       throw ex;
     } finally {
       if (changeEntry != null) {
@@ -267,7 +271,8 @@ public abstract class MigrationExecutorBase<CONFIG extends ChangeExecutorConfigu
         rollbackExecutionState = ROLLBACK_FAILED;
         throw rollbackException;
       } finally {
-        ChangeEntry changeEntry = createChangeEntryInstance(executionId, executionHostname, changeSetItem, -1L, rollbackExecutionState);
+        ChangeType type = changeSetItem.isBeforeChangeSets() ? BEFORE_EXECUTION : EXECUTION;
+        ChangeEntry changeEntry = createChangeEntryInstance(executionId, executionHostname, changeSetItem, -1L, rollbackExecutionState, type);
         logChangeEntry(changeEntry, changeSetItem, false);
         trackChangeEntry(changeSetItem, changeEntry, false);
       }
@@ -297,11 +302,12 @@ public abstract class MigrationExecutorBase<CONFIG extends ChangeExecutorConfigu
     }
   }
 
-  protected ChangeEntry createChangeEntryInstance(String executionId, String executionHostname, ChangeSetItem changeSetItem, long executionTimeMillis, ChangeState state) {
+  protected ChangeEntry createChangeEntryInstance(String executionId, String executionHostname, ChangeSetItem changeSetItem, long executionTimeMillis, ChangeState state, ChangeType type) {
     return ChangeEntry.createInstance(
         executionId,
         StringUtils.isNotEmpty(changeSetItem.getAuthor()) ? changeSetItem.getAuthor() : defaultAuthor,
         state,
+        type,
         changeSetItem.getId(),
         changeSetItem.getMethod().getDeclaringClass().getName(),
         changeSetItem.getMethod().getName(),

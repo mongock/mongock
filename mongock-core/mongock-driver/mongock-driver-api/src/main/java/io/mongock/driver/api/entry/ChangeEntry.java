@@ -28,6 +28,9 @@ public class ChangeEntry {
   @Field("state")
   private final ChangeState state;
 
+  @Field("type")
+  private final ChangeType type;
+
   @Field("changeLogClass")
   private final String changeLogClass;
 
@@ -48,6 +51,7 @@ public class ChangeEntry {
                      String author,
                      Date timestamp,
                      ChangeState state,
+                     ChangeType type,
                      String changeLogClass,
                      String changeSetMethod,
                      long executionMillis,
@@ -58,6 +62,7 @@ public class ChangeEntry {
     this.author = author;
     this.timestamp = new Date(timestamp.getTime());
     this.state = state;
+    this.type = type;
     this.changeLogClass = changeLogClass;
     this.changeSetMethod = changeSetMethod;
     this.executionMillis = executionMillis;
@@ -68,6 +73,7 @@ public class ChangeEntry {
   public static ChangeEntry createInstance(String executionId,
                                            String author,
                                            ChangeState state,
+                                           ChangeType type,
                                            String changeSetId,
                                            String changeSetClassName,
                                            String changeSetName,
@@ -80,12 +86,15 @@ public class ChangeEntry {
         author,
         new Date(),
         state,
+        type,
         changeSetClassName,
         changeSetName,
         executionMillis,
         executionHostname,
         metadata);
   }
+
+
 
   public String getExecutionId() {
     return executionId;
@@ -127,19 +136,25 @@ public class ChangeEntry {
     return metadata;
   }
 
+  public ChangeType getType() {
+    return type;
+  }
+
   @Override
   public String toString() {
-    return "ChangeEntry{" +
-        "executionId='" + executionId + '\'' +
+    String sb = "ChangeEntry{" + "executionId='" + executionId + '\'' +
         ", changeId='" + changeId + '\'' +
         ", author='" + author + '\'' +
         ", timestamp=" + timestamp +
         ", state=" + state +
+        ", type=" + type +
         ", changeLogClass='" + changeLogClass + '\'' +
         ", changeSetMethod='" + changeSetMethod + '\'' +
         ", metadata=" + metadata +
         ", executionMillis=" + executionMillis +
+        ", executionHostname='" + executionHostname + '\'' +
         '}';
+    return sb;
   }
 
   public String toPrettyString() {

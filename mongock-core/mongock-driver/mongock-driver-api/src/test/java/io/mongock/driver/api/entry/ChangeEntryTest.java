@@ -41,6 +41,7 @@ public class ChangeEntryTest {
 				"migrationExecutionId",
 				"changeAuthor",
 				ChangeState.EXECUTED,
+				ChangeType.EXECUTION,
 				"changeId",
 				ChangeEntryTest.class.getName(),
 				"changeSetMethod",
