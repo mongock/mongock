@@ -1,6 +1,7 @@
 package io.mongock.driver.mongodb.springdata.v2;
 
 import io.mongock.driver.api.driver.ChangeSetDependency;
+import io.mongock.driver.api.driver.ChangeSetDependencyBuildable;
 import io.mongock.driver.api.driver.Transactioner;
 import io.mongock.driver.api.entry.ChangeEntry;
 import io.mongock.driver.api.entry.ChangeEntryService;
@@ -48,7 +49,11 @@ public abstract class SpringDataMongoV2DriverBase<CHANGE_ENTRY extends ChangeEnt
   @Override
   public void specificInitialization() {
     super.specificInitialization();
-    dependencies.add(new ChangeSetDependency(MongockTemplate.class, new MongockTemplate(mongoTemplate, new LockGuardInvokerImpl(this.getLockManager())), false));
+    dependencies.add(new ChangeSetDependencyBuildable(
+        MongockTemplate.class,
+        MongoTemplate.class,
+        impl -> new MongockTemplate((MongoTemplate) impl),
+        true));
     dependencies.add(new ChangeSetDependency(MongoTemplate.class, this.mongoTemplate));
   }
 
