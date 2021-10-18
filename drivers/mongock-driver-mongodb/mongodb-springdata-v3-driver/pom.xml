@@ -64,7 +64,7 @@
     <dependency>
       <groupId>org.mongodb</groupId>
       <artifactId>mongodb-driver-sync</artifactId>
-      <version>4.2.3</version>
+      <version>${spring-data-3.mongodb.version}</version>
       <scope>provided</scope>
     </dependency>
 
