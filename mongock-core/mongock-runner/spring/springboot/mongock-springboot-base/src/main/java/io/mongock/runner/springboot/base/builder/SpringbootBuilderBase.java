@@ -109,7 +109,7 @@ public abstract class SpringbootBuilderBase<
     super.beforeBuildRunner();
     DependencyContext dependencyContext = getDependencyManager().getDependencyContext();
     Environment environment = ((SpringDependencyContext) dependencyContext).getSpringContext().getEnvironment();
-    //if cli active(cli-profile), the runner needs to be disabled
+    //if cli active(mongock-cli-profile), the runner needs to be disabled
     if(environment.getActiveProfiles()!= null && Stream.of(environment.getActiveProfiles()).anyMatch(CLI_PROFILE::equalsIgnoreCase)) {
       CONFIG config = getConfig();
       config.setEnabled(false);
