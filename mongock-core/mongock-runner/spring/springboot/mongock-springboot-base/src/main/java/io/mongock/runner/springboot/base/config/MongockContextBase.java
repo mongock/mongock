@@ -16,7 +16,7 @@ import org.springframework.context.annotation.Profile;
 public abstract class MongockContextBase<CHANGE_ENTRY extends ChangeEntry, CONFIG extends MongockConfiguration> {
 
   @Bean
-  @Profile("!" + Constants.CLI_PROFILE)
+  @Profile(Constants.NON_CLI_PROFILE)
   @ConditionalOnExpression("'${mongock.runner-type:ApplicationRunner}'.toLowerCase().equals('applicationrunner')")
   public MongockApplicationRunner applicationRunner(ConnectionDriver<CHANGE_ENTRY> connectionDriver,
                                                     CONFIG springConfiguration,
@@ -28,7 +28,7 @@ public abstract class MongockContextBase<CHANGE_ENTRY extends ChangeEntry, CONFI
   }
 
   @Bean
-  @Profile("!" + Constants.CLI_PROFILE)
+  @Profile(Constants.NON_CLI_PROFILE)
   @ConditionalOnExpression("'${mongock.runner-type:null}'.toLowerCase().equals('initializingbean')")
   public MongockInitializingBeanRunner initializingBeanRunner(ConnectionDriver<CHANGE_ENTRY> connectionDriver,
                                                               CONFIG springConfiguration,
