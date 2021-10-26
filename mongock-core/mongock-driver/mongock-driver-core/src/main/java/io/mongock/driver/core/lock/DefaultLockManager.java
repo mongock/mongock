@@ -51,6 +51,11 @@ public class DefaultLockManager implements LockManager {
   private final String owner;
 
   /**
+   * Daemon that will ensure the lock in background.
+   */
+  private LockDaemon lockDaemon;
+
+  /**
    * <p>The period of time for which the lock will be owned.</p>
    */
   private long lockAcquiredForMillis = DEFAULT_LOCK_ACQUIRED_FOR_MILLIS;
@@ -81,6 +86,7 @@ public class DefaultLockManager implements LockManager {
    */
   private Instant shouldStopTryingAt;
 
+
   /**
    * Constructor takes some bean injections
    *
@@ -106,8 +112,8 @@ public class DefaultLockManager implements LockManager {
     acquireLock(getDefaultKey());
   }
 
-  private void acquireLock(String lockKey) {
-    startAcquisitionTimer();
+  private void acquireLock(String lockKey) throws LockCheckException {
+    initialize();
     boolean keepLooping = true;
     do {
       try {
@@ -134,8 +140,8 @@ public class DefaultLockManager implements LockManager {
     ensureLock(getDefaultKey());
   }
 
-  private void ensureLock(String lockKey) {
-    startAcquisitionTimer();
+  private void ensureLock(String lockKey) throws LockCheckException {
+    initialize();
     boolean keepLooping = true;
     do {
       if (needsRefreshLock()) {
@@ -171,6 +177,7 @@ public class DefaultLockManager implements LockManager {
    */
   @Override
   public void close() {
+    lockDaemon.cancel();
     releaseLockDefault();
   }
 
@@ -300,6 +307,12 @@ public class DefaultLockManager implements LockManager {
     repository.deleteAll();
   }
 
+  @Override
+  public long getMillisUntilRefreshRequired() {
+    Date expirationWithMargin = new Date(this.lockExpiresAt.getTime() - lockRefreshMarginMillis);
+    return expirationWithMargin.getTime() - timeUtils.currentTime().getTime();
+  }
+
   private boolean needsRefreshLock() {
 
     if (this.lockExpiresAt == null) {
@@ -316,11 +329,17 @@ public class DefaultLockManager implements LockManager {
   }
 
   /**
-   * idempotent operation to start the acquisition timer
+   * idempotent operation that
+   * - Starts the acquisition timer
+   * - Initializes and run the lock daemon.
    */
-  private synchronized void startAcquisitionTimer() {
+  private synchronized void initialize() {
     if (shouldStopTryingAt == null) {
       shouldStopTryingAt = timeUtils.nowPlusMillis(lockQuitTryingAfterMillis);
+    }
+    if(lockDaemon == null) {
+      lockDaemon = new LockDaemon(this, lockAcquiredForMillis - lockRefreshMarginMillis);
+      lockDaemon.start();
     }
   }
 

@@ -1,6 +1,7 @@
 package io.mongock.driver.api.lock;
 
 import java.io.Closeable;
+import java.util.Date;
 
 
 public interface LockManager extends Closeable {
@@ -85,6 +86,8 @@ public interface LockManager extends Closeable {
    * force to delete all the locks in the database. Mainly for test environment. Not recommended production use
    */
   void clean();
+
+  long getMillisUntilRefreshRequired();
 
 
   @Override
