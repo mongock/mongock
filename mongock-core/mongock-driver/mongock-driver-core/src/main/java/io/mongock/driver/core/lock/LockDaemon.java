@@ -12,10 +12,6 @@ public class LockDaemon extends Thread {
   private final long initialDelay;
   private volatile boolean cancelled = false;
 
-
-  public LockDaemon(LockManager lockManager) {
-    this(lockManager, -1);
-  }
   public LockDaemon(LockManager lockManager, long initialDelay) {
     setName("mongock-lock-keeper-daemon");
     this.initialDelay = initialDelay;
@@ -53,6 +49,10 @@ public class LockDaemon extends Thread {
   public void cancel() {
     logger.info("...cancelling mongock lock daemon");
     cancelled = true;
+  }
+
+  public boolean isCancelled() {
+    return cancelled;
   }
 
 }

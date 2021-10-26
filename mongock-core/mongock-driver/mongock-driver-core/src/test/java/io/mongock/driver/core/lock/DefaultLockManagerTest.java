@@ -43,6 +43,7 @@ public class DefaultLockManagerTest {
     assertTrue(ex.getMessage().contains("Quit trying lock after 180000 millis due to LockPersistenceException:"));
   }
 
+
   @Before
   public void setUp() {
     lockManager = new DefaultLockManager(lockRepository = Mockito.mock(LockRepositoryWithEntity.class), timeUtils = Mockito.mock(TimeService.class))
