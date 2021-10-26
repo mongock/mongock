@@ -173,7 +173,10 @@ public class DefaultLockManager implements LockManager {
   }
 
   /**
-   * release the default lock. Useful in try/catch blocks
+   * Required when lock managing is done.
+   * Responsible for:
+   * - Release the lock in database (not critical. It will be expired eventually )
+   * - Cancel the lock daemon (CRITICAL. Otherwise it  will keep refreshing the lock making other Mongock process starved)
    */
   @Override
   public void close() {
