@@ -180,13 +180,13 @@ public class DefaultLockManager implements LockManager {
    */
   @Override
   public void close() {
-    if(lockDaemon != null) {
-      lockDaemon.cancel();
-    }
     releaseLockDefault();
   }
 
   private void releaseLock(String lockKey) {
+    if(lockDaemon != null) {
+      lockDaemon.cancel();
+    }
     if (this.lockExpiresAt == null) {
       return;
     }
