@@ -1,5 +1,6 @@
 package io.mongock.driver.core.lock;
 
+import io.mongock.driver.api.lock.LockCheckException;
 import io.mongock.driver.api.lock.LockManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -28,8 +29,15 @@ public class LockDaemon extends Thread {
     if(initialDelay > 0 ) {
       repose(initialDelay);
     }
+
     while(!cancelled) {
-      lockManager.ensureLockDefault();
+      try {
+        lockManager.ensureLockDefault();
+      } catch(Exception ex) {
+        logger.error("Error ensuring the lock at the lock daemon", ex);
+        cancelled = true;
+        break;
+      }
       repose(lockManager.getMillisUntilRefreshRequired());
     }
   }
