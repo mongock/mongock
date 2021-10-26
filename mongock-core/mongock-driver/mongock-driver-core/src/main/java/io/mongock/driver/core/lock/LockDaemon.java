@@ -40,6 +40,7 @@ public class LockDaemon extends Thread {
 
   private void repose(long timeForResting) {
     try {
+      logger.debug("...mongock lock daemon going to sleep: " + timeForResting + "ms");
       sleep(timeForResting);
     } catch (InterruptedException ex) {
       logger.warn("Interrupted exception ignored");
