@@ -19,7 +19,7 @@ public class LockDaemon extends Thread {
   }
 
   @Override
-  public void start() {
+  public void run() {
     logger.info("...starting mongock lock daemon");
     if(initialDelay > 0 ) {
       repose(initialDelay);
