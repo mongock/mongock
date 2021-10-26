@@ -10,7 +10,6 @@ public class LockDaemon extends Thread {
   private final LockManager lockManager;
   private final long initialDelay;
   private volatile boolean cancelled = false;
-  private volatile boolean started = false;
 
 
   public LockDaemon(LockManager lockManager) {
@@ -25,11 +24,12 @@ public class LockDaemon extends Thread {
 
   @Override
   public void start() {
+    logger.info("...starting mongock lock daemon");
     if(initialDelay > 0 ) {
       repose(initialDelay);
     }
     while(!cancelled) {
-      ensureLock();
+      lockManager.ensureLockDefault();
       repose(lockManager.getMillisUntilRefreshRequired());
     }
   }
@@ -43,11 +43,8 @@ public class LockDaemon extends Thread {
   }
 
   public void cancel() {
+    logger.info("...cancelling mongock lock daemon");
     cancelled = true;
-  }
-
-  private void ensureLock() {
-    lockManager.ensureLockDefault();
   }
 
 }

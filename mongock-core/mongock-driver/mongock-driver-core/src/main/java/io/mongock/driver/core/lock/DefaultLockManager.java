@@ -58,28 +58,28 @@ public class DefaultLockManager implements LockManager {
   /**
    * <p>The period of time for which the lock will be owned.</p>
    */
-  private long lockAcquiredForMillis = DEFAULT_LOCK_ACQUIRED_FOR_MILLIS;
+  private volatile long lockAcquiredForMillis = DEFAULT_LOCK_ACQUIRED_FOR_MILLIS;
 
   /**
    * <p>Milliseconds after which it will try to acquire the lock again<p/>
    */
-  private long lockTryFrequencyMillis = DEFAULT_TRY_FREQUENCY_MILLIS;
-
-  /**
-   * <p>Maximum time it will wait for the lock in total.</p>
-   */
-  private long lockQuitTryingAfterMillis = DEFAULT_QUIT_TRY_AFTER_MILLIS;
+  private volatile long lockTryFrequencyMillis = DEFAULT_TRY_FREQUENCY_MILLIS;
 
   /**
    * <p>The margin in which the lock should be refresh to avoid losing it</p>
    */
-  private long lockRefreshMarginMillis = DEFAULT_LOCK_REFRESH_MARGIN_MILLIS;
+  private volatile long lockRefreshMarginMillis = DEFAULT_LOCK_REFRESH_MARGIN_MILLIS;
 
 
   /**
    * Moment when will mandatory to acquire the lock again.
    */
-  private Date lockExpiresAt = null;
+  private volatile Date lockExpiresAt = null;
+
+  /**
+   * <p>Maximum time it will wait for the lock in total.</p>
+   */
+  private long lockQuitTryingAfterMillis = DEFAULT_QUIT_TRY_AFTER_MILLIS;
 
   /**
    * The instant the acquisition has shouldStopTryingAt
