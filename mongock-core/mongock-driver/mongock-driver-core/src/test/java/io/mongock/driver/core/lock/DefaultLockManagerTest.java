@@ -3,6 +3,7 @@ package io.mongock.driver.core.lock;
 import io.mongock.driver.api.lock.LockCheckException;
 import io.mongock.driver.api.lock.LockManager;
 import io.mongock.utils.TimeService;
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.ArgumentCaptor;
@@ -50,6 +51,11 @@ public class DefaultLockManagerTest {
         .setLockAcquiredForMillis(lockActiveMillis)
         .setLockQuitTryingAfterMillis(quitTryingAfterMillis)
         .setLockTryFrequencyMillis(tryFrequency);
+  }
+
+  @After
+  public void tearDown() {
+    lockManager.close();
   }
 
   @Test

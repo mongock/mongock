@@ -180,7 +180,9 @@ public class DefaultLockManager implements LockManager {
    */
   @Override
   public void close() {
-    lockDaemon.cancel();
+    if(lockDaemon != null) {
+      lockDaemon.cancel();
+    }
     releaseLockDefault();
   }
 
