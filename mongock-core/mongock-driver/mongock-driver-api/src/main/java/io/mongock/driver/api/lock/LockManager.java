@@ -1,7 +1,6 @@
 package io.mongock.driver.api.lock;
 
 import java.io.Closeable;
-import java.util.Date;
 
 
 public interface LockManager extends Closeable {
