@@ -1,6 +1,5 @@
 package io.mongock.driver.core.lock;
 
-import io.mongock.driver.api.lock.LockCheckException;
 import io.mongock.driver.api.lock.LockManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -13,7 +12,7 @@ public class LockDaemon extends Thread {
   private volatile boolean cancelled = false;
 
   public LockDaemon(LockManager lockManager, long initialDelay) {
-    setName("mongock-lock-keeper-daemon");
+    setName("mongock-lock-daemon");
     this.initialDelay = initialDelay;
     this.lockManager = lockManager;
     setDaemon(true);
