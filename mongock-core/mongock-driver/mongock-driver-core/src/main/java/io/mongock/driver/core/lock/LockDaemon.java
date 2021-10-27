@@ -14,14 +14,14 @@ public class LockDaemon extends Thread {
   private volatile boolean active = false;
 
   public LockDaemon(LockManager lockManager) {
-    setName("mongock-lock-daemon");
+    setName("mongock-lock-daemon-" + getId());
     this.lockManager = lockManager;
     setDaemon(true);
   }
 
   @Override
   public void run() {
-    logger.info("...starting mongock lock daemon");
+    logger.info("Starting mongock lock daemon...");
     while(!cancelled) {
       try {
         if(active) {
@@ -32,16 +32,17 @@ public class LockDaemon extends Thread {
         }
       } catch(Exception ex) {
         logger.error("Error ensuring the lock at the lock daemon", ex);
-        cancelled = true;
+        cancel();
         break;
       }
       repose(lockManager.getMillisUntilRefreshRequired());
     }
+    logger.info("Cancelled mongock lock daemon");
   }
 
   private void repose(long timeForResting) {
     try {
-      logger.debug("...mongock lock daemon going to sleep: " + timeForResting + "ms");
+      logger.debug("Mongock lock daemon going to sleep: " + timeForResting + "ms");
       sleep(timeForResting);
     } catch (InterruptedException ex) {
       logger.warn("Interrupted exception ignored");
@@ -49,12 +50,8 @@ public class LockDaemon extends Thread {
   }
 
   public void cancel() {
-    logger.info("...cancelling mongock lock daemon");
+    logger.info("Cancelling mongock lock daemon...");
     cancelled = true;
-  }
-
-  public boolean isCancelled() {
-    return cancelled;
   }
 
   public void activate() {
