@@ -4,16 +4,17 @@ import io.mongock.driver.api.lock.LockManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.time.LocalDateTime;
+
 public class LockDaemon extends Thread {
 
   private static final Logger logger = LoggerFactory.getLogger(LockDaemon.class);
   private final LockManager lockManager;
-  private final long initialDelay;
   private volatile boolean cancelled = false;
+  private volatile boolean active = false;
 
-  public LockDaemon(LockManager lockManager, long initialDelay) {
+  public LockDaemon(LockManager lockManager) {
     setName("mongock-lock-daemon");
-    this.initialDelay = initialDelay;
     this.lockManager = lockManager;
     setDaemon(true);
   }
@@ -21,13 +22,14 @@ public class LockDaemon extends Thread {
   @Override
   public void run() {
     logger.info("...starting mongock lock daemon");
-    if(initialDelay > 0 ) {
-      repose(initialDelay);
-    }
-
     while(!cancelled) {
       try {
-        lockManager.ensureLockDefault();
+        if(active) {
+          logger.debug("Mongock lock daemon ensuring lock");
+          lockManager.ensureLockDefault();
+        } else {
+          logger.debug("Mongock lock daemon in loop but not ensuring lock because it's been activated yet");
+        }
       } catch(Exception ex) {
         logger.error("Error ensuring the lock at the lock daemon", ex);
         cancelled = true;
@@ -53,6 +55,10 @@ public class LockDaemon extends Thread {
 
   public boolean isCancelled() {
     return cancelled;
+  }
+
+  public void activate() {
+    active = true;
   }
 
 }
