@@ -283,18 +283,11 @@ public class DefaultLockManager implements LockManager {
 
   @Override
   public long getMillisUntilRefreshRequired() {
-
-
     if (lockExpiresAt != null) {
       return lockExpiresAt.getTime() - timeUtils.currentTime().getTime() - lockRefreshMarginMillis;
     } else {
       return lockAcquiredForMillis - lockRefreshMarginMillis;
     }
-
-//    return lockExpiresAt != null
-//        ? lockExpiresAt.getTime() - timeUtils.currentTime().getTime() - lockRefreshMarginMillis
-//        : lockAcquiredForMillis - lockRefreshMarginMillis;
-
   }
 
   private boolean needsRefreshLock() {
