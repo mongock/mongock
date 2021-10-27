@@ -14,6 +14,7 @@ import org.bson.Document;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+import org.mockito.Mockito;
 
 import java.util.Date;
 
@@ -36,10 +37,13 @@ public abstract class MongoLockManagerITestBase extends IntegrationTestBase {
   public void setUp() {
     initializeRepository();
     TimeService timeUtils = new TimeService();
-    lockManager = new DefaultLockManager(repository, timeUtils)
+    lockManager = DefaultLockManager.builder()
+        .setLockRepository(repository)
+        .setTimeUtils( timeUtils)
         .setLockAcquiredForMillis(LOCK_ACQUIRED_FOR_MILLIS)
-        .setLockTryFrequencyMillis(LOCK_TRY_FRQUENCY_MILLIS)
-        .setLockQuitTryingAfterMillis(LOCK_QUIT_TRYING_AFTER_MILLIS);
+        .setLockQuitTryingAfterMillis(LOCK_TRY_FRQUENCY_MILLIS)
+        .setLockTryFrequencyMillis(LOCK_QUIT_TRYING_AFTER_MILLIS)
+        .build();
   }
 
   @After

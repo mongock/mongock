@@ -15,8 +15,6 @@ import java.util.UUID;
  * <p>This class is responsible of managing the lock at high level. It provides 3 main methods which are
  * for acquiring, ensuring(doesn't acquires the lock, just refresh the expiration time if required) and
  * releasing the lock.</p>
- * <p>Implementation note: This class is not thread safe. If in future development thread safety is needed, please consider
- * using volatile for expiresAt field and synchronized mechanism.</p>
  */
 @NotThreadSafe
 public class DefaultLockManager implements LockManager {
@@ -51,35 +49,43 @@ public class DefaultLockManager implements LockManager {
   private final String owner;
 
   /**
+   * Daemon that will ensure the lock in background.
+   */
+  private LockDaemon lockDaemon;
+
+  /**
    * <p>The period of time for which the lock will be owned.</p>
    */
-  private long lockAcquiredForMillis = DEFAULT_LOCK_ACQUIRED_FOR_MILLIS;
+  private final long lockAcquiredForMillis;
 
   /**
    * <p>Milliseconds after which it will try to acquire the lock again<p/>
    */
-  private long lockTryFrequencyMillis = DEFAULT_TRY_FREQUENCY_MILLIS;
-
-  /**
-   * <p>Maximum time it will wait for the lock in total.</p>
-   */
-  private long lockQuitTryingAfterMillis = DEFAULT_QUIT_TRY_AFTER_MILLIS;
+  private final long lockTryFrequencyMillis;
 
   /**
    * <p>The margin in which the lock should be refresh to avoid losing it</p>
    */
-  private long lockRefreshMarginMillis = DEFAULT_LOCK_REFRESH_MARGIN_MILLIS;
+  private final long lockRefreshMarginMillis;
+  /**
+   * <p>Maximum time it will wait for the lock in total.</p>
+   */
+  private final long lockQuitTryingAfterMillis;
 
 
   /**
    * Moment when will mandatory to acquire the lock again.
    */
-  private Date lockExpiresAt = null;
+  private volatile Date lockExpiresAt = null;
 
   /**
    * The instant the acquisition has shouldStopTryingAt
    */
-  private Instant shouldStopTryingAt;
+  private volatile Instant shouldStopTryingAt;
+
+  public static DefaultLockManagerBuilder builder() {
+    return new DefaultLockManagerBuilder();
+  }
 
   /**
    * Constructor takes some bean injections
@@ -88,9 +94,18 @@ public class DefaultLockManager implements LockManager {
    * @param timeUtils  time utils service
    */
   //TODO add lock configuration to constructor, make fields finals and move DEFAULTS away
-  public DefaultLockManager(LockRepository repository, TimeService timeUtils) {
+  public DefaultLockManager(LockRepository repository,
+                            TimeService timeUtils,
+                            long lockAcquiredForMillis,
+                            long lockQuitTryingAfterMillis,
+                            long lockTryFrequencyMillis,
+                            long lockRefreshMarginMillis) {
     this.repository = repository;
     this.timeUtils = timeUtils;
+    this.lockAcquiredForMillis = lockAcquiredForMillis;
+    this.lockQuitTryingAfterMillis = lockQuitTryingAfterMillis;
+    this.lockTryFrequencyMillis = lockTryFrequencyMillis;
+    this.lockRefreshMarginMillis = lockRefreshMarginMillis;
     this.owner = UUID.randomUUID().toString();//TODO reconsider this
   }
 
@@ -106,8 +121,7 @@ public class DefaultLockManager implements LockManager {
     acquireLock(getDefaultKey());
   }
 
-  private void acquireLock(String lockKey) {
-    startAcquisitionTimer();
+  private void acquireLock(String lockKey) throws LockCheckException {
     boolean keepLooping = true;
     do {
       try {
@@ -116,6 +130,7 @@ public class DefaultLockManager implements LockManager {
         repository.insertUpdate(new LockEntry(lockKey, LockStatus.LOCK_HELD.name(), owner, newLockExpiresAt));
         logger.info("Mongock acquired the lock until: {}", newLockExpiresAt);
         updateStatus(newLockExpiresAt);
+        lockDaemon.activate();
         keepLooping = false;
       } catch (LockPersistenceException ex) {
         handleLockException(true, ex);
@@ -134,8 +149,7 @@ public class DefaultLockManager implements LockManager {
     ensureLock(getDefaultKey());
   }
 
-  private void ensureLock(String lockKey) {
-    startAcquisitionTimer();
+  private void ensureLock(String lockKey) throws LockCheckException {
     boolean keepLooping = true;
     do {
       if (needsRefreshLock()) {
@@ -146,6 +160,7 @@ public class DefaultLockManager implements LockManager {
           repository.updateIfSameOwner(lockEntry);
           updateStatus(lockExpiresAtTemp);
           logger.info("Mongock refreshed the lock until: {}", lockExpiresAtTemp);
+          lockDaemon.activate();
           keepLooping = false;
         } catch (LockPersistenceException ex) {
           handleLockException(false, ex);
@@ -167,7 +182,10 @@ public class DefaultLockManager implements LockManager {
   }
 
   /**
-   * release the default lock. Useful in try/catch blocks
+   * Required when lock managing is done.
+   * Responsible for:
+   * - Release the lock in database (not critical. It will be expired eventually )
+   * - Cancel the lock daemon (CRITICAL. Otherwise it  will keep refreshing the lock making other Mongock process starved)
    */
   @Override
   public void close() {
@@ -175,6 +193,9 @@ public class DefaultLockManager implements LockManager {
   }
 
   private void releaseLock(String lockKey) {
+    if (lockDaemon != null) {
+      lockDaemon.cancel();
+    }
     if (this.lockExpiresAt == null) {
       return;
     }
@@ -185,53 +206,13 @@ public class DefaultLockManager implements LockManager {
     logger.info("Mongock released the lock");
   }
 
-  /**
-   * <p>If the flag 'waitForLog' is set, indicates the maximum time it will wait for the lock in each try.</p>
-   * <p>Default 3 minutes</p>
-   *
-   * @param millis max waiting time for lock. Must be greater than 0
-   * @return LockChecker object for fluent interface
-   */
-  public DefaultLockManager setLockQuitTryingAfterMillis(long millis) {
-    if (millis <= 0) {
-      throw new IllegalArgumentException("Lock-quit-trying-after must be grater than 0 ");
-    }
-    lockQuitTryingAfterMillis = millis;
-    return this;
-  }
 
   @Override
   public long getLockTryFrequency() {
     return lockTryFrequencyMillis;
   }
 
-  public DefaultLockManager setLockTryFrequencyMillis(long millis) {
-    if (millis < MINIMUM_WAITING_TO_TRY_AGAIN) {
-      throw new IllegalArgumentException(String.format("Lock-try-frequency must be grater than %d", MINIMUM_WAITING_TO_TRY_AGAIN));
-    }
-    lockTryFrequencyMillis = millis;
-    return this;
-  }
-
-  /**
-   * <p>Indicates the number of milliseconds the lock will be acquired for</p>
-   * <p>Minimum 3 seconds</p>
-   *
-   * @param millis milliseconds the lock will be acquired for
-   * @return LockChecker object for fluent interface
-   */
-  public DefaultLockManager setLockAcquiredForMillis(long millis) {
-    if (millis < MIN_LOCK_ACQUIRED_FOR_MILLIS) {
-      throw new IllegalArgumentException(String.format(EXPIRATION_ARG_ERROR_MSG, MIN_LOCK_ACQUIRED_FOR_MILLIS));
-    }
-    lockAcquiredForMillis = millis;
-    long marginTemp = (long) (lockAcquiredForMillis * LOCK_REFRESH_MARGIN_PERCENTAGE);
-    lockRefreshMarginMillis = marginTemp > MIN_LOCK_REFRESH_MARGIN_MILLIS ? marginTemp : MIN_LOCK_REFRESH_MARGIN_MILLIS;
-    return this;
-  }
-
   private void handleLockException(boolean acquiringLock, LockPersistenceException ex) {
-
     LockEntry currentLock = repository.findByKey(getDefaultKey());
 
     if (isAcquisitionTimerOver()) {
@@ -300,6 +281,22 @@ public class DefaultLockManager implements LockManager {
     repository.deleteAll();
   }
 
+  @Override
+  public long getMillisUntilRefreshRequired() {
+
+
+    if (lockExpiresAt != null) {
+      return lockExpiresAt.getTime() - timeUtils.currentTime().getTime() - lockRefreshMarginMillis;
+    } else {
+      return lockAcquiredForMillis - lockRefreshMarginMillis;
+    }
+
+//    return lockExpiresAt != null
+//        ? lockExpiresAt.getTime() - timeUtils.currentTime().getTime() - lockRefreshMarginMillis
+//        : lockAcquiredForMillis - lockRefreshMarginMillis;
+
+  }
+
   private boolean needsRefreshLock() {
 
     if (this.lockExpiresAt == null) {
@@ -316,18 +313,24 @@ public class DefaultLockManager implements LockManager {
   }
 
   /**
-   * idempotent operation to start the acquisition timer
+   * idempotent operation that
+   * - Starts the acquisition timer
+   * - Initializes and run the lock daemon.
    */
-  private synchronized void startAcquisitionTimer() {
+  protected void initialize() {
     if (shouldStopTryingAt == null) {
       shouldStopTryingAt = timeUtils.nowPlusMillis(lockQuitTryingAfterMillis);
+    }
+    if (lockDaemon == null) {
+      lockDaemon = new LockDaemon(this);
+      lockDaemon.start();
     }
   }
 
   /**
    * idempotent operation to start the acquisition timer
    */
-  private synchronized void finishAcquisitionTimer() {
+  private void finishAcquisitionTimer() {
     shouldStopTryingAt = null;
   }
 
@@ -336,4 +339,87 @@ public class DefaultLockManager implements LockManager {
     return timeUtils.isPast(shouldStopTryingAt);
   }
 
+
+  public static class DefaultLockManagerBuilder {
+
+    private LockRepository lockRepository;
+    private long lockAcquiredForMillis = DEFAULT_LOCK_ACQUIRED_FOR_MILLIS;
+    private long lockTryFrequencyMillis = DEFAULT_TRY_FREQUENCY_MILLIS;
+    private long lockRefreshMarginMillis = DEFAULT_LOCK_REFRESH_MARGIN_MILLIS;
+    private long lockQuitTryingAfterMillis = DEFAULT_QUIT_TRY_AFTER_MILLIS;
+    private TimeService timeService = new TimeService();
+
+    public DefaultLockManagerBuilder() {
+    }
+
+    /**
+     * <p>If the flag 'waitForLog' is set, indicates the maximum time it will wait for the lock in total.</p>
+     *
+     * @param millis max waiting time for lock. Must be greater than 0
+     * @return LockChecker object for fluent interface
+     */
+    public DefaultLockManagerBuilder setLockQuitTryingAfterMillis(long millis) {
+      if (millis <= 0) {
+        throw new IllegalArgumentException("Lock-quit-trying-after must be grater than 0 ");
+      }
+      lockQuitTryingAfterMillis = millis;
+      return this;
+    }
+
+    /**
+     * <p>Updates the maximum number of tries to acquire the lock, if the flag 'waitForLog' is set </p>
+     * <p>Default 1</p>
+     *
+     * @param millis number of tries
+     * @return LockChecker object for fluent interface
+     */
+    public DefaultLockManagerBuilder setLockTryFrequencyMillis(long millis) {
+      if (millis < MINIMUM_WAITING_TO_TRY_AGAIN) {
+        throw new IllegalArgumentException(String.format("Lock-try-frequency must be grater than %d", MINIMUM_WAITING_TO_TRY_AGAIN));
+      }
+      lockTryFrequencyMillis = millis;
+      return this;
+    }
+
+    /**
+     * <p>Indicates the number of milliseconds the lock will be acquired for</p>
+     * <p>Minimum 3 seconds</p>
+     *
+     * @param millis milliseconds the lock will be acquired for
+     * @return LockChecker object for fluent interface
+     */
+    public DefaultLockManagerBuilder setLockAcquiredForMillis(long millis) {
+      if (millis < MIN_LOCK_ACQUIRED_FOR_MILLIS) {
+        throw new IllegalArgumentException(String.format(EXPIRATION_ARG_ERROR_MSG, MIN_LOCK_ACQUIRED_FOR_MILLIS));
+      }
+      lockAcquiredForMillis = millis;
+      long marginTemp = (long) (lockAcquiredForMillis * LOCK_REFRESH_MARGIN_PERCENTAGE);
+      lockRefreshMarginMillis = Math.max(marginTemp, MIN_LOCK_REFRESH_MARGIN_MILLIS);
+      return this;
+    }
+
+    public DefaultLockManagerBuilder setLockRepository(LockRepository lockRepository) {
+      this.lockRepository = lockRepository;
+      return this;
+    }
+
+    public DefaultLockManagerBuilder setTimeUtils(TimeService timeService) {
+      this.timeService = timeService;
+      return this;
+    }
+
+    public DefaultLockManager build() {
+      DefaultLockManager lockManager = new DefaultLockManager(
+          lockRepository,
+          timeService,
+          lockAcquiredForMillis,
+          lockQuitTryingAfterMillis,
+          lockTryFrequencyMillis,
+          lockRefreshMarginMillis);
+      lockManager.initialize();
+      return lockManager;
+    }
+
+
+  }
 }

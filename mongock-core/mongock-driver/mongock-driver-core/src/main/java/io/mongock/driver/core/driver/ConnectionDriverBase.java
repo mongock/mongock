@@ -40,10 +40,12 @@ public abstract class ConnectionDriverBase<CHANGE_ENTRY extends ChangeEntry> imp
       LockRepository lockRepository = this.getLockRepository();
       lockRepository.setIndexCreation(isIndexCreation());
       lockRepository.initialize();
-      lockManager = new DefaultLockManager(lockRepository, TIME_SERVICE)
+      lockManager = DefaultLockManager.builder()
+          .setLockRepository(lockRepository)
           .setLockAcquiredForMillis(lockAcquiredForMillis)
           .setLockQuitTryingAfterMillis(lockQuitTryingAfterMillis)
-          .setLockTryFrequencyMillis(lockTryFrequencyMillis);
+          .setLockTryFrequencyMillis(lockTryFrequencyMillis)
+          .build();
       ChangeEntryService<CHANGE_ENTRY> changeEntryService = getChangeEntryService();
       changeEntryService.setIndexCreation(isIndexCreation());
       changeEntryService.initialize();
