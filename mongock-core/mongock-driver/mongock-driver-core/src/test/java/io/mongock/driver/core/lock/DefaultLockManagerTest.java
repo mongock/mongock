@@ -92,6 +92,27 @@ public class DefaultLockManagerTest {
     verify(lockManagerSpy, new AtMost(5)).ensureLockDefault();
   }
 
+  @Test
+  public void shouldRefresh_InBackground_AfterManagerIsClosed() throws InterruptedException {
+    when(timeUtils.currentTime()).thenReturn(new Date(40000L));// Exactly the expiration time(minus margin)
+
+    DefaultLockManager lockManager = new DefaultLockManager(
+        lockRepository,
+        timeUtils,
+        3000L,
+        quitTryingAfterMillis,
+        tryFrequency,
+        2000L);
+
+    DefaultLockManager lockManagerSpy = Mockito.spy(lockManager);
+    lockManagerSpy.initialize();
+    lockManagerSpy.acquireLockDefault();
+    lockManagerSpy.close();
+    Thread.sleep(7000L);
+
+    verify(lockManagerSpy, new Times(0)).ensureLockDefault();
+  }
+
 
   @Test
   public void shouldRetrieveLock_WhenAcquireLock() throws LockPersistenceException, LockCheckException {
