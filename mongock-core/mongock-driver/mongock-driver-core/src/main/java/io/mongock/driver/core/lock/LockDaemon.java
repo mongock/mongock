@@ -4,8 +4,6 @@ import io.mongock.driver.api.lock.LockManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.time.LocalDateTime;
-
 public class LockDaemon extends Thread {
 
   private static final Logger logger = LoggerFactory.getLogger(LockDaemon.class);

@@ -57,7 +57,7 @@ public class DefaultLockManagerTest {
   private void setLockManager(long lockActiveMillis, long quitTryingAfterMillis, long tryFrequency) {
     lockManager = DefaultLockManager.builder()
         .setLockRepository(lockRepository)
-        .setTimeUtils( timeUtils)
+        .setTimeUtils(timeUtils)
         .setLockAcquiredForMillis(lockActiveMillis)
         .setLockQuitTryingAfterMillis(quitTryingAfterMillis)
         .setLockTryFrequencyMillis(tryFrequency)
@@ -66,7 +66,7 @@ public class DefaultLockManagerTest {
 
   @After
   public void tearDown() {
-    if(lockManager != null) {
+    if (lockManager != null) {
       lockManager.close();
     }
   }
