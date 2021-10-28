@@ -4,7 +4,7 @@
   <parent>
     <groupId>io.mongock</groupId>
     <artifactId>mongock-core</artifactId>
-    <version>5.0.21.RC-SNAPSHOT</version>
+    <version>5.0.22.RC-SNAPSHOT</version>
   </parent>
   <modelVersion>4.0.0</modelVersion>
 

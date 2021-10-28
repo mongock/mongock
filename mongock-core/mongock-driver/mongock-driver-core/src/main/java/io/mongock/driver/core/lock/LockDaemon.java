@@ -30,10 +30,13 @@ public class LockDaemon extends Thread {
         }
       } catch(Exception ex) {
         logger.error("Error ensuring the lock at the lock daemon", ex);
-        cancel();
-        break;
+        return;
       }
       repose(lockManager.getMillisUntilRefreshRequired());
+    }
+    if(cancelled) {
+      logger.info("Cancelling mongock lock daemon: Releasing lock(if taken)...");
+      lockManager.releaseLockDefault();
     }
     logger.info("Cancelled mongock lock daemon");
   }
@@ -47,6 +50,9 @@ public class LockDaemon extends Thread {
     }
   }
 
+  /**
+   * indempotent cancellation
+   */
   public void cancel() {
     logger.info("Cancelling mongock lock daemon...");
     cancelled = true;

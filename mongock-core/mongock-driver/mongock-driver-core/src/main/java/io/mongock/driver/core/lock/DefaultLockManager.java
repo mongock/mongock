@@ -192,7 +192,7 @@ public class DefaultLockManager implements LockManager {
     releaseLockDefault();
   }
 
-  private void releaseLock(String lockKey) {
+  private synchronized void releaseLock(String lockKey) {
     if (lockDaemon != null) {
       lockDaemon.cancel();
     }
