@@ -15,13 +15,7 @@ MongoDB version control tool for Java
 [![Hex.pm](https://img.shields.io/hexpm/l/plug.svg)](https://github.com/dieppa/mongock/blob/master/LICENSE)
 
 
-<script>
-function hello() {
-alert("hello!");    
-}
-</script>
-
- <button onclick="hello()">Click me</button>
+<p onClick="(function(){alert('Hey i am calling');return false;})();return false;">click here</p>
 
     
 **Mongock** is a Java based migration tool as part of your application code. It allows developers to have ownership and control over data migrations during the deployment process, allowing safer migrations in distributed systems as code and data changes are shipped together.  
