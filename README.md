@@ -44,4 +44,4 @@ Mongock propject is licensed under the [Apache License Version 2.0][apacheLicens
 [apacheLicense]: http://www.apache.org/licenses/LICENSE-2.0.html
 [JHipster]: https://www.jhipster.tech/
 [documentation_link]: https://www.mongock.io/
-[github_releases]: https://github.com/cloudyrock/mongock/releases
+[github_releases]: https://github.com/mongock/mongock/releases
