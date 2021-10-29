@@ -2,7 +2,7 @@
     <img src="https://raw.githubusercontent.com/mongock/mongock/master/misc/logo-with-title.png" width="100%" />
 </p>
 <h3 align="center" style="vertical-align: top;">
-MongoDB version control tool for Java
+lightweight Java based migration tool
 </h4>
 <br />
 <p align="center" >
