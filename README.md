@@ -12,8 +12,8 @@ MongoDB version control tool for Java
 ![Build](https://github.com/mongock/mongock/workflows/Build/badge.svg)
 [![Hex.pm](https://img.shields.io/hexpm/l/plug.svg)](https://github.com/dieppa/mongock/blob/master/LICENSE)
 
-[![Bugs](https://sonarcloud.io/api/project_badges/measure?project=com.cloudyrock.mongock&metric=bugs)](https://sonarcloud.io/component_measures?id=com.cloudyrock.mongock&metric=bugs)
-[![Vulnerabilities](https://sonarcloud.io/api/project_badges/measure?project=com.cloudyrock.mongock&metric=vulnerabilities)](https://sonarcloud.io/component_measures?id=com.cloudyrock.mongock&metric=vulnerabilities)
+[![Bugs](https://sonarcloud.io/api/project_badges/measure?project=com.github.cloudyrock.mongock&metric=bugs)](https://sonarcloud.io/component_measures?id=com.github.cloudyrock.mongock&metric=bugs)
+[![Vulnerabilities](https://sonarcloud.io/api/project_badges/measure?project=com.github.cloudyrock.mongock&metric=vulnerabilities)](https://sonarcloud.io/component_measures?id=com.github.cloudyrock.mongock&metric=vulnerabilities)
     
 
     
