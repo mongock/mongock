@@ -10,9 +10,13 @@ MongoDB version control tool for Java
 [![Maven Central](https://maven-badges.herokuapp.com/maven-central/io.mongock/mongock/badge.png)](https://search.maven.org/artifact/io.mongock/mongock)
 [![Codacy Badge](https://api.codacy.com/project/badge/Grade/5f9459fc702a4ee389071f77cec97a38)](https://app.codacy.com/gh/mongock/mongock?utm_source=github.com&utm_medium=referral&utm_content=mongock/mongock&utm_campaign=Badge_Grade)
 ![Build](https://github.com/mongock/mongock/workflows/Build/badge.svg)
-//[![Bugs](https://sonarcloud.io/api/project_badges/measure?project=io.mongock&metric=bugs)](https://sonarcloud.io/component_measures?id=io.mongock&metric=bugs)
-//[![Vulnerabilities](https://sonarcloud.io/api/project_badges/measure?project=io.mongock&metric=vulnerabilities)](https://sonarcloud.io/component_measures?id=io.mongock&metric=vulnerabilities)
 [![Hex.pm](https://img.shields.io/hexpm/l/plug.svg)](https://github.com/dieppa/mongock/blob/master/LICENSE)
+
+[![Bugs](https://sonarcloud.io/api/project_badges/measure?project=com.cloudyrock.mongock&metric=bugs)](https://sonarcloud.io/component_measures?id=com.cloudyrock.mongock&metric=bugs)
+[![Vulnerabilities](https://sonarcloud.io/api/project_badges/measure?project=com.cloudyrock.mongock&metric=vulnerabilities)](https://sonarcloud.io/component_measures?id=com.cloudyrock.mongock&metric=vulnerabilities)
+    
+
+    
     
 **Mongock** is a Java based migration tool as part of your application code. It allows developers to have ownership and control over data migrations during the deployment process, allowing safer migrations in distributed systems as code and data changes are shipped together.  
 
