@@ -13,15 +13,11 @@ MongoDB version control tool for Java
 [![Bugs](https://sonarcloud.io/api/project_badges/measure?project=com.github.cloudyrock.mongock&metric=bugs)](https://sonarcloud.io/component_measures?id=com.github.cloudyrock.mongock&metric=bugs)
 [![Vulnerabilities](https://sonarcloud.io/api/project_badges/measure?project=com.github.cloudyrock.mongock&metric=vulnerabilities)](https://sonarcloud.io/component_measures?id=com.github.cloudyrock.mongock&metric=vulnerabilities)
 [![Hex.pm](https://img.shields.io/hexpm/l/plug.svg)](https://github.com/dieppa/mongock/blob/master/LICENSE)
-
-
-<p onClick="(function(){alert('Hey i am calling');return false;})();return false;">click here</p>
-
     
 **Mongock** is a Java based migration tool as part of your application code. It allows developers to have ownership and control over data migrations during the deployment process, allowing safer migrations in distributed systems as code and data changes are shipped together.  
 
 ## Documentation
-The official documentation can be found [here][documentation_link]. 
+The official documentation can be found [here][documentation_link]. You can find here all the documentation from version 3.
 
 ## Examples
 [Mongock examples](https://github.com/cloudyrock/mongock-examples)
@@ -29,12 +25,9 @@ The official documentation can be found [here][documentation_link].
 ## Changelog
 To see our changelog, please take a look to  our [github releases][github_releases]
 
-## Old versions
+## Older versions support
 With new major releases, like now with version 4, we stop enhancing or adding new features to older version(like version 3).
 However, we'll keep providing support and bug fixes for a long period. We are working on an official support plan.
-
-If you are still working with version 3, we suggest you to upgrade to the last version, otherwise you can see the old documentation 
-in [here][documentation_v3] 
 
 ## Contributing
 If you would like to contribute to Mongock project, please read [how to contribute][contributing] for details on our collaboration process and standards.
