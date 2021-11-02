@@ -7,7 +7,7 @@ import io.mongock.driver.mongodb.v3.MongoDb3DriverTestAdapterImpl;
 public class Mongo3LockManagerITest extends MongoLockManagerITestBase {
 
   protected void initializeRepository() {
-    repository = new Mongo3LockRepository(getDataBase().getCollection(LOCK_COLLECTION_NAME), true);
+    repository = new Mongo3LockRepository(getDataBase().getCollection(LOCK_COLLECTION_NAME));
     repository.setIndexCreation(true);
     repository.initialize();
   }

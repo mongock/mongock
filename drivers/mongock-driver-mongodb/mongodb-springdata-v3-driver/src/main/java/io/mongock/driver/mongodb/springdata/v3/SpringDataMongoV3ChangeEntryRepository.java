@@ -15,15 +15,12 @@ public class SpringDataMongoV3ChangeEntryRepository<CHANGE_ENTRY extends ChangeE
 
   private final MongoTemplate mongoTemplate;
 
-  public SpringDataMongoV3ChangeEntryRepository(MongoTemplate mongoTemplate, String collectionName, boolean indexCreation) {
-    this(mongoTemplate, collectionName, indexCreation, ReadWriteConfiguration.getDefault());
+  public SpringDataMongoV3ChangeEntryRepository(MongoTemplate mongoTemplate, String collectionName) {
+    this(mongoTemplate, collectionName, ReadWriteConfiguration.getDefault());
   }
 
-  public SpringDataMongoV3ChangeEntryRepository(MongoTemplate mongoTemplate,
-                                                String collectionName,
-                                                boolean indexCreation,
-                                                ReadWriteConfiguration readWriteConfiguration) {
-    super(mongoTemplate.getCollection(collectionName), indexCreation, readWriteConfiguration);
+  public SpringDataMongoV3ChangeEntryRepository(MongoTemplate mongoTemplate, String collectionName, ReadWriteConfiguration readWriteConfiguration) {
+    super(mongoTemplate.getCollection(collectionName), readWriteConfiguration);
     this.mongoTemplate = mongoTemplate;
   }
 

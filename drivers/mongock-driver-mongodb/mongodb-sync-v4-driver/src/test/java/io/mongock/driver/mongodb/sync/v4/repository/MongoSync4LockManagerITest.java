@@ -7,7 +7,7 @@ import io.mongock.driver.mongodb.test.template.util.MongoDBDriverTestAdapter;
 public class MongoSync4LockManagerITest extends MongoLockManagerITestBase {
 
   protected void initializeRepository() {
-    repository = new MongoSync4LockRepository(getDataBase().getCollection(LOCK_COLLECTION_NAME), true);
+    repository = new MongoSync4LockRepository(getDataBase().getCollection(LOCK_COLLECTION_NAME));
     repository.setIndexCreation(true);
     repository.initialize();
   }

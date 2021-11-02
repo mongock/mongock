@@ -82,6 +82,7 @@ public class ConnectionDriverBaseTest {
 
     @Override
     public ChangeEntryService<ChangeEntry> getChangeEntryService() {
+      changeEntryService.setIndexCreation(isIndexCreation());
       return changeEntryService;
     }
 

@@ -22,20 +22,18 @@ public  abstract class Mongo3RepositoryBase<DOMAIN_CLASS> implements EntityRepos
   private final static int INDEX_ENSURE_MAX_TRIES = 3;
 
   private final String[] uniqueFields;
-  private boolean indexCreation;
+  private boolean indexCreation = true;
   private boolean ensuredCollectionIndex = false;
   protected MongoCollection<Document> collection;
 
   public Mongo3RepositoryBase(MongoCollection<Document> collection,
                               String[] uniqueFields,
-                              boolean indexCreation,
                               ReadWriteConfiguration readWriteConfiguration) {
     this.collection = collection
         .withReadConcern(readWriteConfiguration.getReadConcern())
         .withReadPreference(readWriteConfiguration.getReadPreference())
         .withWriteConcern(readWriteConfiguration.getWriteConcern());
     this.uniqueFields = uniqueFields;
-//    this.indexCreation = indexCreation;
   }
 
   @Override
