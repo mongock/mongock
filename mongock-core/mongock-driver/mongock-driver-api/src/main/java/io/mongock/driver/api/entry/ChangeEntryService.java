@@ -4,7 +4,11 @@ import io.mongock.api.exception.MongockException;
 import io.mongock.driver.api.common.RepositoryIndexable;
 import io.mongock.utils.Process;
 
+import java.util.Collection;
+import java.util.Comparator;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 
 public interface ChangeEntryService<CHANGE_ENTRY extends ChangeEntry> extends RepositoryIndexable, Process {
@@ -26,7 +30,25 @@ public interface ChangeEntryService<CHANGE_ENTRY extends ChangeEntry> extends Re
    * @return list of current executed entries ordered by execution timestamp
    * @throws MongockException 
    */
-  List<ExecutedChangeEntry> getExecuted() throws MongockException;
+  default List<ExecutedChangeEntry> getExecuted() throws MongockException {
+    return getAll()
+        .stream()
+        .collect(Collectors.groupingBy(ChangeEntry::getChangeId))//Maps of List<ChangeEntry>, indexed by changeId
+        .values()//collection of List<ChangeEntry>
+        .stream()
+        .peek(duplicatedEntries -> duplicatedEntries.sort((c1, c2) -> c2.getTimestamp().compareTo(c1.getTimestamp())))//sorts each list in the map by date in reverse
+        .map(duplicatedEntries-> duplicatedEntries.get(0))//transform each list in a single ChangeEntry. The first one
+        .sorted(Comparator.comparing(ChangeEntry::getTimestamp))// Sorts the resulting list chronologically
+        .map(ExecutedChangeEntry::new)//transform the entry to an executed entry
+        .collect(Collectors.toList());
+  }
+
+  /**
+   * Returns all the changeEntries
+   * @return
+   */
+  List<CHANGE_ENTRY> getAll();
+
 
   /**
    * If there is already an ChangeEntry the same executionId, id and author, it will be updated. Otherwise,

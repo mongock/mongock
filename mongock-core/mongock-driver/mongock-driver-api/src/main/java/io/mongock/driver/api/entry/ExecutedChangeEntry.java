@@ -26,6 +26,9 @@ public class ExecutedChangeEntry {
     this.changeLogClass = changeLogClass;
     this.changeSetMethod = changeSetMethod;
   }
+  public ExecutedChangeEntry(ChangeEntry entry) {
+    this(entry.getChangeId(), entry.getAuthor(), entry.getTimestamp(), entry.getChangeLogClass(), entry.getChangeSetMethod());
+  }
 
   public String getChangeId() {
     return this.changeId;
