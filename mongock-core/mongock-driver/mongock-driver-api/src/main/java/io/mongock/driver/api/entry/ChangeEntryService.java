@@ -8,9 +8,11 @@ import java.util.Collection;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 import static io.mongock.driver.api.entry.ChangeState.EXECUTED;
+import static io.mongock.driver.api.entry.ChangeState.ROLLED_BACK;
 
 
 public interface ChangeEntryService<CHANGE_ENTRY extends ChangeEntry> extends RepositoryIndexable, Process {
@@ -33,14 +35,18 @@ public interface ChangeEntryService<CHANGE_ENTRY extends ChangeEntry> extends Re
    * @throws MongockException 
    */
   default List<ExecutedChangeEntry> getExecuted() throws MongockException {
+
+    Predicate<CHANGE_ENTRY> filterState = entry -> entry.getState() == null || entry.getState() == EXECUTED || entry.getState() == ROLLED_BACK;
+
     return getAll()
         .stream()
         .collect(Collectors.groupingBy(ChangeEntry::getChangeId))//Maps of List<ChangeEntry>, indexed by changeId
         .values()//collection of List<ChangeEntry>
         .stream()
         .peek(duplicatedEntries -> duplicatedEntries.sort((c1, c2) -> c2.getTimestamp().compareTo(c1.getTimestamp())))//sorts each list in the map by date in reverse
+        .map(duplicatedEntries -> duplicatedEntries.stream().filter(filterState).collect(Collectors.toList()))//only takes into account executed or rolled back
         .map(duplicatedEntries-> duplicatedEntries.get(0))//transform each list in a single ChangeEntry. The first one
-        .filter(entry -> EXECUTED == entry.getState())//only gets the ones that are executed
+        .filter(entry -> entry.getState() == null || entry.getState() == EXECUTED)//only gets the ones that are executed
         .sorted(Comparator.comparing(ChangeEntry::getTimestamp))// Sorts the resulting list chronologically
         .map(ExecutedChangeEntry::new)//transform the entry to an executed entry
         .collect(Collectors.toList());
