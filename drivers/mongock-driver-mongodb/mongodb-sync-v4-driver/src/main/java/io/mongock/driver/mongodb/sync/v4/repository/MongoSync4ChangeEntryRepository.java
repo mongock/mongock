@@ -130,6 +130,12 @@ public class MongoSync4ChangeEntryRepository<CHANGE_ENTRY extends ChangeEntry> e
                      .collect(Collectors.toList());
   }
 
+  @Override
+  public List<CHANGE_ENTRY> getAll() {
+    throw  new UnsupportedOperationException("GetAll not implemented yet");
+  }
+
+
   public void setClientSession(ClientSession clientSession) {
     this.clientSession = clientSession;
   }
