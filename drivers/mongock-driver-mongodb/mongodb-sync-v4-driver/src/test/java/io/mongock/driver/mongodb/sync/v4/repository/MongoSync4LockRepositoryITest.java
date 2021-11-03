@@ -42,7 +42,10 @@ public class MongoSync4LockRepositoryITest extends MongoLockRepositoryITestBase 
 
     // given
     //TODO remove this. Already done in initializeRepository()
-    repository = Mockito.spy(new MongoSync4LockRepository(getDataBase().getCollection(LOCK_COLLECTION_NAME), true));
+    MongoSync4LockRepository repo = new MongoSync4LockRepository(getDataBase().getCollection(LOCK_COLLECTION_NAME));
+    repo.setIndexCreation(true);
+    repository = Mockito.spy(repo);
+
 
     doReturn(true).when((MongoSync4LockRepository)repository).isUniqueIndex(any(Document.class));
 
@@ -78,9 +81,9 @@ public class MongoSync4LockRepositoryITest extends MongoLockRepositoryITestBase 
   private void testReadWriteConcern(WriteConcern expectedWriteConcern, ReadConcern expectedReadConcern, ReadPreference expectedReadPreference, ReadWriteConfiguration readWriteConfiguration) {
     MongoSync4LockRepository repo;
     if(readWriteConfiguration != null) {
-      repo = new MongoSync4LockRepository(getDataBase().getCollection(LOCK_COLLECTION_NAME), true, readWriteConfiguration);
+      repo = new MongoSync4LockRepository(getDataBase().getCollection(LOCK_COLLECTION_NAME), readWriteConfiguration);
     } else {
-      repo = new MongoSync4LockRepository(getDataBase().getCollection(LOCK_COLLECTION_NAME), true);
+      repo = new MongoSync4LockRepository(getDataBase().getCollection(LOCK_COLLECTION_NAME));
     }
     MongoCollection collection = RepositoryAccessorHelper.getCollection(repo);
     Assert.assertEquals(expectedWriteConcern, collection.getWriteConcern());
@@ -90,7 +93,7 @@ public class MongoSync4LockRepositoryITest extends MongoLockRepositoryITestBase 
 
   @Override
   protected void initializeRepository() {
-    MongoSync4LockRepository repo = new MongoSync4LockRepository(getDataBase().getCollection(LOCK_COLLECTION_NAME), true);
+    MongoSync4LockRepository repo = new MongoSync4LockRepository(getDataBase().getCollection(LOCK_COLLECTION_NAME));
     repo.setIndexCreation(true);
     repository = Mockito.spy(repo);
     repository.initialize();

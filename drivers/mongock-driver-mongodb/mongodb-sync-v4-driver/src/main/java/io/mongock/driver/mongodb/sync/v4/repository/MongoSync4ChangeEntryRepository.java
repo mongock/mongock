@@ -5,6 +5,7 @@ import io.mongock.driver.api.entry.ChangeState;
 import io.mongock.driver.api.entry.ExecutedChangeEntry;
 import io.mongock.driver.core.entry.ChangeEntryRepositoryWithEntity;
 import io.mongock.api.exception.MongockException;
+
 import com.mongodb.client.ClientSession;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.model.Accumulators;
@@ -13,10 +14,11 @@ import com.mongodb.client.model.Filters;
 import com.mongodb.client.model.Projections;
 import com.mongodb.client.model.Sorts;
 import com.mongodb.client.model.UpdateOptions;
-import com.mongodb.client.result.InsertOneResult;
 import com.mongodb.client.result.UpdateResult;
 import org.bson.Document;
 import org.bson.conversions.Bson;
+
+import com.mongodb.client.result.InsertOneResult;
 
 import java.lang.reflect.Field;
 import java.util.ArrayList;
@@ -71,15 +73,12 @@ public class MongoSync4ChangeEntryRepository<CHANGE_ENTRY extends ChangeEntry> e
     }
   }
 
-  //todo remove indexCreation from all repositories. It's already set in with the setter in the driver initialization
-  public MongoSync4ChangeEntryRepository(MongoCollection<Document> collection, boolean indexCreation) {
-    this(collection, indexCreation, ReadWriteConfiguration.getDefault());
+  public MongoSync4ChangeEntryRepository(MongoCollection<Document> collection) {
+    this(collection, ReadWriteConfiguration.getDefault());
   }
 
-  public MongoSync4ChangeEntryRepository(MongoCollection<Document> collection,
-                                         boolean indexCreation,
-                                         ReadWriteConfiguration readWriteConfiguration) {
-    super(collection, new String[]{KEY_EXECUTION_ID, KEY_AUTHOR, KEY_CHANGE_ID}, indexCreation, readWriteConfiguration);
+  public MongoSync4ChangeEntryRepository(MongoCollection<Document> collection, ReadWriteConfiguration readWriteConfiguration) {
+    super(collection, new String[]{KEY_EXECUTION_ID, KEY_AUTHOR, KEY_CHANGE_ID}, readWriteConfiguration);
   }
 
   @Override
@@ -130,6 +129,12 @@ public class MongoSync4ChangeEntryRepository<CHANGE_ENTRY extends ChangeEntry> e
                                                            entry.getString(KEY_CHANGESET_METHOD)))
                      .collect(Collectors.toList());
   }
+
+  @Override
+  public List<CHANGE_ENTRY> getAll() {
+    throw  new UnsupportedOperationException("GetAll not implemented yet");
+  }
+
 
   public void setClientSession(ClientSession clientSession) {
     this.clientSession = clientSession;

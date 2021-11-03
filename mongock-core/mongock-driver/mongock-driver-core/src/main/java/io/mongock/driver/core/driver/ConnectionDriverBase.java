@@ -38,7 +38,6 @@ public abstract class ConnectionDriverBase<CHANGE_ENTRY extends ChangeEntry> imp
     if (!initialized) {
       initialized = true;
       LockRepository lockRepository = this.getLockRepository();
-      lockRepository.setIndexCreation(isIndexCreation());
       lockRepository.initialize();
       lockManager = DefaultLockManager.builder()
           .setLockRepository(lockRepository)
@@ -47,7 +46,6 @@ public abstract class ConnectionDriverBase<CHANGE_ENTRY extends ChangeEntry> imp
           .setLockTryFrequencyMillis(lockTryFrequencyMillis)
           .build();
       ChangeEntryService<CHANGE_ENTRY> changeEntryService = getChangeEntryService();
-      changeEntryService.setIndexCreation(isIndexCreation());
       changeEntryService.initialize();
       specificInitialization();
     }

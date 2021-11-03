@@ -100,7 +100,8 @@ public abstract class MongoSync4DriverGeneric<CHANGE_ENTRY extends ChangeEntry> 
   protected LockRepositoryWithEntity getLockRepository() {
     if (lockRepository == null) {
       MongoCollection<Document> collection = mongoDatabase.getCollection(lockCollectionName);
-      this.lockRepository = new MongoSync4LockRepository(collection, isIndexCreation(), getReadWriteConfiguration());
+      lockRepository = new MongoSync4LockRepository(collection, getReadWriteConfiguration());
+      lockRepository.setIndexCreation(isIndexCreation());
     }
     return lockRepository;
   }
@@ -108,7 +109,8 @@ public abstract class MongoSync4DriverGeneric<CHANGE_ENTRY extends ChangeEntry> 
   @Override
   public ChangeEntryService<CHANGE_ENTRY> getChangeEntryService() {
     if (changeEntryRepository == null) {
-      this.changeEntryRepository = new MongoSync4ChangeEntryRepository<>(mongoDatabase.getCollection(changeLogCollectionName), isIndexCreation(), getReadWriteConfiguration());
+      changeEntryRepository = new MongoSync4ChangeEntryRepository<>(mongoDatabase.getCollection(changeLogCollectionName), getReadWriteConfiguration());
+      changeEntryRepository.setIndexCreation(isIndexCreation());
     }
     return changeEntryRepository;
   }

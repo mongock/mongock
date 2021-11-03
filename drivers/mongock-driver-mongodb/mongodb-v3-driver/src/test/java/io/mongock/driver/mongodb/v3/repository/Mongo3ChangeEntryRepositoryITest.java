@@ -19,7 +19,7 @@ public class Mongo3ChangeEntryRepositoryITest extends MongoChangeEntryRepository
 
 
   protected void initializeRepository(boolean indexCreation) {
-    Mongo3ChangeEntryRepository<ChangeEntry> repo = new Mongo3ChangeEntryRepository<>(getDataBase().getCollection(CHANGELOG_COLLECTION_NAME), indexCreation);
+    Mongo3ChangeEntryRepository<ChangeEntry> repo = new Mongo3ChangeEntryRepository<>(getDataBase().getCollection(CHANGELOG_COLLECTION_NAME));
     repo.setIndexCreation(indexCreation);
     repository = Mockito.spy(repo);
     repository.initialize();
@@ -39,7 +39,7 @@ public class Mongo3ChangeEntryRepositoryITest extends MongoChangeEntryRepository
   public void shouldNoCreateUniqueIndex_whenEnsureIndex_IfAlreadyCreated() throws MongockException {
     initializeRepository(true);
     // given
-    repository = Mockito.spy(new Mongo3ChangeEntryRepository(getDataBase().getCollection(CHANGELOG_COLLECTION_NAME), true));
+    repository = Mockito.spy(new Mongo3ChangeEntryRepository(getDataBase().getCollection(CHANGELOG_COLLECTION_NAME)));
 
     doReturn(true).when((Mongo3ChangeEntryRepository)repository).isUniqueIndex(any(Document.class));
 

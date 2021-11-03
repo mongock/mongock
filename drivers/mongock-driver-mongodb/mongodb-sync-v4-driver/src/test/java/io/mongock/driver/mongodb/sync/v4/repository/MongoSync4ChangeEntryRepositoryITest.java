@@ -25,7 +25,7 @@ public class MongoSync4ChangeEntryRepositoryITest extends MongoChangeEntryReposi
 
 
   protected void initializeRepository(boolean indexCreation) {
-    MongoSync4ChangeEntryRepository<ChangeEntry> repo = new MongoSync4ChangeEntryRepository<>(getDataBase().getCollection(CHANGELOG_COLLECTION_NAME), indexCreation);
+    MongoSync4ChangeEntryRepository<ChangeEntry> repo = new MongoSync4ChangeEntryRepository<>(getDataBase().getCollection(CHANGELOG_COLLECTION_NAME));
     repo.setIndexCreation(indexCreation);
     repository = Mockito.spy(repo);
     repository.initialize();
@@ -45,7 +45,7 @@ public class MongoSync4ChangeEntryRepositoryITest extends MongoChangeEntryReposi
   public void shouldNoCreateUniqueIndex_whenEnsureIndex_IfAlreadyCreated() throws MongockException {
     initializeRepository(true);
     // given
-    repository = Mockito.spy(new MongoSync4ChangeEntryRepository(getDataBase().getCollection(CHANGELOG_COLLECTION_NAME), true));
+    repository = Mockito.spy(new MongoSync4ChangeEntryRepository(getDataBase().getCollection(CHANGELOG_COLLECTION_NAME)));
 
     doReturn(true).when((MongoSync4ChangeEntryRepository)repository).isUniqueIndex(any(Document.class));
 
@@ -81,9 +81,11 @@ public class MongoSync4ChangeEntryRepositoryITest extends MongoChangeEntryReposi
   private void testReadWriteConcern(WriteConcern expectedWriteConcern, ReadConcern expectedReadConcern, ReadPreference expectedReadPreference, ReadWriteConfiguration readWriteConfiguration) {
     MongoSync4LockRepository repo;
     if(readWriteConfiguration != null) {
-      repo = new MongoSync4LockRepository(getDataBase().getCollection(LOCK_COLLECTION_NAME), true, readWriteConfiguration);
+      repo = new MongoSync4LockRepository(getDataBase().getCollection(LOCK_COLLECTION_NAME), readWriteConfiguration);
+      repo.setIndexCreation(true);
     } else {
-      repo = new MongoSync4LockRepository(getDataBase().getCollection(LOCK_COLLECTION_NAME), true);
+      repo = new MongoSync4LockRepository(getDataBase().getCollection(LOCK_COLLECTION_NAME));
+      repo.setIndexCreation(true);
     }
     MongoCollection collection = RepositoryAccessorHelper.getCollection(repo);
     Assert.assertEquals(expectedWriteConcern, collection.getWriteConcern());

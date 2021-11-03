@@ -5,6 +5,7 @@ import io.mongock.driver.api.entry.ChangeState;
 import io.mongock.driver.api.entry.ExecutedChangeEntry;
 import io.mongock.driver.core.entry.ChangeEntryRepositoryWithEntity;
 import io.mongock.api.exception.MongockException;
+
 import com.mongodb.client.ClientSession;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.model.Accumulators;
@@ -70,15 +71,12 @@ public class Mongo3ChangeEntryRepository<CHANGE_ENTRY extends ChangeEntry> exten
     }
   }
 
-  //todo remove indexCreation from all repositories. It's already set in with the setter in the driver initialization
-  public Mongo3ChangeEntryRepository(MongoCollection<Document> collection, boolean indexCreation) {
-    this(collection, indexCreation, ReadWriteConfiguration.getDefault());
+  public Mongo3ChangeEntryRepository(MongoCollection<Document> collection) {
+    this(collection, ReadWriteConfiguration.getDefault());
   }
 
-  public Mongo3ChangeEntryRepository(MongoCollection<Document> collection,
-                                     boolean indexCreation,
-                                     ReadWriteConfiguration readWriteConfiguration) {
-    super(collection, new String[]{KEY_EXECUTION_ID, KEY_AUTHOR, KEY_CHANGE_ID}, indexCreation, readWriteConfiguration);
+  public Mongo3ChangeEntryRepository(MongoCollection<Document> collection,  ReadWriteConfiguration readWriteConfiguration) {
+    super(collection, new String[]{KEY_EXECUTION_ID, KEY_AUTHOR, KEY_CHANGE_ID}, readWriteConfiguration);
   }
   
   @Override
@@ -128,6 +126,11 @@ public class Mongo3ChangeEntryRepository<CHANGE_ENTRY extends ChangeEntry> exten
                                                            entry.getString(KEY_CHANGELOG_CLASS),
                                                            entry.getString(KEY_CHANGESET_METHOD)))
                      .collect(Collectors.toList());
+  }
+
+  @Override
+  public List<CHANGE_ENTRY> getAll() {
+    throw  new UnsupportedOperationException("GetAll not implemented yet");
   }
 
   public void setClientSession(ClientSession clientSession) {
