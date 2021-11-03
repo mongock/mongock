@@ -1,6 +1,7 @@
 package io.mongock.driver.api.entry;
 
 import io.mongock.api.exception.MongockException;
+import org.junit.Assert;
 import org.junit.Test;
 
 import java.time.Instant;
@@ -9,20 +10,16 @@ import java.util.Date;
 import java.util.List;
 
 import static io.mongock.driver.api.entry.ChangeState.EXECUTED;
+import static io.mongock.driver.api.entry.ChangeState.IGNORED;
 import static org.junit.Assert.*;
 
 public class ChangeEntryServiceTest {
-
-  @Test
-  public void getExecuted() {
-  }
-
 
   static class ChangeEntryServiceImpl implements ChangeEntryService<ChangeEntry> {
 
 
     @Override
-    public List<ChangeEntry> getAll() {
+    public List<ChangeEntry> getAllEntries() {
       Instant now = Instant.now();
       return Arrays.asList(
           getChangeEntry("changeEntry-1", now, EXECUTED)

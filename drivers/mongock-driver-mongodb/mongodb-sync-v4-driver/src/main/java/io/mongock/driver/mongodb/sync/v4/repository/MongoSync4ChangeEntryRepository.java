@@ -131,7 +131,7 @@ public class MongoSync4ChangeEntryRepository<CHANGE_ENTRY extends ChangeEntry> e
   }
 
   @Override
-  public List<CHANGE_ENTRY> getAll() {
+  public List<CHANGE_ENTRY> getAllEntries() {
     throw  new UnsupportedOperationException("GetAll not implemented yet");
   }
 
