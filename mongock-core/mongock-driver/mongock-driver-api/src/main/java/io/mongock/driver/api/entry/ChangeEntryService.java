@@ -6,11 +6,11 @@ import io.mongock.utils.Process;
 
 import java.util.Comparator;
 import java.util.List;
+import java.util.Map;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
-import static io.mongock.driver.api.entry.ChangeState.EXECUTED;
-import static io.mongock.driver.api.entry.ChangeState.RELEVANT_STATES;
+import static io.mongock.driver.api.entry.ChangeState.ROLLED_BACK;
 
 
 public interface ChangeEntryService<CHANGE_ENTRY extends ChangeEntry> extends RepositoryIndexable, Process {
@@ -33,9 +33,15 @@ public interface ChangeEntryService<CHANGE_ENTRY extends ChangeEntry> extends Re
    * @throws MongockException 
    */
   default List<ExecutedChangeEntry> getExecuted() throws MongockException {
-    return getAllEntriesWithCurrentState()
+
+    Predicate<CHANGE_ENTRY> filter = entry -> entry.isExecuted() || entry.getState() == ROLLED_BACK;
+    return getEntriesMap()//Maps of List<ChangeEntry>, indexed by changeId
+        .values()//collection of List<ChangeEntry>
         .stream()
-        .filter(entry -> entry.getState() == null || entry.getState() == EXECUTED)//only gets the ones that are executed
+        .map(duplicatedEntries -> duplicatedEntries.stream().filter(filter).collect(Collectors.toList()))//only takes into account executed or rolled back
+        .map(duplicatedEntries -> duplicatedEntries.get(0))//transform each list in a single ChangeEntry(the first one)
+        .sorted(Comparator.comparing(ChangeEntry::getTimestamp))// Sorts the resulting list chronologically
+        .filter(ChangeEntry::isExecuted)//only gets the ones that are executed
         .map(ExecutedChangeEntry::new)//transform the entry to an executed entry
         .collect(Collectors.toList());
   }
@@ -46,24 +52,28 @@ public interface ChangeEntryService<CHANGE_ENTRY extends ChangeEntry> extends Re
    * @throws MongockException
    */
   default List<CHANGE_ENTRY> getAllEntriesWithCurrentState() throws MongockException{
-    Predicate<CHANGE_ENTRY> filterState = entry -> RELEVANT_STATES.contains(entry.getState());
-    return getAllEntries()
-        .stream()
-        .collect(Collectors.groupingBy(ChangeEntry::getChangeId))//Maps of List<ChangeEntry>, indexed by changeId
+    return getEntriesMap()//Maps of List<ChangeEntry>, indexed by changeId
         .values()//collection of List<ChangeEntry>
         .stream()
-        .peek(duplicatedEntries -> duplicatedEntries.sort((c1, c2) -> c2.getTimestamp().compareTo(c1.getTimestamp())))//sorts each list in the map by date in reverse
-        .map(duplicatedEntries -> duplicatedEntries.stream().filter(filterState).collect(Collectors.toList()))//only takes into account executed or rolled back
+        .map(duplicatedEntries -> duplicatedEntries.stream().filter(ChangeEntry::hasRelevantState).collect(Collectors.toList()))//only takes into account relevant states
         .map(duplicatedEntries -> duplicatedEntries.get(0))//transform each list in a single ChangeEntry(the first one)
         .sorted(Comparator.comparing(ChangeEntry::getTimestamp))// Sorts the resulting list chronologically
         .collect(Collectors.toList());
+  }
+
+  default Map<String, List<CHANGE_ENTRY>> getEntriesMap() {
+    Map<String, List<CHANGE_ENTRY>> log = getEntriesLog()
+        .stream()
+        .collect(Collectors.groupingBy(ChangeEntry::getChangeId));
+    log.values().forEach(entries -> entries.sort((c1, c2) -> c2.getTimestamp().compareTo(c1.getTimestamp())));//sorts each list in the map by date in reverse
+    return log;
   }
 
   /**
    * Returns all the changeEntries
    * @return
    */
-  List<CHANGE_ENTRY> getAllEntries();
+  List<CHANGE_ENTRY> getEntriesLog();
 
 
   /**

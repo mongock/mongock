@@ -15,30 +15,43 @@ import static org.junit.Assert.*;
 
 public class ChangeEntryServiceTest {
 
+  @Test
+  public void getAllEntriesWithCurrentState() {
+
+    Instant now = Instant.now();
+    List<ChangeEntry> entries =  Arrays.asList(
+      getChangeEntry("change-1", now, EXECUTED),
+        getChangeEntry("change-1", now, EXECUTED)
+    );
+
+  }
+
+
+  static ChangeEntry getChangeEntry(String changeId, Instant instant, ChangeState state) {
+    return new ChangeEntry(
+        "executionId",
+        changeId,
+        "author",
+        Date.from(instant),
+        EXECUTED,
+        ChangeType.EXECUTION,
+        "changeLogClass",
+        "changeSetMethod",
+        1000L,
+        "executionHostname",
+        new Object());
+  }
   static class ChangeEntryServiceImpl implements ChangeEntryService<ChangeEntry> {
 
+    private final List<ChangeEntry> entries;
 
-    @Override
-    public List<ChangeEntry> getAllEntries() {
-      Instant now = Instant.now();
-      return Arrays.asList(
-          getChangeEntry("changeEntry-1", now, EXECUTED)
-      );
+    public ChangeEntryServiceImpl(List<ChangeEntry> entries) {
+      this.entries = entries;
     }
 
-    static ChangeEntry getChangeEntry(String changeId, Instant instant, ChangeState state) {
-      return new ChangeEntry(
-          "executionId",
-          changeId,
-          "author",
-          Date.from(instant),
-          EXECUTED,
-          ChangeType.EXECUTION,
-          "changeLogClass",
-          "changeSetMethod",
-          1000L,
-          "executionHostname",
-          new Object());
+    @Override
+    public List<ChangeEntry> getEntriesLog() {
+      return entries;
     }
 
     @Override
