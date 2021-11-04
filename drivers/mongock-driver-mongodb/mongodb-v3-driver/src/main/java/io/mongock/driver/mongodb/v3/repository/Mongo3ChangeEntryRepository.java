@@ -129,7 +129,7 @@ public class Mongo3ChangeEntryRepository<CHANGE_ENTRY extends ChangeEntry> exten
   }
 
   @Override
-  public List<CHANGE_ENTRY> getAll() {
+  public List<CHANGE_ENTRY> getEntriesLog() {
     throw  new UnsupportedOperationException("GetAll not implemented yet");
   }
 

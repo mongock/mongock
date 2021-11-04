@@ -3,7 +3,16 @@ package io.mongock.driver.api.entry;
 import io.mongock.utils.StringUtils;
 import io.mongock.utils.field.Field;
 
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.Date;
+import java.util.HashSet;
+import java.util.Set;
+
+import static io.mongock.driver.api.entry.ChangeState.EXECUTED;
+import static io.mongock.driver.api.entry.ChangeState.FAILED;
+import static io.mongock.driver.api.entry.ChangeState.ROLLBACK_FAILED;
+import static io.mongock.driver.api.entry.ChangeState.ROLLED_BACK;
 
 /**
  * Entry in the changes collection log
@@ -164,5 +173,16 @@ public class ChangeEntry {
         ", \"class\"=\"" + StringUtils.getSimpleClassName(changeLogClass) + "\"" +
         ", \"method\"=\"" + changeSetMethod + "\"" +
         '}';
+  }
+
+  private static final Set<ChangeState> RELEVANT_STATES = Collections.unmodifiableSet(new HashSet<>(Arrays.asList(EXECUTED, ROLLED_BACK, FAILED, ROLLBACK_FAILED)));
+
+  public boolean hasRelevantState() {
+    return state == null || RELEVANT_STATES.contains(state);
+  }
+
+
+  public boolean isExecuted() {
+    return state == null || EXECUTED == state ;
   }
 }
