@@ -10,6 +10,9 @@ import java.util.Map;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
+import static io.mongock.driver.api.entry.ChangeState.FAILED;
+import static io.mongock.driver.api.entry.ChangeState.IGNORED;
+import static io.mongock.driver.api.entry.ChangeState.ROLLBACK_FAILED;
 import static io.mongock.driver.api.entry.ChangeState.ROLLED_BACK;
 
 
@@ -26,19 +29,20 @@ public interface ChangeEntryService<CHANGE_ENTRY extends ChangeEntry> extends Re
    * @throws MongockException if anything goes wrong
    */
   boolean isAlreadyExecuted(String changeSetId, String author) throws MongockException;
-  
+
   /**
    * Retrieves a list with current executed entries ordered by execution timestamp.
+   *
    * @return list of current executed entries ordered by execution timestamp
-   * @throws MongockException 
+   * @throws MongockException
    */
   default List<ExecutedChangeEntry> getExecuted() throws MongockException {
 
-    Predicate<CHANGE_ENTRY> filter = entry -> entry.isExecuted() || entry.getState() == ROLLED_BACK;
+    Predicate<CHANGE_ENTRY> cleanIrrelevantState = entry -> entry.getState() != IGNORED && entry.getState() != ROLLBACK_FAILED;
     return getEntriesMap()//Maps of List<ChangeEntry>, indexed by changeId
         .values()//collection of List<ChangeEntry>
         .stream()
-        .map(duplicatedEntries -> duplicatedEntries.stream().filter(filter).collect(Collectors.toList()))//only takes into account executed or rolled back
+        .map(duplicatedEntries -> duplicatedEntries.stream().filter(cleanIrrelevantState).collect(Collectors.toList()))//only takes into account executed or rolled back
         .map(duplicatedEntries -> duplicatedEntries.get(0))//transform each list in a single ChangeEntry(the first one)
         .sorted(Comparator.comparing(ChangeEntry::getTimestamp))// Sorts the resulting list chronologically
         .filter(ChangeEntry::isExecuted)//only gets the ones that are executed
@@ -48,10 +52,11 @@ public interface ChangeEntryService<CHANGE_ENTRY extends ChangeEntry> extends Re
 
   /**
    * Retrieves a list of the  entries in database with the current relevant state ordered by execution timestamp.
+   *
    * @return list of the  entries in database with the current relevant state ordered by execution timestamp
    * @throws MongockException
    */
-  default List<CHANGE_ENTRY> getAllEntriesWithCurrentState() throws MongockException{
+  default List<CHANGE_ENTRY> getAllEntriesWithCurrentState() throws MongockException {
     return getEntriesMap()//Maps of List<ChangeEntry>, indexed by changeId
         .values()//collection of List<ChangeEntry>
         .stream()
@@ -71,6 +76,7 @@ public interface ChangeEntryService<CHANGE_ENTRY extends ChangeEntry> extends Re
 
   /**
    * Returns all the changeEntries
+   *
    * @return
    */
   List<CHANGE_ENTRY> getEntriesLog();
@@ -79,13 +85,13 @@ public interface ChangeEntryService<CHANGE_ENTRY extends ChangeEntry> extends Re
   /**
    * If there is already an ChangeEntry the same executionId, id and author, it will be updated. Otherwise,
    * this method will be inserted.
+   *
    * @param changeEntry Entry to be inserted
    * @throws MongockException if any i/o exception or already inserted
    */
   void saveOrUpdate(CHANGE_ENTRY changeEntry) throws MongockException;
 
   void save(CHANGE_ENTRY changeEntry) throws MongockException;
-
 
 
 }
