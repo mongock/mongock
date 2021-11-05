@@ -119,7 +119,7 @@ public abstract class MigrationExecutorBase<CONFIG extends ChangeExecutorConfigu
   protected void processSingleChangeLog(String executionId, String executionHostname, ChangeLogItem<ChangeSetItem> changeLog) {
     try {
       //if strategy == changeLog only needs to store the processed changeSets per changeLog
-      prepareForStageExecutionIfApply(isStrategyPerChangeLog());
+      prepareForStageExecutionIfApply(isStrategyPerChangeUnit());
       Object changeLogInstance = getChangeLogInstance(changeLog.getType());
       loopRawChangeSets(executionId, executionHostname, changeLogInstance, changeLog.getBeforeItems());
       processChangeLogInTransactionIfApplies(executionId, executionHostname, changeLogInstance, changeLog);
@@ -138,7 +138,7 @@ public abstract class MigrationExecutorBase<CONFIG extends ChangeExecutorConfigu
 
   protected void processChangeLogInTransactionIfApplies(String executionId, String executionHostname, Object changeLogInstance, ChangeLogItem<ChangeSetItem> changeLogItem) {
     driver.getTransactioner()
-        .filter(c -> isStrategyPerChangeLog() && isTransactional())
+        .filter(c -> isStrategyPerChangeUnit() && isTransactional())
         .orElse(Runnable::run)
         .executeInTransaction(() -> loopRawChangeSets(executionId, executionHostname, changeLogInstance, changeLogItem.getChangeSetItems()));
   }
@@ -156,8 +156,16 @@ public abstract class MigrationExecutorBase<CONFIG extends ChangeExecutorConfigu
     }
   }
 
+  /**
+   * Should be added for manual rollback if
+   * - Non-native-transactional environment OR
+   * - the transactional strategy is per changeUnit and the changeSet is NOT transactional
+   *  (beforeChangeSets are not transactional by definition)
+   * @param changeSet
+   * @return if the changeSet should mark to be manually rolled back
+   */
   private boolean shouldChangeSetBeStoredToRollback(ChangeSetItem changeSet) {
-    return !isTransactional() ||(isStrategyPerChangeLog() && changeSet.isBeforeChangeSets());
+    return !isTransactional() ||(isStrategyPerChangeUnit() && !changeSet.isTransactional());
   }
 
   /**
@@ -355,7 +363,7 @@ public abstract class MigrationExecutorBase<CONFIG extends ChangeExecutorConfigu
     return globalTransactionEnabled == null ? driver.isTransactionable() : globalTransactionEnabled && driver.isTransactionable();
   }
 
-  protected final boolean isStrategyPerChangeLog() {
+  protected final boolean isStrategyPerChangeUnit() {
     return transactionStrategy == null || transactionStrategy == TransactionStrategy.CHANGE_UNIT;
   }
 
