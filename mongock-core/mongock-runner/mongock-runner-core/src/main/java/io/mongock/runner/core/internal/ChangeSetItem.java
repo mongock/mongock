@@ -26,8 +26,7 @@ public class ChangeSetItem {
   private final boolean transactional;
   
   private final Method rollbackMethod;
-  
-  private final boolean beforeChangeSets;
+
 
 
   public ChangeSetItem(String id,
@@ -38,8 +37,7 @@ public class ChangeSetItem {
                        boolean failFast,
                        boolean transactional,
                        Method changeSetMethod,
-                       Method rollbackMethod,
-                       boolean beforeChangeSets) {
+                       Method rollbackMethod) {
     if (id == null || id.trim().isEmpty()) {
       throw new MongockException("id cannot be null or empty.");
     }
@@ -55,7 +53,6 @@ public class ChangeSetItem {
     this.failFast = failFast;
     this.transactional = transactional;
     this.rollbackMethod = rollbackMethod;
-    this.beforeChangeSets = beforeChangeSets;
   }
 
 
@@ -92,7 +89,7 @@ public class ChangeSetItem {
   }
   
   public boolean isBeforeChangeSets() {
-    return beforeChangeSets;
+    return this instanceof BeforeChangeSetItem;
   }
 
   public boolean isTransactional() {
@@ -124,7 +121,6 @@ public class ChangeSetItem {
     sb.append(", failFast=").append(failFast);
     sb.append(", transactional=").append(transactional);
     sb.append(", rollbackMethod=").append(rollbackMethod);
-    sb.append(", beforeChangeSets=").append(beforeChangeSets);
     sb.append('}');
     return sb.toString();
   }

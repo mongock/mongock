@@ -14,12 +14,11 @@ public class LegacyLegacyAnnotationProcessor implements LegacyAnnotationProcesso
 
   public ChangeSetItem getChangeSetItem(Method method, Method rollbackMethod) {
       ChangeSet ann = method.getAnnotation(ChangeSet.class);
-      return createChangeSetItemInstance(ann.id(), ann.author(), ann.order(), ann.runAlways(), ann.systemVersion(), ann.failFast(), method, rollbackMethod, false);
+      return createChangeSetItemInstance(ann.id(), ann.author(), ann.order(), ann.runAlways(), ann.systemVersion(), ann.failFast(), method, rollbackMethod);
   }
 
-  private ChangeSetItem createChangeSetItemInstance(String id, String author, String order, boolean runAlways, String systemVersion, boolean failFast, Method method, Method rollbackMethod, boolean beforeChangeSets) {
-    return new ChangeSetItem(id, author, order, runAlways, systemVersion, failFast, true, method, rollbackMethod, beforeChangeSets);
+  private ChangeSetItem createChangeSetItemInstance(String id, String author, String order, boolean runAlways, String systemVersion, boolean failFast, Method method, Method rollbackMethod) {
+    return new ChangeSetItem(id, author, order, runAlways, systemVersion, failFast, true, method, rollbackMethod);
   }
-
 
 }
