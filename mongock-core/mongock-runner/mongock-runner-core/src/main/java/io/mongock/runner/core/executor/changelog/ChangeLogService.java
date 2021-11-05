@@ -71,6 +71,7 @@ public class ChangeLogService extends ChangeLogServiceBase<ChangeLogItem<ChangeS
         changeUnit.order(),
         changeUnit.failFast(),
         changeUnit.runAlways(),
+        changeUnit.transactional(),
         changeUnit.systemVersion(),
         annotationProcessor.getExecuteMethod(changeUnitClass),
         annotationProcessor.getRollbackMethod(changeUnitClass),

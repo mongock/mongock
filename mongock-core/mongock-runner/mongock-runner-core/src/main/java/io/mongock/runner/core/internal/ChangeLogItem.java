@@ -32,6 +32,7 @@ public class ChangeLogItem<CHANGESET extends ChangeSetItem> {
       String author,
       String order,
       boolean failFast,
+      boolean transactional,
       boolean runAlways,
       String systemVersion,
       Method executionMethod,
@@ -45,6 +46,7 @@ public class ChangeLogItem<CHANGESET extends ChangeSetItem> {
         runAlways,
         systemVersion,
         failFast,
+        transactional,
         executionMethod,
         rollbackExecutionMethod,
         false);
@@ -57,6 +59,7 @@ public class ChangeLogItem<CHANGESET extends ChangeSetItem> {
           runAlways,
           systemVersion,
           failFast,
+          false,
           beforeMethod,
           rollbackBeforeMethod,
           true));

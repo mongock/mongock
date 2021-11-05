@@ -22,6 +22,8 @@ public class ChangeSetItem {
   private final Method method;
 
   private final boolean failFast;
+
+  private final boolean transactional;
   
   private final Method rollbackMethod;
   
@@ -34,6 +36,7 @@ public class ChangeSetItem {
                        boolean runAlways,
                        String systemVersion,
                        boolean failFast,
+                       boolean transactional,
                        Method changeSetMethod,
                        Method rollbackMethod,
                        boolean beforeChangeSets) {
@@ -50,6 +53,7 @@ public class ChangeSetItem {
     this.systemVersion = systemVersion;
     this.method = changeSetMethod;
     this.failFast = failFast;
+    this.transactional = transactional;
     this.rollbackMethod = rollbackMethod;
     this.beforeChangeSets = beforeChangeSets;
   }
@@ -91,6 +95,9 @@ public class ChangeSetItem {
     return beforeChangeSets;
   }
 
+  public boolean isTransactional() {
+    return transactional;
+  }
 
   @Override
   public boolean equals(Object o) {
@@ -107,16 +114,19 @@ public class ChangeSetItem {
 
   @Override
   public String toString() {
-    return "ChangeSetItem{" +
-        "id='" + id + '\'' +
-        ", author='" + author + '\'' +
-        ", order='" + order + '\'' +
-        ", runAlways=" + runAlways +
-        ", systemVersion='" + systemVersion + '\'' +
-        ", method=" + method +
-        ", failFast=" + failFast +
-        ", beforeChangeSets=" + beforeChangeSets +
-        '}';
+    final StringBuilder sb = new StringBuilder("ChangeSetItem{");
+    sb.append("id='").append(id).append('\'');
+    sb.append(", author='").append(author).append('\'');
+    sb.append(", order='").append(order).append('\'');
+    sb.append(", runAlways=").append(runAlways);
+    sb.append(", systemVersion='").append(systemVersion).append('\'');
+    sb.append(", method=").append(method);
+    sb.append(", failFast=").append(failFast);
+    sb.append(", transactional=").append(transactional);
+    sb.append(", rollbackMethod=").append(rollbackMethod);
+    sb.append(", beforeChangeSets=").append(beforeChangeSets);
+    sb.append('}');
+    return sb.toString();
   }
 
   public String toPrettyString() {

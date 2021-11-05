@@ -92,6 +92,6 @@ public @interface ChangeUnit {
    * If true, Mongock will try to run the changeUnit in a native transaction, if possible.
    * @return If he changeUnit should be run in a native transaction.
    */
-  boolean transaction() default true;
+  boolean transactional() default true;
 
 }
