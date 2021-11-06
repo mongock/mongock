@@ -88,4 +88,10 @@ public @interface ChangeUnit {
    */
   String systemVersion()default "0";
 
+  /**
+   * If true, Mongock will try to run the changeUnit in a native transaction, if possible.
+   * @return If he changeUnit should be run in a native transaction.
+   */
+  boolean transactional() default true;
+
 }

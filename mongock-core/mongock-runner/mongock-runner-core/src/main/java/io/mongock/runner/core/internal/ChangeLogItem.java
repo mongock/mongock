@@ -32,6 +32,7 @@ public class ChangeLogItem<CHANGESET extends ChangeSetItem> {
       String author,
       String order,
       boolean failFast,
+      boolean transactional,
       boolean runAlways,
       String systemVersion,
       Method executionMethod,
@@ -45,21 +46,21 @@ public class ChangeLogItem<CHANGESET extends ChangeSetItem> {
         runAlways,
         systemVersion,
         failFast,
+        transactional,
         executionMethod,
-        rollbackExecutionMethod,
-        false);
+        rollbackExecutionMethod);
     List<ChangeSetItem> changeSetBeforeList = new ArrayList<>();
     if (beforeMethod != null) {
-      changeSetBeforeList.add(new ChangeSetItem(
-          String.format("%s_%s", baseId, "before"),
+      changeSetBeforeList.add(new BeforeChangeSetItem(
+          baseId,
           author,
           order,
           runAlways,
           systemVersion,
           failFast,
           beforeMethod,
-          rollbackBeforeMethod,
-          true));
+          rollbackBeforeMethod
+          ));
 
     }
     return new ChangeLogItem<>(
