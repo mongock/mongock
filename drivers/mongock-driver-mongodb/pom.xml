@@ -8,7 +8,7 @@
 
   <modelVersion>4.0.0</modelVersion>
 
-  <name>Mongock parent project for MongoDB</name>
+  <name>MongoDB driver parent</name>
   <description>MongoDB tool for tracking, managing and applying database schema changes</description>
   <url>https://github.com/cloudyrock/mongock</url>
 
@@ -46,7 +46,6 @@
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
     <maven.javadoc.failOnError>false</maven.javadoc.failOnError>
 
-    <project.scm.id>ossrh</project.scm.id>
   </properties>
 
 </project>
