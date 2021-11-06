@@ -15,11 +15,11 @@ import org.springframework.context.annotation.Import;
 
 @Import(MongockDriverContextSelector.class)
 @ConditionalOnExpression("${mongock.enabled:true}")
-public class MongockContext extends MongockContextBase<ChangeEntry, MongockConfiguration> {
+public class MongockContext extends MongockContextBase<MongockConfiguration> {
 
 
   @Bean
-  public RunnerSpringbootBuilder getBuilder(ConnectionDriver<ChangeEntry> connectionDriver,
+  public RunnerSpringbootBuilder getBuilder(ConnectionDriver connectionDriver,
                                             MongockConfiguration springConfiguration,
                                             ApplicationContext springContext,
                                             ApplicationEventPublisher applicationEventPublisher) {

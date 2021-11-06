@@ -25,7 +25,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-public class Mongo3ChangeEntryRepository extends Mongo3RepositoryBase implements ChangeEntryRepositoryWithEntity<Document> {
+public class Mongo3ChangeEntryRepository extends Mongo3RepositoryBase<ChangeEntry> implements ChangeEntryRepositoryWithEntity<Document> {
 
   protected static String KEY_EXECUTION_ID;
   protected static String KEY_CHANGE_ID;

@@ -37,15 +37,14 @@ import java.util.function.Function;
 
 
 public abstract class RunnerBuilderBase<
-    SELF extends RunnerBuilderBase<SELF, CHANGELOG, CHANGESET, CHANGE_ENTRY, CONFIG>,
+    SELF extends RunnerBuilderBase<SELF, CHANGELOG, CHANGESET, CONFIG>,
     CHANGELOG extends ChangeLogItem<CHANGESET>,
     CHANGESET extends ChangeSetItem,
-    CHANGE_ENTRY extends ChangeEntry,
     CONFIG extends MongockConfiguration> {
 
   private static final Logger logger = LoggerFactory.getLogger(RunnerBuilderBase.class);
   protected final CONFIG config;//todo make it independent from external configuration
-  protected final ExecutorFactory<CHANGELOG, ? extends ChangeSetItem, CHANGE_ENTRY, CONFIG> executorFactory;
+  protected final ExecutorFactory<CHANGELOG, ? extends ChangeSetItem, CONFIG> executorFactory;
   protected final ChangeLogServiceBase<CHANGELOG, CHANGESET> changeLogService;
   protected final DependencyManager dependencyManager;
   private final BuilderType type;
@@ -59,7 +58,7 @@ public abstract class RunnerBuilderBase<
 
 
   protected RunnerBuilderBase(BuilderType type,
-                              ExecutorFactory<CHANGELOG, ? extends ChangeSetItem, CHANGE_ENTRY, CONFIG> executorFactory,
+                              ExecutorFactory<CHANGELOG, ? extends ChangeSetItem, CONFIG> executorFactory,
                               ChangeLogServiceBase<CHANGELOG, CHANGESET> changeLogService,
                               DependencyManager dependencyManager,
                               CONFIG config) {

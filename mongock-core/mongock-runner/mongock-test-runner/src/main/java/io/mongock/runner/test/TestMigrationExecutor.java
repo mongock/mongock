@@ -17,7 +17,7 @@ public class TestMigrationExecutor extends MigrationExecutor {
 
   public TestMigrationExecutor(String executionId,
                                SortedSet<ChangeLogItem<ChangeSetItem>> changeLogs,
-                               ConnectionDriver<ChangeEntry> driver,
+                               ConnectionDriver driver,
                                ChangeLogRuntime changeLogRuntime,
                                MongockConfiguration config) {
     //todo remove null

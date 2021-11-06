@@ -18,10 +18,10 @@ public final class MongockStandalone {
     return new RunnerStandaloneBuilderImpl(new ExecutorFactoryDefault(), new MongockConfiguration());
   }
 
-  public static class RunnerStandaloneBuilderImpl extends StandaloneBuilderBase<RunnerStandaloneBuilderImpl, ChangeLogItem<ChangeSetItem>, ChangeSetItem, ChangeEntry, MongockConfiguration>
+  public static class RunnerStandaloneBuilderImpl extends StandaloneBuilderBase<RunnerStandaloneBuilderImpl, ChangeLogItem<ChangeSetItem>, ChangeSetItem, MongockConfiguration>
       implements RunnerStandaloneBuilder {
 
-    private RunnerStandaloneBuilderImpl(ExecutorFactory<ChangeLogItem<ChangeSetItem>, ChangeSetItem, ChangeEntry, MongockConfiguration> executorFactory, MongockConfiguration config) {
+    private RunnerStandaloneBuilderImpl(ExecutorFactory<ChangeLogItem<ChangeSetItem>, ChangeSetItem, MongockConfiguration> executorFactory, MongockConfiguration config) {
       super(COMMUNITY, executorFactory, new ChangeLogService(), config);
     }
 

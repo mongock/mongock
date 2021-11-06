@@ -39,17 +39,16 @@ import java.util.stream.Stream;
 import static io.mongock.utils.Constants.CLI_PROFILE;
 
 public abstract class SpringbootBuilderBase<
-    SELF extends SpringbootBuilderBase<SELF,  CHANGELOG, CHANGESET, CHANGE_ENTRY, CONFIG>,
+    SELF extends SpringbootBuilderBase<SELF,  CHANGELOG, CHANGESET, CONFIG>,
     CHANGELOG extends ChangeLogItem<CHANGESET>,
     CHANGESET extends ChangeSetItem,
-    CHANGE_ENTRY extends ChangeEntry,
     CONFIG extends MongockConfiguration>
-    extends RunnerBuilderBase<SELF,CHANGELOG, CHANGESET, CHANGE_ENTRY, CONFIG> {
+    extends RunnerBuilderBase<SELF,CHANGELOG, CHANGESET, CONFIG> {
 
   private static final String DEFAULT_PROFILE = "default";
 
   protected SpringbootBuilderBase(BuilderType builderType,
-                                  ExecutorFactory<CHANGELOG, CHANGESET, CHANGE_ENTRY, CONFIG> executorFactory,
+                                  ExecutorFactory<CHANGELOG, CHANGESET, CONFIG> executorFactory,
                                   ChangeLogServiceBase<CHANGELOG, CHANGESET> changeLogService,
                                   CONFIG config) {
     super(builderType, executorFactory, changeLogService, new DependencyManagerWithContext(), config);

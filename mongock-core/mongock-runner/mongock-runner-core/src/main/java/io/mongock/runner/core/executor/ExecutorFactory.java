@@ -13,7 +13,6 @@ import java.util.SortedSet;
 public interface ExecutorFactory<
     CHANGELOG extends ChangeLogItem<CHANGESET>,
     CHANGESET extends ChangeSetItem,
-    CHANGE_ENTRY extends ChangeEntry,
     CONFIG extends ExecutorConfiguration> {
 
   Executor getExecutor(Operation op,

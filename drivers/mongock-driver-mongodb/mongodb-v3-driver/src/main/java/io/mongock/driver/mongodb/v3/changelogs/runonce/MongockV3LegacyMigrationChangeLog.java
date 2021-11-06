@@ -19,7 +19,7 @@ public class MongockV3LegacyMigrationChangeLog extends LegacyService {
   public void mongockSpringLegacyMigration(@NonLockGuarded(NonLockGuardedType.NONE)
                                            @Named("legacy-migration") LegacyMigration legacyMigration,
                                            MongoDatabase mongoDatabase,
-                                           ChangeEntryService<ChangeEntry> changeEntryService) {
+                                           ChangeEntryService changeEntryService) {
     new LegacyService().executeMigration(legacyMigration, mongoDatabase, changeEntryService);
   }
 

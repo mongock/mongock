@@ -19,7 +19,7 @@ public class Mongo3ChangeEntryRepositoryITest extends MongoChangeEntryRepository
 
 
   protected void initializeRepository(boolean indexCreation) {
-    Mongo3ChangeEntryRepository<ChangeEntry> repo = new Mongo3ChangeEntryRepository<>(getDataBase().getCollection(CHANGELOG_COLLECTION_NAME));
+    Mongo3ChangeEntryRepository repo = new Mongo3ChangeEntryRepository(getDataBase().getCollection(CHANGELOG_COLLECTION_NAME));
     repo.setIndexCreation(indexCreation);
     repository = Mockito.spy(repo);
     repository.initialize();

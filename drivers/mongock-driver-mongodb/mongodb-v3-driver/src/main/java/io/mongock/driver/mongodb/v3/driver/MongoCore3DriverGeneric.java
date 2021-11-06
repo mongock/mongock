@@ -109,7 +109,7 @@ public abstract class MongoCore3DriverGeneric extends ConnectionDriverBase imple
   @Override
   public ChangeEntryService getChangeEntryService() {
     if (changeEntryRepository == null) {
-      changeEntryRepository = new Mongo3ChangeEntryRepository<>(mongoDatabase.getCollection(changeLogCollectionName), getReadWriteConfiguration());
+      changeEntryRepository = new Mongo3ChangeEntryRepository(mongoDatabase.getCollection(changeLogCollectionName), getReadWriteConfiguration());
       changeEntryRepository.setIndexCreation(isIndexCreation());
     }
     return changeEntryRepository;

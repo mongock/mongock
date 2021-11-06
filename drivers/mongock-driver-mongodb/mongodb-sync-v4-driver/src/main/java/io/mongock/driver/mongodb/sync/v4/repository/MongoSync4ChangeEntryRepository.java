@@ -27,7 +27,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-public class MongoSync4ChangeEntryRepository extends MongoSync4RepositoryBase implements ChangeEntryRepositoryWithEntity<Document> {
+public class MongoSync4ChangeEntryRepository extends MongoSync4RepositoryBase<ChangeEntry> implements ChangeEntryRepositoryWithEntity<Document> {
 
   protected static String KEY_EXECUTION_ID;
   protected static String KEY_CHANGE_ID;

@@ -6,7 +6,7 @@ import io.mongock.utils.annotation.NotThreadSafe;
 import com.mongodb.client.MongoClient;
 
 @NotThreadSafe
-public class MongoCore3Driver extends MongoCore3DriverBase<ChangeEntry> {
+public class MongoCore3Driver extends MongoCore3DriverBase {
 
   protected MongoCore3Driver(MongoClient mongoClient,
                              String databaseName,

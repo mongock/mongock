@@ -15,14 +15,13 @@ import io.mongock.runner.core.builder.roles.Transactionable;
 
 @SuppressWarnings("all")
 public interface RunnerBuilder<
-    SELF extends RunnerBuilder<SELF, CHANGE_ENTRY, CONFIG>,
-    CHANGE_ENTRY extends ChangeEntry,
+    SELF extends RunnerBuilder<SELF, CONFIG>,
     CONFIG extends MongockConfiguration>
     extends
 		ChangeLogScanner<SELF, CONFIG>,
 		MigrationWriter<SELF, CONFIG>,
 		LegacyMigrator<SELF, CONFIG>,
-		DriverConnectable<SELF, CHANGE_ENTRY, CONFIG>,
+		DriverConnectable<SELF, CONFIG>,
 		SystemVersionable<SELF, CONFIG>,
 		DependencyInjectable<SELF>,
 		ServiceIdentificable<SELF, CONFIG>,

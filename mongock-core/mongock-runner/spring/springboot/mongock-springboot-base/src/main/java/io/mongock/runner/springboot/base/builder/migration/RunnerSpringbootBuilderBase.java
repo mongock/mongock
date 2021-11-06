@@ -10,12 +10,12 @@ import org.springframework.context.ApplicationEventPublisher;
 
 //TODO javadoc
 public interface RunnerSpringbootBuilderBase<
-    SELF extends RunnerSpringbootBuilderBase<SELF, CHANGE_ENTRY, CONFIG>,
-    CHANGE_ENTRY extends ChangeEntry,
+    SELF extends RunnerSpringbootBuilderBase<SELF, CONFIG>,
+    
     CONFIG extends MongockConfiguration>
     extends
     SpringApplicationBean,
-    RunnerBuilder<SELF, CHANGE_ENTRY, CONFIG> {
+    RunnerBuilder<SELF, CONFIG> {
 
   //TODO javadoc
   SELF setSpringContext(ApplicationContext springContext);

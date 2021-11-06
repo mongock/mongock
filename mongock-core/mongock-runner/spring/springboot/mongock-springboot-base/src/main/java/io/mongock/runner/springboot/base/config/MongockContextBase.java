@@ -13,7 +13,7 @@ import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Profile;
 
-public abstract class MongockContextBase<CHANGE_ENTRY extends ChangeEntry, CONFIG extends MongockConfiguration> {
+public abstract class MongockContextBase<CONFIG extends MongockConfiguration> {
 
   @Bean
   @Profile(Constants.NON_CLI_PROFILE)

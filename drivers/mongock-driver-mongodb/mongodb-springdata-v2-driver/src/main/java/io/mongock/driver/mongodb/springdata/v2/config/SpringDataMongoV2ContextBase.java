@@ -13,7 +13,7 @@ import org.springframework.data.mongodb.core.MongoTemplate;
 
 import java.util.Optional;
 
-public abstract class SpringDataMongoV2ContextBase<CHANGE_ENTRY extends ChangeEntry, CONFIG extends MongockConfiguration, DRIVER extends SpringDataMongoV2DriverBase> {
+public abstract class SpringDataMongoV2ContextBase<CONFIG extends MongockConfiguration, DRIVER extends SpringDataMongoV2DriverBase> {
   private static final Logger logger = LoggerFactory.getLogger(SpringDataMongoV2ContextBase.class);
 
   @Bean

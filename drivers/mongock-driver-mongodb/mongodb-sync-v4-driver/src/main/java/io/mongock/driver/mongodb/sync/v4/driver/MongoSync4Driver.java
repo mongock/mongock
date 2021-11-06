@@ -6,7 +6,7 @@ import io.mongock.utils.annotation.NotThreadSafe;
 import com.mongodb.client.MongoClient;
 
 @NotThreadSafe
-public class MongoSync4Driver extends MongoSync4DriverBase<ChangeEntry> {
+public class MongoSync4Driver extends MongoSync4DriverBase {
 
   protected MongoSync4Driver(MongoClient mongoClient,
                              String databaseName,

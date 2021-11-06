@@ -19,9 +19,9 @@ public class TestMongock {
     return new Builder(new ExecutorFactoryDefault());
   }
 
-  public static class Builder extends RunnerBuilderBase<Builder, ChangeLogItem<ChangeSetItem>, ChangeSetItem, ChangeEntry, MongockConfiguration> implements RunnerBuilder<Builder, ChangeEntry, MongockConfiguration> {
+  public static class Builder extends RunnerBuilderBase<Builder, ChangeLogItem<ChangeSetItem>, ChangeSetItem, MongockConfiguration> implements RunnerBuilder<Builder, MongockConfiguration> {
 
-    private Builder(ExecutorFactory<ChangeLogItem<ChangeSetItem>, ChangeSetItem, ChangeEntry, MongockConfiguration> executorFactory) {
+    private Builder(ExecutorFactory<ChangeLogItem<ChangeSetItem>, ChangeSetItem, MongockConfiguration> executorFactory) {
       super(COMMUNITY, executorFactory, new ChangeLogService(), new DependencyManager(), new MongockConfiguration());
     }
 

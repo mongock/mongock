@@ -71,9 +71,9 @@ public class ChangeUnitExecutorImplTest {
   private static final Function<Parameter, String> DEFAULT_PARAM_NAME_PROVIDER = parameter -> parameter.isAnnotationPresent(Named.class) ? parameter.getAnnotation(Named.class).value() : null;
   @Rule
   public ExpectedException exceptionExpected = ExpectedException.none();
-  private ChangeEntryService<ChangeEntry> changeEntryService;
+  private ChangeEntryService changeEntryService;
   private LockManager lockManager;
-  private ConnectionDriver<ChangeEntry> driver;
+  private ConnectionDriver driver;
   private TransactionableConnectionDriver transactionableDriver;
 
   @Before
@@ -963,7 +963,7 @@ public class ChangeUnitExecutorImplTest {
     when(driver.getDependencies()).thenReturn(dependencies);
   }
 
-  private abstract static class TransactionableConnectionDriver implements ConnectionDriver<ChangeEntry> {
+  private abstract static class TransactionableConnectionDriver implements ConnectionDriver {
   }
 
   private ExecutedChangeEntry generateExecutedChangeEntry(String changeId, String author) {

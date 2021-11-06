@@ -34,7 +34,7 @@ public class LegacyService {
   public void executeMigration(@NonLockGuarded(NonLockGuardedType.NONE)
                                            @Named("legacy-migration") LegacyMigration legacyMigration,
                                            MongoDatabase mongoDatabase,
-                                           ChangeEntryService<ChangeEntry> changeEntryService) {
+                                           ChangeEntryService changeEntryService) {
     int changesMigrated = 0;
     Integer changesCountExpectation = legacyMigration.getChangesCountExpectation();
     if(changesCountExpectation == null) {

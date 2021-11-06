@@ -16,7 +16,7 @@ public class MigrationExecutor extends MigrationExecutorBase<ChangeExecutorConfi
 
   public MigrationExecutor(String executionId,
                            Set<ChangeLogItem<ChangeSetItem>> changeLogs,
-                           ConnectionDriver<ChangeEntry> driver,
+                           ConnectionDriver driver,
                            ChangeLogRuntime changeLogRuntime,
                            ChangeExecutorConfiguration config) {
     super(executionId, changeLogs, driver, changeLogRuntime, config);
