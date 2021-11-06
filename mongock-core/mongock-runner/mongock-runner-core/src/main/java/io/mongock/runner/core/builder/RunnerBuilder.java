@@ -1,7 +1,6 @@
 package io.mongock.runner.core.builder;
 
 import io.mongock.api.config.MongockConfiguration;
-import io.mongock.driver.api.entry.ChangeEntry;
 import io.mongock.runner.core.builder.roles.ChangeLogScanner;
 import io.mongock.runner.core.builder.roles.DependencyInjectable;
 import io.mongock.runner.core.builder.roles.DriverConnectable;

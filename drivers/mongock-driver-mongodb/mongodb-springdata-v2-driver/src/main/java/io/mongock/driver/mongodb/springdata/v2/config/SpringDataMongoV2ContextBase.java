@@ -2,7 +2,6 @@ package io.mongock.driver.mongodb.springdata.v2.config;
 
 import io.mongock.api.config.MongockConfiguration;
 import io.mongock.driver.api.driver.ConnectionDriver;
-import io.mongock.driver.api.entry.ChangeEntry;
 import io.mongock.driver.mongodb.springdata.v2.SpringDataMongoV2DriverBase;
 import com.mongodb.ReadConcern;
 import org.slf4j.Logger;

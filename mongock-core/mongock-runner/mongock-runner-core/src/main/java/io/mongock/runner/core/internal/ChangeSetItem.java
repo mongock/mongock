@@ -1,7 +1,6 @@
 package io.mongock.runner.core.internal;
 
 import io.mongock.api.exception.MongockException;
-import io.mongock.driver.api.entry.ChangeType;
 
 import java.lang.reflect.Method;
 import java.util.Objects;

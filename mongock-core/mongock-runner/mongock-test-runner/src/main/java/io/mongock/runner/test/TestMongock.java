@@ -3,7 +3,6 @@ package io.mongock.runner.test;
 import io.mongock.runner.core.internal.ChangeLogItem;
 import io.mongock.runner.core.internal.ChangeSetItem;
 import io.mongock.api.config.MongockConfiguration;
-import io.mongock.driver.api.entry.ChangeEntry;
 import io.mongock.runner.core.builder.RunnerBuilder;
 import io.mongock.runner.core.builder.RunnerBuilderBase;
 import io.mongock.runner.core.executor.ExecutorFactory;

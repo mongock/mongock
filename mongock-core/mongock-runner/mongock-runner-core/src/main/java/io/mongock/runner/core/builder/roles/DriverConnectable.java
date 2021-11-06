@@ -2,7 +2,6 @@ package io.mongock.runner.core.builder.roles;
 
 import io.mongock.api.config.MongockConfiguration;
 import io.mongock.driver.api.driver.ConnectionDriver;
-import io.mongock.driver.api.entry.ChangeEntry;
 
 public interface DriverConnectable<SELF extends DriverConnectable<SELF, CONFIG>, CONFIG extends MongockConfiguration>
     extends Configurable<SELF, CONFIG>, SelfInstanstiator<SELF> {

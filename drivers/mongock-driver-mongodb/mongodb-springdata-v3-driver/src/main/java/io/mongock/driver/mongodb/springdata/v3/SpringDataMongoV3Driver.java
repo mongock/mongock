@@ -1,6 +1,5 @@
 package io.mongock.driver.mongodb.springdata.v3;
 
-import io.mongock.driver.api.entry.ChangeEntry;
 import io.mongock.utils.TimeService;
 import io.mongock.utils.annotation.NotThreadSafe;
 import org.springframework.data.mongodb.core.MongoTemplate;

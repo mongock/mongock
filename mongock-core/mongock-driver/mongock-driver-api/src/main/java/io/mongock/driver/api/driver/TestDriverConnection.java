@@ -1,8 +1,5 @@
 package io.mongock.driver.api.driver;
 
-
-import io.mongock.driver.api.entry.ChangeEntry;
-
 /**
  * Wrapper util class for testing
  */

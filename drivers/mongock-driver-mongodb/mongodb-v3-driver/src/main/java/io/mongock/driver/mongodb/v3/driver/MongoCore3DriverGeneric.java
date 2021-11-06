@@ -2,9 +2,7 @@ package io.mongock.driver.mongodb.v3.driver;
 
 import io.mongock.driver.api.driver.ChangeSetDependency;
 import io.mongock.driver.api.driver.Transactioner;
-import io.mongock.driver.api.entry.ChangeEntry;
 import io.mongock.driver.api.entry.ChangeEntryService;
-import io.mongock.driver.api.lock.guard.invoker.LockGuardInvokerImpl;
 import io.mongock.driver.core.driver.ConnectionDriverBase;
 import io.mongock.driver.core.lock.LockRepositoryWithEntity;
 import io.mongock.driver.mongodb.v3.changelogs.runalways.MongockV3LegacyMigrationChangeRunAlwaysLog;

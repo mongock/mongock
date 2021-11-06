@@ -10,7 +10,6 @@ import io.mongock.api.exception.MongockException;
 import io.mongock.driver.api.driver.ChangeSetDependency;
 import io.mongock.driver.api.driver.ConnectionDriver;
 import io.mongock.driver.api.driver.DriverLegaciable;
-import io.mongock.driver.api.entry.ChangeEntry;
 import io.mongock.runner.core.event.EventPublisher;
 import io.mongock.runner.core.executor.ChangeLogRuntimeImpl;
 import io.mongock.runner.core.executor.Executor;

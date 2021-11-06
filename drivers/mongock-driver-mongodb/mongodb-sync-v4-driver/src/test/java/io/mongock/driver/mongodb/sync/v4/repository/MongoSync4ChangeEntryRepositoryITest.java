@@ -1,6 +1,5 @@
 package io.mongock.driver.mongodb.sync.v4.repository;
 
-import io.mongock.driver.api.entry.ChangeEntry;
 import io.mongock.driver.mongodb.sync.v4.MongoDbSync4DriverTestAdapterImpl;
 import io.mongock.driver.mongodb.sync.v4.repository.util.RepositoryAccessorHelper;
 import io.mongock.driver.mongodb.test.template.MongoChangeEntryRepositoryITestBase;
