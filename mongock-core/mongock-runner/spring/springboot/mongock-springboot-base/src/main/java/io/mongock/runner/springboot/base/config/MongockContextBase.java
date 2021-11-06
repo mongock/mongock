@@ -18,7 +18,7 @@ public abstract class MongockContextBase<CHANGE_ENTRY extends ChangeEntry, CONFI
   @Bean
   @Profile(Constants.NON_CLI_PROFILE)
   @ConditionalOnExpression("'${mongock.runner-type:ApplicationRunner}'.toLowerCase().equals('applicationrunner')")
-  public MongockApplicationRunner applicationRunner(ConnectionDriver<CHANGE_ENTRY> connectionDriver,
+  public MongockApplicationRunner applicationRunner(ConnectionDriver connectionDriver,
                                                     CONFIG springConfiguration,
                                                     ApplicationContext springContext,
                                                     ApplicationEventPublisher applicationEventPublisher) {
@@ -30,7 +30,7 @@ public abstract class MongockContextBase<CHANGE_ENTRY extends ChangeEntry, CONFI
   @Bean
   @Profile(Constants.NON_CLI_PROFILE)
   @ConditionalOnExpression("'${mongock.runner-type:null}'.toLowerCase().equals('initializingbean')")
-  public MongockInitializingBeanRunner initializingBeanRunner(ConnectionDriver<CHANGE_ENTRY> connectionDriver,
+  public MongockInitializingBeanRunner initializingBeanRunner(ConnectionDriver connectionDriver,
                                                               CONFIG springConfiguration,
                                                               ApplicationContext springContext,
                                                               ApplicationEventPublisher applicationEventPublisher) {
@@ -39,7 +39,7 @@ public abstract class MongockContextBase<CHANGE_ENTRY extends ChangeEntry, CONFI
   }
 
   @SuppressWarnings("all")
-  public abstract SpringApplicationBean getBuilder(ConnectionDriver<CHANGE_ENTRY> connectionDriver,
+  public abstract SpringApplicationBean getBuilder(ConnectionDriver connectionDriver,
 												   CONFIG springConfiguration,
 												   ApplicationContext springContext,
 												   ApplicationEventPublisher applicationEventPublisher);

@@ -14,7 +14,7 @@ import java.util.Optional;
 import java.util.Set;
 
 @NotThreadSafe
-public abstract  class MongoCore3DriverBase<CHANGE_ENTRY extends ChangeEntry> extends MongoCore3DriverGeneric<CHANGE_ENTRY> {
+public abstract  class MongoCore3DriverBase extends MongoCore3DriverGeneric {
 
   private final MongoClient mongoClient;
   protected ClientSession clientSession;

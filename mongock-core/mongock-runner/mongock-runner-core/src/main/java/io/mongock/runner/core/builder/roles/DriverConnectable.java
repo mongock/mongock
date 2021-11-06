@@ -13,7 +13,7 @@ public interface DriverConnectable<SELF extends DriverConnectable<SELF, CHANGE_E
    * @param driver connection driver
    * @return builder for fluent interface
    */
-  SELF setDriver(ConnectionDriver<CHANGE_ENTRY> driver);
+  SELF setDriver(ConnectionDriver driver);
 
   /**
    * Indicates that in case the lock cannot be obtained, therefore the migration is not executed, Mongock won't throw

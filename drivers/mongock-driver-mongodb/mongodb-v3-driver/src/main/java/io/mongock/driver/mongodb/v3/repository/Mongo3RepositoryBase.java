@@ -16,7 +16,7 @@ import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
 
-public  abstract class Mongo3RepositoryBase<DOMAIN_CLASS> implements EntityRepository<DOMAIN_CLASS, Document>, RepositoryIndexable {
+public  abstract class Mongo3RepositoryBase implements EntityRepository<Document>, RepositoryIndexable {
 
   private final static Logger logger = LoggerFactory.getLogger(Mongo3RepositoryBase.class);
   private final static int INDEX_ENSURE_MAX_TRIES = 3;

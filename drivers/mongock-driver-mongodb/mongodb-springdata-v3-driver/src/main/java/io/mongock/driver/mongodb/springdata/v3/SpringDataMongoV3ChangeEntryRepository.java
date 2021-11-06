@@ -11,7 +11,7 @@ import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.data.mongodb.core.query.Update;
 
-public class SpringDataMongoV3ChangeEntryRepository<CHANGE_ENTRY extends ChangeEntry> extends MongoSync4ChangeEntryRepository<CHANGE_ENTRY> implements ChangeEntryRepositoryWithEntity<CHANGE_ENTRY, Document> {
+public class SpringDataMongoV3ChangeEntryRepository extends MongoSync4ChangeEntryRepository implements ChangeEntryRepositoryWithEntity<Document> {
 
   private final MongoTemplate mongoTemplate;
 
@@ -26,12 +26,12 @@ public class SpringDataMongoV3ChangeEntryRepository<CHANGE_ENTRY extends ChangeE
 
 
   @Override
-  public void save(CHANGE_ENTRY changeEntry) throws MongockException {
+  public void save(ChangeEntry changeEntry) throws MongockException {
     mongoTemplate.save(changeEntry, collection.getNamespace().getCollectionName());
   }
 
   @Override
-  public void saveOrUpdate(CHANGE_ENTRY changeEntry) throws MongockException {
+  public void saveOrUpdate(ChangeEntry changeEntry) throws MongockException {
 
     Query filter = new Query().addCriteria(new Criteria()
         .andOperator(
@@ -41,7 +41,7 @@ public class SpringDataMongoV3ChangeEntryRepository<CHANGE_ENTRY extends ChangeE
     mongoTemplate.upsert(filter, getUpdateFromEntity(changeEntry), collection.getNamespace().getCollectionName());
   }
 
-  private Update getUpdateFromEntity(CHANGE_ENTRY changeEntry) {
+  private Update getUpdateFromEntity(ChangeEntry changeEntry) {
     Update updateChangeEntry = new Update();
     Document entityDocu = toEntity(changeEntry);
     entityDocu.forEach(updateChangeEntry::set);

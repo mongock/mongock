@@ -16,7 +16,7 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
-public class MongoSync4RepositoryBase<DOMAIN_CLASS> implements EntityRepository<DOMAIN_CLASS, Document>, RepositoryIndexable {
+public class MongoSync4RepositoryBase implements EntityRepository<Document>, RepositoryIndexable {
 
   private final static Logger logger = LoggerFactory.getLogger(MongoSync4RepositoryBase.class);
   private final static int INDEX_ENSURE_MAX_TRIES = 3;

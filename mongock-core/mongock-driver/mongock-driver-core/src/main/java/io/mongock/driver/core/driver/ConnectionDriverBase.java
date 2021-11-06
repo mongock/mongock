@@ -11,7 +11,7 @@ import io.mongock.utils.TimeService;
 import io.mongock.utils.annotation.NotThreadSafe;
 
 @NotThreadSafe
-public abstract class ConnectionDriverBase<CHANGE_ENTRY extends ChangeEntry> implements ConnectionDriver<CHANGE_ENTRY> {
+public abstract class ConnectionDriverBase implements ConnectionDriver {
 
   private static final TimeService TIME_SERVICE = new TimeService();
 
@@ -45,7 +45,7 @@ public abstract class ConnectionDriverBase<CHANGE_ENTRY extends ChangeEntry> imp
           .setLockQuitTryingAfterMillis(lockQuitTryingAfterMillis)
           .setLockTryFrequencyMillis(lockTryFrequencyMillis)
           .build();
-      ChangeEntryService<CHANGE_ENTRY> changeEntryService = getChangeEntryService();
+      ChangeEntryService changeEntryService = getChangeEntryService();
       changeEntryService.initialize();
       specificInitialization();
     }

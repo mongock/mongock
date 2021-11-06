@@ -17,7 +17,7 @@ public abstract class SpringDataMongoV3ContextBase<CHANGE_ENTRY extends ChangeEn
   private static final Logger logger = LoggerFactory.getLogger(SpringDataMongoV3ContextBase.class);
 
   @Bean
-  public ConnectionDriver<CHANGE_ENTRY> connectionDriver(MongoTemplate mongoTemplate,
+  public ConnectionDriver connectionDriver(MongoTemplate mongoTemplate,
                                                          CONFIG config,
                                                          MongoDBConfiguration mongoDbConfig,
                                                          Optional<MongoTransactionManager> txManagerOpt) {

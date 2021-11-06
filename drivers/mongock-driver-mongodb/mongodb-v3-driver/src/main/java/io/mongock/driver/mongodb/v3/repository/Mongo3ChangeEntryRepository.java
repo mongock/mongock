@@ -25,7 +25,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-public class Mongo3ChangeEntryRepository<CHANGE_ENTRY extends ChangeEntry> extends Mongo3RepositoryBase<CHANGE_ENTRY> implements ChangeEntryRepositoryWithEntity<CHANGE_ENTRY, Document> {
+public class Mongo3ChangeEntryRepository extends Mongo3RepositoryBase implements ChangeEntryRepositoryWithEntity<Document> {
 
   protected static String KEY_EXECUTION_ID;
   protected static String KEY_CHANGE_ID;
@@ -129,7 +129,7 @@ public class Mongo3ChangeEntryRepository<CHANGE_ENTRY extends ChangeEntry> exten
   }
 
   @Override
-  public List<CHANGE_ENTRY> getEntriesLog() {
+  public List<ChangeEntry> getEntriesLog() {
     throw  new UnsupportedOperationException("GetAll not implemented yet");
   }
 
@@ -146,7 +146,7 @@ public class Mongo3ChangeEntryRepository<CHANGE_ENTRY extends ChangeEntry> exten
   }
 
   @Override
-  public void save(CHANGE_ENTRY changeEntry) throws MongockException {
+  public void save(ChangeEntry changeEntry) throws MongockException {
 
     if(getClientSession().isPresent()) {
       collection.insertOne(getClientSession().get(), toEntity(changeEntry));
@@ -156,7 +156,7 @@ public class Mongo3ChangeEntryRepository<CHANGE_ENTRY extends ChangeEntry> exten
   }
 
   @Override
-  public void saveOrUpdate(CHANGE_ENTRY changeEntry) throws MongockException {
+  public void saveOrUpdate(ChangeEntry changeEntry) throws MongockException {
     Bson filter = Filters.and(
         Filters.eq(KEY_EXECUTION_ID, changeEntry.getExecutionId()),
         Filters.eq(KEY_CHANGE_ID, changeEntry.getChangeId()),
@@ -166,7 +166,7 @@ public class Mongo3ChangeEntryRepository<CHANGE_ENTRY extends ChangeEntry> exten
     Document document = collection.find(filter).first();
     if (document != null) {
       toEntity(changeEntry).forEach(document::put);
-      ;
+
       UpdateResult result = getClientSession()
           .map(clientSession -> collection.updateOne(clientSession, filter, new Document("$set", document), new UpdateOptions().upsert(true)))
           .orElseGet(() -> collection.updateOne(filter, new Document("$set", document), new UpdateOptions().upsert(true)));

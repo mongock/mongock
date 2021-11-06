@@ -27,7 +27,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-public class MongoSync4ChangeEntryRepository<CHANGE_ENTRY extends ChangeEntry> extends MongoSync4RepositoryBase<CHANGE_ENTRY> implements ChangeEntryRepositoryWithEntity<CHANGE_ENTRY, Document> {
+public class MongoSync4ChangeEntryRepository extends MongoSync4RepositoryBase implements ChangeEntryRepositoryWithEntity<Document> {
 
   protected static String KEY_EXECUTION_ID;
   protected static String KEY_CHANGE_ID;
@@ -131,7 +131,7 @@ public class MongoSync4ChangeEntryRepository<CHANGE_ENTRY extends ChangeEntry> e
   }
 
   @Override
-  public List<CHANGE_ENTRY> getEntriesLog() {
+  public List<ChangeEntry> getEntriesLog() {
     throw  new UnsupportedOperationException("GetAll not implemented yet");
   }
 
@@ -149,14 +149,14 @@ public class MongoSync4ChangeEntryRepository<CHANGE_ENTRY extends ChangeEntry> e
   }
 
   @Override
-  public void save(CHANGE_ENTRY changeEntry) throws MongockException {
+  public void save(ChangeEntry changeEntry) throws MongockException {
     InsertOneResult result = getClientSession()
         .map(clientSession -> collection.insertOne(clientSession, toEntity(changeEntry)))
         .orElseGet(() -> collection.insertOne(toEntity(changeEntry)));
   }
 
   @Override
-  public void saveOrUpdate(CHANGE_ENTRY changeEntry) throws MongockException {
+  public void saveOrUpdate(ChangeEntry changeEntry) throws MongockException {
     Bson filter = Filters.and(
         Filters.eq(KEY_EXECUTION_ID, changeEntry.getExecutionId()),
         Filters.eq(KEY_CHANGE_ID, changeEntry.getChangeId()),

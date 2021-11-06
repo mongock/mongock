@@ -50,7 +50,7 @@ public abstract class RunnerBuilderBase<
   protected final DependencyManager dependencyManager;
   private final BuilderType type;
   protected EventPublisher eventPublisher = new EventPublisher();
-  protected ConnectionDriver<CHANGE_ENTRY> driver;
+  protected ConnectionDriver driver;
   protected Function<Class<?>, Object> changeLogInstantiatorFunctionForAnnotations;
   protected Function<Parameter, String> parameterNameFunction = parameter -> parameter.isAnnotationPresent(Named.class) ? parameter.getAnnotation(Named.class).value() : null;
 
@@ -104,7 +104,7 @@ public abstract class RunnerBuilderBase<
     return getInstance();
   }
 
-  public SELF setDriver(ConnectionDriver<CHANGE_ENTRY> driver) {
+  public SELF setDriver(ConnectionDriver driver) {
     this.driver = driver;
     return getInstance();
   }
@@ -132,13 +132,13 @@ public abstract class RunnerBuilderBase<
     return buildRunner(operation, driver);
   }
 
-  protected MongockRunner buildRunner(ConnectionDriver<CHANGE_ENTRY> driver) {
+  protected MongockRunner buildRunner(ConnectionDriver driver) {
     return buildRunner(new MigrationOp(), driver);
   }
 
 
 
-  protected MongockRunner buildRunner(Operation operation, ConnectionDriver<CHANGE_ENTRY> driver) {
+  protected MongockRunner buildRunner(Operation operation, ConnectionDriver driver) {
     logger.info("Mongock runner {} version[{}]", getType(), getVersion());
     validateConfigurationAndInjections(driver);
     try {
@@ -187,7 +187,7 @@ public abstract class RunnerBuilderBase<
   }
 
 
-  protected void validateConfigurationAndInjections(ConnectionDriver<CHANGE_ENTRY> driver) throws MongockException {
+  protected void validateConfigurationAndInjections(ConnectionDriver driver) throws MongockException {
     if (driver == null) {
       throw new MongockException("Driver must be injected to Mongock builder");
     }
@@ -236,7 +236,7 @@ public abstract class RunnerBuilderBase<
     return this.driver;
   }
 
-  protected  Executor buildExecutor(Operation operation, ConnectionDriver<CHANGE_ENTRY> driver) {
+  protected  Executor buildExecutor(Operation operation, ConnectionDriver driver) {
     return executorFactory.getExecutor(
         operation,
         executionId,

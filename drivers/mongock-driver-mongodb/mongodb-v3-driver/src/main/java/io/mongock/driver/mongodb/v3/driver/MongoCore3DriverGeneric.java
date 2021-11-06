@@ -26,7 +26,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 @NotThreadSafe
-public abstract class MongoCore3DriverGeneric<CHANGE_ENTRY extends ChangeEntry> extends ConnectionDriverBase<CHANGE_ENTRY> implements Transactioner {
+public abstract class MongoCore3DriverGeneric extends ConnectionDriverBase implements Transactioner {
 
   private static final String DEFAULT_CHANGELOG_COLLECTION_NAME = "mongockChangeLog";
   private static final String DEFAULT_LOCK_COLLECTION_NAME = "mongockLock";
@@ -38,7 +38,7 @@ public abstract class MongoCore3DriverGeneric<CHANGE_ENTRY extends ChangeEntry> 
   protected String changeLogCollectionName = DEFAULT_CHANGELOG_COLLECTION_NAME;
   protected String lockCollectionName = DEFAULT_LOCK_COLLECTION_NAME;
 
-  protected Mongo3ChangeEntryRepository<CHANGE_ENTRY> changeEntryRepository;
+  protected Mongo3ChangeEntryRepository changeEntryRepository;
   protected Mongo3LockRepository lockRepository;
   protected Set<ChangeSetDependency> dependencies;
   protected TransactionOptions txOptions;
@@ -107,7 +107,7 @@ public abstract class MongoCore3DriverGeneric<CHANGE_ENTRY extends ChangeEntry> 
   }
 
   @Override
-  public ChangeEntryService<CHANGE_ENTRY> getChangeEntryService() {
+  public ChangeEntryService getChangeEntryService() {
     if (changeEntryRepository == null) {
       changeEntryRepository = new Mongo3ChangeEntryRepository<>(mongoDatabase.getCollection(changeLogCollectionName), getReadWriteConfiguration());
       changeEntryRepository.setIndexCreation(isIndexCreation());

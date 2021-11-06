@@ -19,7 +19,7 @@ public interface ExecutorFactory<
   Executor getExecutor(Operation op,
 						  String executionId,
 						  SortedSet<CHANGELOG> changeLogs,
-						  ConnectionDriver<CHANGE_ENTRY> driver,
+						  ConnectionDriver driver,
 						  ChangeLogRuntime changeLogRuntime,
 						  CONFIG config);
 
