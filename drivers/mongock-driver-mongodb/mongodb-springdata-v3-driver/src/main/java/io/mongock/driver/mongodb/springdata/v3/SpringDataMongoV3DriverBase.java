@@ -3,7 +3,6 @@ package io.mongock.driver.mongodb.springdata.v3;
 import io.mongock.driver.api.driver.ChangeSetDependency;
 import io.mongock.driver.api.driver.ChangeSetDependencyBuildable;
 import io.mongock.driver.api.driver.Transactioner;
-import io.mongock.driver.api.entry.ChangeEntry;
 import io.mongock.driver.api.entry.ChangeEntryService;
 import com.github.cloudyrock.mongock.driver.mongodb.springdata.v3.decorator.impl.MongockTemplate;
 import io.mongock.driver.mongodb.sync.v4.driver.MongoSync4DriverGeneric;

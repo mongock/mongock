@@ -9,7 +9,6 @@ import com.mongodb.client.MongoDatabase;
 import io.mongock.api.exception.MongockException;
 import io.mongock.driver.api.driver.ChangeSetDependency;
 import io.mongock.driver.api.driver.Transactioner;
-import io.mongock.driver.api.entry.ChangeEntry;
 import io.mongock.driver.api.entry.ChangeEntryService;
 import io.mongock.driver.core.driver.ConnectionDriverBase;
 import io.mongock.driver.core.lock.LockRepositoryWithEntity;

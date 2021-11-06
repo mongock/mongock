@@ -4,8 +4,6 @@ import io.mongock.driver.api.lock.LockManager;
 import javassist.util.proxy.MethodHandler;
 
 import java.lang.reflect.Method;
-import java.util.Collections;
-import java.util.HashSet;
 import java.util.Set;
 
 public class LockGuardMethodHandler<T>  implements MethodHandler {

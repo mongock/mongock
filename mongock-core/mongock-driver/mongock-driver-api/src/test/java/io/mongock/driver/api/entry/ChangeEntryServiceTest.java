@@ -1,7 +1,6 @@
 package io.mongock.driver.api.entry;
 
 import io.mongock.api.exception.MongockException;
-import org.junit.Assert;
 import org.junit.Test;
 
 import java.time.Instant;

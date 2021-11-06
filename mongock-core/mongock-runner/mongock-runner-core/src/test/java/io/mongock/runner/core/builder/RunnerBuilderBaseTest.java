@@ -6,7 +6,6 @@ import io.mongock.runner.core.internal.ChangeSetItem;
 import io.mongock.api.config.MongockConfiguration;
 import io.mongock.api.exception.MongockException;
 import io.mongock.driver.api.driver.ConnectionDriver;
-import io.mongock.driver.api.entry.ChangeEntry;
 import io.mongock.runner.core.builder.roles.ChangeLogScanner;
 import io.mongock.runner.core.builder.roles.MigrationWriter;
 import io.mongock.runner.core.builder.roles.Configurable;

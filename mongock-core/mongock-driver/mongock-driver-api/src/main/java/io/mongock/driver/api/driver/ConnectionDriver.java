@@ -1,7 +1,6 @@
 package io.mongock.driver.api.driver;
 
 import io.mongock.driver.api.common.Validable;
-import io.mongock.driver.api.entry.ChangeEntry;
 import io.mongock.driver.api.entry.ChangeEntryService;
 import io.mongock.driver.api.lock.LockManager;
 
