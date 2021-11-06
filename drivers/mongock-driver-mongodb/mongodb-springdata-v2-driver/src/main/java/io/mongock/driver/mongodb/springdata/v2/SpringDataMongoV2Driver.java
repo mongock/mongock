@@ -6,7 +6,7 @@ import io.mongock.utils.annotation.NotThreadSafe;
 import org.springframework.data.mongodb.core.MongoTemplate;
 
 @NotThreadSafe
-public class SpringDataMongoV2Driver extends SpringDataMongoV2DriverBase<ChangeEntry> {
+public class SpringDataMongoV2Driver extends SpringDataMongoV2DriverBase {
 
   protected SpringDataMongoV2Driver(MongoTemplate mongoTemplate,
                                     long lockAcquiredForMillis,

@@ -22,9 +22,9 @@ public class ConnectionDriverBaseTest {
   public void shouldInitializeRepositories() {
     // given
     LockRepositoryWithEntity lockRepository = Mockito.mock(LockRepositoryWithEntity.class);
-    ChangeEntryService<ChangeEntry> changeEntryService = Mockito.mock(ChangeEntryService.class);
+    ChangeEntryService changeEntryService = Mockito.mock(ChangeEntryService.class);
 
-    ConnectionDriverBase<ChangeEntry> driver = new ConnectionDriverBaseTestImpl(
+    ConnectionDriverBase driver = new ConnectionDriverBaseTestImpl(
         4,
         3,
         3,
@@ -43,10 +43,10 @@ public class ConnectionDriverBaseTest {
   }
 
 
-  static class ConnectionDriverBaseTestImpl extends ConnectionDriverBase<ChangeEntry> {
+  static class ConnectionDriverBaseTestImpl extends ConnectionDriverBase {
 
     private final LockRepositoryWithEntity lockRepository;
-    private final ChangeEntryService<ChangeEntry> changeEntryService;
+    private final ChangeEntryService changeEntryService;
     private final LockManager lockManager;
 
 
@@ -54,7 +54,7 @@ public class ConnectionDriverBaseTest {
                                  long maxWaitingForLockMinutesEachTry,
                                  int maxTries,
                                  LockRepositoryWithEntity lockRepository,
-                                 ChangeEntryService<ChangeEntry> changeEntryService,
+                                 ChangeEntryService changeEntryService,
                                  LockManager lockManager) {
       super(
           minutesToMillis(lockAcquiredForMinutes),
@@ -81,7 +81,7 @@ public class ConnectionDriverBaseTest {
     }
 
     @Override
-    public ChangeEntryService<ChangeEntry> getChangeEntryService() {
+    public ChangeEntryService getChangeEntryService() {
       changeEntryService.setIndexCreation(isIndexCreation());
       return changeEntryService;
     }

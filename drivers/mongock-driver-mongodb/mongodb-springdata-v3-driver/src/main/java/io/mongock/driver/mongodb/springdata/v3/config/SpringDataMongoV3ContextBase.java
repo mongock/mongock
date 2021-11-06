@@ -13,11 +13,11 @@ import org.springframework.data.mongodb.core.MongoTemplate;
 
 import java.util.Optional;
 
-public abstract class SpringDataMongoV3ContextBase<CHANGE_ENTRY extends ChangeEntry, CONFIG extends MongockConfiguration, DRIVER extends SpringDataMongoV3DriverBase> {
+public abstract class SpringDataMongoV3ContextBase<CONFIG extends MongockConfiguration, DRIVER extends SpringDataMongoV3DriverBase> {
   private static final Logger logger = LoggerFactory.getLogger(SpringDataMongoV3ContextBase.class);
 
   @Bean
-  public ConnectionDriver<CHANGE_ENTRY> connectionDriver(MongoTemplate mongoTemplate,
+  public ConnectionDriver connectionDriver(MongoTemplate mongoTemplate,
                                                          CONFIG config,
                                                          MongoDBConfiguration mongoDbConfig,
                                                          Optional<MongoTransactionManager> txManagerOpt) {

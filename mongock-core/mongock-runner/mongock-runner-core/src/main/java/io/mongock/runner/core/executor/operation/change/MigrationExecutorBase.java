@@ -44,7 +44,7 @@ public abstract class MigrationExecutorBase<CONFIG extends ChangeExecutorConfigu
 
   protected final Boolean globalTransactionEnabled;
   protected final Deque<Pair<Object, ChangeSetItem>> changeSetsToRollBack = new ArrayDeque<>();
-  protected final ConnectionDriver<ChangeEntry> driver;
+  protected final ConnectionDriver driver;
   protected final String serviceIdentifier;
   protected final boolean trackIgnored;
   protected final Set<ChangeLogItem<ChangeSetItem>> changeLogs;
@@ -59,7 +59,7 @@ public abstract class MigrationExecutorBase<CONFIG extends ChangeExecutorConfigu
 
   public MigrationExecutorBase(String executionId,
                                Set<ChangeLogItem<ChangeSetItem>> changeLogs,
-                               ConnectionDriver<ChangeEntry> driver,
+                               ConnectionDriver driver,
                                ChangeLogRuntime changeLogRuntime,
                                CONFIG config) {
     this.executionId = executionId;

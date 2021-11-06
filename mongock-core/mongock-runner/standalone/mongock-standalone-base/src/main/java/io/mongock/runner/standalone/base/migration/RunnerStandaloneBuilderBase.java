@@ -10,10 +10,10 @@ import io.mongock.runner.core.event.MigrationSuccessEvent;
 import java.util.function.Consumer;
 
 public interface RunnerStandaloneBuilderBase<
-    SELF extends RunnerStandaloneBuilderBase<SELF, CHANGE_ENTRY, CONFIG>,
-    CHANGE_ENTRY extends ChangeEntry,
+    SELF extends RunnerStandaloneBuilderBase<SELF, CONFIG>,
+    
     CONFIG extends MongockConfiguration>
-    extends RunnerBuilder<SELF, CHANGE_ENTRY, CONFIG> {
+    extends RunnerBuilder<SELF, CONFIG> {
 
   //TODO javadoc
   SELF setMigrationStartedListener(Consumer<MigrationStartedEvent> listener);

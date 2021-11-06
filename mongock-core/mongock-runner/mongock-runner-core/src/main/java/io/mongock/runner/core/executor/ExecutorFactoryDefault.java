@@ -15,13 +15,13 @@ import io.mongock.runner.core.executor.operation.list.ListChangesOp;
 
 import java.util.SortedSet;
 
-public class ExecutorFactoryDefault implements ExecutorFactory<ChangeLogItem<ChangeSetItem>, ChangeSetItem, ChangeEntry, MongockConfiguration> {
+public class ExecutorFactoryDefault implements ExecutorFactory<ChangeLogItem<ChangeSetItem>, ChangeSetItem, MongockConfiguration> {
 
   @Override
   public  Executor getExecutor(Operation op,
 								 String executionId,
 								 SortedSet<ChangeLogItem<ChangeSetItem>> changeLogs,
-								 ConnectionDriver<ChangeEntry> driver,
+								 ConnectionDriver driver,
 								 ChangeLogRuntime changeLogRuntime,
 								 MongockConfiguration config) {
     switch (op.getId()) {

@@ -10,13 +10,11 @@ import java.util.Map;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
-import static io.mongock.driver.api.entry.ChangeState.FAILED;
 import static io.mongock.driver.api.entry.ChangeState.IGNORED;
 import static io.mongock.driver.api.entry.ChangeState.ROLLBACK_FAILED;
-import static io.mongock.driver.api.entry.ChangeState.ROLLED_BACK;
 
 
-public interface ChangeEntryService<CHANGE_ENTRY extends ChangeEntry> extends RepositoryIndexable, Process {
+public interface ChangeEntryService extends RepositoryIndexable, Process {
 
   /**
    * Retrieves if a changeSet with given changeSetId and author hasn't been already executed. This means
@@ -38,7 +36,7 @@ public interface ChangeEntryService<CHANGE_ENTRY extends ChangeEntry> extends Re
    */
   default List<ExecutedChangeEntry> getExecuted() throws MongockException {
 
-    Predicate<CHANGE_ENTRY> cleanIrrelevantState = entry -> entry.getState() != IGNORED && entry.getState() != ROLLBACK_FAILED;
+    Predicate<ChangeEntry> cleanIrrelevantState = entry -> entry.getState() != IGNORED && entry.getState() != ROLLBACK_FAILED;
     return getEntriesMap()//Maps of List<ChangeEntry>, indexed by changeId
         .values()//collection of List<ChangeEntry>
         .stream()
@@ -56,7 +54,7 @@ public interface ChangeEntryService<CHANGE_ENTRY extends ChangeEntry> extends Re
    * @return list of the  entries in database with the current relevant state ordered by execution timestamp
    * @throws MongockException
    */
-  default List<CHANGE_ENTRY> getAllEntriesWithCurrentState() throws MongockException {
+  default List<ChangeEntry> getAllEntriesWithCurrentState() throws MongockException {
     return getEntriesMap()//Maps of List<ChangeEntry>, indexed by changeId
         .values()//collection of List<ChangeEntry>
         .stream()
@@ -66,8 +64,8 @@ public interface ChangeEntryService<CHANGE_ENTRY extends ChangeEntry> extends Re
         .collect(Collectors.toList());
   }
 
-  default Map<String, List<CHANGE_ENTRY>> getEntriesMap() {
-    Map<String, List<CHANGE_ENTRY>> log = getEntriesLog()
+  default Map<String, List<ChangeEntry>> getEntriesMap() {
+    Map<String, List<ChangeEntry>> log = getEntriesLog()
         .stream()
         .collect(Collectors.groupingBy(ChangeEntry::getChangeId));
     log.values().forEach(entries -> entries.sort((c1, c2) -> c2.getTimestamp().compareTo(c1.getTimestamp())));//sorts each list in the map by date in reverse
@@ -79,7 +77,7 @@ public interface ChangeEntryService<CHANGE_ENTRY extends ChangeEntry> extends Re
    *
    * @return
    */
-  List<CHANGE_ENTRY> getEntriesLog();
+  List<ChangeEntry> getEntriesLog();
 
 
   /**
@@ -89,9 +87,9 @@ public interface ChangeEntryService<CHANGE_ENTRY extends ChangeEntry> extends Re
    * @param changeEntry Entry to be inserted
    * @throws MongockException if any i/o exception or already inserted
    */
-  void saveOrUpdate(CHANGE_ENTRY changeEntry) throws MongockException;
+  void saveOrUpdate(ChangeEntry changeEntry) throws MongockException;
 
-  void save(CHANGE_ENTRY changeEntry) throws MongockException;
+  void save(ChangeEntry changeEntry) throws MongockException;
 
 
 }

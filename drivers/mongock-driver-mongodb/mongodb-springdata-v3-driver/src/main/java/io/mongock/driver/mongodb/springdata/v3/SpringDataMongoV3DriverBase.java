@@ -21,7 +21,7 @@ import org.springframework.transaction.support.DefaultTransactionDefinition;
 import java.util.Optional;
 
 @NotThreadSafe
-public abstract class SpringDataMongoV3DriverBase<CHANGE_ENTRY extends ChangeEntry> extends MongoSync4DriverGeneric<CHANGE_ENTRY> {
+public abstract class SpringDataMongoV3DriverBase extends MongoSync4DriverGeneric {
 
   protected static final Logger logger = LoggerFactory.getLogger(SpringDataMongoV3DriverBase.class);
 
@@ -73,9 +73,9 @@ public abstract class SpringDataMongoV3DriverBase<CHANGE_ENTRY extends ChangeEnt
   }
 
   @Override
-  public ChangeEntryService<CHANGE_ENTRY> getChangeEntryService() {
+  public ChangeEntryService getChangeEntryService() {
     if (changeEntryRepository == null) {
-      changeEntryRepository = new SpringDataMongoV3ChangeEntryRepository<>(mongoTemplate, changeLogCollectionName, getReadWriteConfiguration());
+      changeEntryRepository = new SpringDataMongoV3ChangeEntryRepository(mongoTemplate, changeLogCollectionName, getReadWriteConfiguration());
       changeEntryRepository.setIndexCreation(isIndexCreation());
     }
     return changeEntryRepository;

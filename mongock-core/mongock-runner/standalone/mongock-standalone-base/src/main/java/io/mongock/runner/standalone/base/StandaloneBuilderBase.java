@@ -17,15 +17,15 @@ import io.mongock.runner.core.executor.dependency.DependencyManager;
 import java.util.function.Consumer;
 
 public abstract class StandaloneBuilderBase<
-    SELF extends StandaloneBuilderBase<SELF, CHANGELOG, CHANGESET, CHANGE_ENTRY, CONFIG>,
+    SELF extends StandaloneBuilderBase<SELF, CHANGELOG, CHANGESET, CONFIG>,
     CHANGELOG extends ChangeLogItem<CHANGESET>,
     CHANGESET extends ChangeSetItem,
-    CHANGE_ENTRY extends ChangeEntry,
+    
     CONFIG extends MongockConfiguration>
-    extends RunnerBuilderBase<SELF, CHANGELOG, CHANGESET, CHANGE_ENTRY, CONFIG> {
+    extends RunnerBuilderBase<SELF, CHANGELOG, CHANGESET, CONFIG> {
 
   protected StandaloneBuilderBase(BuilderType builderType,
-                                  ExecutorFactory<CHANGELOG, CHANGESET, CHANGE_ENTRY, CONFIG> executorFactory,
+                                  ExecutorFactory<CHANGELOG, CHANGESET, CONFIG> executorFactory,
                                   ChangeLogServiceBase<CHANGELOG, CHANGESET> changeLogService,
                                   CONFIG config) {
     super(builderType, executorFactory, changeLogService, new DependencyManager(), config);

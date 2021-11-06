@@ -25,7 +25,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 @NotThreadSafe
-public abstract class MongoSync4DriverGeneric<CHANGE_ENTRY extends ChangeEntry> extends ConnectionDriverBase<CHANGE_ENTRY> implements Transactioner {
+public abstract class MongoSync4DriverGeneric extends ConnectionDriverBase implements Transactioner {
 
   private static final String DEFAULT_CHANGELOG_COLLECTION_NAME = "mongockChangeLog";
   private static final String DEFAULT_LOCK_COLLECTION_NAME = "mongockLock";
@@ -37,7 +37,7 @@ public abstract class MongoSync4DriverGeneric<CHANGE_ENTRY extends ChangeEntry> 
   protected String changeLogCollectionName = DEFAULT_CHANGELOG_COLLECTION_NAME;
   protected String lockCollectionName = DEFAULT_LOCK_COLLECTION_NAME;
 
-  protected MongoSync4ChangeEntryRepository<CHANGE_ENTRY> changeEntryRepository;
+  protected MongoSync4ChangeEntryRepository changeEntryRepository;
   protected MongoSync4LockRepository lockRepository;
   protected Set<ChangeSetDependency> dependencies;
   protected TransactionOptions txOptions;
@@ -107,9 +107,9 @@ public abstract class MongoSync4DriverGeneric<CHANGE_ENTRY extends ChangeEntry> 
   }
 
   @Override
-  public ChangeEntryService<CHANGE_ENTRY> getChangeEntryService() {
+  public ChangeEntryService getChangeEntryService() {
     if (changeEntryRepository == null) {
-      changeEntryRepository = new MongoSync4ChangeEntryRepository<>(mongoDatabase.getCollection(changeLogCollectionName), getReadWriteConfiguration());
+      changeEntryRepository = new MongoSync4ChangeEntryRepository(mongoDatabase.getCollection(changeLogCollectionName), getReadWriteConfiguration());
       changeEntryRepository.setIndexCreation(isIndexCreation());
     }
     return changeEntryRepository;

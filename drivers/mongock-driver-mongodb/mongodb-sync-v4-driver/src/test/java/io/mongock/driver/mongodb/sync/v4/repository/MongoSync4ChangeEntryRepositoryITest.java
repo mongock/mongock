@@ -25,7 +25,7 @@ public class MongoSync4ChangeEntryRepositoryITest extends MongoChangeEntryReposi
 
 
   protected void initializeRepository(boolean indexCreation) {
-    MongoSync4ChangeEntryRepository<ChangeEntry> repo = new MongoSync4ChangeEntryRepository<>(getDataBase().getCollection(CHANGELOG_COLLECTION_NAME));
+    MongoSync4ChangeEntryRepository repo = new MongoSync4ChangeEntryRepository(getDataBase().getCollection(CHANGELOG_COLLECTION_NAME));
     repo.setIndexCreation(indexCreation);
     repository = Mockito.spy(repo);
     repository.initialize();

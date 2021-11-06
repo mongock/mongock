@@ -55,7 +55,7 @@ public class RunnerBuilderBaseTest {
   private static final Map<String, Object> METADATA = new HashMap<>();
   @Rule
   public ExpectedException exceptionExpected = ExpectedException.none();
-  ConnectionDriver<ChangeEntry> driver = mock(ConnectionDriver.class);
+  ConnectionDriver driver = mock(ConnectionDriver.class);
   Map<String, Object> metadata = new HashMap<>();
 
   @Before
@@ -220,12 +220,12 @@ class DummyMongockConfiguration extends MongockConfiguration {
 
 }
 
-class DummyRunnerBuilder extends RunnerBuilderBase<DummyRunnerBuilder, ChangeLogItem<ChangeSetItem>, ChangeSetItem, ChangeEntry, MongockConfiguration>
+class DummyRunnerBuilder extends RunnerBuilderBase<DummyRunnerBuilder, ChangeLogItem<ChangeSetItem>, ChangeSetItem, MongockConfiguration>
     implements
     ChangeLogScanner<DummyRunnerBuilder, MongockConfiguration>,
     MigrationWriter<DummyRunnerBuilder, MongockConfiguration>,
     LegacyMigrator<DummyRunnerBuilder, MongockConfiguration>,
-    DriverConnectable<DummyRunnerBuilder, ChangeEntry, MongockConfiguration>,
+    DriverConnectable<DummyRunnerBuilder, MongockConfiguration>,
     Configurable<DummyRunnerBuilder, MongockConfiguration>,
     SystemVersionable<DummyRunnerBuilder, MongockConfiguration>,
     DependencyInjectable<DummyRunnerBuilder>,
@@ -233,7 +233,7 @@ class DummyRunnerBuilder extends RunnerBuilderBase<DummyRunnerBuilder, ChangeLog
     MongockRunnable<DummyRunnerBuilder, MongockConfiguration>,
     SelfInstanstiator<DummyRunnerBuilder> {
 
-  protected DummyRunnerBuilder(ExecutorFactory<ChangeLogItem<ChangeSetItem>, ChangeSetItem, ChangeEntry, MongockConfiguration> executorFactory) {
+  protected DummyRunnerBuilder(ExecutorFactory<ChangeLogItem<ChangeSetItem>, ChangeSetItem, MongockConfiguration> executorFactory) {
     super(COMMUNITY, executorFactory, new ChangeLogService(), new DependencyManager(), new MongockConfiguration());
   }
 

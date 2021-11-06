@@ -32,8 +32,8 @@ public class SpringMongockInitializingBeanRunnerBaseTest {
 
   @Rule
   public ExpectedException exceptionExpected = ExpectedException.none();
-  private ChangeEntryService<ChangeEntry> changeEntryService;
-  private ConnectionDriver<ChangeEntry> driver;
+  private ChangeEntryService changeEntryService;
+  private ConnectionDriver driver;
   private CallVerifier callVerifier;
   private ApplicationContext springContext;
 

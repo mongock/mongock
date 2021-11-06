@@ -14,7 +14,7 @@ import java.util.Optional;
 @Configuration
 @Import(MongoDBConfiguration.class)
 @ConditionalOnExpression("${mongock.enabled:true}")
-public class SpringDataMongoV2Context extends SpringDataMongoV2ContextBase<ChangeEntry, MongockConfiguration, SpringDataMongoV2Driver> {
+public class SpringDataMongoV2Context extends SpringDataMongoV2ContextBase<MongockConfiguration, SpringDataMongoV2Driver> {
 
   @Override
   protected SpringDataMongoV2Driver buildDriver(MongoTemplate mongoTemplate,

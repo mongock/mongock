@@ -216,7 +216,7 @@ public class ChangeEntryServiceTest {
         new Object());
   }
 
-  private static class ChangeEntryServiceImpl implements ChangeEntryService<ChangeEntry> {
+  private static class ChangeEntryServiceImpl implements ChangeEntryService {
 
     private final List<ChangeEntry> entries;
 

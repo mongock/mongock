@@ -4,7 +4,7 @@ import io.mongock.api.config.MongockConfiguration;
 import io.mongock.driver.api.driver.ConnectionDriver;
 import io.mongock.driver.api.entry.ChangeEntry;
 
-public interface DriverConnectable<SELF extends DriverConnectable<SELF, CHANGE_ENTRY, CONFIG>, CHANGE_ENTRY extends ChangeEntry, CONFIG extends MongockConfiguration>
+public interface DriverConnectable<SELF extends DriverConnectable<SELF, CONFIG>, CONFIG extends MongockConfiguration>
     extends Configurable<SELF, CONFIG>, SelfInstanstiator<SELF> {
   /**
    * Set the specific connection driver
@@ -13,7 +13,7 @@ public interface DriverConnectable<SELF extends DriverConnectable<SELF, CHANGE_E
    * @param driver connection driver
    * @return builder for fluent interface
    */
-  SELF setDriver(ConnectionDriver<CHANGE_ENTRY> driver);
+  SELF setDriver(ConnectionDriver driver);
 
   /**
    * Indicates that in case the lock cannot be obtained, therefore the migration is not executed, Mongock won't throw

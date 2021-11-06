@@ -8,12 +8,12 @@ import io.mongock.driver.api.lock.LockManager;
 import java.util.Optional;
 import java.util.Set;
 
-public interface ConnectionDriver<CHANGE_ENTRY extends ChangeEntry> extends Validable, DriverLegaciable {
+public interface ConnectionDriver extends Validable, DriverLegaciable {
   void initialize();
 
   LockManager getLockManager();
 
-  ChangeEntryService<CHANGE_ENTRY> getChangeEntryService();
+  ChangeEntryService getChangeEntryService();
 
   /**
    * This method will be called just before executing a changeSet, for all the changeSets, pulling all the refreshed dependencies

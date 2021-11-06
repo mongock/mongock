@@ -18,10 +18,10 @@ public final class MongockSpringboot {
     return new RunnerSpringbootBuilderImpl(new ExecutorFactoryDefault(), new MongockConfiguration());
   }
 
-  public static class RunnerSpringbootBuilderImpl extends SpringbootBuilderBase<RunnerSpringbootBuilderImpl, ChangeLogItem<ChangeSetItem>, ChangeSetItem, ChangeEntry, MongockConfiguration>
+  public static class RunnerSpringbootBuilderImpl extends SpringbootBuilderBase<RunnerSpringbootBuilderImpl, ChangeLogItem<ChangeSetItem>, ChangeSetItem, MongockConfiguration>
       implements RunnerSpringbootBuilder {
 
-    private RunnerSpringbootBuilderImpl(ExecutorFactory<ChangeLogItem<ChangeSetItem>, ChangeSetItem, ChangeEntry, MongockConfiguration> executorFactory, MongockConfiguration config) {
+    private RunnerSpringbootBuilderImpl(ExecutorFactory<ChangeLogItem<ChangeSetItem>, ChangeSetItem, MongockConfiguration> executorFactory, MongockConfiguration config) {
       super(COMMUNITY, executorFactory, new ChangeLogService(), config);
     }
 
