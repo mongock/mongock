@@ -892,7 +892,7 @@ public class ChangeUnitExecutorImplTest {
   }
 
   @Test
-  public void sshouldNotRollbackManuallyAnyChangeSetsAndStoreChangeEntries_whenSecondChangeLogFailAtChangeSet_ifStrategyIsMigrationAndTransactional() throws InterruptedException {
+  public void shouldNotRollbackManuallyAnyChangeSetsAndStoreChangeEntries_whenSecondChangeLogFailAtChangeSet_ifStrategyIsChangeUnitAndTransactional() throws InterruptedException {
     // given
     when(transactionableDriver.getLockManager()).thenReturn(lockManager);
 
@@ -916,11 +916,11 @@ public class ChangeUnitExecutorImplTest {
 
 
     // checks the four rollbacks were called
-    assertFalse("AdvanceChangeLogWithBefore's Rollback before method wasn't executed", AdvanceChangeLogWithBefore.rollbackBeforeCalled);
-    assertFalse("AdvanceChangeLogWithBefore's Rollback method wasn't executed", AdvanceChangeLogWithBefore.rollbackCalled);
+    assertFalse("AdvanceChangeLogWithBefore's Rollback before method was executed", AdvanceChangeLogWithBefore.rollbackBeforeCalled);
+    assertFalse("AdvanceChangeLogWithBefore's Rollback method was executed", AdvanceChangeLogWithBefore.rollbackCalled);
 
     assertTrue("AdvanceChangeLogWithBeforeAndChangeSetFailing's Rollback before method wasn't executed", AdvanceChangeLogWithBeforeAndChangeSetFailing.rollbackBeforeCalled);
-    assertFalse("AdvanceChangeLogWithBeforeAndChangeSetFailing's Rollback method wasn't executed", AdvanceChangeLogWithBeforeAndChangeSetFailing.rollbackCalled);
+    assertFalse("AdvanceChangeLogWithBeforeAndChangeSetFailing's Rollback method was executed", AdvanceChangeLogWithBeforeAndChangeSetFailing.rollbackCalled);
 
     ArgumentCaptor<ChangeEntry> changeEntryCaptor = ArgumentCaptor.forClass(ChangeEntry.class);
     verify(changeEntryService, new Times(5)).saveOrUpdate(changeEntryCaptor.capture());
