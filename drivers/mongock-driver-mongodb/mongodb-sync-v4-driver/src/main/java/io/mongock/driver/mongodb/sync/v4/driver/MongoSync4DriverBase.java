@@ -30,11 +30,7 @@ public abstract class MongoSync4DriverBase extends MongoSync4DriverGeneric {
 
   @Override
   public void prepareForExecutionBlock() {
-    try {
-      clientSession = mongoClient.startSession();
-    } catch (MongoClientException ex) {
-      throw new MongockException("ERROR starting session. If Mongock is connected to a MongoDB cluster which doesn't support transactions, you must to disable transactions", ex);
-    }
+
   }
 
   @Override
@@ -52,6 +48,12 @@ public abstract class MongoSync4DriverBase extends MongoSync4DriverGeneric {
   @Override
   public void executeInTransaction(Runnable operation) {
     try {
+      try {
+        clientSession = mongoClient.startSession();
+      } catch (MongoClientException ex) {
+        throw new MongockException("ERROR starting session. If Mongock is connected to a MongoDB cluster which doesn't support transactions, you must to disable transactions", ex);
+      }
+
       changeEntryRepository.setClientSession(clientSession);
       clientSession.withTransaction(getTransactionBody(operation), txOptions);
     } catch (Exception ex) {
