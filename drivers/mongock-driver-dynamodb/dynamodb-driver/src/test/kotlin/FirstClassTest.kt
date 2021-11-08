@@ -5,7 +5,13 @@ open class FirstClassTest {
 
     @Test
     fun test1() {
-        Assert.assertEquals("Hello world!", FirstClass().helloWorld())
+        val transactionRequest:List<String>? = null
+        val size = transactionRequest?.size
+        if(size == 0) {
+            println("equal zero")
+        } else {
+            println("NOT equal zero")
+        }
     }
 
 

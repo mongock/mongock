@@ -1,5 +1,6 @@
 package io.mongock.driver.dynamodb.repository
 
+import com.amazonaws.services.dynamodbv2.AmazonDynamoDBClient
 import com.amazonaws.services.dynamodbv2.document.DynamoDB
 import com.amazonaws.services.dynamodbv2.document.Item
 import com.amazonaws.services.dynamodbv2.model.AttributeDefinition
@@ -7,7 +8,7 @@ import com.amazonaws.services.dynamodbv2.model.KeySchemaElement
 import io.mongock.driver.api.common.EntityRepository
 import io.mongock.utils.field.FieldInstance
 
-open class DynamoDbRepositoryBase<DOMAIN_CLASS>(private val dynamoDB: DynamoDB,
+open class DynamoDbRepositoryBase<DOMAIN_CLASS>(private val dynamoDBClient: AmazonDynamoDBClient,
                                                 private val tableName: String,
                                                 private val keySchemaElements: List<KeySchemaElement>,
                                                 private val attributeDefinitions: List<AttributeDefinition>):EntityRepository<DOMAIN_CLASS, Item> {
