@@ -26,9 +26,6 @@ import java.util.Set;
 @NotThreadSafe
 public abstract class MongoCore3DriverGeneric extends ConnectionDriverBase implements Transactioner {
 
-  private static final String DEFAULT_CHANGELOG_COLLECTION_NAME = "mongockChangeLog";
-  private static final String DEFAULT_LOCK_COLLECTION_NAME = "mongockLock";
-
   private static final WriteConcern DEFAULT_WRITE_CONCERN = WriteConcern.MAJORITY.withJournal(true);
   private static final ReadConcern DEFAULT_READ_CONCERN = ReadConcern.MAJORITY;
   private static final ReadPreference DEFAULT_READ_PREFERENCE = ReadPreference.primary();
