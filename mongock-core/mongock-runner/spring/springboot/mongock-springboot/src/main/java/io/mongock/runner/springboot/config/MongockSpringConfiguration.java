@@ -4,9 +4,7 @@ import io.mongock.api.config.MongockConfiguration;
 import io.mongock.runner.springboot.base.config.MongockSpringConfigurationBase;
 import io.mongock.runner.springboot.base.config.SpringRunnerType;
 import org.springframework.boot.context.properties.ConfigurationProperties;
-import org.springframework.context.annotation.Configuration;
 
-@Configuration
 @ConfigurationProperties("mongock")
 public class MongockSpringConfiguration extends MongockConfiguration implements MongockSpringConfigurationBase {
 
