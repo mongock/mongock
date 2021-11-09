@@ -74,7 +74,7 @@ public abstract class SpringDataMongoV3DriverBase extends MongoSync4DriverGeneri
   @Override
   public ChangeEntryService getChangeEntryService() {
     if (changeEntryRepository == null) {
-      changeEntryRepository = new SpringDataMongoV3ChangeEntryRepository(mongoTemplate, changeLogCollectionName, getReadWriteConfiguration());
+      changeEntryRepository = new SpringDataMongoV3ChangeEntryRepository(mongoTemplate, migrationRepositoryName, getReadWriteConfiguration());
       changeEntryRepository.setIndexCreation(isIndexCreation());
     }
     return changeEntryRepository;

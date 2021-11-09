@@ -33,9 +33,6 @@ public abstract class MongoCore3DriverGeneric extends ConnectionDriverBase imple
   private static final ReadConcern DEFAULT_READ_CONCERN = ReadConcern.MAJORITY;
   private static final ReadPreference DEFAULT_READ_PREFERENCE = ReadPreference.primary();
 
-  protected String changeLogCollectionName = DEFAULT_CHANGELOG_COLLECTION_NAME;
-  protected String lockCollectionName = DEFAULT_LOCK_COLLECTION_NAME;
-
   protected Mongo3ChangeEntryRepository changeEntryRepository;
   protected Mongo3LockRepository lockRepository;
   protected Set<ChangeSetDependency> dependencies;
@@ -51,16 +48,6 @@ public abstract class MongoCore3DriverGeneric extends ConnectionDriverBase imple
                                  long lockTryFrequencyMillis) {
     super(lockAcquiredForMillis, lockQuitTryingAfterMillis, lockTryFrequencyMillis);
     this.mongoDatabase = mongoDatabase;
-  }
-
-  @Override
-  public void setChangeLogRepositoryName(String changeLogCollectionName) {
-    this.changeLogCollectionName = changeLogCollectionName;
-  }
-
-  @Override
-  public void setLockRepositoryName(String lockCollectionName) {
-    this.lockCollectionName = lockCollectionName;
   }
 
   /**
@@ -97,7 +84,7 @@ public abstract class MongoCore3DriverGeneric extends ConnectionDriverBase imple
   @Override
   protected LockRepositoryWithEntity getLockRepository() {
     if (lockRepository == null) {
-      MongoCollection<Document> collection = mongoDatabase.getCollection(lockCollectionName);
+      MongoCollection<Document> collection = mongoDatabase.getCollection(lockRepositoryName);
       lockRepository = new Mongo3LockRepository(collection, getReadWriteConfiguration());
       lockRepository.setIndexCreation(isIndexCreation());
     }
@@ -107,7 +94,7 @@ public abstract class MongoCore3DriverGeneric extends ConnectionDriverBase imple
   @Override
   public ChangeEntryService getChangeEntryService() {
     if (changeEntryRepository == null) {
-      changeEntryRepository = new Mongo3ChangeEntryRepository(mongoDatabase.getCollection(changeLogCollectionName), getReadWriteConfiguration());
+      changeEntryRepository = new Mongo3ChangeEntryRepository(mongoDatabase.getCollection(migrationRepositoryName), getReadWriteConfiguration());
       changeEntryRepository.setIndexCreation(isIndexCreation());
     }
     return changeEntryRepository;

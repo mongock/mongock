@@ -26,15 +26,10 @@ import java.util.Set;
 @NotThreadSafe
 public abstract class MongoSync4DriverGeneric extends ConnectionDriverBase implements Transactioner {
 
-  private static final String DEFAULT_CHANGELOG_COLLECTION_NAME = "mongockChangeLog";
-  private static final String DEFAULT_LOCK_COLLECTION_NAME = "mongockLock";
 
   private static final WriteConcern DEFAULT_WRITE_CONCERN = WriteConcern.MAJORITY.withJournal(true);
   private static final ReadConcern DEFAULT_READ_CONCERN = ReadConcern.MAJORITY;
   private static final ReadPreference DEFAULT_READ_PREFERENCE = ReadPreference.primary();
-
-  protected String changeLogCollectionName = DEFAULT_CHANGELOG_COLLECTION_NAME;
-  protected String lockCollectionName = DEFAULT_LOCK_COLLECTION_NAME;
 
   protected MongoSync4ChangeEntryRepository changeEntryRepository;
   protected MongoSync4LockRepository lockRepository;
@@ -53,15 +48,7 @@ public abstract class MongoSync4DriverGeneric extends ConnectionDriverBase imple
     this.mongoDatabase = mongoDatabase;
   }
 
-  @Override
-  public void setChangeLogRepositoryName(String changeLogCollectionName) {
-    this.changeLogCollectionName = changeLogCollectionName;
-  }
 
-  @Override
-  public void setLockRepositoryName(String lockCollectionName) {
-    this.lockCollectionName = lockCollectionName;
-  }
 
   /**
    * When using Java MongoDB driver directly, it sets the transaction options for all the Mongock's transactions.
@@ -98,7 +85,7 @@ public abstract class MongoSync4DriverGeneric extends ConnectionDriverBase imple
   @Override
   protected LockRepositoryWithEntity getLockRepository() {
     if (lockRepository == null) {
-      MongoCollection<Document> collection = mongoDatabase.getCollection(lockCollectionName);
+      MongoCollection<Document> collection = mongoDatabase.getCollection(lockRepositoryName);
       lockRepository = new MongoSync4LockRepository(collection, getReadWriteConfiguration());
       lockRepository.setIndexCreation(isIndexCreation());
     }
@@ -108,7 +95,7 @@ public abstract class MongoSync4DriverGeneric extends ConnectionDriverBase imple
   @Override
   public ChangeEntryService getChangeEntryService() {
     if (changeEntryRepository == null) {
-      changeEntryRepository = new MongoSync4ChangeEntryRepository(mongoDatabase.getCollection(changeLogCollectionName), getReadWriteConfiguration());
+      changeEntryRepository = new MongoSync4ChangeEntryRepository(mongoDatabase.getCollection(migrationRepositoryName), getReadWriteConfiguration());
       changeEntryRepository.setIndexCreation(isIndexCreation());
     }
     return changeEntryRepository;

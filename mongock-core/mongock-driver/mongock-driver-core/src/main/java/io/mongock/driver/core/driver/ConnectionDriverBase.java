@@ -11,6 +11,8 @@ import io.mongock.utils.annotation.NotThreadSafe;
 
 @NotThreadSafe
 public abstract class ConnectionDriverBase implements ConnectionDriver {
+  private static final String DEFAULT_CHANGELOG_COLLECTION_NAME = "mongockChangeLog";
+  private static final String DEFAULT_LOCK_COLLECTION_NAME = "mongockLock";
 
   private static final TimeService TIME_SERVICE = new TimeService();
 
@@ -21,8 +23,8 @@ public abstract class ConnectionDriverBase implements ConnectionDriver {
 
   protected boolean initialized = false;
   protected LockManager lockManager = null;
-  protected String migrationRepositoryName;
-  protected String lockRepositoryName;
+  protected String migrationRepositoryName = DEFAULT_CHANGELOG_COLLECTION_NAME;
+  protected String lockRepositoryName = DEFAULT_LOCK_COLLECTION_NAME;
   protected boolean indexCreation = true;
 
 
