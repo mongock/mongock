@@ -4,6 +4,7 @@ import com.amazonaws.services.dynamodbv2.AmazonDynamoDBClient
 import com.amazonaws.services.dynamodbv2.document.Item
 import com.amazonaws.services.dynamodbv2.model.KeySchemaElement
 import com.amazonaws.services.dynamodbv2.model.KeyType
+import io.mongock.driver.api.entry.ChangeEntry
 import io.mongock.driver.core.lock.LockEntry
 import io.mongock.driver.core.lock.LockRepositoryWithEntity
 
@@ -13,12 +14,13 @@ class DynamoDBLockRepository(client: AmazonDynamoDBClient, tableName: String) :
     DynamoDbRepositoryBase<LockEntry>(
         client,
         tableName,
-        listOf(KeySchemaElement("change_id", KeyType.HASH)),
+        listOf(KeySchemaElement(ChangeEntry.KEY_CHANGE_ID, KeyType.HASH)),
         emptyList()//todo change this
     ) {
+    private var _indexCreation = true;
 
     override fun setIndexCreation(indexCreation: Boolean) {
-        TODO("Not yet implemented")
+        _indexCreation = indexCreation
     }
 
     override fun insertUpdate(newLock: LockEntry?) {

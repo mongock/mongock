@@ -11,7 +11,7 @@ open class DynamoDBTransactionItems {
 
     fun add(item:TransactWriteItem) {
         if(items.size >= max) {
-            throw MongockException("exceeded maxium number of items: $max")
+            throw MongockException("exceeded maximum number of items: $max")
         }
         items.add(item)
     }

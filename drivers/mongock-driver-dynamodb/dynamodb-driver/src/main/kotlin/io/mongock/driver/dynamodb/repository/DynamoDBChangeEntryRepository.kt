@@ -17,9 +17,11 @@ open class DynamoDBChangeEntryRepository(client: AmazonDynamoDBClient, tableName
         emptyList()
     ) {
     var transactionItems:DynamoDBTransactionItems? = null
+    private var _indexCreation = true;
+
 
     override fun setIndexCreation(indexCreation: Boolean) {
-        TODO("Not yet implemented")
+        _indexCreation = indexCreation
     }
 
     override fun isAlreadyExecuted(changeSetId: String?, author: String?): Boolean {

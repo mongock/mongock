@@ -6,6 +6,8 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
+import static io.mongock.utils.field.Field.KeyType.STANDARD;
+
 /**
  * Set of changes to be added to the DB. Many changesets are included in one changelog.
  *
@@ -15,6 +17,10 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 public @interface Field {
 
+  enum KeyType {STANDARD, PRIMARY}
+
   String value();
+
+  KeyType type() default STANDARD;
 
 }

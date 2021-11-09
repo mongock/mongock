@@ -17,12 +17,13 @@ import org.bson.conversions.Bson;
 
 import java.util.Date;
 
+import static io.mongock.driver.core.lock.LockEntry.KEY_FIELD;
+import static io.mongock.driver.core.lock.LockEntry.STATUS_FIELD;
+import static io.mongock.driver.core.lock.LockEntry.OWNER_FIELD;
+import static io.mongock.driver.core.lock.LockEntry.EXPIRES_AT_FIELD;
 public class MongoSync4LockRepository extends MongoSync4RepositoryBase<LockEntry> implements LockRepositoryWithEntity<Document> {
 
-  private static final String KEY_FIELD = "key";
-  private static final String STATUS_FIELD = "status";
-  private static final String OWNER_FIELD = "owner";
-  private static final String EXPIRES_AT_FIELD = "expiresAt";
+
 
   public MongoSync4LockRepository(MongoCollection<Document> collection) {
     super(collection, new String[]{KEY_FIELD}, ReadWriteConfiguration.getDefault());

@@ -4,23 +4,29 @@ import io.mongock.utils.field.Field;
 
 import java.util.Date;
 
+import static io.mongock.utils.field.Field.KeyType.PRIMARY;
+
 /**
  * Type: entity class.
  *
  * @since 27/07/2014
  */
 public class LockEntry {
+  public static final String KEY_FIELD = "key";
+  public static final String STATUS_FIELD = "status";
+  public static final String OWNER_FIELD = "owner";
+  public static final String EXPIRES_AT_FIELD = "expiresAt";
 
-  @Field("key")
+  @Field(value = KEY_FIELD, type = PRIMARY)
   private final String key;
 
-  @Field("status")
+  @Field(STATUS_FIELD)
   private final String status;
 
-  @Field("owner")
+  @Field(OWNER_FIELD)
   private final String owner;
 
-  @Field("expiresAt")
+  @Field(EXPIRES_AT_FIELD)
   private final Date expiresAt;
 
   public LockEntry(String key, String status, String owner, Date expiresAt) {

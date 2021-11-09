@@ -13,6 +13,8 @@ import static io.mongock.driver.api.entry.ChangeState.EXECUTED;
 import static io.mongock.driver.api.entry.ChangeState.FAILED;
 import static io.mongock.driver.api.entry.ChangeState.ROLLBACK_FAILED;
 import static io.mongock.driver.api.entry.ChangeState.ROLLED_BACK;
+import static io.mongock.utils.field.Field.KeyType.INDEX;
+import static io.mongock.utils.field.Field.KeyType.PRIMARY;
 
 /**
  * Entry in the changes collection log
@@ -36,13 +38,13 @@ public class ChangeEntry {
 
 
 
-  @Field(KEY_EXECUTION_ID)
+  @Field(value = KEY_EXECUTION_ID, type = PRIMARY)
   private final String executionId;
 
-  @Field(KEY_CHANGE_ID)
+  @Field(value = KEY_CHANGE_ID, type = PRIMARY)
   private final String changeId;
 
-  @Field(KEY_AUTHOR)
+  @Field(value = KEY_AUTHOR, type = PRIMARY)
   private final String author;
 
   @Field(KEY_TIMESTAMP)
