@@ -4,6 +4,7 @@ import com.amazonaws.services.dynamodbv2.AmazonDynamoDBClient
 import com.amazonaws.services.dynamodbv2.document.Item
 import com.amazonaws.services.dynamodbv2.model.KeySchemaElement
 import com.amazonaws.services.dynamodbv2.model.KeyType
+import com.amazonaws.services.dynamodbv2.model.TransactWriteItemsRequest
 import io.mongock.driver.api.entry.ChangeEntry
 import io.mongock.driver.core.entry.ChangeEntryRepositoryWithEntity
 
@@ -15,6 +16,8 @@ open class DynamoDBChangeEntryRepository(client: AmazonDynamoDBClient, tableName
         listOf(KeySchemaElement("change_id", KeyType.HASH), KeySchemaElement("execution_id_author", KeyType.RANGE)),
         emptyList()
     ) {
+    var transactionItems:DynamoDBTransactionItems? = null
+
     override fun setIndexCreation(indexCreation: Boolean) {
         TODO("Not yet implemented")
     }
@@ -34,4 +37,9 @@ open class DynamoDBChangeEntryRepository(client: AmazonDynamoDBClient, tableName
     override fun save(changeEntry: ChangeEntry?) {
         TODO("Not yet implemented")
     }
+
+    fun cleanTransactionRequest() {
+        transactionItems = null
+    }
+
 }

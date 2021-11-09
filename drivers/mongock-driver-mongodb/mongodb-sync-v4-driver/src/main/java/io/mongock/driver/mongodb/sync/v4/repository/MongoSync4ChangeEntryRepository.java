@@ -175,19 +175,6 @@ public class MongoSync4ChangeEntryRepository extends MongoSync4RepositoryBase<Ch
             .collect(Collectors.toList());
   }
 
-
-  public void setClientSession(ClientSession clientSession) {
-    this.clientSession = clientSession;
-  }
-
-  public void clearClientSession() {
-    setClientSession(null);
-  }
-
-  private Optional<ClientSession> getClientSession() {
-    return Optional.ofNullable(clientSession);
-  }
-
   @Override
   public void save(ChangeEntry changeEntry) throws MongockException {
     InsertOneResult result = getClientSession()
@@ -213,6 +200,20 @@ public class MongoSync4ChangeEntryRepository extends MongoSync4RepositoryBase<Ch
       save(changeEntry);
     }
   }
+
+
+  public void setClientSession(ClientSession clientSession) {
+    this.clientSession = clientSession;
+  }
+
+  public void clearClientSession() {
+    setClientSession(null);
+  }
+
+  private Optional<ClientSession> getClientSession() {
+    return Optional.ofNullable(clientSession);
+  }
+
 
   /**
    * Check if a changeSet with given changeSetId and author and

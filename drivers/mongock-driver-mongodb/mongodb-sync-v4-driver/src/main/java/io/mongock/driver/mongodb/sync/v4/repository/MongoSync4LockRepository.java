@@ -51,6 +51,7 @@ public class MongoSync4LockRepository extends MongoSync4RepositoryBase<LockEntry
    * @throws LockPersistenceException if there is no lock in the database with the same key and owner or cannot update
    *                                  the lock for any other reason
    */
+  @Override
   public void updateIfSameOwner(LockEntry newLock)  {
     insertUpdate(newLock, true);
   }
@@ -61,6 +62,7 @@ public class MongoSync4LockRepository extends MongoSync4RepositoryBase<LockEntry
    * @param lockKey key
    * @return LockEntry
    */
+  @Override
   public LockEntry findByKey(String lockKey) {
     Document result = collection.find(new Document().append(KEY_FIELD, lockKey)).first();
     if (result != null) {
@@ -80,6 +82,7 @@ public class MongoSync4LockRepository extends MongoSync4RepositoryBase<LockEntry
    * @param lockKey lock key
    * @param owner   lock owner
    */
+  @Override
   public void removeByKeyAndOwner(String lockKey, String owner) {
     collection.deleteMany(Filters.and(Filters.eq(KEY_FIELD, lockKey), Filters.eq(OWNER_FIELD, owner)));
   }
