@@ -65,26 +65,26 @@ public abstract class ConnectionDriverBase implements ConnectionDriver {
   }
 
   @Override
-  public void setMigrationRepositoryName(String migrationRepositoryName) {
+  public final void setMigrationRepositoryName(String migrationRepositoryName) {
     if(migrationRepositoryName != null || this.migrationRepositoryName2 == null) {
       this.migrationRepositoryName2 = migrationRepositoryName;
     }
   }
 
   @Override
-  public void setLockRepositoryName(String lockRepositoryName) {
+  public final void setLockRepositoryName(String lockRepositoryName) {
     if(lockRepositoryName != null || this.lockRepositoryName2 == null) {
       this.lockRepositoryName2 = lockRepositoryName;
     }
   }
 
   @Override
-  public String getMigrationRepositoryName() {
+  public final String getMigrationRepositoryName() {
     return migrationRepositoryName2 != null ? migrationRepositoryName2 : DEFAULT_MIGRATION_REPOSITORY_NAME;
   };
 
   @Override
-  public String getLockRepositoryName() {
+  public final String getLockRepositoryName() {
 
     return lockRepositoryName2 != null ? lockRepositoryName2 : DEFAULT_LOCK_REPOSITORY_NAME;
   }

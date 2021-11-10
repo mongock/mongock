@@ -1,16 +1,16 @@
 package io.mongock.integrationtests.spring5.springdata3;
 
+import com.mongodb.client.FindIterable;
+import com.mongodb.client.MongoCollection;
+import com.mongodb.client.MongoDatabase;
 import io.mongock.api.config.MongockConfiguration;
 import io.mongock.api.config.TransactionStrategy;
-import io.mongock.driver.api.entry.ChangeState;
 import io.mongock.api.exception.MongockException;
+import io.mongock.driver.api.entry.ChangeState;
 import io.mongock.integrationtests.spring5.springdata3.changelogs.interfaces.mongodbstandalone.rollback.MongoDBAdvanceChangeLog;
 import io.mongock.integrationtests.spring5.springdata3.changelogs.interfaces.mongodbstandalone.rollback.MongoDBAdvanceChangeLogWithBeforeFailing;
 import io.mongock.integrationtests.spring5.springdata3.changelogs.interfaces.mongodbstandalone.rollback.MongoDBAdvanceChangeLogWithChangeSetFailing;
 import io.mongock.integrationtests.spring5.springdata3.changelogs.interfaces.mongodbstandalone.withoutsession.MongoDBRollbackWithNoClientSessionChangeLog;
-import com.mongodb.client.FindIterable;
-import com.mongodb.client.MongoCollection;
-import com.mongodb.client.MongoDatabase;
 import org.bson.Document;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
@@ -68,7 +68,9 @@ class MongoDBWithRunnerITest extends ApplicationRunnerTestBase {
     // given
     MongoDatabase database = mongoClient.getDatabase(RuntimeTestUtil.DEFAULT_DATABASE_NAME);
 
-    MongockConfiguration config = new MongockConfiguration();
+    MongockConfiguration config = new MongockConfiguration(); 
+    config.setMigrationRepositoryName("mongockChangeLog");
+    config.setLockRepositoryName("mongockLock");
     config.setServiceIdentifier("myService");
     config.setTrackIgnored(false);
     config.setChangeLogsScanPackage(Arrays.asList(
@@ -143,7 +145,11 @@ class MongoDBWithRunnerITest extends ApplicationRunnerTestBase {
 
     MongoDatabase database = mongoClient.getDatabase(RuntimeTestUtil.DEFAULT_DATABASE_NAME);
 
-    MongockConfiguration config = new MongockConfiguration();
+    MongockConfiguration config = new MongockConfiguration(); 
+    config.setMigrationRepositoryName("mongockChangeLog");
+    config.setLockRepositoryName("mongockLock"); 
+    config.setMigrationRepositoryName("mongockChangeLog");
+    config.setLockRepositoryName("mongockLock");
     config.setServiceIdentifier("myService");
     config.setTrackIgnored(false);
     config.setChangeLogsScanPackage(Arrays.asList(
@@ -214,7 +220,9 @@ class MongoDBWithRunnerITest extends ApplicationRunnerTestBase {
 
     MongoDatabase database = mongoClient.getDatabase(RuntimeTestUtil.DEFAULT_DATABASE_NAME);
 
-    MongockConfiguration config = new MongockConfiguration();
+    MongockConfiguration config = new MongockConfiguration(); 
+    config.setMigrationRepositoryName("mongockChangeLog");
+    config.setLockRepositoryName("mongockLock");
     config.setServiceIdentifier("myService");
     config.setTrackIgnored(false);
     config.setChangeLogsScanPackage(Arrays.asList(
@@ -283,7 +291,9 @@ class MongoDBWithRunnerITest extends ApplicationRunnerTestBase {
     // given
     MongoDatabase database = mongoClient.getDatabase(RuntimeTestUtil.DEFAULT_DATABASE_NAME);
 
-    MongockConfiguration config = new MongockConfiguration();
+    MongockConfiguration config = new MongockConfiguration(); 
+    config.setMigrationRepositoryName("mongockChangeLog");
+    config.setLockRepositoryName("mongockLock");
     config.setServiceIdentifier("myService");
     config.setTrackIgnored(false);
     config.setChangeLogsScanPackage(Arrays.asList(
@@ -344,7 +354,9 @@ class MongoDBWithRunnerITest extends ApplicationRunnerTestBase {
     // given
     MongoDatabase database = mongoClient.getDatabase(RuntimeTestUtil.DEFAULT_DATABASE_NAME);
 
-    MongockConfiguration config = new MongockConfiguration();
+    MongockConfiguration config = new MongockConfiguration(); 
+    config.setMigrationRepositoryName("mongockChangeLog");
+    config.setLockRepositoryName("mongockLock");
     config.setServiceIdentifier("myService");
     config.setTrackIgnored(false);
     config.setChangeLogsScanPackage(Collections.singletonList(MongoDBAdvanceChangeLog.class.getName()));
@@ -393,7 +405,9 @@ class MongoDBWithRunnerITest extends ApplicationRunnerTestBase {
     // given
     MongoDatabase database = mongoClient.getDatabase(RuntimeTestUtil.DEFAULT_DATABASE_NAME);
 
-    MongockConfiguration config = new MongockConfiguration();
+    MongockConfiguration config = new MongockConfiguration(); 
+    config.setMigrationRepositoryName("mongockChangeLog");
+    config.setLockRepositoryName("mongockLock");
     config.setServiceIdentifier("myService");
     config.setTrackIgnored(false);
     config.setChangeLogsScanPackage(Collections.singletonList(MongoDBAdvanceChangeLogWithBeforeFailing.class.getName()));
