@@ -44,18 +44,6 @@ class DynamoDBLockRepository(client: AmazonDynamoDBClient, tableName: String, in
         TODO("Not yet implemented")
     }
 
-    override fun mapFieldInstances(fieldInstanceList: MutableList<FieldInstance>?): Item {
-        val changeId = fieldInstanceList!!
-            .filter { fieldInstance -> fieldInstance.name == ChangeEntry.KEY_CHANGE_ID }
-            .map { fieldInstance -> fieldInstance.value }
-            .first()!!
 
-//        val item = Item()
-//            .withPrimaryKey(KEY_CHANGE_ID, changeId)
-//            .withLong(ChangeEntry.KEY_TIMESTAMP, Date().time)
-//            .withString(ChangeEntry.KEY_AUTHOR, getHostName())
-
-        return Item()
-    }
 
 }

@@ -51,18 +51,6 @@ open class DynamoDBChangeEntryRepository(client: AmazonDynamoDBClient, tableName
         transactionItems = null
     }
 
-    override fun mapFieldInstances(fieldInstanceList: MutableList<FieldInstance>?): Item {
-        val changeId = fieldInstanceList!!
-            .filter { fieldInstance -> fieldInstance.name == KEY_CHANGE_ID }
-            .map { fieldInstance -> fieldInstance.value }
-            .first()!!
 
-//        val item = Item()
-//            .withPrimaryKey(KEY_CHANGE_ID, changeId)
-//            .withLong(ChangeEntry.KEY_TIMESTAMP, Date().time)
-//            .withString(ChangeEntry.KEY_AUTHOR, getHostName())
-
-        return Item()
-    }
 
 }
