@@ -19,7 +19,7 @@ import java.util.*
 
 private val logger = KotlinLogging.logger {}
 
-open class DynamoDBDriverBase protected constructor(
+abstract class DynamoDBDriverBase protected constructor(
     private val client: AmazonDynamoDBClient,
     lockAcquiredForMillis: Long,
     lockQuitTryingAfterMillis: Long,
@@ -30,25 +30,21 @@ open class DynamoDBDriverBase protected constructor(
 
     private var transactionItems: DynamoDBTransactionItems? = null
     private var transactionEnabled = false
-    private lateinit var _lockRepository: DynamoDBLockRepository
-    private lateinit var _changeEntryService: DynamoDBChangeEntryRepository
     private lateinit var _dependencies: MutableSet<ChangeSetDependency>
 
-    @Synchronized
+    private val _changeEntryService: DynamoDBChangeEntryRepository by lazy {
+        DynamoDBChangeEntryRepository(client, migrationRepositoryName, indexCreation)
+    }
+
+    private val _lockRepository: DynamoDBLockRepository by lazy {
+        DynamoDBLockRepository(client, lockRepositoryName, indexCreation)
+    }
+
     override fun getLockRepository(): LockRepository {
-        if (!this::_lockRepository.isInitialized) {
-            _lockRepository = DynamoDBLockRepository(client = client, tableName = lockRepositoryName)
-            _lockRepository.setIndexCreation(isIndexCreation)
-        }
         return _lockRepository
     }
 
-    @Synchronized
     override fun getChangeEntryService(): ChangeEntryService {
-        if (!this::_changeEntryService.isInitialized) {
-            _changeEntryService = DynamoDBChangeEntryRepository(client = client, tableName = migrationRepositoryName)
-            _lockRepository.setIndexCreation(isIndexCreation)
-        }
         return _changeEntryService
     }
 

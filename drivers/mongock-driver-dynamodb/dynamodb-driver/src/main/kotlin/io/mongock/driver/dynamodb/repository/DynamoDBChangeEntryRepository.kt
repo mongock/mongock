@@ -15,18 +15,17 @@ import io.mongock.utils.field.FieldInstance
 
 private const val KEY_EXECUTION_ID_AUTHOR = "$KEY_EXECUTION_ID#$KEY_AUTHOR"
 
-open class DynamoDBChangeEntryRepository(client: AmazonDynamoDBClient, tableName: String) :
+open class DynamoDBChangeEntryRepository(client: AmazonDynamoDBClient, tableName: String, indexCreation: Boolean) :
     ChangeEntryRepositoryWithEntity<Item>,
     DynamoDbRepositoryBase<ChangeEntry>(
         client,
         tableName,
         listOf(KeySchemaElement(KEY_CHANGE_ID, KeyType.HASH), KeySchemaElement(KEY_EXECUTION_ID_AUTHOR, KeyType.RANGE)),
-        emptyList()
+        emptyList(),//TODO chage this
+        indexCreation
     ) {
-    var transactionItems:DynamoDBTransactionItems? = null
+    var transactionItems: DynamoDBTransactionItems? = null
     private var _indexCreation = true;
-
-    private val dynamoDB: DynamoDB? = null
 
     override fun setIndexCreation(indexCreation: Boolean) {
         _indexCreation = indexCreation

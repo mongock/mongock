@@ -27,11 +27,11 @@ abstract class DynamoDbRepositoryBase<DOMAIN_CLASS>(
     private val client: AmazonDynamoDBClient,
     private val tableName: String,
     private val keySchemaElements: List<KeySchemaElement>,
-    private val attributeDefinitions: List<AttributeDefinition>
+    private val attributeDefinitions: List<AttributeDefinition>,
+    private val indexCreation:Boolean
 ) : EntityRepository<DOMAIN_CLASS, Item> {
     protected val dynamoDB: DynamoDB = DynamoDB(client)
     private var ensuredIndex = false
-    var indexCreation: Boolean = true
 
     @Synchronized
     override fun initialize() {

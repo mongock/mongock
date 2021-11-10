@@ -7,21 +7,22 @@ import com.amazonaws.services.dynamodbv2.model.KeyType
 import io.mongock.driver.api.entry.ChangeEntry
 import io.mongock.driver.core.lock.LockEntry
 import io.mongock.driver.core.lock.LockRepositoryWithEntity
+import io.mongock.utils.field.FieldInstance
 
 
-class DynamoDBLockRepository(client: AmazonDynamoDBClient, tableName: String) :
+class DynamoDBLockRepository(client: AmazonDynamoDBClient, tableName: String, indexCreation: Boolean) :
     LockRepositoryWithEntity<Item>,
     DynamoDbRepositoryBase<LockEntry>(
         client,
         tableName,
         listOf(KeySchemaElement(ChangeEntry.KEY_CHANGE_ID, KeyType.HASH)),
-        emptyList()//todo change this
+        emptyList(),//todo change this
+        indexCreation
     ) {
-    private var _indexCreation = true;
-
     override fun setIndexCreation(indexCreation: Boolean) {
-        _indexCreation = indexCreation
+        TODO("Not yet implemented")
     }
+
 
     override fun insertUpdate(newLock: LockEntry?) {
         TODO("Not yet implemented")
@@ -43,5 +44,18 @@ class DynamoDBLockRepository(client: AmazonDynamoDBClient, tableName: String) :
         TODO("Not yet implemented")
     }
 
+    override fun mapFieldInstances(fieldInstanceList: MutableList<FieldInstance>?): Item {
+        val changeId = fieldInstanceList!!
+            .filter { fieldInstance -> fieldInstance.name == ChangeEntry.KEY_CHANGE_ID }
+            .map { fieldInstance -> fieldInstance.value }
+            .first()!!
+
+//        val item = Item()
+//            .withPrimaryKey(KEY_CHANGE_ID, changeId)
+//            .withLong(ChangeEntry.KEY_TIMESTAMP, Date().time)
+//            .withString(ChangeEntry.KEY_AUTHOR, getHostName())
+
+        return Item()
+    }
 
 }
