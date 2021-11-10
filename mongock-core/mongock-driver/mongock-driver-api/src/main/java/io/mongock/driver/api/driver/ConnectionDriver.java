@@ -34,4 +34,12 @@ public interface ConnectionDriver extends Validable, DriverLegaciable {
     return getTransactioner().isPresent();
   }
 
+  void setMigrationRepositoryName(String migrationRepositoryName);
+
+  void setLockRepositoryName(String lockRepositoryName);
+
+
+  String getMigrationRepositoryName();
+
+  String getLockRepositoryName();
 }

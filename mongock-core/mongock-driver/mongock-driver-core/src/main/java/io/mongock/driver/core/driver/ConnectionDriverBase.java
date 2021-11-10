@@ -11,8 +11,8 @@ import io.mongock.utils.annotation.NotThreadSafe;
 
 @NotThreadSafe
 public abstract class ConnectionDriverBase implements ConnectionDriver {
-  private static final String DEFAULT_CHANGELOG_COLLECTION_NAME = "mongockChangeLog";
-  private static final String DEFAULT_LOCK_COLLECTION_NAME = "mongockLock";
+  private static final String DEFAULT_MIGRATION_REPOSITORY_NAME = "mongockChangeLog";
+  private static final String DEFAULT_LOCK_REPOSITORY_NAME = "mongockLock";
 
   private static final TimeService TIME_SERVICE = new TimeService();
 
@@ -23,8 +23,8 @@ public abstract class ConnectionDriverBase implements ConnectionDriver {
 
   protected boolean initialized = false;
   protected LockManager lockManager = null;
-  protected String migrationRepositoryName = DEFAULT_CHANGELOG_COLLECTION_NAME;
-  protected String lockRepositoryName = DEFAULT_LOCK_COLLECTION_NAME;
+  protected String migrationRepositoryName2;
+  protected String lockRepositoryName2 ;
   protected boolean indexCreation = true;
 
 
@@ -64,13 +64,31 @@ public abstract class ConnectionDriverBase implements ConnectionDriver {
     return initialized;
   }
 
-  public void setMigrationRepositoryName(String migrationRepositoryName) {
-    this.migrationRepositoryName = migrationRepositoryName;
+  @Override
+  public final void setMigrationRepositoryName(String migrationRepositoryName) {
+    if(migrationRepositoryName != null || this.migrationRepositoryName2 == null) {
+      this.migrationRepositoryName2 = migrationRepositoryName;
+    }
   }
 
-  public void setLockRepositoryName(String lockRepositoryName) {
-    this.lockRepositoryName = lockRepositoryName;
+  @Override
+  public final void setLockRepositoryName(String lockRepositoryName) {
+    if(lockRepositoryName != null || this.lockRepositoryName2 == null) {
+      this.lockRepositoryName2 = lockRepositoryName;
+    }
   }
+
+  @Override
+  public final String getMigrationRepositoryName() {
+    return migrationRepositoryName2 != null ? migrationRepositoryName2 : DEFAULT_MIGRATION_REPOSITORY_NAME;
+  };
+
+  @Override
+  public final String getLockRepositoryName() {
+
+    return lockRepositoryName2 != null ? lockRepositoryName2 : DEFAULT_LOCK_REPOSITORY_NAME;
+  }
+
 
   public boolean isIndexCreation() {
     return indexCreation;

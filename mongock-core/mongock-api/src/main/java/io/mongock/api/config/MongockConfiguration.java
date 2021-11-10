@@ -140,10 +140,6 @@ public class MongockConfiguration implements ExecutorConfiguration {
   private Long maxWaitingForLockMillis;
 
 
-  public MongockConfiguration() {
-    setMigrationRepositoryName(getMigrationRepositoryNameDefault());
-    setLockRepositoryName(getLockRepositoryNameDefault());
-  }
 
   private static long minutesToMillis(int minutes) {
     return minutes * 60 * 1000L;

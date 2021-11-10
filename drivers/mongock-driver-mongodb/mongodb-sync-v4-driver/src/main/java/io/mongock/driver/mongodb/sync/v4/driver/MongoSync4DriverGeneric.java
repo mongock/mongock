@@ -85,7 +85,7 @@ public abstract class MongoSync4DriverGeneric extends ConnectionDriverBase imple
   @Override
   protected LockRepositoryWithEntity getLockRepository() {
     if (lockRepository == null) {
-      MongoCollection<Document> collection = mongoDatabase.getCollection(lockRepositoryName);
+      MongoCollection<Document> collection = mongoDatabase.getCollection(getLockRepositoryName());
       lockRepository = new MongoSync4LockRepository(collection, getReadWriteConfiguration());
       lockRepository.setIndexCreation(isIndexCreation());
     }
@@ -95,7 +95,7 @@ public abstract class MongoSync4DriverGeneric extends ConnectionDriverBase imple
   @Override
   public ChangeEntryService getChangeEntryService() {
     if (changeEntryRepository == null) {
-      changeEntryRepository = new MongoSync4ChangeEntryRepository(mongoDatabase.getCollection(migrationRepositoryName), getReadWriteConfiguration());
+      changeEntryRepository = new MongoSync4ChangeEntryRepository(mongoDatabase.getCollection(getMigrationRepositoryName()), getReadWriteConfiguration());
       changeEntryRepository.setIndexCreation(isIndexCreation());
     }
     return changeEntryRepository;
