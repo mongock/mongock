@@ -15,6 +15,7 @@ import io.mongock.driver.dynamodb.repository.DynamoDBLockRepository
 import io.mongock.driver.dynamodb.repository.DynamoDBTransactionItems
 import mu.KotlinLogging
 import java.util.*
+import kotlin.collections.HashSet
 
 
 private val logger = KotlinLogging.logger {}
@@ -28,17 +29,26 @@ abstract class DynamoDBDriverBase protected constructor(
     ConnectionDriverBase(lockAcquiredForMillis, lockQuitTryingAfterMillis, lockTryFrequencyMillis),
     Transactioner {
 
-    private var transactionItems: DynamoDBTransactionItems? = null
-    private var transactionEnabled = false
-    private lateinit var _dependencies: MutableSet<ChangeSetDependency>
-
+    private val _dependencies: MutableSet<ChangeSetDependency> = HashSet()
     private val _changeEntryService: DynamoDBChangeEntryRepository by lazy {
-        DynamoDBChangeEntryRepository(client, migrationRepositoryName, indexCreation)
+        DynamoDBChangeEntryRepository(
+            client,
+            migrationRepositoryName,
+            indexCreation
+        )
+    }
+    private val _lockRepository: DynamoDBLockRepository by lazy {
+        DynamoDBLockRepository(
+            client,
+            lockRepositoryName,
+            indexCreation
+        )
     }
 
-    private val _lockRepository: DynamoDBLockRepository by lazy {
-        DynamoDBLockRepository(client, lockRepositoryName, indexCreation)
-    }
+    private var transactionItems: DynamoDBTransactionItems? = null
+
+    private var transactionEnabled = false
+
 
     override fun getLockRepository(): LockRepository {
         return _lockRepository
@@ -59,9 +69,6 @@ abstract class DynamoDBDriverBase protected constructor(
 
 
     override fun getDependencies(): Set<ChangeSetDependency> {
-        if (!this::_dependencies.isInitialized) {
-            throw MongockException("Driver not initialized");
-        }
         if (transactionItems != null) {
             val transactionReqDependency =
                 ChangeSetDependency(DynamoDBTransactionItems::class.java, transactionItems, true)
@@ -71,11 +78,6 @@ abstract class DynamoDBDriverBase protected constructor(
         return _dependencies;
     }
 
-    override fun specificInitialization() {
-        if (!this::_dependencies.isInitialized) {
-            _dependencies = HashSet();
-        }
-    }
 
     //TODO potentially removable(move it to executeInTransaction)
     override fun prepareForExecutionBlock() {
