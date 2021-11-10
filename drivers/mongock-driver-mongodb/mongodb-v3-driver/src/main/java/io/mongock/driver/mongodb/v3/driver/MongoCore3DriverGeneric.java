@@ -84,7 +84,7 @@ public abstract class MongoCore3DriverGeneric extends ConnectionDriverBase imple
   @Override
   protected LockRepositoryWithEntity getLockRepository() {
     if (lockRepository == null) {
-      MongoCollection<Document> collection = mongoDatabase.getCollection(lockRepositoryName);
+      MongoCollection<Document> collection = mongoDatabase.getCollection(getLockRepositoryName());
       lockRepository = new Mongo3LockRepository(collection, getReadWriteConfiguration());
       lockRepository.setIndexCreation(isIndexCreation());
     }
@@ -94,7 +94,7 @@ public abstract class MongoCore3DriverGeneric extends ConnectionDriverBase imple
   @Override
   public ChangeEntryService getChangeEntryService() {
     if (changeEntryRepository == null) {
-      changeEntryRepository = new Mongo3ChangeEntryRepository(mongoDatabase.getCollection(migrationRepositoryName), getReadWriteConfiguration());
+      changeEntryRepository = new Mongo3ChangeEntryRepository(mongoDatabase.getCollection(getMigrationRepositoryName()), getReadWriteConfiguration());
       changeEntryRepository.setIndexCreation(isIndexCreation());
     }
     return changeEntryRepository;

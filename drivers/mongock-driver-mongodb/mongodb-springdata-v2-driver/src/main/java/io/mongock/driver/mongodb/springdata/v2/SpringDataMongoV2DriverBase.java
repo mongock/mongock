@@ -72,7 +72,7 @@ public abstract class SpringDataMongoV2DriverBase extends MongoCore3DriverGeneri
   @Override
   public ChangeEntryService getChangeEntryService() {
     if (changeEntryRepository == null) {
-      changeEntryRepository = new SpringDataMongoV2ChangeEntryRepository(mongoTemplate, migrationRepositoryName, getReadWriteConfiguration());
+      changeEntryRepository = new SpringDataMongoV2ChangeEntryRepository(mongoTemplate, getMigrationRepositoryName(), getReadWriteConfiguration());
       changeEntryRepository.setIndexCreation(isIndexCreation());
     }
     return changeEntryRepository;

@@ -163,6 +163,8 @@ public abstract class RunnerBuilderBase<
         );
       }
     }
+    driver.setLockRepositoryName(config.getLockRepositoryName());
+    driver.setMigrationRepositoryName(config.getMigrationRepositoryName());
   }
 
 
