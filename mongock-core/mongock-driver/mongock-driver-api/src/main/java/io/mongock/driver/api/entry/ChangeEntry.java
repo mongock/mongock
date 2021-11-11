@@ -33,42 +33,42 @@ public class ChangeEntry {
   public static final String KEY_CHANGESET_METHOD = "changeSetMethod";
   public static final String KEY_METADATA = "metadata";
   public static final String KEY_EXECUTION_MILLIS = "executionMillis";
-  public static final String KEY_EXECUTION_HOST_NAMEA = "executionHostname";
+  public static final String KEY_EXECUTION_HOST_NAME = "executionHostname";
 
 
 
   @Field(value = KEY_EXECUTION_ID, type = PRIMARY)
-  private final String executionId;
+  protected String executionId;
 
   @Field(value = KEY_CHANGE_ID, type = PRIMARY)
-  private final String changeId;
+  protected String changeId;
 
   @Field(value = KEY_AUTHOR, type = PRIMARY)
-  private final String author;
+  protected String author;
 
   @Field(KEY_TIMESTAMP)
-  private final Date timestamp;
+  protected Date timestamp;
 
   @Field(KEY_STATE)
-  private final ChangeState state;
+  protected ChangeState state;
 
   @Field(KEY_TYPE)
-  private final ChangeType type;
+  protected ChangeType type;
 
   @Field(KEY_CHANGELOG_CLASS)
-  private final String changeLogClass;
+  protected String changeLogClass;
 
   @Field(KEY_CHANGESET_METHOD)
-  private final String changeSetMethod;
+  protected String changeSetMethod;
 
   @Field(KEY_METADATA)
-  private final Object metadata;
+  protected Object metadata;
 
   @Field(KEY_EXECUTION_MILLIS)
-  private final long executionMillis;
+  protected long executionMillis;
 
-  @Field(KEY_EXECUTION_HOST_NAMEA)
-  private final String executionHostname;
+  @Field(KEY_EXECUTION_HOST_NAME)
+  protected String executionHostname;
 
   public ChangeEntry(String executionId,
                      String changeId,
@@ -166,7 +166,7 @@ public class ChangeEntry {
 
   @Override
   public String toString() {
-    String sb = "ChangeEntry{" + "executionId='" + executionId + '\'' +
+    return "ChangeEntry{" + "executionId='" + executionId + '\'' +
         ", changeId='" + changeId + '\'' +
         ", author='" + author + '\'' +
         ", timestamp=" + timestamp +
@@ -178,7 +178,6 @@ public class ChangeEntry {
         ", executionMillis=" + executionMillis +
         ", executionHostname='" + executionHostname + '\'' +
         '}';
-    return sb;
   }
 
   public String toPrettyString() {
