@@ -28,7 +28,7 @@ public class ChangeEntryServiceTest {
 
     int i = 0;
     assertEquals("change-" + (i+1), result.get(i).getChangeId());
-    assertNull(result.get(i).getState());
+    assertEquals(EXECUTED, result.get(i).getState());
 
     i++;
     assertEquals("change-10", result.get(i).getChangeId());
@@ -36,7 +36,7 @@ public class ChangeEntryServiceTest {
 
     i++;
     assertEquals("change-" + i, result.get(i).getChangeId());
-    assertNull(result.get(i).getState());
+    assertEquals(EXECUTED, result.get(i).getState());
 
     i++;
     assertEquals("change-" + i, result.get(i).getChangeId());
@@ -78,7 +78,9 @@ public class ChangeEntryServiceTest {
     assertEquals("change-2", result.get(1).getChangeId());
     assertEquals("change-3", result.get(2).getChangeId());
     assertEquals("change-4", result.get(3).getChangeId());
-    assertEquals("change-9", result.get(4).getChangeId());
+    assertEquals("change-5", result.get(4).getChangeId());
+    assertEquals("change-6", result.get(5).getChangeId());
+    assertEquals("change-9", result.get(6).getChangeId());
   }
 
   private ChangeEntryServiceImpl getChangeEntryService() {

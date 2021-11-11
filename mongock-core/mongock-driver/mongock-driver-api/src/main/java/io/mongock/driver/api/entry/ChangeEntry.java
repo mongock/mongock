@@ -70,8 +70,8 @@ public class ChangeEntry {
     this.changeId = changeId;
     this.author = author;
     this.timestamp = new Date(timestamp.getTime());
-    this.state = state;
-    this.type = type;
+    this.state = state != null ? state : ChangeState.EXECUTED;
+    this.type = type != null ? type : ChangeType.EXECUTION;
     this.changeLogClass = changeLogClass;
     this.changeSetMethod = changeSetMethod;
     this.executionMillis = executionMillis;

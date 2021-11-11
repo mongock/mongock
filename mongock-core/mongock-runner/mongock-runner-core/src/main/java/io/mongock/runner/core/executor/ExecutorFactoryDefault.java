@@ -9,8 +9,6 @@ import io.mongock.runner.core.executor.changelog.ChangeLogRuntime;
 import io.mongock.runner.core.executor.operation.Operation;
 import io.mongock.runner.core.executor.operation.change.MigrationExecutor;
 import io.mongock.runner.core.executor.operation.change.MigrationOp;
-import io.mongock.runner.core.executor.operation.list.ListChangesExecutor;
-import io.mongock.runner.core.executor.operation.list.ListChangesOp;
 
 import java.util.SortedSet;
 
@@ -27,9 +25,6 @@ public class ExecutorFactoryDefault implements ExecutorFactory<ChangeLogItem<Cha
 
       case MigrationOp.ID:
         return new MigrationExecutor(executionId, changeLogs, driver, changeLogRuntime, config);
-
-      case ListChangesOp.ID:
-        return new ListChangesExecutor();
 
       default:
         throw new MongockException(String.format("Operation '%s' not found. It may be a professional operation and the professional library is not provided ", op.getId()));
