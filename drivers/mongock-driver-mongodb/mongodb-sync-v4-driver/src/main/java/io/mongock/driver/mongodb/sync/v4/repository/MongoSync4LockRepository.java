@@ -120,9 +120,12 @@ public class MongoSync4LockRepository extends MongoSync4RepositoryBase<LockEntry
   }
 
   protected Bson getAcquireLockQuery(String lockKey, String owner, boolean onlyIfSameOwner) {
-    Bson alreadyExpiredCond = Filters.lt(EXPIRES_AT_FIELD, new Date());
+    Bson expirationCond = Filters.lt(EXPIRES_AT_FIELD, new Date());
     Bson ownerCond = Filters.eq(OWNER_FIELD, owner);
-    Bson orCond = onlyIfSameOwner ? Filters.or(ownerCond) : Filters.or(alreadyExpiredCond, ownerCond);
-    return Filters.and(Filters.eq(KEY_FIELD, lockKey), Filters.eq(STATUS_FIELD, LockStatus.LOCK_HELD.toString()), orCond);
+    Bson keyCond = Filters.eq(KEY_FIELD, lockKey);
+    Bson statusCond = Filters.eq(STATUS_FIELD, LockStatus.LOCK_HELD.toString());
+    return onlyIfSameOwner
+        ? Filters.and(keyCond, statusCond, ownerCond)
+        : Filters.and(keyCond, Filters.or(expirationCond, ownerCond));
   }
 }
