@@ -1,28 +1,18 @@
 package io.mongock.driver.dynamodb.repository
 
 import com.amazonaws.services.dynamodbv2.AmazonDynamoDBClient
-import com.amazonaws.services.dynamodbv2.document.Item
-import com.amazonaws.services.dynamodbv2.model.KeySchemaElement
-import com.amazonaws.services.dynamodbv2.model.KeyType
-import io.mongock.driver.api.entry.ChangeEntry
 import io.mongock.driver.core.lock.LockEntry
-import io.mongock.driver.core.lock.LockRepositoryWithEntity
-import io.mongock.utils.field.FieldInstance
+import io.mongock.driver.core.lock.LockRepository
 
 
 class DynamoDBLockRepository(client: AmazonDynamoDBClient, tableName: String, indexCreation: Boolean) :
-    LockRepositoryWithEntity<Item>,
+    LockRepository,
     DynamoDbRepositoryBase<LockEntry>(
         client,
         tableName,
-        listOf(KeySchemaElement(ChangeEntry.KEY_CHANGE_ID, KeyType.HASH)),
-        emptyList(),//todo change this
+        LockEntry::class,
         indexCreation
     ) {
-    override fun setIndexCreation(indexCreation: Boolean) {
-        TODO("Not yet implemented")
-    }
-
 
     override fun insertUpdate(newLock: LockEntry?) {
         TODO("Not yet implemented")
@@ -43,7 +33,6 @@ class DynamoDBLockRepository(client: AmazonDynamoDBClient, tableName: String, in
     override fun deleteAll() {
         TODO("Not yet implemented")
     }
-
 
 
 }
