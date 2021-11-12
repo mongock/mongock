@@ -85,10 +85,6 @@ public class Mongo3LockRepository extends Mongo3RepositoryBase<LockEntry> implem
     collection.deleteMany(Filters.and(Filters.eq(KEY_FIELD, lockKey), Filters.eq(OWNER_FIELD, owner)));
   }
 
-  @Override
-  public void deleteAll() {
-    collection.deleteMany(new BsonDocument());
-  }
 
   protected void insertUpdate(LockEntry newLock, boolean onlyIfSameOwner)  {
     boolean lockHeld;

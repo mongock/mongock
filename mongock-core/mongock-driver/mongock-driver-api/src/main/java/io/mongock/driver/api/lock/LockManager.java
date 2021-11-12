@@ -55,10 +55,6 @@ public interface LockManager extends Closeable {
    */
   boolean isLockHeld();
 
-  /**
-   * force to delete all the locks in the database. Mainly for test environment. Not recommended production use
-   */
-  void clean();
 
   long getMillisUntilRefreshRequired();
 

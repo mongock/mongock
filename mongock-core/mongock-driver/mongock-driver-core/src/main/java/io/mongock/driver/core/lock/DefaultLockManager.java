@@ -277,11 +277,6 @@ public class DefaultLockManager implements LockManager {
   }
 
   @Override
-  public void clean() {
-    repository.deleteAll();
-  }
-
-  @Override
   public long getMillisUntilRefreshRequired() {
     if (lockExpiresAt != null) {
       return lockExpiresAt.getTime() - timeUtils.currentTime().getTime() - lockRefreshMarginMillis;

@@ -28,10 +28,18 @@ private enum class TableState { OK, NOT_FOUND, WRONG_INDEX }
 
 private fun tableNameOverriderConfig(tableName: String) = DynamoDBMapperConfig
     .builder()
+    .withConsistentReads(DynamoDBMapperConfig.ConsistentReads.CONSISTENT)
+    .withPaginationLoadingStrategy(DynamoDBMapperConfig.PaginationLoadingStrategy.EAGER_LOADING)
     .withTableNameOverride(DynamoDBMapperConfig.TableNameOverride.withTableNameReplacement(tableName))
     .build()
 
-abstract class DynamoDbRepositoryBase<ENTITY_CLASS>(
+
+var mapperConfig = DynamoDBMapperConfig.builder()
+    .withSaveBehavior(DynamoDBMapperConfig.SaveBehavior.CLOBBER)
+    .withTableNameOverride(null)
+    .build()
+
+abstract class DynamoDbRepositoryBase(
     private val client: AmazonDynamoDBClient,
     protected val tableName: String,
     private val mapperClass: KClass<*>,
@@ -39,7 +47,7 @@ abstract class DynamoDbRepositoryBase<ENTITY_CLASS>(
 ) : Process, RepositoryIndexable {
 
     protected val mapper: DynamoDBMapper = DynamoDBMapper(client, tableNameOverriderConfig(tableName))
-    private val dynamoDB: DynamoDB = DynamoDB(client)
+    protected val dynamoDB: DynamoDB = DynamoDB(client)
     private var ensuredIndex = false
 
 

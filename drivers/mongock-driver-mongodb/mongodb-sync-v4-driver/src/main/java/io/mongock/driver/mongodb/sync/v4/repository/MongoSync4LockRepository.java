@@ -88,11 +88,6 @@ public class MongoSync4LockRepository extends MongoSync4RepositoryBase<LockEntry
     collection.deleteMany(Filters.and(Filters.eq(KEY_FIELD, lockKey), Filters.eq(OWNER_FIELD, owner)));
   }
 
-  @Override
-  public void deleteAll() {
-    collection.deleteMany(new BsonDocument());
-  }
-
   protected void insertUpdate(LockEntry newLock, boolean onlyIfSameOwner)  {
     boolean lockHeld;
     String debErrorDetail = "not db error";
