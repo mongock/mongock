@@ -116,6 +116,11 @@ public abstract class RunnerBuilderBase<
     config.setTransactionStrategy(transactionStrategy);
     return getInstance();
   }
+  
+  public SELF setEventPublisher(EventPublisher eventPublisher) {
+    this.eventPublisher = eventPublisher;
+    return getInstance();
+  }
 
   ///////////////////////////////////////////////////////////////////////////////////
   //  Build methods

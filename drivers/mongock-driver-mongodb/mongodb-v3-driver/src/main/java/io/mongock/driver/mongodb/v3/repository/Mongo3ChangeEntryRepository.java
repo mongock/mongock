@@ -15,6 +15,7 @@ import com.mongodb.client.model.Projections;
 import com.mongodb.client.model.Sorts;
 import com.mongodb.client.model.UpdateOptions;
 import com.mongodb.client.result.UpdateResult;
+import io.mongock.driver.api.entry.ChangeType;
 import org.bson.Document;
 import org.bson.conversions.Bson;
 
@@ -30,17 +31,21 @@ public class Mongo3ChangeEntryRepository extends Mongo3RepositoryBase<ChangeEntr
   protected static String KEY_EXECUTION_ID;
   protected static String KEY_CHANGE_ID;
   protected static String KEY_STATE;
+  protected static String KEY_TYPE;
   protected static String KEY_AUTHOR;
   protected static String KEY_TIMESTAMP;
   protected static String KEY_CHANGELOG_CLASS;
   protected static String KEY_CHANGESET_METHOD;
+  protected static String KEY_EXECUTION_MILLIS;
+  protected static String KEY_EXECUTION_HOSTNAME;
+  protected static String KEY_METADATA;
 
   private ClientSession clientSession;
 
   static {
     try {
-      Field field = ChangeEntry.class.getDeclaredField("executionId");
-      field.setAccessible(true);
+       Field field = ChangeEntry.class.getDeclaredField("executionId");
+       field.setAccessible(true);
       KEY_EXECUTION_ID = field.getAnnotation(io.mongock.utils.field.Field.class).value();
 
       field = ChangeEntry.class.getDeclaredField("changeId");
@@ -50,22 +55,38 @@ public class Mongo3ChangeEntryRepository extends Mongo3RepositoryBase<ChangeEntr
       field = ChangeEntry.class.getDeclaredField("state");
       field.setAccessible(true);
       KEY_STATE = field.getAnnotation(io.mongock.utils.field.Field.class).value();
+      
+      field = ChangeEntry.class.getDeclaredField("type");
+      field.setAccessible(true);
+      KEY_TYPE = field.getAnnotation(io.mongock.utils.field.Field.class).value();
 
       field = ChangeEntry.class.getDeclaredField("author");
       field.setAccessible(true);
       KEY_AUTHOR = field.getAnnotation(io.mongock.utils.field.Field.class).value();
-      
+
       field = ChangeEntry.class.getDeclaredField("timestamp");
       field.setAccessible(true);
       KEY_TIMESTAMP = field.getAnnotation(io.mongock.utils.field.Field.class).value();
-      
+
       field = ChangeEntry.class.getDeclaredField("changeLogClass");
       field.setAccessible(true);
       KEY_CHANGELOG_CLASS = field.getAnnotation(io.mongock.utils.field.Field.class).value();
-      
+
       field = ChangeEntry.class.getDeclaredField("changeSetMethod");
       field.setAccessible(true);
       KEY_CHANGESET_METHOD = field.getAnnotation(io.mongock.utils.field.Field.class).value();
+      
+      field = ChangeEntry.class.getDeclaredField("metadata");
+      field.setAccessible(true);
+      KEY_METADATA = field.getAnnotation(io.mongock.utils.field.Field.class).value();
+      
+      field = ChangeEntry.class.getDeclaredField("executionMillis");
+      field.setAccessible(true);
+      KEY_EXECUTION_MILLIS = field.getAnnotation(io.mongock.utils.field.Field.class).value();
+      
+      field = ChangeEntry.class.getDeclaredField("executionHostname");
+      field.setAccessible(true);
+      KEY_EXECUTION_HOSTNAME = field.getAnnotation(io.mongock.utils.field.Field.class).value();
     } catch (NoSuchFieldException e) {
       throw new MongockException(e);
     }
@@ -130,7 +151,26 @@ public class Mongo3ChangeEntryRepository extends Mongo3RepositoryBase<ChangeEntr
 
   @Override
   public List<ChangeEntry> getEntriesLog() {
-    throw  new UnsupportedOperationException("GetAll not implemented yet");
+    return collection.find()
+            .into(new ArrayList<>())
+            .stream()
+            .map(entry -> new ChangeEntry(
+                                  entry.getString(KEY_EXECUTION_ID),
+                                  entry.getString(KEY_CHANGE_ID),
+                                  entry.getString(KEY_AUTHOR),
+                                  entry.getDate(KEY_TIMESTAMP),
+                                  entry.getString(KEY_STATE) != null 
+                                          ? ChangeState.valueOf(entry.getString(KEY_STATE)) 
+                                          : null,
+                                  entry.getString(KEY_TYPE) != null 
+                                          ? ChangeType.valueOf(entry.getString(KEY_TYPE)) 
+                                          : null,
+                                  entry.getString(KEY_CHANGELOG_CLASS),
+                                  entry.getString(KEY_CHANGESET_METHOD),
+                                  entry.getLong(KEY_EXECUTION_MILLIS),
+                                  entry.getString(KEY_EXECUTION_HOSTNAME),
+                                  entry.get(KEY_METADATA)))
+            .collect(Collectors.toList());
   }
 
   public void setClientSession(ClientSession clientSession) {
