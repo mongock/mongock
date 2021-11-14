@@ -185,15 +185,6 @@ public class Mongo3ChangeEntryRepository extends Mongo3RepositoryBase<ChangeEntr
     return Optional.ofNullable(clientSession);
   }
 
-  @Override
-  public void save(ChangeEntry changeEntry) throws MongockException {
-
-    if(getClientSession().isPresent()) {
-      collection.insertOne(getClientSession().get(), toEntity(changeEntry));
-    } else {
-      collection.insertOne(toEntity(changeEntry));
-    }
-  }
 
   @Override
   public void saveOrUpdate(ChangeEntry changeEntry) throws MongockException {
@@ -211,7 +202,11 @@ public class Mongo3ChangeEntryRepository extends Mongo3RepositoryBase<ChangeEntr
           .map(clientSession -> collection.updateOne(clientSession, filter, new Document("$set", document), new UpdateOptions().upsert(true)))
           .orElseGet(() -> collection.updateOne(filter, new Document("$set", document), new UpdateOptions().upsert(true)));
     } else {
-      save(changeEntry);
+      if(getClientSession().isPresent()) {
+        collection.insertOne(getClientSession().get(), toEntity(changeEntry));
+      } else {
+        collection.insertOne(toEntity(changeEntry));
+      }
     }
   }
 
