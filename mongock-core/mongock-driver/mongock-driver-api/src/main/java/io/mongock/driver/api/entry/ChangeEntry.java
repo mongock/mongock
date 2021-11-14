@@ -22,37 +22,51 @@ import static io.mongock.driver.api.entry.ChangeState.ROLLED_BACK;
  */
 public class ChangeEntry {
 
-  @Field("executionId")
+  public static final String KEY_EXECUTION_ID = "executionId";
+  public static final String KEY_CHANGE_ID = "changeId";
+  public static final String KEY_AUTHOR = "author";
+  public static final String KEY_TIMESTAMP = "timestamp";
+  public static final String KEY_STATE = "state";
+  public static final String KEY_TYPE = "type";
+  public static final String KEY_CHANGELOG_CLASS = "changeLogClass";
+  public static final String KEY_CHANGESET_METHOD = "changeSetMethod";
+  public static final String KEY_METADATA = "metadata";
+  public static final String KEY_EXECUTION_MILLIS = "executionMillis";
+  public static final String KEY_EXECUTION_HOST_NAMEA = "executionHostname";
+
+
+
+  @Field(KEY_EXECUTION_ID)
   private final String executionId;
 
-  @Field("changeId")
+  @Field(KEY_CHANGE_ID)
   private final String changeId;
 
-  @Field("author")
+  @Field(KEY_AUTHOR)
   private final String author;
 
-  @Field("timestamp")
+  @Field(KEY_TIMESTAMP)
   private final Date timestamp;
 
-  @Field("state")
+  @Field(KEY_STATE)
   private final ChangeState state;
 
-  @Field("type")
+  @Field(KEY_TYPE)
   private final ChangeType type;
 
-  @Field("changeLogClass")
+  @Field(KEY_CHANGELOG_CLASS)
   private final String changeLogClass;
 
-  @Field("changeSetMethod")
+  @Field(KEY_CHANGESET_METHOD)
   private final String changeSetMethod;
 
-  @Field("metadata")
+  @Field(KEY_METADATA)
   private final Object metadata;
 
-  @Field("executionMillis")
+  @Field(KEY_EXECUTION_MILLIS)
   private final long executionMillis;
 
-  @Field("executionHostname")
+  @Field(KEY_EXECUTION_HOST_NAMEA)
   private final String executionHostname;
 
   public ChangeEntry(String executionId,

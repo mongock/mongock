@@ -1,10 +1,10 @@
 package io.mongock.driver.mongodb.test.template;
 
-import io.mongock.driver.api.entry.ChangeState;
-import io.mongock.driver.core.entry.ChangeEntryRepository;
-import io.mongock.driver.mongodb.test.template.util.IntegrationTestBase;
-import io.mongock.api.exception.MongockException;
 import com.mongodb.client.model.IndexOptions;
+import io.mongock.api.exception.MongockException;
+import io.mongock.driver.api.entry.ChangeEntryService;
+import io.mongock.driver.api.entry.ChangeState;
+import io.mongock.driver.mongodb.test.template.util.IntegrationTestBase;
 import org.bson.Document;
 import org.junit.Assert;
 import org.junit.Rule;
@@ -17,7 +17,7 @@ import java.util.Date;
 
 public abstract class MongoChangeEntryRepositoryITestBase extends IntegrationTestBase {
 
-  protected ChangeEntryRepository repository;
+  protected ChangeEntryService repository;
 
   @Rule
   public ExpectedException exceptionRule = ExpectedException.none();
