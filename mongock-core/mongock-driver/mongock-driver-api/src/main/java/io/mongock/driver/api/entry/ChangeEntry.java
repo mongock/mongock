@@ -13,7 +13,6 @@ import static io.mongock.driver.api.entry.ChangeState.EXECUTED;
 import static io.mongock.driver.api.entry.ChangeState.FAILED;
 import static io.mongock.driver.api.entry.ChangeState.ROLLBACK_FAILED;
 import static io.mongock.driver.api.entry.ChangeState.ROLLED_BACK;
-import static io.mongock.utils.field.Field.KeyType.INDEX;
 import static io.mongock.utils.field.Field.KeyType.PRIMARY;
 
 /**

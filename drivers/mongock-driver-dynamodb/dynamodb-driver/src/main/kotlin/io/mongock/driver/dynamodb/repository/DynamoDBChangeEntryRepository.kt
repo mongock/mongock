@@ -1,24 +1,32 @@
 package io.mongock.driver.dynamodb.repository
 
 import com.amazonaws.services.dynamodbv2.AmazonDynamoDBClient
+import com.amazonaws.services.dynamodbv2.document.DynamoDB
 import com.amazonaws.services.dynamodbv2.document.Item
 import com.amazonaws.services.dynamodbv2.model.KeySchemaElement
 import com.amazonaws.services.dynamodbv2.model.KeyType
-import com.amazonaws.services.dynamodbv2.model.TransactWriteItemsRequest
 import io.mongock.driver.api.entry.ChangeEntry
+import io.mongock.driver.api.entry.ChangeEntry.KEY_AUTHOR
+import io.mongock.driver.api.entry.ChangeEntry.KEY_CHANGE_ID
+import io.mongock.driver.api.entry.ChangeEntry.KEY_EXECUTION_ID
 import io.mongock.driver.core.entry.ChangeEntryRepositoryWithEntity
+import io.mongock.utils.field.FieldInstance
+
+
+private const val KEY_EXECUTION_ID_AUTHOR = "$KEY_EXECUTION_ID#$KEY_AUTHOR"
 
 open class DynamoDBChangeEntryRepository(client: AmazonDynamoDBClient, tableName: String) :
     ChangeEntryRepositoryWithEntity<Item>,
     DynamoDbRepositoryBase<ChangeEntry>(
         client,
         tableName,
-        listOf(KeySchemaElement("change_id", KeyType.HASH), KeySchemaElement("execution_id_author", KeyType.RANGE)),
+        listOf(KeySchemaElement(KEY_CHANGE_ID, KeyType.HASH), KeySchemaElement(KEY_EXECUTION_ID_AUTHOR, KeyType.RANGE)),
         emptyList()
     ) {
     var transactionItems:DynamoDBTransactionItems? = null
     private var _indexCreation = true;
 
+    private val dynamoDB: DynamoDB? = null
 
     override fun setIndexCreation(indexCreation: Boolean) {
         _indexCreation = indexCreation
@@ -42,6 +50,20 @@ open class DynamoDBChangeEntryRepository(client: AmazonDynamoDBClient, tableName
 
     fun cleanTransactionRequest() {
         transactionItems = null
+    }
+
+    override fun mapFieldInstances(fieldInstanceList: MutableList<FieldInstance>?): Item {
+        val changeId = fieldInstanceList!!
+            .filter { fieldInstance -> fieldInstance.name == KEY_CHANGE_ID }
+            .map { fieldInstance -> fieldInstance.value }
+            .first()!!
+
+//        val item = Item()
+//            .withPrimaryKey(KEY_CHANGE_ID, changeId)
+//            .withLong(ChangeEntry.KEY_TIMESTAMP, Date().time)
+//            .withString(ChangeEntry.KEY_AUTHOR, getHostName())
+
+        return Item()
     }
 
 }
