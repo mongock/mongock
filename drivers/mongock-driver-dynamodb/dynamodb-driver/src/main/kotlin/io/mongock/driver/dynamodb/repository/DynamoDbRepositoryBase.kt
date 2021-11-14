@@ -20,10 +20,6 @@ private val logger = KotlinLogging.logger {}
 
 private const val INDEX_TABLE_MAX_TRIES = 2
 
-private const val RANGE_KEY_SEPARATOR = "#"
-private const val RANGE_VALUE_SEPARATOR = "#"
-private val GSON = Gson()
-
 private enum class TableState { OK, NOT_FOUND, WRONG_INDEX }
 
 private fun mapperConfig(tableName: String) = DynamoDBMapperConfig
@@ -127,43 +123,4 @@ abstract class DynamoDbRepositoryBase(
         this.indexCreation = indexCreation
     }
 
-
-//    fun mapFieldInstances(fieldInstanceList: MutableList<FieldInstance>): Item {
-//
-//        val hashKey = keySchemaElements.first { key -> key.keyType == KeyType.HASH.name }
-//        val rangeKey = keySchemaElements.firstOrNull { key -> key.keyType == KeyType.RANGE.name }
-//
-//        val fieldsMap= fieldInstanceList.associate { it.name to it.value }
-//        val hashKeyValue = fieldsMap[hashKey.attributeName]
-//        var rangeKeySplit:List<String> = listOf()
-//
-//        val item = if (rangeKey != null) {
-//            rangeKeySplit = rangeKey.attributeName.split(RANGE_KEY_SEPARATOR)
-//                .map { fieldsMap[it].toString() }
-//                .toList()
-//            val rangeKeyValue = rangeKeySplit .joinToString(separator = RANGE_VALUE_SEPARATOR)
-//            Item().withPrimaryKey(hashKey.attributeName, hashKeyValue, rangeKey.attributeName, rangeKeyValue)
-//        } else {
-//            Item().withPrimaryKey(hashKey.attributeName, hashKeyValue)
-//        }
-//        fieldInstanceList
-//            .filter {  it.name != hashKey.attributeName && !rangeKeySplit.contains(it.name)}
-//            .forEach{ setValue(item, it)}
-//        return item
-//
-//    }
-//
-//    private fun setValue(item: Item, field: FieldInstance) {
-//        if(field.value == null) {
-//            item.withString(field.name, null)
-//        }
-//        when(field.value) {
-//            is String -> item.withString(field.name, field.value as String)
-//            is Date -> item.withLong(field.name, (field.value as Date).time)
-//            is ChangeState -> item.withString(field.name, (field.value as ChangeState).name)
-//            is ChangeType -> item.withString(field.name, (field.value as ChangeType).name)
-//            is Long -> item.withLong(field.name, (field.value as Long))
-//            is Any -> item.withJSON(field.name, GSON.toJson(field.value))
-//        }
-//    }
 }

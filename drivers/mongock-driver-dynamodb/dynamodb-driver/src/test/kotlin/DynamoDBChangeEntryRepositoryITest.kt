@@ -48,36 +48,39 @@ class DynamoDBChangeEntryRepositoryITest : DescribeSpec({
     }
 
     /**
-     * saveOrUpdate
+     * SAVE OR UPDATE
      */
     context("saveOrUpdate") {
         When("changeEntry table is empty", { companion.createChangeEntryTable("for-save-1") }) {
             should("add new changeEntry") {
                 val repo = companion.getChangeService("for-save-1", true)
-                repo.saveOrUpdate(c1)
-                companion.isInserted("for-save-1", c1) shouldBe true
+                repo.saveOrUpdate(change1)
+                companion.isInserted("for-save-1", change1) shouldBe true
             }
         }
 
         When(
             "WHEN changeEntry table contains c1, c2 and c3",
-            { companion.createInsert("for-save-2", c1, c2, c3) }) {
+            { companion.createInsert("for-save-2", change1, change2, change3) }) {
             and("c1 is saved again") {
                 should("update c1") {
                     val repo = companion.getChangeService("for-save-2", true)
-                    repo.saveOrUpdate(c1_updated)
-                    companion.isInserted("for-save-2", c1) shouldBe true
-                    val result = companion.getChangeEntry("for-save-2", c1_updated)
-                    result!!.changeId shouldBe c1.changeId
-                    result.executionId shouldBe c1.executionId
-                    result.author shouldBe c1.author
-                    result.changeLogClass shouldBe c1_updated.changeLogClass
+                    repo.saveOrUpdate(change1_u)
+                    companion.isInserted("for-save-2", change1) shouldBe true
+                    val result = companion.getChangeEntry("for-save-2", change1_u)
+                    result!!.changeId shouldBe change1.changeId
+                    result.executionId shouldBe change1.executionId
+                    result.author shouldBe change1.author
+                    result.changeLogClass shouldBe change1_u.changeLogClass
                 }
             }
 
         }
     }
 
+    /**
+     * GET ENTRIES LOG
+     */
     context("getEntriesLog") {
         When("changeEntry table is empty", { companion.createChangeEntryTable("for-entries-1") }) {
             should("return emptyList") {
@@ -86,13 +89,13 @@ class DynamoDBChangeEntryRepositoryITest : DescribeSpec({
             }
         }
 
-        When("WHEN changeEntry not empty", { companion.createInsert("for-save-2", c1, c2, c3) }) {
+        When("WHEN changeEntry not empty", { companion.createInsert("for-save-2", change1, change2, change3) }) {
             should("return the items in the table") {
                 val repo = companion.getChangeService("for-save-2", true)
                 val items = repo.entriesLog
                 items.size shouldBe 3
                 items.forEach{
-                    it.changeId shouldBeIn listOf<String>(c1.changeId, c2.changeId, c3.changeId)
+                    it.changeId shouldBeIn listOf<String>(change1.changeId, change2.changeId, change3.changeId)
                 }
             }
 

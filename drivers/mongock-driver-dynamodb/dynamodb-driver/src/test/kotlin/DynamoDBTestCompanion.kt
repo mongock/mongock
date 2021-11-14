@@ -14,124 +14,19 @@ import io.mongock.driver.api.entry.ChangeEntry.KEY_CHANGE_ID
 import io.mongock.driver.api.entry.ChangeEntryService
 import io.mongock.driver.api.entry.ChangeState
 import io.mongock.driver.api.entry.ChangeType
+import io.mongock.driver.core.lock.LockEntry
+import io.mongock.driver.core.lock.LockRepository
+import io.mongock.driver.core.lock.LockStatus
 import io.mongock.driver.dynamodb.repository.ChangeEntryDynamoDB
 import io.mongock.driver.dynamodb.repository.DynamoDBChangeEntryRepository
+import io.mongock.driver.dynamodb.repository.DynamoDBLockRepository
+import io.mongock.driver.dynamodb.repository.KEY_FIELD_DYNAMODB
+import io.mongock.driver.dynamodb.repository.LockEntryDynamoDB
 import io.mongock.driver.dynamodb.repository.RANGE_KEY_ID
 import org.testcontainers.dynamodb.DynaliteContainer
 import org.testcontainers.utility.DockerImageName
 import java.util.*
 
-
-suspend fun DescribeSpecContainerContext.tearDown(
-    name: String,
-    test: suspend TestContext.() -> Unit
-) {
-    it("[tear-down]: $name", test)
-}
-
-suspend fun DescribeSpecContainerContext.should(
-    name: String,
-    test: suspend TestContext.() -> Unit
-) {
-    it("SHOULD $name", test)
-}
-
-suspend fun DescribeSpecContainerContext.and(
-    name: String,
-    test: suspend TestContext.() -> Unit
-) {
-    describe("AND $name", test)
-}
-
-suspend fun DescribeSpecContainerContext.and(
-    name: String,
-    preTest: () -> Unit,
-    test: suspend TestContext.() -> Unit
-) {
-    preTest()
-    and(name, test)
-}
-
-suspend fun DescribeSpecContainerContext.When(
-    name: String,
-    test: suspend TestContext.() -> Unit
-) {
-    describe("WHEN $name", test)
-}
-
-suspend fun DescribeSpecContainerContext.When(
-    name: String,
-    preTest: () -> Unit,
-    test: suspend TestContext.() -> Unit
-) {
-    preTest()
-    When(name, test)
-}
-
-suspend fun DescribeSpecContainerContext.describe(
-    name: String,
-    preTest: () -> Unit,
-    test: suspend TestContext.() -> Unit
-) {
-    preTest()
-    describe(name, test)
-}
-
-val c1 = ChangeEntry(
-    "executionId",
-    "c1",
-    "author-c1",
-    Date(),
-    ChangeState.EXECUTED,
-    ChangeType.EXECUTION,
-    "changeLogClass",
-    "changeSetMethod",
-    0L,
-    "executionHostname",
-    mapOf("this" to "that")
-)
-
-val c1_updated = ChangeEntry(
-    "executionId",
-    "c1",
-    "author-c1",
-    Date(),
-    ChangeState.EXECUTED,
-    ChangeType.EXECUTION,
-    "updated-changelog-class",
-    "updated-changelog-method",
-    0L,
-    "updated-host-name",
-    mapOf("updated" to "that")
-)
-
-val c2 = ChangeEntry(
-    "executionId",
-    "c2",
-    "author-c2",
-    Date(),
-    ChangeState.EXECUTED,
-    ChangeType.EXECUTION,
-    "changeLogClass",
-    "changeSetMethod",
-    0L,
-    "executionHostname",
-    mapOf("this" to "that")
-)
-
-val c3 = ChangeEntry(
-    "executionId",
-    "c3",
-    "author-c3",
-    Date(),
-    ChangeState.EXECUTED,
-    ChangeType.EXECUTION,
-    "changeLogClass",
-    "changeSetMethod",
-    0L,
-    "executionHostname",
-    mapOf("this" to "that")
-)
 
 class DynamoDBTestCompanion {
 
@@ -160,10 +55,6 @@ class DynamoDBTestCompanion {
         dynamoDB!!.getTable(tableName).describe()
     }
 
-    fun dropTable(tableName: String) {
-        dynamoDB!!.getTable(tableName).delete()
-    }
-
     fun createChangeEntryTable(tableName: String) {
         val mapperConfig = DynamoDBMapperConfig
             .builder()
@@ -178,6 +69,8 @@ class DynamoDBTestCompanion {
         )
         TableUtils.waitUntilActive(client, tableName)
     }
+
+
 
     fun insertChangeEntries(tableName: String, vararg entries: ChangeEntry) {
         entries.forEach {
@@ -210,5 +103,196 @@ class DynamoDBTestCompanion {
         return if (item != null) ChangeEntryDynamoDB(item).changeEntry else null
     }
 
+    /**
+     * LOCK
+     */
+    fun getLockRepository(tableName: String, indexCreation: Boolean) : LockRepository {
+        return DynamoDBLockRepository(client!!, tableName, indexCreation)
+    }
+
+    fun createLockTable(tableName: String) {
+        val mapperConfig = DynamoDBMapperConfig
+            .builder()
+            .withConsistentReads(DynamoDBMapperConfig.ConsistentReads.CONSISTENT)
+            .withPaginationLoadingStrategy(DynamoDBMapperConfig.PaginationLoadingStrategy.EAGER_LOADING)
+            .withTableNameOverride(DynamoDBMapperConfig.TableNameOverride.withTableNameReplacement(tableName))
+            .build()
+        TableUtils.createTableIfNotExists(
+            client,
+            DynamoDBMapper(client, mapperConfig).generateCreateTableRequest(LockEntryDynamoDB::class.java)
+                .withProvisionedThroughput(ProvisionedThroughput(1L, 1L))
+        )
+        TableUtils.waitUntilActive(client, tableName)
+    }
+
+    fun isInserted(tableName: String, lockEntry: LockEntry): Boolean {
+        return getLockEntry(tableName, lockEntry) != null
+    }
+
+    fun getLockEntry(tableName: String, lockEntry: LockEntry): LockEntry? {
+        val dynamoEntry = LockEntryDynamoDB(lockEntry)
+        val request = GetItemRequest()
+            .withTableName(tableName)
+            .withConsistentRead(true)
+            .withKey(
+                mapOf(
+                    KEY_FIELD_DYNAMODB to AttributeValue().withS(dynamoEntry.key),
+                )
+            )
+
+        val item = client!!.getItem(request).item
+        return if (item != null) LockEntryDynamoDB(item).lockEntry else null
+    }
+
+    fun insertLockEntries(tableName: String, vararg entries: LockEntry) {
+        entries.forEach {
+            client!!.putItem(PutItemRequest().withTableName(tableName).withItem(LockEntryDynamoDB(it).attributes))
+        }
+    }
+
+    fun createInsert(tableName: String, vararg entries: LockEntry) {
+        createLockTable(tableName)
+        insertLockEntries(tableName, *entries)
+    }
 
 }
+
+
+suspend fun DescribeSpecContainerContext.tearDown(
+    name: String,
+    test: suspend TestContext.() -> Unit
+) {
+    it("[tear-down]: $name", test)
+}
+
+suspend fun DescribeSpecContainerContext.should(
+    name: String,
+    test: suspend TestContext.() -> Unit
+) {
+    it("SHOULD $name", test)
+}
+suspend fun DescribeSpecContainerContext.xshould(
+    name: String,
+    test: suspend TestContext.() -> Unit
+) {
+    xit("SHOULD $name", test)
+}
+
+suspend fun DescribeSpecContainerContext.and(
+    name: String,
+    test: suspend TestContext.() -> Unit
+) {
+    describe("AND $name", test)
+}
+
+suspend fun DescribeSpecContainerContext.and(
+    name: String,
+    preTest: () -> Unit,
+    test: suspend TestContext.() -> Unit
+) {
+    preTest()
+    and(name, test)
+}
+
+suspend fun DescribeSpecContainerContext.When(
+    name: String,
+    test: suspend TestContext.() -> Unit
+) {
+    describe("WHEN $name", test)
+}
+
+suspend fun DescribeSpecContainerContext.xWhen(
+    name: String,
+    test: suspend TestContext.() -> Unit
+) {
+    xdescribe("WHEN $name", test)
+}
+
+suspend fun DescribeSpecContainerContext.When(
+    name: String,
+    preTest: () -> Unit,
+    test: suspend TestContext.() -> Unit
+) {
+    preTest()
+    When(name, test)
+}
+
+suspend fun DescribeSpecContainerContext.xWhen(
+    name: String,
+    preTest: () -> Unit,
+    test: suspend TestContext.() -> Unit
+) {
+    xWhen(name, test)
+}
+
+suspend fun DescribeSpecContainerContext.describe(
+    name: String,
+    preTest: () -> Unit,
+    test: suspend TestContext.() -> Unit
+) {
+    preTest()
+    describe(name, test)
+}
+
+val change1 = ChangeEntry(
+    "executionId",
+    "c1",
+    "author-c1",
+    Date(),
+    ChangeState.EXECUTED,
+    ChangeType.EXECUTION,
+    "changeLogClass",
+    "changeSetMethod",
+    0L,
+    "executionHostname",
+    mapOf("this" to "that")
+)
+
+val change1_u = ChangeEntry(
+    "executionId",
+    "c1",
+    "author-c1",
+    Date(),
+    ChangeState.EXECUTED,
+    ChangeType.EXECUTION,
+    "updated-changelog-class",
+    "updated-changelog-method",
+    0L,
+    "updated-host-name",
+    mapOf("updated" to "that")
+)
+
+val change2 = ChangeEntry(
+    "executionId",
+    "c2",
+    "author-c2",
+    Date(),
+    ChangeState.EXECUTED,
+    ChangeType.EXECUTION,
+    "changeLogClass",
+    "changeSetMethod",
+    0L,
+    "executionHostname",
+    mapOf("this" to "that")
+)
+
+val change3 = ChangeEntry(
+    "executionId",
+    "c3",
+    "author-c3",
+    Date(),
+    ChangeState.EXECUTED,
+    ChangeType.EXECUTION,
+    "changeLogClass",
+    "changeSetMethod",
+    0L,
+    "executionHostname",
+    mapOf("this" to "that")
+)
+const val lockKey = "lock-key"
+
+//String key, String status, String owner, Date expiresAt
+val lockOwner1NotExpired = LockEntry(lockKey, LockStatus.LOCK_HELD.name, "owner-1", Date(System.currentTimeMillis() + 90000))
+val lockOwner1NotExpiredUpdated = LockEntry(lockKey, LockStatus.LOCK_HELD.name, "owner-1", Date(System.currentTimeMillis() + 180000))
+val lockOwner1Expired = LockEntry(lockKey, LockStatus.LOCK_HELD.name, "owner-1", Date(System.currentTimeMillis() - 10000))
+val lockOwner2NotExpired = LockEntry(lockKey, LockStatus.LOCK_HELD.name, "owner-2", Date(System.currentTimeMillis() + 90000))

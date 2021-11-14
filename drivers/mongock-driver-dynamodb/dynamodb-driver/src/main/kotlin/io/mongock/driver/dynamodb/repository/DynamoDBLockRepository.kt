@@ -18,10 +18,10 @@ import mu.KotlinLogging
 import java.util.*
 
 
-private const val KEY_FIELD_DYNAMODB = "lock_key"
-private const val STATUS_FIELD_DYNAMODB = "status"
-private const val OWNER_FIELD_DYNAMODB = "lock_owner"
-private const val EXPIRES_AT_FIELD_DYNAMODB = "expiresAt"
+const val KEY_FIELD_DYNAMODB = "lock_key"
+const val STATUS_FIELD_DYNAMODB = "lock_status"
+const val OWNER_FIELD_DYNAMODB = "lock_owner"
+const val EXPIRES_AT_FIELD_DYNAMODB = "expiresAt"
 
 private val logger = KotlinLogging.logger {}
 
@@ -50,7 +50,7 @@ class DynamoDBLockRepository(client: AmazonDynamoDBClient, tableName: String, in
     @Throws(LockPersistenceException::class)
     override fun updateIfSameOwner(newLock: LockEntry) {
         val expression = "attribute_exists($KEY_FIELD_DYNAMODB) " +
-                "AND $OWNER_FIELD_DYNAMODB = :owner_value" +
+                "AND $OWNER_FIELD_DYNAMODB = :owner_value " +
                 "AND $STATUS_FIELD_DYNAMODB = :status_value"
         val expressionAttributeValues = mapOf(
             ":owner_value" to AttributeValue().withS(newLock.owner),
@@ -79,6 +79,8 @@ class DynamoDBLockRepository(client: AmazonDynamoDBClient, tableName: String, in
             logger.debug { "...trying  to delete lock request: $request" }
             val result = client.deleteItem(request)
             logger.debug { "deletion successfully performed: $result" }
+        } catch (ex: ConditionalCheckFailedException) {
+            logger.warn { ex.message}
         } catch (ex: Throwable) {
             throw MongockException(ex)
         }
