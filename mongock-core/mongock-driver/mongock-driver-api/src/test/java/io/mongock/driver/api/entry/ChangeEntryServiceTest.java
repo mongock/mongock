@@ -241,7 +241,7 @@ public class ChangeEntryServiceTest {
     }
 
     @Override
-    public void upsert(ChangeEntry changeEntry) throws MongockException {
+    public void saveOrUpdate(ChangeEntry changeEntry) throws MongockException {
 
     }
 

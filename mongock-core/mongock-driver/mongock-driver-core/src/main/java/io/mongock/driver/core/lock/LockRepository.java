@@ -26,7 +26,7 @@ public interface LockRepository extends RepositoryIndexable, Process {
    * @throws LockPersistenceException if there is a lock in database with same key, but is expired and belong to
    *                                  another owner or cannot insert/update the lock for any other reason
    */
-  void upsert(LockEntry newLock) throws LockPersistenceException;
+  void insertUpdate(LockEntry newLock) throws LockPersistenceException;
 
   /**
    * The only goal of this method is to update(mainly to extend the expiry date) the lock in case is already owned. So

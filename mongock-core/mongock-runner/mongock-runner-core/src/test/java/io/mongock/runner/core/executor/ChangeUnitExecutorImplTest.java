@@ -120,7 +120,7 @@ public class ChangeUnitExecutorImplTest {
     assertTrue("Changelog's methods have not been fully executed", ExecutorChangeLog.latch.await(1, TimeUnit.NANOSECONDS));
     // then
     ArgumentCaptor<ChangeEntry> captor = ArgumentCaptor.forClass(ChangeEntry.class);
-    verify(changeEntryService, new Times(trackingIgnored ? 4 : 3)).upsert(captor.capture());
+    verify(changeEntryService, new Times(trackingIgnored ? 4 : 3)).saveOrUpdate(captor.capture());
 
     List<ChangeEntry> entries = captor.getAllValues();
     assertEquals(trackingIgnored ? 4 : 3, entries.size());
@@ -188,7 +188,7 @@ public class ChangeUnitExecutorImplTest {
     assertTrue("Changelog's methods have not been fully executed", ExecutorWithFailFastChangeLog.latch.await(1, TimeUnit.NANOSECONDS));
     // then
     ArgumentCaptor<ChangeEntry> captor = ArgumentCaptor.forClass(ChangeEntry.class);
-    verify(changeEntryService, new Times(3)).upsert(captor.capture());
+    verify(changeEntryService, new Times(3)).saveOrUpdate(captor.capture());
 
     List<ChangeEntry> entries = captor.getAllValues();
     assertEquals(3, entries.size());
@@ -314,7 +314,7 @@ public class ChangeUnitExecutorImplTest {
     assertTrue("Changelog's methods have not been fully executed", ExecutorWithNonFailFastChangeLog.latch.await(1, TimeUnit.NANOSECONDS));
     // then
     ArgumentCaptor<ChangeEntry> captor = ArgumentCaptor.forClass(ChangeEntry.class);
-    verify(changeEntryService, new Times(3)).upsert(captor.capture());
+    verify(changeEntryService, new Times(3)).saveOrUpdate(captor.capture());
 
     List<ChangeEntry> entries = captor.getAllValues();
     assertEquals(3, entries.size());
@@ -368,7 +368,7 @@ public class ChangeUnitExecutorImplTest {
 
     // then
     ArgumentCaptor<ChangeEntry> captor = ArgumentCaptor.forClass(ChangeEntry.class);
-    verify(changeEntryService, new Times(4)).upsert(captor.capture());
+    verify(changeEntryService, new Times(4)).saveOrUpdate(captor.capture());
 
     List<ChangeEntry> entries = captor.getAllValues();
     assertEquals(4, entries.size());
@@ -428,7 +428,7 @@ public class ChangeUnitExecutorImplTest {
 
     // then
     ArgumentCaptor<ChangeEntry> captor = ArgumentCaptor.forClass(ChangeEntry.class);
-    verify(changeEntryService, new Times(2)).upsert(captor.capture());
+    verify(changeEntryService, new Times(2)).saveOrUpdate(captor.capture());
 
     List<ChangeEntry> entries = captor.getAllValues();
     assertEquals(2, entries.size());
@@ -648,7 +648,7 @@ public class ChangeUnitExecutorImplTest {
 
     ArgumentCaptor<ChangeEntry> changeEntryCaptor = ArgumentCaptor.forClass(ChangeEntry.class);
     // ChangeEntry for ChangeSet "alreadyExecutedRunAlways" should be stored
-    verify(changeEntryService, new Times(1)).upsert(changeEntryCaptor.capture());
+    verify(changeEntryService, new Times(1)).saveOrUpdate(changeEntryCaptor.capture());
   }
 
   @Test
@@ -677,7 +677,7 @@ public class ChangeUnitExecutorImplTest {
 
     ArgumentCaptor<ChangeEntry> changeEntryCaptor = ArgumentCaptor.forClass(ChangeEntry.class);
     // ChangeEntry for ChangeSet "alreadyExecutedRunAlways" should not be stored
-    verify(changeEntryService, new Times(0)).upsert(changeEntryCaptor.capture());
+    verify(changeEntryService, new Times(0)).saveOrUpdate(changeEntryCaptor.capture());
   }
 
   @Test
@@ -705,7 +705,7 @@ public class ChangeUnitExecutorImplTest {
 
     ArgumentCaptor<ChangeEntry> changeEntryCaptor = ArgumentCaptor.forClass(ChangeEntry.class);
     verify(changeEntryService, new Times(2))
-        .upsert(changeEntryCaptor.capture());
+        .saveOrUpdate(changeEntryCaptor.capture());
 
     List<ChangeEntry> allValues = changeEntryCaptor.getAllValues();
     assertEquals(ChangeState.FAILED, allValues.get(0).getState());
@@ -736,7 +736,7 @@ public class ChangeUnitExecutorImplTest {
         });
 
     ArgumentCaptor<ChangeEntry> changeEntryCaptor = ArgumentCaptor.forClass(ChangeEntry.class);
-    verify(changeEntryService, new Times(2)).upsert(changeEntryCaptor.capture());
+    verify(changeEntryService, new Times(2)).saveOrUpdate(changeEntryCaptor.capture());
 
     List<ChangeEntry> changeEntryList = changeEntryCaptor.getAllValues();
     assertEquals("changeset_with_exception_in_rollback_1", changeEntryList.get(0).getChangeId());
@@ -776,7 +776,7 @@ public class ChangeUnitExecutorImplTest {
     assertTrue("AdvanceChangeLogWithBeforeAndChangeSetFailing's Rollback method wasn't executed", AdvanceChangeLogWithBeforeAndChangeSetFailing.rollbackCalledLatch.await(5, TimeUnit.NANOSECONDS));
 
     ArgumentCaptor<ChangeEntry> changeEntryCaptor = ArgumentCaptor.forClass(ChangeEntry.class);
-    verify(changeEntryService, new Times(8)).upsert(changeEntryCaptor.capture());
+    verify(changeEntryService, new Times(8)).saveOrUpdate(changeEntryCaptor.capture());
 
     List<ChangeEntry> changeEntryList = changeEntryCaptor.getAllValues();
     assertEquals("AdvanceChangeLogWithBefore_before", changeEntryList.get(0).getChangeId());
@@ -826,7 +826,7 @@ public class ChangeUnitExecutorImplTest {
     assertTrue("AdvanceChangeLogWithBeforeAndChangeSetFailing's Rollback method wasn't executed", AdvanceChangeLogWithBeforeAndChangeSetFailing.rollbackCalledLatch.await(5, TimeUnit.NANOSECONDS));
 
     ArgumentCaptor<ChangeEntry> changeEntryCaptor = ArgumentCaptor.forClass(ChangeEntry.class);
-    verify(changeEntryService, new Times(6)).upsert(changeEntryCaptor.capture());
+    verify(changeEntryService, new Times(6)).saveOrUpdate(changeEntryCaptor.capture());
 
     List<ChangeEntry> changeEntryList = changeEntryCaptor.getAllValues();
     assertEquals("AdvanceChangeLogWithBefore_before", changeEntryList.get(0).getChangeId());
@@ -876,7 +876,7 @@ public class ChangeUnitExecutorImplTest {
     assertFalse("AdvanceChangeLogWithBeforeAndChangeSetFailing's Rollback method wasn't executed", AdvanceChangeLogWithBeforeAndChangeSetFailing.rollbackCalled);
 
     ArgumentCaptor<ChangeEntry> changeEntryCaptor = ArgumentCaptor.forClass(ChangeEntry.class);
-    verify(changeEntryService, new Times(4)).upsert(changeEntryCaptor.capture());
+    verify(changeEntryService, new Times(4)).saveOrUpdate(changeEntryCaptor.capture());
 
     List<ChangeEntry> changeEntryList = changeEntryCaptor.getAllValues();
     assertEquals("AdvanceChangeLogWithBefore_before", changeEntryList.get(0).getChangeId());
@@ -923,7 +923,7 @@ public class ChangeUnitExecutorImplTest {
     assertFalse("AdvanceChangeLogWithBeforeAndChangeSetFailing's Rollback method was executed", AdvanceChangeLogWithBeforeAndChangeSetFailing.rollbackCalled);
 
     ArgumentCaptor<ChangeEntry> changeEntryCaptor = ArgumentCaptor.forClass(ChangeEntry.class);
-    verify(changeEntryService, new Times(5)).upsert(changeEntryCaptor.capture());
+    verify(changeEntryService, new Times(5)).saveOrUpdate(changeEntryCaptor.capture());
 
     List<ChangeEntry> changeEntryList = changeEntryCaptor.getAllValues();
     assertEquals("AdvanceChangeLogWithBefore_before", changeEntryList.get(0).getChangeId());

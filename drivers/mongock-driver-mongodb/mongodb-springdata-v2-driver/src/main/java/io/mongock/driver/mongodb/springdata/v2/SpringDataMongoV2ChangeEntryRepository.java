@@ -29,7 +29,7 @@ public class SpringDataMongoV2ChangeEntryRepository extends Mongo3ChangeEntryRep
 
 
   @Override
-  public void upsert(ChangeEntry changeEntry) throws MongockException {
+  public void saveOrUpdate(ChangeEntry changeEntry) throws MongockException {
 
     Query filter = new Query().addCriteria(new Criteria()
         .andOperator(

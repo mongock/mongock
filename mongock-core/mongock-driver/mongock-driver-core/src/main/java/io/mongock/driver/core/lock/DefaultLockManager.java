@@ -127,7 +127,7 @@ public class DefaultLockManager implements LockManager {
       try {
         logger.info("Mongock trying to acquire the lock");
         Date newLockExpiresAt = timeUtils.currentDatePlusMillis(lockAcquiredForMillis);
-        repository.upsert(new LockEntry(lockKey, LockStatus.LOCK_HELD.name(), owner, newLockExpiresAt));
+        repository.insertUpdate(new LockEntry(lockKey, LockStatus.LOCK_HELD.name(), owner, newLockExpiresAt));
         logger.info("Mongock acquired the lock until: {}", newLockExpiresAt);
         updateStatus(newLockExpiresAt);
         lockDaemon.activate();

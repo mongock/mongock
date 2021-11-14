@@ -4,22 +4,39 @@ import com.amazonaws.services.dynamodbv2.AmazonDynamoDBClient
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBAttribute
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBHashKey
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBMapperConfig
-import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBQueryExpression
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBRangeKey
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBScanExpression
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBTable
+import com.amazonaws.services.dynamodbv2.document.Item
 import com.amazonaws.services.dynamodbv2.model.AttributeValue
 import com.amazonaws.services.dynamodbv2.model.Put
+import com.amazonaws.services.dynamodbv2.model.PutItemRequest
 import com.amazonaws.services.dynamodbv2.model.TransactWriteItem
-import com.amazonaws.services.dynamodbv2.model.Update
 import com.google.gson.Gson
 import io.mongock.driver.api.entry.ChangeEntry
+import io.mongock.driver.api.entry.ChangeEntry.KEY_AUTHOR
+import io.mongock.driver.api.entry.ChangeEntry.KEY_CHANGELOG_CLASS
+import io.mongock.driver.api.entry.ChangeEntry.KEY_CHANGESET_METHOD
+import io.mongock.driver.api.entry.ChangeEntry.KEY_CHANGE_ID
+import io.mongock.driver.api.entry.ChangeEntry.KEY_EXECUTION_HOST_NAME
+import io.mongock.driver.api.entry.ChangeEntry.KEY_EXECUTION_ID
+import io.mongock.driver.api.entry.ChangeEntry.KEY_EXECUTION_MILLIS
+import io.mongock.driver.api.entry.ChangeEntry.KEY_METADATA
+import io.mongock.driver.api.entry.ChangeEntry.KEY_STATE
+import io.mongock.driver.api.entry.ChangeEntry.KEY_TIMESTAMP
+import io.mongock.driver.api.entry.ChangeEntry.KEY_TYPE
 import io.mongock.driver.api.entry.ChangeEntryService
 import io.mongock.driver.api.entry.ChangeState
 import io.mongock.driver.api.entry.ChangeType
+import mu.KotlinLogging
 import java.util.*
 import kotlin.collections.HashMap
 
+
+
+internal  const val RANGE_KEY_ID = "${KEY_EXECUTION_ID}#${KEY_AUTHOR}"
+private val gson = Gson()
+private val logger = KotlinLogging.logger {}
 
 class DynamoDBChangeEntryRepository(client: AmazonDynamoDBClient, tableName: String, indexCreation: Boolean) :
     DynamoDbRepositoryBase(client, tableName, ChangeEntryDynamoDB::class, indexCreation),
@@ -32,36 +49,31 @@ class DynamoDBChangeEntryRepository(client: AmazonDynamoDBClient, tableName: Str
     }
 
     override fun getEntriesLog(): List<ChangeEntry> {
-        return mapper.scan(ChangeEntryDynamoDB::class.java, DynamoDBScanExpression(), DynamoDBMapperConfig.builder().withConsistentReads(DynamoDBMapperConfig.ConsistentReads.CONSISTENT).build())
-            .map { it.changeEntry() }
+        return mapper.scan(
+            ChangeEntryDynamoDB::class.java,
+            DynamoDBScanExpression(),
+            DynamoDBMapperConfig.builder().withConsistentReads(DynamoDBMapperConfig.ConsistentReads.CONSISTENT).build()
+        )
+            .map { it.changeEntry }
             .toList()
     }
 
-    override fun upsert(changeEntry: ChangeEntry) {
+    override fun saveOrUpdate(changeEntry: ChangeEntry) {
         val changeEntryDynamoDB = ChangeEntryDynamoDB(changeEntry)
+        if (transactionItems == null) {
 
-        if (transactionItems == null){
-            mapper.save(changeEntryDynamoDB)
+            val request = PutItemRequest()
+                .withTableName(tableName)
+                .withItem(changeEntryDynamoDB.attributes)
+            println("Upserting changeEntry: $request")
+            val result = client.putItem(request)
+            logger.debug("Upsert performed: $result")
         } else {
-            //TODO NOT TESTED
-            val transactionItem: TransactWriteItem = TransactWriteItem()
-            if (!isAlreadyPresent(changeEntryDynamoDB)) {
-                println("SHOULD PERFORM INSERT")
-                transactionItem.withPut(Put().withTableName(tableName).withItem(changeEntryDynamoDB.mapValues()))
-            } else {
-                println("SHOULD PERFORM UPDATE")
-                transactionItem.withUpdate(Update().withTableName(tableName))
-            }
-            transactionItems!!.addChangeEntry(transactionItem)
+            //TODO TEST this against AWS DYNAMODB
+            val put = Put().withTableName(tableName).withItem(changeEntryDynamoDB.attributes)
+            logger.debug { "Upserting changeEntry: $put" }
+            transactionItems!!.addChangeEntry(TransactWriteItem().withPut(put))
         }
-    }
-
-    //TODO if passing the log check just in memory. Challenge, the log should be updated
-    private fun isAlreadyPresent(changeEntry: ChangeEntryDynamoDB): Boolean {
-        val expression =  DynamoDBQueryExpression<ChangeEntryDynamoDB>()
-            .withHashKeyValues(changeEntry)
-            .withConsistentRead(true)
-        return mapper.query(ChangeEntryDynamoDB::class.java, expression) .any { it.author == changeEntry.author }
     }
 
     fun cleanTransactionRequest() {
@@ -71,92 +83,123 @@ class DynamoDBChangeEntryRepository(client: AmazonDynamoDBClient, tableName: Str
 
 }
 
-
-private val gson = Gson()
-
-private const val RANGE_KEY_ID = "${ChangeEntry.KEY_EXECUTION_ID}#${ChangeEntry.KEY_AUTHOR}"
-
 @DynamoDBTable(tableName = "should_not_be_used")
 internal class ChangeEntryDynamoDB private constructor(
-    @DynamoDBHashKey(attributeName = ChangeEntry.KEY_CHANGE_ID)
+    @DynamoDBHashKey(attributeName = KEY_CHANGE_ID)
     var changeId: String?,
     @DynamoDBRangeKey(attributeName = RANGE_KEY_ID)
     var rangeKey: String?,
-    @DynamoDBAttribute(attributeName = ChangeEntry.KEY_EXECUTION_ID)
+    @DynamoDBAttribute(attributeName = KEY_EXECUTION_ID)
     var executionId: String?,
-    @DynamoDBAttribute(attributeName = ChangeEntry.KEY_AUTHOR)
+    @DynamoDBAttribute(attributeName = KEY_AUTHOR)
     var author: String?,
-    @DynamoDBAttribute(attributeName = ChangeEntry.KEY_TIMESTAMP)
+    @DynamoDBAttribute(attributeName = KEY_TIMESTAMP)
     var timestamp: Long?,
-    @DynamoDBAttribute(attributeName = ChangeEntry.KEY_STATE)
+    @DynamoDBAttribute(attributeName = KEY_STATE)
     var state: String?,
-    @DynamoDBAttribute(attributeName = ChangeEntry.KEY_TYPE)
+    @DynamoDBAttribute(attributeName = KEY_TYPE)
     var type: String?,
-    @DynamoDBAttribute(attributeName = ChangeEntry.KEY_CHANGELOG_CLASS)
+    @DynamoDBAttribute(attributeName = KEY_CHANGELOG_CLASS)
     var changeLogClass: String?,
-    @DynamoDBAttribute(attributeName = ChangeEntry.KEY_CHANGESET_METHOD)
+    @DynamoDBAttribute(attributeName = KEY_CHANGESET_METHOD)
     var changeSetMethod: String?,
-    @DynamoDBAttribute(attributeName = ChangeEntry.KEY_EXECUTION_MILLIS)
+    @DynamoDBAttribute(attributeName = KEY_EXECUTION_MILLIS)
     var executionMillis: Long?,
-    @DynamoDBAttribute(attributeName = ChangeEntry.KEY_EXECUTION_HOST_NAME)
+    @DynamoDBAttribute(attributeName = KEY_EXECUTION_HOST_NAME)
     var executionHostname: String?,
-    @DynamoDBAttribute(attributeName = ChangeEntry.KEY_METADATA)
+    @DynamoDBAttribute(attributeName = KEY_METADATA)
     var metadata: String?
 
 ) {
+    internal val item: Item
+        get() {
+            return Item()
+                .withPrimaryKey(KEY_CHANGE_ID, changeId, RANGE_KEY_ID, rangeKey)
+                .withString(KEY_CHANGE_ID, changeId)
+                .withString(RANGE_KEY_ID, rangeKey)
+                .withString(KEY_EXECUTION_ID, executionId)
+                .withString(KEY_AUTHOR, author)
+                .withNumber(KEY_TIMESTAMP, timestamp)
+                .withString(KEY_STATE, state)
+                .withString(KEY_TYPE, type)
+                .withString(KEY_CHANGELOG_CLASS, changeLogClass)
+                .withString(KEY_CHANGESET_METHOD, changeSetMethod)
+                .withNumber(KEY_EXECUTION_MILLIS, executionMillis)
+                .withString(KEY_EXECUTION_HOST_NAME, executionHostname)
+                .withString(KEY_METADATA, metadata)
+        }
+
+    internal val changeEntry: ChangeEntry
+        get() {
+            return ChangeEntry(
+                executionId,
+                changeId,
+                author,
+                if (timestamp != null) Date(timestamp!!) else null,
+                if (state != null) ChangeState.valueOf(state!!) else null,
+                if (type != null) ChangeType.valueOf(type!!) else null,
+                changeLogClass,
+                changeSetMethod,
+                executionMillis ?: 0L,
+                executionHostname,
+                if (metadata != null) gson.fromJson(metadata, Map::class.java) else Unit
+            )
+        }
+
+    internal val attributes: Map<String, AttributeValue>
+        get() {
+            val attributes = HashMap<String, AttributeValue>()
+            attributes[KEY_CHANGE_ID] = AttributeValue(changeId)
+            attributes[RANGE_KEY_ID] = AttributeValue(rangeKey)
+            attributes[KEY_EXECUTION_ID] = AttributeValue(executionId)
+            attributes[KEY_AUTHOR] = AttributeValue(author)
+            attributes[KEY_TIMESTAMP] = AttributeValue()
+            attributes[KEY_TIMESTAMP]!!.withN(timestamp.toString())
+            attributes[KEY_STATE] = AttributeValue(state)
+            attributes[KEY_TYPE] = AttributeValue(type)
+            attributes[KEY_CHANGELOG_CLASS] = AttributeValue(changeLogClass)
+            attributes[KEY_CHANGESET_METHOD] = AttributeValue(changeSetMethod)
+            attributes[KEY_EXECUTION_MILLIS] = AttributeValue()
+            attributes[KEY_EXECUTION_MILLIS]!!.withN(executionMillis.toString())
+            if (executionHostname != null && executionHostname != "") {
+                attributes[KEY_EXECUTION_HOST_NAME] = AttributeValue(executionHostname)
+            }
+            if (metadata != null && metadata != "") {
+                attributes[KEY_METADATA] = AttributeValue(metadata)
+            }
+            return attributes
+        }
+
+
     internal constructor(c: ChangeEntry) : this(
         changeId = c.changeId,
         rangeKey = "${c.executionId}#${c.author}",
         executionId = c.executionId,
         author = c.author,
-        timestamp = c.timestamp?.time?:0L,
+        timestamp = c.timestamp?.time ?: 0L,
         state = (c.state ?: ChangeState.EXECUTED).name,
         type = (c.type ?: ChangeType.EXECUTION).name,
         changeLogClass = c.changeLogClass,
         changeSetMethod = c.changeSetMethod,
         executionMillis = c.executionMillis,
-        executionHostname = c.executionHostname?:"",
-        metadata = if(c.metadata != null) gson.toJson(c.metadata) else  ""
+        executionHostname = c.executionHostname ?: "",
+        metadata = if (c.metadata != null) gson.toJson(c.metadata) else ""
     )
 
-    constructor():this(null,null,null,null,null,null,null,null,null,null,null,null)
-
-    internal fun changeEntry():ChangeEntry {
-        return ChangeEntry(
-            executionId,
-            changeId,
-            author,
-            if(timestamp!=null) Date(timestamp!!) else null,
-            if(state!=null) ChangeState.valueOf(state!!) else null,
-            if(type!=null) ChangeType.valueOf(type!!) else null,
-            changeLogClass,
-            changeSetMethod,
-            executionMillis?:0L,
-            executionHostname,
-            if(metadata != null) gson.fromJson(metadata, Map::class.java) else {}
-
-        )
-    }
-
-    internal fun mapValues():Map<String, AttributeValue> {
-        val item = HashMap<String, AttributeValue>()
-        item[ChangeEntry.KEY_CHANGE_ID] = AttributeValue(changeId)
-        item[RANGE_KEY_ID] = AttributeValue(rangeKey)
-        item[ChangeEntry.KEY_EXECUTION_ID] = AttributeValue(executionId)
-        item[ChangeEntry.KEY_AUTHOR] = AttributeValue(author)
-        item[ChangeEntry.KEY_TIMESTAMP] = AttributeValue()
-        item[ChangeEntry.KEY_TIMESTAMP]!!.withN(timestamp.toString())
-        item[ChangeEntry.KEY_STATE] = AttributeValue(state)
-        item[ChangeEntry.KEY_TYPE] = AttributeValue(type)
-        item[ChangeEntry.KEY_CHANGELOG_CLASS] = AttributeValue(changeLogClass)
-        item[ChangeEntry.KEY_CHANGESET_METHOD] = AttributeValue(changeSetMethod)
-        item[ChangeEntry.KEY_EXECUTION_MILLIS] = AttributeValue()
-        item[ChangeEntry.KEY_EXECUTION_MILLIS]!!.withN(executionMillis.toString())
-        item[ChangeEntry.KEY_EXECUTION_HOST_NAME] = AttributeValue(executionHostname)
-        item[ChangeEntry.KEY_METADATA] = AttributeValue(metadata)
-
-        return item
-    }
-
+    constructor() : this(null, null, null, null, null, null, null, null, null, null, null, null)
+    internal constructor(item: Map<String, AttributeValue>) : this(
+        changeId = item[KEY_CHANGE_ID]!!.s,
+        rangeKey = item[RANGE_KEY_ID]!!.s,
+        executionId = item[KEY_EXECUTION_ID]!!.s,
+        author = item[KEY_AUTHOR]!!.s,
+        timestamp = item[KEY_TIMESTAMP]!!.n.toLong(),
+        state = item[KEY_STATE]!!.s,
+        type = item[KEY_TYPE]!!.s,
+        changeLogClass = item[KEY_CHANGELOG_CLASS]!!.s,
+        changeSetMethod = item[KEY_CHANGESET_METHOD]!!.s,
+        executionMillis = item[KEY_EXECUTION_MILLIS]!!.n.toLong(),
+        executionHostname = item[KEY_EXECUTION_HOST_NAME]!!.s,
+        metadata = item[KEY_METADATA]!!.s
+    )
 
 }

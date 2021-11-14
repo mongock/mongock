@@ -176,7 +176,7 @@ public class MongoSync4ChangeEntryRepository extends MongoSync4RepositoryBase<Ch
   }
 
   @Override
-  public void upsert(ChangeEntry changeEntry) throws MongockException {
+  public void saveOrUpdate(ChangeEntry changeEntry) throws MongockException {
     Bson filter = Filters.and(
         Filters.eq(KEY_EXECUTION_ID, changeEntry.getExecutionId()),
         Filters.eq(KEY_CHANGE_ID, changeEntry.getChangeId()),

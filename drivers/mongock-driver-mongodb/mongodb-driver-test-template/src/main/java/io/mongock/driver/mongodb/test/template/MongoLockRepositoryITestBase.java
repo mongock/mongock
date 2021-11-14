@@ -73,7 +73,7 @@ public abstract class MongoLockRepositoryITestBase extends IntegrationTestBase {
 
     // when
     Date expiresAtExpected = new Date(System.currentTimeMillis() - 60000);
-    repository.upsert(new LockEntry(LOCK_KEY, LockStatus.LOCK_HELD.name(), "process1", expiresAtExpected));
+    repository.insertUpdate(new LockEntry(LOCK_KEY, LockStatus.LOCK_HELD.name(), "process1", expiresAtExpected));
 
     //then
     FindIterable<Document> result = getDataBase().getCollection(LOCK_COLLECTION_NAME).find(new Document().append("key", LOCK_KEY));
@@ -87,11 +87,11 @@ public abstract class MongoLockRepositoryITestBase extends IntegrationTestBase {
     //given
     final long currentMillis = System.currentTimeMillis();
     repository
-        .upsert(new LockEntry(LOCK_KEY, LockStatus.LOCK_HELD.name(), "process1", new Date(currentMillis - 1000)));
+        .insertUpdate(new LockEntry(LOCK_KEY, LockStatus.LOCK_HELD.name(), "process1", new Date(currentMillis - 1000)));
 
     //when
     Date expiresAtExpected = new Date();
-    repository.upsert(new LockEntry(LOCK_KEY, LockStatus.LOCK_HELD.name(), "process2", expiresAtExpected));
+    repository.insertUpdate(new LockEntry(LOCK_KEY, LockStatus.LOCK_HELD.name(), "process2", expiresAtExpected));
 
     //then
     FindIterable<Document> result = getDataBase().getCollection(LOCK_COLLECTION_NAME).find(new Document().append("key", LOCK_KEY));
@@ -104,13 +104,13 @@ public abstract class MongoLockRepositoryITestBase extends IntegrationTestBase {
   public void insertUpdateShouldUpdateWhenSameOwner() throws LockPersistenceException, MongockException {
     initializeRepository();
     //given
-    repository.upsert(
+    repository.insertUpdate(
         new LockEntry(LOCK_KEY, LockStatus.LOCK_HELD.name(), "process1",
             new Date(System.currentTimeMillis() + 60 * 60 * 1000)));
 
     //when
     Date expiresAtExpected = new Date();
-    repository.upsert(new LockEntry(LOCK_KEY, LockStatus.LOCK_HELD.name(), "process1", expiresAtExpected));
+    repository.insertUpdate(new LockEntry(LOCK_KEY, LockStatus.LOCK_HELD.name(), "process1", expiresAtExpected));
 
     //then
     FindIterable<Document> result = getDataBase().getCollection(LOCK_COLLECTION_NAME).find(new Document().append("key", LOCK_KEY));
@@ -124,12 +124,12 @@ public abstract class MongoLockRepositoryITestBase extends IntegrationTestBase {
     //given
     final long currentMillis = System.currentTimeMillis();
     repository
-        .upsert(
+        .insertUpdate(
             new LockEntry(LOCK_KEY, LockStatus.LOCK_HELD.name(), "process1", new Date(currentMillis + 60 * 60 * 1000)));
 
     //when
     repository
-        .upsert(
+        .insertUpdate(
             new LockEntry(LOCK_KEY, LockStatus.LOCK_HELD.name(), "process2", new Date(currentMillis + 90 * 60 * 1000)));
   }
 
@@ -188,7 +188,7 @@ public abstract class MongoLockRepositoryITestBase extends IntegrationTestBase {
     //given
     final long currentMillis = System.currentTimeMillis();
     repository
-        .upsert(new LockEntry(LOCK_KEY, LockStatus.LOCK_HELD.name(), "process1", new Date(currentMillis - 1000)));
+        .insertUpdate(new LockEntry(LOCK_KEY, LockStatus.LOCK_HELD.name(), "process1", new Date(currentMillis - 1000)));
 
     //when
     repository
@@ -200,7 +200,7 @@ public abstract class MongoLockRepositoryITestBase extends IntegrationTestBase {
   public void updateIfSameOwnerShouldUpdateWhenSameOwner() throws LockPersistenceException, MongockException {
     initializeRepository();
     //given
-    repository.upsert(
+    repository.insertUpdate(
         new LockEntry(LOCK_KEY, LockStatus.LOCK_HELD.name(), "process1",
             new Date(System.currentTimeMillis() + 60 * 60 * 1000)));
 
@@ -220,11 +220,11 @@ public abstract class MongoLockRepositoryITestBase extends IntegrationTestBase {
     // given
     final long currentMillis = System.currentTimeMillis();
     repository
-        .upsert(
+        .insertUpdate(
             new LockEntry(LOCK_KEY, LockStatus.LOCK_HELD.name(), "process1", new Date(currentMillis + 60 * 60 * 1000)));
 
     // when
-    repository.upsert(new LockEntry(LOCK_KEY, LockStatus.LOCK_HELD.name(), "process2", new Date(currentMillis)));
+    repository.insertUpdate(new LockEntry(LOCK_KEY, LockStatus.LOCK_HELD.name(), "process2", new Date(currentMillis)));
   }
 
   protected abstract void initializeRepository() ;

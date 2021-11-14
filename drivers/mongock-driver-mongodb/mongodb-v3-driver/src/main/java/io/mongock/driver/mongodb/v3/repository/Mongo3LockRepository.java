@@ -46,7 +46,7 @@ public class Mongo3LockRepository extends Mongo3RepositoryBase<LockEntry> implem
    *                                  another owner or cannot insert/update the lock for any other reason
    */
   @Override
-  public void upsert(LockEntry newLock)  {
+  public void insertUpdate(LockEntry newLock)  {
     insertUpdate(newLock, false);
   }
 

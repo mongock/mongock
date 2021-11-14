@@ -26,28 +26,23 @@ private val GSON = Gson()
 
 private enum class TableState { OK, NOT_FOUND, WRONG_INDEX }
 
-private fun tableNameOverriderConfig(tableName: String) = DynamoDBMapperConfig
+private fun mapperConfig(tableName: String) = DynamoDBMapperConfig
     .builder()
     .withConsistentReads(DynamoDBMapperConfig.ConsistentReads.CONSISTENT)
     .withPaginationLoadingStrategy(DynamoDBMapperConfig.PaginationLoadingStrategy.EAGER_LOADING)
     .withTableNameOverride(DynamoDBMapperConfig.TableNameOverride.withTableNameReplacement(tableName))
     .build()
 
-
-var mapperConfig = DynamoDBMapperConfig.builder()
-    .withSaveBehavior(DynamoDBMapperConfig.SaveBehavior.CLOBBER)
-    .withTableNameOverride(null)
-    .build()
-
 abstract class DynamoDbRepositoryBase(
-    private val client: AmazonDynamoDBClient,
+    protected val client: AmazonDynamoDBClient,
     protected val tableName: String,
     private val mapperClass: KClass<*>,
     private var indexCreation: Boolean
 ) : Process, RepositoryIndexable {
 
-    protected val mapper: DynamoDBMapper = DynamoDBMapper(client, tableNameOverriderConfig(tableName))
-    protected val dynamoDB: DynamoDB = DynamoDB(client)
+    protected val mapper: DynamoDBMapper = DynamoDBMapper(client, mapperConfig(tableName))
+    private val dynamoDB: DynamoDB = DynamoDB(client)
+    protected lateinit var table:Table
     private var ensuredIndex = false
 
 
@@ -67,12 +62,12 @@ abstract class DynamoDbRepositoryBase(
             throw MongockException("Max tries $INDEX_TABLE_MAX_TRIES index  creation")
         }
         dynamoDB.listTables()
-        val table = dynamoDB.getTable(tableName)
+        table = dynamoDB.getTable(tableName)
         val tableState = getTableState(table)
         if (tableState != TableState.OK) {
             logger.debug { "Table[$tableName] not OK $tableState" }
             when (tableState) {
-                TableState.NOT_FOUND -> createTable()
+                TableState.NOT_FOUND -> table = createTable()
                 TableState.WRONG_INDEX -> fixIndexTable()
             }
             ensureTable(tryCounter - 1)

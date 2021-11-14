@@ -90,6 +90,6 @@ public interface ChangeEntryService extends RepositoryIndexable, Process {
    * @param changeEntry Entry to be inserted
    * @throws MongockException if any i/o exception or already inserted
    */
-  void upsert(ChangeEntry changeEntry) throws MongockException;
+  void saveOrUpdate(ChangeEntry changeEntry) throws MongockException;
 
 }
