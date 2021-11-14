@@ -197,7 +197,9 @@ public class MongoSync4ChangeEntryRepository extends MongoSync4RepositoryBase<Ch
           .map(clientSession -> collection.updateOne(clientSession, filter, new Document("$set", document), new UpdateOptions().upsert(true)))
           .orElseGet(() -> collection.updateOne(filter, new Document("$set", document), new UpdateOptions().upsert(true)));
     } else {
-      save(changeEntry);
+      InsertOneResult result = getClientSession()
+          .map(clientSession -> collection.insertOne(clientSession, toEntity(changeEntry)))
+          .orElseGet(() -> collection.insertOne(toEntity(changeEntry)));
     }
   }
 
