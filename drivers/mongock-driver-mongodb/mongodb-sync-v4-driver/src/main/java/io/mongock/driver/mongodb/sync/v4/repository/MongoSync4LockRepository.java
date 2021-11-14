@@ -41,7 +41,7 @@ public class MongoSync4LockRepository extends MongoSync4RepositoryBase<LockEntry
    *                                  another owner or cannot insert/update the lock for any other reason
    */
   @Override
-  public void insertUpdate(LockEntry newLock)  {
+  public void upsert(LockEntry newLock)  {
     insertUpdate(newLock, false);
   }
 

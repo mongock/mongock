@@ -261,7 +261,7 @@ public abstract class MigrationExecutorBase<CONFIG extends ChangeExecutorConfigu
     if (!changeSetItem.isRunAlways() || !alreadyExecuted) {
       //if not ignored or, being ignored, should be tracked anyway
       if (changeEntry.getState() != IGNORED || trackIgnored) {
-        driver.getChangeEntryService().saveOrUpdate(changeEntry);
+        driver.getChangeEntryService().upsert(changeEntry);
       }
     }
   }

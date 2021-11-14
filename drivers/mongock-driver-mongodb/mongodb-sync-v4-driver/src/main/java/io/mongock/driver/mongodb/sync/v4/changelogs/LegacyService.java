@@ -46,7 +46,7 @@ public class LegacyService {
       for (ChangeEntry originalChange : changesToMigrate) {
         if (!changeEntryService.isAlreadyExecuted(originalChange.getChangeId(), originalChange.getAuthor())) {
           logTracking(originalChange);
-          changeEntryService.saveOrUpdate(originalChange);
+          changeEntryService.upsert(originalChange);
           logSuccessfullyTracked(originalChange);
         } else {
           logAlreadyTracked(originalChange);

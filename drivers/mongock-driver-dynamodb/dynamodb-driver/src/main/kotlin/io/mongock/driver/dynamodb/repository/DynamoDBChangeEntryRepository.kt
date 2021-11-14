@@ -29,7 +29,7 @@ class DynamoDBChangeEntryRepository(client: AmazonDynamoDBClient, tableName: Str
             .toList()
     }
 
-    override fun saveOrUpdate(changeEntry: ChangeEntry) {
+    override fun upsert(changeEntry: ChangeEntry) {
         val changeEntryDynamoDB = ChangeEntryDynamoDB(changeEntry)
         if (transactionItems != null) {
             val transactionItem: TransactWriteItem = TransactWriteItem()

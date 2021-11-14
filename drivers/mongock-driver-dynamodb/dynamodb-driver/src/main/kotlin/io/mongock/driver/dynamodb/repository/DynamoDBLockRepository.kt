@@ -14,7 +14,7 @@ class DynamoDBLockRepository(client: AmazonDynamoDBClient, tableName: String, in
         indexCreation
     ) {
 
-    override fun insertUpdate(newLock: LockEntry?) {
+    override fun upsert(newLock: LockEntry?) {
         TODO("Not yet implemented")
     }
 
