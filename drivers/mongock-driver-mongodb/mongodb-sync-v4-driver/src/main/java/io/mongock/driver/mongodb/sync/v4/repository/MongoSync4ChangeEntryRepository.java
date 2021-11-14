@@ -176,13 +176,6 @@ public class MongoSync4ChangeEntryRepository extends MongoSync4RepositoryBase<Ch
   }
 
   @Override
-  public void save(ChangeEntry changeEntry) throws MongockException {
-    InsertOneResult result = getClientSession()
-        .map(clientSession -> collection.insertOne(clientSession, toEntity(changeEntry)))
-        .orElseGet(() -> collection.insertOne(toEntity(changeEntry)));
-  }
-
-  @Override
   public void saveOrUpdate(ChangeEntry changeEntry) throws MongockException {
     Bson filter = Filters.and(
         Filters.eq(KEY_EXECUTION_ID, changeEntry.getExecutionId()),

@@ -40,10 +40,6 @@ class DynamoDBChangeEntryRepository(client: AmazonDynamoDBClient, tableName: Str
         }
     }
 
-    override fun save(changeEntry: ChangeEntry) {
-        TODO("THIS WILL SOON BE DELETED. It shouldn't be used")
-    }
-
     fun cleanTransactionRequest() {
         transactionItems = null
     }

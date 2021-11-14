@@ -245,10 +245,6 @@ public class ChangeEntryServiceTest {
 
     }
 
-    @Override
-    public void save(ChangeEntry changeEntry) throws MongockException {
-
-    }
 
     @Override
     public void initialize() {

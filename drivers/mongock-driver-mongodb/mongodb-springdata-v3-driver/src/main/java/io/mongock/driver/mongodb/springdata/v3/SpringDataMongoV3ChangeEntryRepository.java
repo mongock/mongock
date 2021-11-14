@@ -30,11 +30,6 @@ public class SpringDataMongoV3ChangeEntryRepository extends MongoSync4ChangeEntr
 
 
   @Override
-  public void save(ChangeEntry changeEntry) throws MongockException {
-    mongoTemplate.save(changeEntry, collection.getNamespace().getCollectionName());
-  }
-
-  @Override
   public void saveOrUpdate(ChangeEntry changeEntry) throws MongockException {
 
     Query filter = new Query().addCriteria(new Criteria()
