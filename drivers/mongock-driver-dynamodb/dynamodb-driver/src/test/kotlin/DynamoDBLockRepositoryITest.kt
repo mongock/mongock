@@ -144,7 +144,7 @@ class DynamoDBLockRepositoryITest : DescribeSpec({
             }
         }
         When("lock is in table", {companion.createInsert("lock-t-save-9", lockOwner1NotExpired)}) {
-            should("return lock") {
+            should("remove lock") {
                 companion.isInserted("lock-t-save-9", lockOwner1NotExpired) shouldBe true
                 companion.getLockRepository("lock-t-save-9", true).removeByKeyAndOwner(lockOwner1NotExpired.key, lockOwner1NotExpired.owner)
                 companion.isInserted("lock-t-save-9", lockOwner1NotExpired) shouldBe false
