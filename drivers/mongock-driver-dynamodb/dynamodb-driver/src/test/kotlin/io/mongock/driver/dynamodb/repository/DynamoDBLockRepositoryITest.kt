@@ -1,3 +1,5 @@
+package io.mongock.driver.dynamodb.repository
+
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.core.spec.style.DescribeSpec
 import io.kotest.matchers.shouldBe
@@ -10,7 +12,7 @@ import io.mongock.driver.core.lock.LockPersistenceException
 class DynamoDBLockRepositoryITest : DescribeSpec({
     val companion = DynamoDBTestCompanion()
 
-    companion.startContainer()
+    companion.start()
 
     /**
      * INITIALIZE

@@ -47,7 +47,7 @@ abstract class DynamoDBDriverBase protected constructor(
 
     private var transactionItems: DynamoDBTransactionItems? = null
 
-    private var transactionEnabled = false
+    private var transactionEnabled = true
 
 
     override fun getLockRepository(): LockRepository {
@@ -78,7 +78,6 @@ abstract class DynamoDBDriverBase protected constructor(
         return _dependencies;
     }
 
-
     //TODO potentially removable(move it to executeInTransaction)
     override fun prepareForExecutionBlock() {
         transactionItems = DynamoDBTransactionItems()
@@ -88,13 +87,12 @@ abstract class DynamoDBDriverBase protected constructor(
         try {
             _changeEntryService.transactionItems = transactionItems
             operation.run()
-            if (transactionItems == null || transactionItems?.containsUserTransactions()!!) {
+            if (!transactionItems!!.containsUserTransactions()) {
                 logger.debug { "no transaction items for changeUnit" }
             }
-
             val result = client.transactWriteItems(
                 TransactWriteItemsRequest()
-                    .withTransactItems(transactionItems?.items)
+                    .withTransactItems(transactionItems!!.items)
                     .withReturnConsumedCapacity(ReturnConsumedCapacity.TOTAL)
             )
             logger.debug { "DynamoDB transaction successful: $result" }
@@ -103,6 +101,7 @@ abstract class DynamoDBDriverBase protected constructor(
         } finally {
             _changeEntryService.cleanTransactionRequest();
             transactionItems = null
+            removeDependencyIfAssignableFrom(_dependencies, DynamoDBTransactionItems::class.java)
         }
     }
 

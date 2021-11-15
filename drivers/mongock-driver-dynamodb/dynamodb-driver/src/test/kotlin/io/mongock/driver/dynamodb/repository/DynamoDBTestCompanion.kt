@@ -1,14 +1,24 @@
+package io.mongock.driver.dynamodb.repository
+
+import com.amazonaws.auth.AWSStaticCredentialsProvider
+import com.amazonaws.auth.BasicAWSCredentials
+import com.amazonaws.client.builder.AwsClientBuilder
 import com.amazonaws.services.dynamodbv2.AmazonDynamoDBClient
+import com.amazonaws.services.dynamodbv2.AmazonDynamoDBClientBuilder
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBMapper
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBMapperConfig
 import com.amazonaws.services.dynamodbv2.document.DynamoDB
+import com.amazonaws.services.dynamodbv2.document.spec.QuerySpec
 import com.amazonaws.services.dynamodbv2.model.AttributeValue
 import com.amazonaws.services.dynamodbv2.model.GetItemRequest
 import com.amazonaws.services.dynamodbv2.model.ProvisionedThroughput
 import com.amazonaws.services.dynamodbv2.model.PutItemRequest
+import com.amazonaws.services.dynamodbv2.model.QueryRequest
+import com.amazonaws.services.dynamodbv2.model.Select
 import com.amazonaws.services.dynamodbv2.util.TableUtils
 import io.kotest.core.spec.style.scopes.DescribeSpecContainerContext
 import io.kotest.core.test.TestContext
+import io.mongock.driver.api.driver.ConnectionDriver
 import io.mongock.driver.api.entry.ChangeEntry
 import io.mongock.driver.api.entry.ChangeEntry.KEY_CHANGE_ID
 import io.mongock.driver.api.entry.ChangeEntryService
@@ -17,12 +27,7 @@ import io.mongock.driver.api.entry.ChangeType
 import io.mongock.driver.core.lock.LockEntry
 import io.mongock.driver.core.lock.LockRepository
 import io.mongock.driver.core.lock.LockStatus
-import io.mongock.driver.dynamodb.repository.ChangeEntryDynamoDB
-import io.mongock.driver.dynamodb.repository.DynamoDBChangeEntryRepository
-import io.mongock.driver.dynamodb.repository.DynamoDBLockRepository
-import io.mongock.driver.dynamodb.repository.KEY_FIELD_DYNAMODB
-import io.mongock.driver.dynamodb.repository.LockEntryDynamoDB
-import io.mongock.driver.dynamodb.repository.RANGE_KEY_ID
+import io.mongock.driver.dynamodb.driver.DynamoDBDriver
 import org.testcontainers.dynamodb.DynaliteContainer
 import org.testcontainers.utility.DockerImageName
 import java.util.*
@@ -30,13 +35,36 @@ import java.util.*
 
 class DynamoDBTestCompanion {
 
+    val transactionServerEnabled = false//todo take this from ENV
     private var container: DynaliteContainer? = null
     private var client: AmazonDynamoDBClient? = null
     private var dynamoDB: DynamoDB? = null
-    fun startContainer() {
-        container = DynaliteContainer(DockerImageName.parse("quay.io/testcontainers/dynalite").withTag("v1.2.1-1"))
-        container!!.start()
-        client = container!!.client as AmazonDynamoDBClient
+    fun start() {
+        if (transactionServerEnabled) {
+            client = AmazonDynamoDBClientBuilder.standard()
+                .withEndpointConfiguration(
+                    AwsClientBuilder.EndpointConfiguration(
+                        "dynamodb.eu-west-1.amazonaws.com",
+                        "eu-west-1"
+                    )
+                )
+                .withCredentials(
+                    AWSStaticCredentialsProvider(
+                        BasicAWSCredentials(
+                            "ACCESS_KEY",//todo take this from ENV
+                            "SECRET_KEY"
+                        )
+                    )
+                )
+                .build() as AmazonDynamoDBClient
+
+        } else {
+            container = DynaliteContainer(DockerImageName.parse("quay.io/testcontainers/dynalite").withTag("v1.2.1-1"))
+            container!!.start()
+            client = container!!.client as AmazonDynamoDBClient
+        }
+
+
         dynamoDB = DynamoDB(client)
 
     }
@@ -69,7 +97,6 @@ class DynamoDBTestCompanion {
         )
         TableUtils.waitUntilActive(client, tableName)
     }
-
 
 
     fun insertChangeEntries(tableName: String, vararg entries: ChangeEntry) {
@@ -106,7 +133,7 @@ class DynamoDBTestCompanion {
     /**
      * LOCK
      */
-    fun getLockRepository(tableName: String, indexCreation: Boolean) : LockRepository {
+    fun getLockRepository(tableName: String, indexCreation: Boolean): LockRepository {
         return DynamoDBLockRepository(client!!, tableName, indexCreation)
     }
 
@@ -155,6 +182,11 @@ class DynamoDBTestCompanion {
         insertLockEntries(tableName, *entries)
     }
 
+    fun getDriver(): ConnectionDriver {
+        return DynamoDBDriver.withDefaultLock(client!!)
+    }
+
+
 }
 
 
@@ -171,6 +203,7 @@ suspend fun DescribeSpecContainerContext.should(
 ) {
     it("SHOULD $name", test)
 }
+
 suspend fun DescribeSpecContainerContext.xshould(
     name: String,
     test: suspend TestContext.() -> Unit
@@ -255,11 +288,11 @@ val change1_u = ChangeEntry(
     Date(),
     ChangeState.EXECUTED,
     ChangeType.EXECUTION,
-    "updated-changelog-class",
-    "updated-changelog-method",
+    "UPDATED",
+    "UPDATED",
     0L,
-    "updated-host-name",
-    mapOf("updated" to "that")
+    "UPDATED",
+    mapOf("UPDATED" to "that")
 )
 
 val change2 = ChangeEntry(
@@ -289,10 +322,29 @@ val change3 = ChangeEntry(
     "executionHostname",
     mapOf("this" to "that")
 )
+
+val changeFailed = ChangeEntry(
+"executionId",
+null,
+"author-c3",
+Date(),
+ChangeState.EXECUTED,
+ChangeType.EXECUTION,
+"changeLogClass",
+"changeSetMethod",
+0L,
+"executionHostname",
+mapOf("this" to "that")
+)
+
 const val lockKey = "lock-key"
 
 //String key, String status, String owner, Date expiresAt
-val lockOwner1NotExpired = LockEntry(lockKey, LockStatus.LOCK_HELD.name, "owner-1", Date(System.currentTimeMillis() + 90000))
-val lockOwner1NotExpiredUpdated = LockEntry(lockKey, LockStatus.LOCK_HELD.name, "owner-1", Date(System.currentTimeMillis() + 180000))
-val lockOwner1Expired = LockEntry(lockKey, LockStatus.LOCK_HELD.name, "owner-1", Date(System.currentTimeMillis() - 10000))
-val lockOwner2NotExpired = LockEntry(lockKey, LockStatus.LOCK_HELD.name, "owner-2", Date(System.currentTimeMillis() + 90000))
+val lockOwner1NotExpired =
+    LockEntry(lockKey, LockStatus.LOCK_HELD.name, "owner-1", Date(System.currentTimeMillis() + 180000))
+val lockOwner1NotExpiredUpdated =
+    LockEntry(lockKey, LockStatus.LOCK_HELD.name, "owner-1", Date(System.currentTimeMillis() + 360000))
+val lockOwner1Expired =
+    LockEntry(lockKey, LockStatus.LOCK_HELD.name, "owner-1", Date(System.currentTimeMillis() - 10000))
+val lockOwner2NotExpired =
+    LockEntry(lockKey, LockStatus.LOCK_HELD.name, "owner-2", Date(System.currentTimeMillis() + 180000))

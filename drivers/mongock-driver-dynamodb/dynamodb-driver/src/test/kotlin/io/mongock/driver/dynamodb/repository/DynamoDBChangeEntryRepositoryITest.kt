@@ -1,15 +1,18 @@
+package io.mongock.driver.dynamodb.repository
+
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.core.spec.style.DescribeSpec
 import io.kotest.matchers.collections.shouldBeIn
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.string.shouldStartWith
 import io.mongock.api.exception.MongockException
+import io.mongock.driver.api.entry.ChangeEntry
 
 
 class DynamoDBChangeEntryRepositoryITest : DescribeSpec({
     val companion = DynamoDBTestCompanion()
 
-    companion.startContainer()
+    companion.start()
 
     /**
      * INITIALIZE
@@ -59,11 +62,9 @@ class DynamoDBChangeEntryRepositoryITest : DescribeSpec({
             }
         }
 
-        When(
-            "WHEN changeEntry table contains c1, c2 and c3",
-            { companion.createInsert("for-save-2", change1, change2, change3) }) {
+        When( "WHEN changeEntry table contains c1, c2 and c3", { companion.createInsert("for-save-2", change1, change2, change3) }) {
             and("c1 is saved again") {
-                should("update c1") {
+                should("updates c1") {
                     val repo = companion.getChangeService("for-save-2", true)
                     repo.saveOrUpdate(change1_u)
                     companion.isInserted("for-save-2", change1) shouldBe true
@@ -73,6 +74,21 @@ class DynamoDBChangeEntryRepositoryITest : DescribeSpec({
                     result.author shouldBe change1.author
                     result.changeLogClass shouldBe change1_u.changeLogClass
                 }
+            }
+
+        }
+
+        When("transaction is enabled") {
+            should("add transactWriteItem to list") {
+                val repo = companion.getChangeService("for-save-transaction-4", true) as DynamoDBChangeEntryRepository
+                repo.initialize()
+                val transactionItems = DynamoDBTransactionItems()
+                repo.transactionItems = transactionItems
+                repo.saveOrUpdate(change1)
+                repo.saveOrUpdate(change2)
+                transactionItems.items
+                    .map { it.put.item[ChangeEntry.KEY_CHANGE_ID]!!.s }
+                    .forEach { it shouldBeIn listOf(change1.changeId, change2.changeId)  }
             }
 
         }

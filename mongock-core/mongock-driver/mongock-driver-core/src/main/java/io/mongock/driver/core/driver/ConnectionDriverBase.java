@@ -1,6 +1,7 @@
 package io.mongock.driver.core.driver;
 
 import io.mongock.api.exception.MongockException;
+import io.mongock.driver.api.driver.ChangeSetDependency;
 import io.mongock.driver.api.driver.ConnectionDriver;
 import io.mongock.driver.api.entry.ChangeEntryService;
 import io.mongock.driver.api.lock.LockManager;
@@ -8,6 +9,8 @@ import io.mongock.driver.core.lock.DefaultLockManager;
 import io.mongock.driver.core.lock.LockRepository;
 import io.mongock.utils.TimeService;
 import io.mongock.utils.annotation.NotThreadSafe;
+
+import java.util.Set;
 
 @NotThreadSafe
 public abstract class ConnectionDriverBase implements ConnectionDriver {
@@ -112,6 +115,13 @@ public abstract class ConnectionDriverBase implements ConnectionDriver {
   @Deprecated
   public void setChangeLogRepositoryName(String migrationRepositoryName) {
     setMigrationRepositoryName(migrationRepositoryName);
+  }
+
+  //This should be injected as association
+  protected void removeDependencyIfAssignableFrom(Set<ChangeSetDependency> dependencies, Class<?> type) {
+    if(dependencies != null) {
+      dependencies.removeIf(d-> type.isAssignableFrom(d.getType()));
+    }
   }
 
 }

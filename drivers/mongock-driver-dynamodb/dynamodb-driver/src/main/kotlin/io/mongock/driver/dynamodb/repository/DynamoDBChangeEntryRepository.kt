@@ -33,8 +33,7 @@ import java.util.*
 import kotlin.collections.HashMap
 
 
-
-internal  const val RANGE_KEY_ID = "${KEY_EXECUTION_ID}#${KEY_AUTHOR}"
+internal const val RANGE_KEY_ID = "${KEY_EXECUTION_ID}#${KEY_AUTHOR}"
 private val gson = Gson()
 private val logger = KotlinLogging.logger {}
 
@@ -61,17 +60,15 @@ class DynamoDBChangeEntryRepository(client: AmazonDynamoDBClient, tableName: Str
     override fun saveOrUpdate(changeEntry: ChangeEntry) {
         val changeEntryDynamoDB = ChangeEntryDynamoDB(changeEntry)
         if (transactionItems == null) {
-
             val request = PutItemRequest()
                 .withTableName(tableName)
                 .withItem(changeEntryDynamoDB.attributes)
-            println("Upserting changeEntry: $request")
+            logger.debug("Upserting changeEntry: $request")
             val result = client.putItem(request)
             logger.debug("Upsert performed: $result")
         } else {
-            //TODO TEST this against AWS DYNAMODB
             val put = Put().withTableName(tableName).withItem(changeEntryDynamoDB.attributes)
-            logger.debug { "Upserting changeEntry: $put" }
+            logger.debug("Added element to transactionItems: $put")
             transactionItems!!.addChangeEntry(TransactWriteItem().withPut(put))
         }
     }
@@ -79,7 +76,6 @@ class DynamoDBChangeEntryRepository(client: AmazonDynamoDBClient, tableName: Str
     fun cleanTransactionRequest() {
         transactionItems = null
     }
-
 
 }
 
