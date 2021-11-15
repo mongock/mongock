@@ -9,7 +9,7 @@ import org.springframework.context.annotation.Configuration;
 
 import java.util.concurrent.TimeUnit;
 
-@Configuration
+
 @ConfigurationProperties("mongock.mongo-db")
 public class MongoDBConfiguration {
 
