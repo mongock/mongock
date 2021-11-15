@@ -27,10 +27,6 @@ public class SpringDataMongoV2ChangeEntryRepository extends Mongo3ChangeEntryRep
   }
 
 
-  @Override
-  public void save(ChangeEntry changeEntry) throws MongockException {
-    mongoTemplate.save(changeEntry, collection.getNamespace().getCollectionName());
-  }
 
   @Override
   public void saveOrUpdate(ChangeEntry changeEntry) throws MongockException {

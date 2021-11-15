@@ -34,6 +34,9 @@ public interface LockRepository extends RepositoryIndexable, Process {
    * <p>
    * If there is no lock for the key or it doesn't belong to newLock.owner, a LockPersistenceException is thrown.
    *
+   * Take into account that if it's already expired, but still with the same owner, we are lucky, no one has taken it yet,
+   * so we can still extend the expiration time.
+   *
    * @param newLock lock to replace the existing one or be inserted.
    * @throws LockPersistenceException if there is a lock in database with same key, but is expired and belong to
    *                                  another owner or cannot insert/update the lock for any other reason
@@ -57,6 +60,5 @@ public interface LockRepository extends RepositoryIndexable, Process {
    */
   void removeByKeyAndOwner(String lockKey, String owner);
 
-  void deleteAll();
 
 }

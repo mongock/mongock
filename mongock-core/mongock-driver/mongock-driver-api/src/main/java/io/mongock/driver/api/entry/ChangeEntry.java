@@ -13,6 +13,7 @@ import static io.mongock.driver.api.entry.ChangeState.EXECUTED;
 import static io.mongock.driver.api.entry.ChangeState.FAILED;
 import static io.mongock.driver.api.entry.ChangeState.ROLLBACK_FAILED;
 import static io.mongock.driver.api.entry.ChangeState.ROLLED_BACK;
+import static io.mongock.utils.field.Field.KeyType.PRIMARY;
 
 /**
  * Entry in the changes collection log
@@ -22,38 +23,52 @@ import static io.mongock.driver.api.entry.ChangeState.ROLLED_BACK;
  */
 public class ChangeEntry {
 
-  @Field("executionId")
-  private final String executionId;
+  public static final String KEY_EXECUTION_ID = "executionId";
+  public static final String KEY_CHANGE_ID = "changeId";
+  public static final String KEY_AUTHOR = "author";
+  public static final String KEY_TIMESTAMP = "timestamp";
+  public static final String KEY_STATE = "state";
+  public static final String KEY_TYPE = "type";
+  public static final String KEY_CHANGELOG_CLASS = "changeLogClass";
+  public static final String KEY_CHANGESET_METHOD = "changeSetMethod";
+  public static final String KEY_METADATA = "metadata";
+  public static final String KEY_EXECUTION_MILLIS = "executionMillis";
+  public static final String KEY_EXECUTION_HOST_NAME = "executionHostname";
 
-  @Field("changeId")
-  private final String changeId;
 
-  @Field("author")
-  private final String author;
 
-  @Field("timestamp")
-  private final Date timestamp;
+  @Field(value = KEY_EXECUTION_ID, type = PRIMARY)
+  protected String executionId;
 
-  @Field("state")
-  private final ChangeState state;
+  @Field(value = KEY_CHANGE_ID, type = PRIMARY)
+  protected String changeId;
 
-  @Field("type")
-  private final ChangeType type;
+  @Field(value = KEY_AUTHOR, type = PRIMARY)
+  protected String author;
 
-  @Field("changeLogClass")
-  private final String changeLogClass;
+  @Field(KEY_TIMESTAMP)
+  protected Date timestamp;
 
-  @Field("changeSetMethod")
-  private final String changeSetMethod;
+  @Field(KEY_STATE)
+  protected ChangeState state;
 
-  @Field("metadata")
-  private final Object metadata;
+  @Field(KEY_TYPE)
+  protected ChangeType type;
 
-  @Field("executionMillis")
-  private final long executionMillis;
+  @Field(KEY_CHANGELOG_CLASS)
+  protected String changeLogClass;
 
-  @Field("executionHostname")
-  private final String executionHostname;
+  @Field(KEY_CHANGESET_METHOD)
+  protected String changeSetMethod;
+
+  @Field(KEY_METADATA)
+  protected Object metadata;
+
+  @Field(KEY_EXECUTION_MILLIS)
+  protected long executionMillis;
+
+  @Field(KEY_EXECUTION_HOST_NAME)
+  protected String executionHostname;
 
   public ChangeEntry(String executionId,
                      String changeId,
@@ -151,7 +166,7 @@ public class ChangeEntry {
 
   @Override
   public String toString() {
-    String sb = "ChangeEntry{" + "executionId='" + executionId + '\'' +
+    return "ChangeEntry{" + "executionId='" + executionId + '\'' +
         ", changeId='" + changeId + '\'' +
         ", author='" + author + '\'' +
         ", timestamp=" + timestamp +
@@ -163,7 +178,6 @@ public class ChangeEntry {
         ", executionMillis=" + executionMillis +
         ", executionHostname='" + executionHostname + '\'' +
         '}';
-    return sb;
   }
 
   public String toPrettyString() {

@@ -11,6 +11,10 @@ import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.data.mongodb.core.query.Update;
 
+import  static io.mongock.driver.api.entry.ChangeEntry.KEY_EXECUTION_ID;
+import  static io.mongock.driver.api.entry.ChangeEntry.KEY_CHANGE_ID;
+import  static io.mongock.driver.api.entry.ChangeEntry.KEY_AUTHOR;
+
 public class SpringDataMongoV3ChangeEntryRepository extends MongoSync4ChangeEntryRepository implements ChangeEntryRepositoryWithEntity<Document> {
 
   private final MongoTemplate mongoTemplate;
@@ -24,11 +28,6 @@ public class SpringDataMongoV3ChangeEntryRepository extends MongoSync4ChangeEntr
     this.mongoTemplate = mongoTemplate;
   }
 
-
-  @Override
-  public void save(ChangeEntry changeEntry) throws MongockException {
-    mongoTemplate.save(changeEntry, collection.getNamespace().getCollectionName());
-  }
 
   @Override
   public void saveOrUpdate(ChangeEntry changeEntry) throws MongockException {

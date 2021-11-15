@@ -7,6 +7,8 @@ import io.mongock.utils.field.FieldUtil;
 import java.util.List;
 import java.util.stream.Collectors;
 
+//TODO move this to an association class
+
 public interface EntityRepository<DOMAIN_CLASS, ENTITY_CLASS> extends Process {
 
   /**
