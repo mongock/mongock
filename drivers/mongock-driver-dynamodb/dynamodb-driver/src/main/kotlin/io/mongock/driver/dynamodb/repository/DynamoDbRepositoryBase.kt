@@ -35,9 +35,7 @@ abstract class DynamoDbRepositoryBase(
     private lateinit var table: Table
     private var ensuredIndex = false
 
-
-    @Synchronized
-    override fun initialize() {
+    private val initialize  by lazy {
         logger.debug { "initializing [$tableName]" }
         if (!this.ensuredIndex) {
             table = retrieveTable()
@@ -45,7 +43,12 @@ abstract class DynamoDbRepositoryBase(
         }
     }
 
+    override fun initialize() {
+        this.initialize
+    }
+
     private fun retrieveTable(): Table = try {
+
         val table = dynamoDB.getTable(tableName)
         val description = table.describe()//just to make it fail if not created
         table

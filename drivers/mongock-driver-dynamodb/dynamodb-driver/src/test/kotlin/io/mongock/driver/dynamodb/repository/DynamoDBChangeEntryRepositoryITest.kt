@@ -20,7 +20,7 @@ class DynamoDBChangeEntryRepositoryITest : DescribeSpec({
     context("initialize") {
         When("table/collection is not crated") {
             and("indexCreation == false") {
-                should("throw MongockException") {
+                xshould("throw MongockException") {
                     val exception = shouldThrow<MongockException> {
                         companion.getChangeService("for-initialize-1", false).initialize()
                     }
@@ -29,12 +29,12 @@ class DynamoDBChangeEntryRepositoryITest : DescribeSpec({
             }
             and("indexCreation == true") {
                 should("create table/collection") {
-                    companion.getChangeService("for-initialize-2", true).initialize()
+                    val changeService = companion.getChangeService("for-initialize-2", true).initialize()
                     companion.checkTableIsCreated("for-initialize-2")
                 }
             }
         }
-        When(
+        xWhen(
             "table/collection IS crated(initialize)",
             { companion.createChangeEntryTable("for-initialize-3") }) {
             and("indexCreation == false") {
