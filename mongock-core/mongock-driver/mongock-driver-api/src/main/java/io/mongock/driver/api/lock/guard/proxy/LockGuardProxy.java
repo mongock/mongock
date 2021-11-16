@@ -30,9 +30,7 @@ public class LockGuardProxy<T> implements InvocationHandler {
 
 
   private static boolean shouldTryProxyReturn(List<NonLockGuardedType> methodNoGuardedLockTypes, Type type) {
-    return
-        !(type instanceof TypeVariableImpl && ((TypeVariableImpl) type).getGenericDeclaration() != null )
-        && !methodNoGuardedLockTypes.contains(NonLockGuardedType.RETURN)
+    return !methodNoGuardedLockTypes.contains(NonLockGuardedType.RETURN)
         && !methodNoGuardedLockTypes.contains(NonLockGuardedType.NONE);
   }
 
