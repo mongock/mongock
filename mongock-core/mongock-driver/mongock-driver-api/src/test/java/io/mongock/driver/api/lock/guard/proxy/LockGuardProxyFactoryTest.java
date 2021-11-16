@@ -72,7 +72,7 @@ public class LockGuardProxyFactoryTest {
   @Test
   public void shouldReturnProxyWithRightImplementation() {
     String javaVersion = System.getProperty("java.version");
-    throw new RuntimeException("VERSION IS: " + javaVersion);
+    if (true)throw new RuntimeException("VERSION IS: " + javaVersion);
     if(javaVersion == null || javaVersion.startsWith("1.8")) {
       Assert.assertEquals(SomeClass.class, ReflectionUtils.getImplementationFromLockGuardProxy(getRawProxy(new SomeClass(), SomeClass.class)).getClass());
     }
