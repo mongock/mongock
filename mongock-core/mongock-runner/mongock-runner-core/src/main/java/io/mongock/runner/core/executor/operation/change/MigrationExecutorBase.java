@@ -1,6 +1,5 @@
 package io.mongock.runner.core.executor.operation.change;
 
-import com.google.gson.Gson;
 import io.mongock.driver.api.entry.ChangeType;
 import io.mongock.runner.core.internal.ChangeLogItem;
 import io.mongock.runner.core.internal.ChangeSetItem;
