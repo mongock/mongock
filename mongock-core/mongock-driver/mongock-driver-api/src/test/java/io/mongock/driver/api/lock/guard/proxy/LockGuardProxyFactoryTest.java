@@ -20,6 +20,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Stream;
 
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNull;
@@ -67,6 +68,7 @@ public class LockGuardProxyFactoryTest {
   public void shouldNotReturnProxy_ifImplClassNonLockGuarded() {
     assertFalse(ReflectionUtils.isProxy(getRawProxy(new InterfaceTypeImplNonLockGuarded(), InterfaceType.class)));
   }
+
 
   //failing in local but not in CI
   @Test

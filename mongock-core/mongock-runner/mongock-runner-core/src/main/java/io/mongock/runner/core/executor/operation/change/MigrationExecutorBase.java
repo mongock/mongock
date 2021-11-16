@@ -43,7 +43,6 @@ import static io.mongock.driver.api.entry.ChangeType.EXECUTION;
 public abstract class MigrationExecutorBase<CONFIG extends ChangeExecutorConfiguration> implements Executor {
 
   private static final Logger logger = LoggerFactory.getLogger(MigrationExecutorBase.class);
-  private static final Gson gson = new Gson();
 
   protected final Boolean globalTransactionEnabled;
   protected final Deque<Pair<Object, ChangeSetItem>> changeSetsToRollBack = new ArrayDeque<>();
@@ -351,7 +350,7 @@ public abstract class MigrationExecutorBase<CONFIG extends ChangeExecutorConfigu
         executionTimeMillis,
         executionHostname,
         metadata,
-        gson.toJson(ex.getMessage())
+        io.mongock.utils.StringUtils.getStackTrace(ex)
         );
   }
 
