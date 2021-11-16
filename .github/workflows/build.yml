@@ -1,5 +1,9 @@
-name: Build
-on: [pull_request]
+name: Build JDK 1.8
+#on: [pull_request]
+on:
+  push:
+    branches:
+      - master
 jobs:
   build:
     runs-on: ubuntu-latest

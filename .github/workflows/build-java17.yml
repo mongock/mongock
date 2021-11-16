@@ -1,4 +1,4 @@
-name: Build
+name: Build JDK 17
 on: [pull_request]
 jobs:
   build:
