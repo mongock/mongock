@@ -1,4 +1,4 @@
-name: Build
+name: Build JDK 17
 on: [pull_request]
 jobs:
   build:
@@ -7,10 +7,11 @@ jobs:
       - name: Checkout project
         uses: actions/checkout@v2
 
-      - name: Set up JDK 1.8
-        uses: actions/setup-java@v1
+      - name: Set up JDK 117
+        uses: actions/setup-java@v2
         with:
-          java-version: 1.8
+          distribution: 'zulu'
+          java-version: 17
 
       - name: Set up testcontainers
         run: docker image pull testcontainers/ryuk:0.3.0

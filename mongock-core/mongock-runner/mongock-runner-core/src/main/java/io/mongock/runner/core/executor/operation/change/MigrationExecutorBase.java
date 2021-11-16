@@ -1,6 +1,5 @@
 package io.mongock.runner.core.executor.operation.change;
 
-import com.google.gson.Gson;
 import io.mongock.driver.api.entry.ChangeType;
 import io.mongock.runner.core.internal.ChangeLogItem;
 import io.mongock.runner.core.internal.ChangeSetItem;
@@ -43,7 +42,6 @@ import static io.mongock.driver.api.entry.ChangeType.EXECUTION;
 public abstract class MigrationExecutorBase<CONFIG extends ChangeExecutorConfiguration> implements Executor {
 
   private static final Logger logger = LoggerFactory.getLogger(MigrationExecutorBase.class);
-  private static final Gson gson = new Gson();
 
   protected final Boolean globalTransactionEnabled;
   protected final Deque<Pair<Object, ChangeSetItem>> changeSetsToRollBack = new ArrayDeque<>();
@@ -351,7 +349,7 @@ public abstract class MigrationExecutorBase<CONFIG extends ChangeExecutorConfigu
         executionTimeMillis,
         executionHostname,
         metadata,
-        gson.toJson(ex.getStackTrace())
+        io.mongock.utils.StringUtils.getStackTrace(ex)
         );
   }
 

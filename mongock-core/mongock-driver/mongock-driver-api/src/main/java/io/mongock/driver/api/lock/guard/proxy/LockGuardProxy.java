@@ -3,7 +3,6 @@ package io.mongock.driver.api.lock.guard.proxy;
 import io.changock.migration.api.annotations.NonLockGuarded;
 import io.changock.migration.api.annotations.NonLockGuardedType;
 import io.mongock.driver.api.lock.LockManager;
-import sun.reflect.generics.reflectiveObjects.TypeVariableImpl;
 
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
@@ -30,9 +29,7 @@ public class LockGuardProxy<T> implements InvocationHandler {
 
 
   private static boolean shouldTryProxyReturn(List<NonLockGuardedType> methodNoGuardedLockTypes, Type type) {
-    return
-        !(type instanceof TypeVariableImpl && ((TypeVariableImpl) type).getGenericDeclaration() != null )
-        && !methodNoGuardedLockTypes.contains(NonLockGuardedType.RETURN)
+    return !methodNoGuardedLockTypes.contains(NonLockGuardedType.RETURN)
         && !methodNoGuardedLockTypes.contains(NonLockGuardedType.NONE);
   }
 
