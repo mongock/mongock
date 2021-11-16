@@ -37,7 +37,7 @@ public class ChangeEntryTest {
 
 		Map<String, String> metadata = new HashMap<>();
 		metadata.put("field", "value");
-		return ChangeEntry.createInstance(
+		return ChangeEntry.instance(
 				"migrationExecutionId",
 				"changeAuthor",
 				ChangeState.EXECUTED,

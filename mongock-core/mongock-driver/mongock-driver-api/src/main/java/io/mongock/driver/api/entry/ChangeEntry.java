@@ -1,5 +1,6 @@
 package io.mongock.driver.api.entry;
 
+import io.mongock.api.exception.MongockException;
 import io.mongock.utils.StringUtils;
 import io.mongock.utils.field.Field;
 
@@ -7,6 +8,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashSet;
+import java.util.Optional;
 import java.util.Set;
 
 import static io.mongock.driver.api.entry.ChangeState.EXECUTED;
@@ -34,7 +36,7 @@ public class ChangeEntry {
   public static final String KEY_METADATA = "metadata";
   public static final String KEY_EXECUTION_MILLIS = "executionMillis";
   public static final String KEY_EXECUTION_HOST_NAME = "executionHostname";
-
+  public static final String KEY_ERROR_TRACE = "errorTrace";
 
 
   @Field(value = KEY_EXECUTION_ID, type = PRIMARY)
@@ -70,6 +72,9 @@ public class ChangeEntry {
   @Field(KEY_EXECUTION_HOST_NAME)
   protected String executionHostname;
 
+  @Field(KEY_ERROR_TRACE)
+  protected String errorTrace;
+
   public ChangeEntry(String executionId,
                      String changeId,
                      String author,
@@ -81,6 +86,21 @@ public class ChangeEntry {
                      long executionMillis,
                      String executionHostname,
                      Object metadata) {
+    this(executionId, changeId, author, timestamp, state, type, changeLogClass, changeSetMethod, executionMillis, executionHostname, metadata, null);
+  }
+
+  public ChangeEntry(String executionId,
+                     String changeId,
+                     String author,
+                     Date timestamp,
+                     ChangeState state,
+                     ChangeType type,
+                     String changeLogClass,
+                     String changeSetMethod,
+                     long executionMillis,
+                     String executionHostname,
+                     Object metadata,
+                     String errorTrace) {
     this.executionId = executionId;
     this.changeId = changeId;
     this.author = author;
@@ -92,18 +112,19 @@ public class ChangeEntry {
     this.executionMillis = executionMillis;
     this.executionHostname = executionHostname;
     this.metadata = metadata;
+    this.errorTrace = errorTrace;
   }
 
-  public static ChangeEntry createInstance(String executionId,
-                                           String author,
-                                           ChangeState state,
-                                           ChangeType type,
-                                           String changeSetId,
-                                           String changeSetClassName,
-                                           String changeSetName,
-                                           long executionMillis,
-                                           String executionHostname,
-                                           Object metadata) {
+  public static ChangeEntry instance(String executionId,
+                                     String author,
+                                     ChangeState state,
+                                     ChangeType type,
+                                     String changeSetId,
+                                     String changeSetClassName,
+                                     String changeSetName,
+                                     long executionMillis,
+                                     String executionHostname,
+                                     Object metadata) {
     return new ChangeEntry(
         executionId,
         changeSetId,
@@ -118,6 +139,34 @@ public class ChangeEntry {
         metadata);
   }
 
+  public static ChangeEntry failedInstance(String executionId,
+                                           String author,
+                                           ChangeState state,
+                                           ChangeType type,
+                                           String changeSetId,
+                                           String changeSetClassName,
+                                           String changeSetName,
+                                           long executionMillis,
+                                           String executionHostname,
+                                           Object metadata,
+                                           String error) {
+    if(!state.isFailed()) {
+      throw new MongockException("Creating a failed instance of changeEntry with a non-failed stated: " + state.name());
+    }
+    return new ChangeEntry(
+        executionId,
+        changeSetId,
+        author,
+        new Date(),
+        state,
+        type,
+        changeSetClassName,
+        changeSetName,
+        executionMillis,
+        executionHostname,
+        metadata,
+        error);
+  }
 
 
   public String getExecutionId() {
@@ -164,6 +213,10 @@ public class ChangeEntry {
     return type;
   }
 
+  public Optional<String> getErrorTrace() {
+    return Optional.ofNullable(errorTrace);
+  }
+
   @Override
   public String toString() {
     return "ChangeEntry{" + "executionId='" + executionId + '\'' +
@@ -197,6 +250,6 @@ public class ChangeEntry {
 
 
   public boolean isExecuted() {
-    return state == null || EXECUTED == state ;
+    return state == null || EXECUTED == state;
   }
 }

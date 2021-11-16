@@ -1,6 +1,9 @@
 package io.mongock.driver.api.entry;
 
 public enum ChangeState {
-  EXECUTED, FAILED, IGNORED, ROLLED_BACK, ROLLBACK_FAILED;
+  EXECUTED, FAILED, ROLLED_BACK, ROLLBACK_FAILED, IGNORED;
 
+  public boolean isFailed() {
+    return this == FAILED || this == ROLLBACK_FAILED;
+  }
 }
