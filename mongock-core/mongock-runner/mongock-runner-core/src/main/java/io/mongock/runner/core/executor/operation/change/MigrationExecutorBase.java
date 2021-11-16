@@ -1,5 +1,6 @@
 package io.mongock.runner.core.executor.operation.change;
 
+import com.google.gson.Gson;
 import io.mongock.driver.api.entry.ChangeType;
 import io.mongock.runner.core.internal.ChangeLogItem;
 import io.mongock.runner.core.internal.ChangeSetItem;
@@ -27,6 +28,7 @@ import java.util.Collection;
 import java.util.Deque;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 
 import static io.mongock.driver.api.entry.ChangeState.EXECUTED;
@@ -41,6 +43,7 @@ import static io.mongock.driver.api.entry.ChangeType.EXECUTION;
 public abstract class MigrationExecutorBase<CONFIG extends ChangeExecutorConfiguration> implements Executor {
 
   private static final Logger logger = LoggerFactory.getLogger(MigrationExecutorBase.class);
+  private static final Gson gson = new Gson();
 
   protected final Boolean globalTransactionEnabled;
   protected final Deque<Pair<Object, ChangeSetItem>> changeSetsToRollBack = new ArrayDeque<>();
@@ -160,28 +163,28 @@ public abstract class MigrationExecutorBase<CONFIG extends ChangeExecutorConfigu
    * Should be added for manual rollback if
    * - Non-native-transactional environment OR
    * - the transactional strategy is per changeUnit and the changeSet is NOT transactional
-   *  (beforeChangeSets are not transactional by definition)
+   * (beforeChangeSets are not transactional by definition)
+   *
    * @param changeSet
    * @return if the changeSet should mark to be manually rolled back
    */
   private boolean shouldChangeSetBeStoredToRollback(ChangeSetItem changeSet) {
-    return !isTransactional() ||(isStrategyPerChangeUnit() && !changeSet.isTransactional());
+    return !isTransactional() || (isStrategyPerChangeUnit() && !changeSet.isTransactional());
   }
 
   /**
    * changeSetsToRollBack collection contains "all and only" the changeSets to rollback "manually" in case of any
    * exception occurs, sorted in reverse order.
-   *
+   * <p>
    * scenarios for the changeSetsToRollBack collection
-   *  - strategy == MIGRATION and transactional: It should be empty, as all the changeSets, before included, should be
-   *    rollBacked in the transaction.
-   *  - strategy == MIGRATION and non-transactional: It should contain all the executed changeSets in the entire
-   *    migration, main and before, in execution reverse order
-   *  - strategy == CHANGE_LOG and transactional: It should contain only the before methods executed for the current
-   *    changeLog
-   *  - strategy == CHANGE_LOG and non-transactional: It should contain all the executed changeSets in the current
-   *    changeLog, main and before, in execution reverse order
-   *
+   * - strategy == MIGRATION and transactional: It should be empty, as all the changeSets, before included, should be
+   * rollBacked in the transaction.
+   * - strategy == MIGRATION and non-transactional: It should contain all the executed changeSets in the entire
+   * migration, main and before, in execution reverse order
+   * - strategy == CHANGE_LOG and transactional: It should contain only the before methods executed for the current
+   * changeLog
+   * - strategy == CHANGE_LOG and non-transactional: It should contain all the executed changeSets in the current
+   * changeLog, main and before, in execution reverse order
    */
   protected void rollbackProcessedChangeSetsIfApply(String executionId, String hostname, Deque<Pair<Object, ChangeSetItem>> processedChangeSets) {
     logger.info("Mongock migration aborted and DB transaction not enabled. Starting manual rollback process");
@@ -237,16 +240,16 @@ public abstract class MigrationExecutorBase<CONFIG extends ChangeExecutorConfigu
       if (!(alreadyExecuted = isAlreadyExecuted(changeSetItem)) || changeSetItem.isRunAlways()) {
         logger.debug("executing changeSet[{}]", changeSetItem.getId());
         final long executionTimeMillis = executeChangeSetMethod(changeSetItem.getMethod(), changelogInstance);
-        changeEntry = createChangeEntryInstance(executionId, executionHostname, changeSetItem, executionTimeMillis, EXECUTED, type);
+        changeEntry = buildChangeEntry(executionId, executionHostname, changeSetItem, executionTimeMillis, EXECUTED, type);
         logger.debug("successfully executed changeSet[{}]", changeSetItem.getId());
 
       } else {
-        changeEntry = createChangeEntryInstance(executionId, executionHostname, changeSetItem, -1L, IGNORED, type);
+        changeEntry = buildChangeEntry(executionId, executionHostname, changeSetItem, -1L, IGNORED, type);
 
       }
     } catch (Exception ex) {
       logger.debug("failure when executing changeSet[{}]", changeSetItem.getId());
-      changeEntry = createChangeEntryInstance(executionId, executionHostname, changeSetItem, -1L, FAILED, type);
+      changeEntry = buildFailedChangeEntry(executionId, executionHostname, changeSetItem, -1L, FAILED, type, ex);
       throw ex;
     } finally {
       if (changeEntry != null) {
@@ -270,17 +273,18 @@ public abstract class MigrationExecutorBase<CONFIG extends ChangeExecutorConfigu
 
     if (changeSetItem.getRollbackMethod().isPresent()) {
       logger.debug("rolling back changeSet[{}]", changeSetItem.getId());
-      ChangeState rollbackExecutionState = ROLLED_BACK;
+      Optional<Exception> exceptionOpt = Optional.empty();
       try {
         executeChangeSetMethod(changeSetItem.getRollbackMethod().get(), changeLogInstance);
         logger.debug("successfully rolled back changeSet[{}]", changeSetItem.getId());
-      } catch (Exception rollbackException) {
-        logger.debug("failure when rolling back changeSet[{}]:\n{}", changeSetItem.getId(), rollbackException.getMessage());
-        rollbackExecutionState = ROLLBACK_FAILED;
-        throw rollbackException;
+      } catch (Exception ex) {
+        logger.debug("failure when rolling back changeSet[{}]:\n{}", changeSetItem.getId(), ex.getMessage());
+        exceptionOpt = Optional.of(ex);
+        throw ex;
       } finally {
         ChangeType type = changeSetItem.isBeforeChangeSets() ? BEFORE_EXECUTION : EXECUTION;
-        ChangeEntry changeEntry = createChangeEntryInstance(executionId, executionHostname, changeSetItem, -1L, rollbackExecutionState, type);
+        ChangeEntry changeEntry = exceptionOpt.map(ex -> buildFailedChangeEntry(executionId, executionHostname, changeSetItem, -1L, ROLLBACK_FAILED, type, ex))
+                .orElseGet(() -> buildChangeEntry(executionId, executionHostname, changeSetItem, -1L, ROLLED_BACK, type));
         logChangeEntry(changeEntry, changeSetItem, false);
         trackChangeEntry(changeSetItem, changeEntry, false);
       }
@@ -310,8 +314,13 @@ public abstract class MigrationExecutorBase<CONFIG extends ChangeExecutorConfigu
     }
   }
 
-  protected ChangeEntry createChangeEntryInstance(String executionId, String executionHostname, ChangeSetItem changeSetItem, long executionTimeMillis, ChangeState state, ChangeType type) {
-    return ChangeEntry.createInstance(
+  protected ChangeEntry buildChangeEntry(String executionId,
+                                         String executionHostname,
+                                         ChangeSetItem changeSetItem,
+                                         long executionTimeMillis,
+                                         ChangeState state,
+                                         ChangeType type) {
+    return ChangeEntry.instance(
         executionId,
         StringUtils.isNotEmpty(changeSetItem.getAuthor()) ? changeSetItem.getAuthor() : defaultAuthor,
         state,
@@ -323,6 +332,29 @@ public abstract class MigrationExecutorBase<CONFIG extends ChangeExecutorConfigu
         executionHostname,
         metadata);
   }
+
+  protected ChangeEntry buildFailedChangeEntry(String executionId,
+                                               String executionHostname,
+                                               ChangeSetItem changeSetItem,
+                                               long executionTimeMillis,
+                                               ChangeState state,
+                                               ChangeType type,
+                                               Exception ex) {
+    return ChangeEntry.failedInstance(
+        executionId,
+        StringUtils.isNotEmpty(changeSetItem.getAuthor()) ? changeSetItem.getAuthor() : defaultAuthor,
+        state,
+        type,
+        changeSetItem.getId(),
+        changeSetItem.getMethod().getDeclaringClass().getName(),
+        changeSetItem.getMethod().getName(),
+        executionTimeMillis,
+        executionHostname,
+        metadata,
+        gson.toJson(ex.getStackTrace())
+        );
+  }
+
 
   protected long executeChangeSetMethod(Method changeSetMethod, Object changeLogInstance) throws IllegalAccessException, InvocationTargetException {
     final long startingTime = System.currentTimeMillis();

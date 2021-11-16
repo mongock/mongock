@@ -3,7 +3,7 @@
   <parent>
     <artifactId>mongock-driver-mongodb</artifactId>
     <groupId>io.mongock</groupId>
-    <version>5.0.22.RC-SNAPSHOT</version>
+    <version>5.0.23.RC-SNAPSHOT</version>
   </parent>
 
   <modelVersion>4.0.0</modelVersion>

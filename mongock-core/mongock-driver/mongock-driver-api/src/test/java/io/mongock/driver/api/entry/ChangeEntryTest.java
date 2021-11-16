@@ -37,17 +37,18 @@ public class ChangeEntryTest {
 
 		Map<String, String> metadata = new HashMap<>();
 		metadata.put("field", "value");
-		return ChangeEntry.createInstance(
+		return ChangeEntry.failedInstance(
 				"migrationExecutionId",
 				"changeAuthor",
-				ChangeState.EXECUTED,
+				ChangeState.FAILED,
 				ChangeType.EXECUTION,
 				"changeId",
 				ChangeEntryTest.class.getName(),
 				"changeSetMethod",
 				333,
 				"localhost",
-				metadata
+				metadata,
+        "ERROR_TRACE"
 		);
 	}
 
@@ -59,13 +60,14 @@ public class ChangeEntryTest {
 		fieldExpectation.put("changeId", "changeId");
 		fieldExpectation.put("author", "changeAuthor");
 		fieldExpectation.put("timestamp", null);
-		fieldExpectation.put("state", "EXECUTED");
+		fieldExpectation.put("state", "FAILED");
     fieldExpectation.put("type", "EXECUTION");
 		fieldExpectation.put("changeLogClass", ChangeEntryTest.class.getName());
 		fieldExpectation.put("changeSetMethod", "changeSetMethod");
 		fieldExpectation.put("metadata", metadata);
 		fieldExpectation.put("executionMillis", 333L);
 		fieldExpectation.put("executionHostname", "localhost");
+    fieldExpectation.put("errorTrace", "ERROR_TRACE");
 		return fieldExpectation;
 	}
 
