@@ -351,7 +351,7 @@ public abstract class MigrationExecutorBase<CONFIG extends ChangeExecutorConfigu
         executionTimeMillis,
         executionHostname,
         metadata,
-        gson.toJson(ex.getStackTrace())
+        gson.toJson(ex.getMessage())
         );
   }
 
