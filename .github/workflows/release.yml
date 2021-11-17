@@ -27,9 +27,6 @@ jobs:
           gpg-private-key: ${{ secrets.GPG_PRIVATE_KEY }}
           gpg-passphrase: GPG_PASSPHRASE
 
-      - name: Set up testcontainers
-        run: docker image pull testcontainers/ryuk:0.3.0
-
       - name: Configure Git User
         run: |
           git config user.email "actions@github.com"
