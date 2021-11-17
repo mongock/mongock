@@ -1,18 +1,22 @@
-name: Build JDK 17
+name: Build JDK 1.8
 on: [pull_request]
 jobs:
   build:
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        distribution: [ 'temurin' ]
+        java: [ '8', '17' ]
+    name: Java ${{ matrix.Java }} (${{ matrix.distribution }}) build
     steps:
+
       - name: Checkout project
         uses: actions/checkout@v2
-
-      - name: Set up JDK 117
+      - name: Setup java
         uses: actions/setup-java@v2
         with:
-          distribution: 'zulu'
-          java-version: 17
-
+          distribution: ${{ matrix.distribution }}
+          java-version: ${{ matrix.java }}
       - name: Set up testcontainers
         run: docker image pull testcontainers/ryuk:0.3.0
 
