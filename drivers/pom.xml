@@ -17,7 +17,6 @@
 
   <modules>
     <module>mongock-driver-mongodb</module>
-    <module>mongock-driver-dynamodb</module>
   </modules>
 
 
