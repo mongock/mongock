@@ -5,7 +5,6 @@ import com.mongodb.ReadConcernLevel;
 import com.mongodb.ReadPreference;
 import com.mongodb.WriteConcern;
 import org.springframework.boot.context.properties.ConfigurationProperties;
-import org.springframework.context.annotation.Configuration;
 
 import java.util.concurrent.TimeUnit;
 
