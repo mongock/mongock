@@ -2,7 +2,7 @@ package io.mongock.driver.dynamodb.driver
 
 import com.amazonaws.services.dynamodbv2.AmazonDynamoDBClient
 
-public class DynamoDBDriver private constructor(
+class DynamoDBDriver private constructor(
     client: AmazonDynamoDBClient,
     lockAcquiredForMillis: Long,
     lockQuitTryingAfterMillis: Long,

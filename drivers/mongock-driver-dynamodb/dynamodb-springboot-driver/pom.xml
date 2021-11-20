@@ -9,6 +9,7 @@
   </parent>
   <modelVersion>4.0.0</modelVersion>
 
+  <version>5.0.25.BETA-SNAPSHOT</version>
   <artifactId>dynamodb-springboot-driver</artifactId>
 
   <properties>
