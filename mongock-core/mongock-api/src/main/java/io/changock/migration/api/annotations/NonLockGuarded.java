@@ -18,7 +18,7 @@ public @interface NonLockGuarded {
    *
    * @return value
    */
-  NonLockGuardedType[] value() default {NonLockGuardedType.METHOD};
+  NonLockGuardedType[] value() default {NonLockGuardedType.METHOD, NonLockGuardedType.RETURN};
 
 
 }
