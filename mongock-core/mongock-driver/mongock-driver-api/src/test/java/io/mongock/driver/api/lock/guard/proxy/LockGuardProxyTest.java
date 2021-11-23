@@ -48,8 +48,8 @@ public class LockGuardProxyTest {
   }
 
   @Test
-  public void shouldReturnProxy_IfMethodAnnotatedWithNonLockGuardDefault() {
-    assertTrue(ReflectionUtils.isProxy(proxy.getGuardedImplWithAnnotationDefault()));
+  public void shouldNotReturnProxy_IfMethodAnnotatedWithNonLockGuardDefault() {
+    assertFalse(ReflectionUtils.isProxy(proxy.getGuardedImplWithAnnotationDefault()));
   }
 
   @Test
