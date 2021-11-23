@@ -250,7 +250,7 @@ public abstract class MigrationExecutorBase<CONFIG extends ChangeExecutorConfigu
       }
     } catch (Exception ex) {
       logger.debug("failure when executing changeSet[{}]", changeSetItem.getId());
-      changeEntry = buildFailedChangeEntry(executionId, executionHostname, changeSetItem, -1L, FAILED, type, ex, null);
+      changeEntry = buildChangeEntry(executionId, executionHostname, changeSetItem, -1L, FAILED, type, ex, null);
       throw ex;
     } finally {
       if (changeEntry != null) {
@@ -288,12 +288,13 @@ public abstract class MigrationExecutorBase<CONFIG extends ChangeExecutorConfigu
         throw ex;
       } finally {
         ChangeType type = changeSetItem.isBeforeChangeSets() ? BEFORE_EXECUTION : EXECUTION;
-
-        ChangeEntry changeEntry = buildFailedChangeEntry(
+        ChangeState state = rollbackExceptionOpt.map(ex -> ROLLBACK_FAILED).orElse(ROLLED_BACK);
+        ChangeEntry changeEntry = buildChangeEntry(
             executionId,
             executionHostname,
             changeSetItem,
-            -1L, ROLLED_BACK,
+            -1L,
+            state,
             type,
             changeSetException,
             rollbackExceptionOpt.orElse(null));
@@ -325,44 +326,43 @@ public abstract class MigrationExecutorBase<CONFIG extends ChangeExecutorConfigu
         break;
     }
   }
-
   protected ChangeEntry buildChangeEntry(String executionId,
                                          String executionHostname,
                                          ChangeSetItem changeSetItem,
                                          long executionTimeMillis,
                                          ChangeState state,
                                          ChangeType type) {
-    return ChangeEntry.instance(
-        executionId,
-        StringUtils.isNotEmpty(changeSetItem.getAuthor()) ? changeSetItem.getAuthor() : defaultAuthor,
-        state,
-        type,
-        changeSetItem.getId(),
-        changeSetItem.getMethod().getDeclaringClass().getName(),
-        changeSetItem.getMethod().getName(),
-        executionTimeMillis,
-        executionHostname,
-        metadata);
+    return buildChangeEntry(executionId, executionHostname, changeSetItem, executionTimeMillis, state, type, null, null);
+
   }
 
-  protected ChangeEntry buildFailedChangeEntry(String executionId,
-                                               String executionHostname,
-                                               ChangeSetItem changeSetItem,
-                                               long executionTimeMillis,
-                                               ChangeState state,
-                                               ChangeType type,
-                                               Exception executionException,
-                                               Exception rollbackException) {
-    String errorTrace;
-    if (rollbackException == null) {
-      errorTrace = io.mongock.utils.StringUtils.getStackTrace(executionException);
-    } else {
-      Map<String, String> errorMap = new HashMap<>();
-      errorMap.put("execution-error", io.mongock.utils.StringUtils.getStackTrace(executionException));
-      errorMap.put("rollback-error", io.mongock.utils.StringUtils.getStackTrace(rollbackException));
-      errorTrace = new Gson().toJson(errorMap);
+  protected ChangeEntry buildChangeEntry(String executionId,
+                                         String executionHostname,
+                                         ChangeSetItem changeSetItem,
+                                         long executionTimeMillis,
+                                         ChangeState state,
+                                         ChangeType type,
+                                         Exception executionException,
+                                         Exception rollbackException) {
+    if(executionException == null && rollbackException == null) {
+      return ChangeEntry.instance(
+          executionId,
+          StringUtils.isNotEmpty(changeSetItem.getAuthor()) ? changeSetItem.getAuthor() : defaultAuthor,
+          state,
+          type,
+          changeSetItem.getId(),
+          changeSetItem.getMethod().getDeclaringClass().getName(),
+          changeSetItem.getMethod().getName(),
+          executionTimeMillis,
+          executionHostname,
+          metadata);
     }
+    Map<String, String> errorMap = new HashMap<>();
+    errorMap.put("execution-error", io.mongock.utils.StringUtils.getStackTrace(executionException));
+    if (rollbackException != null) {
+      errorMap.put("rollback-error", io.mongock.utils.StringUtils.getStackTrace(rollbackException));
 
+    }
     return ChangeEntry.failedInstance(
         executionId,
         StringUtils.isNotEmpty(changeSetItem.getAuthor()) ? changeSetItem.getAuthor() : defaultAuthor,
@@ -374,7 +374,7 @@ public abstract class MigrationExecutorBase<CONFIG extends ChangeExecutorConfigu
         executionTimeMillis,
         executionHostname,
         metadata,
-        errorTrace
+        new Gson().toJson(errorMap)
     );
   }
 
