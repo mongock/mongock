@@ -108,7 +108,7 @@ public class ChangeLogRuntimeImpl implements ChangeLogRuntime {
     String name = getParameterName(parameter);
     boolean makeItProxy = !parameterType.isAnnotationPresent(NonLockGuarded.class)
         && !parameter.isAnnotationPresent(NonLockGuarded.class)
-        && nonProxyableTypes.contains(parameterType);
+        && !nonProxyableTypes.contains(parameterType);
     return dependencyManager
         .getDependency(parameterType, name, makeItProxy)
         .orElseThrow(() -> new DependencyInjectionException(parameterType, name));
