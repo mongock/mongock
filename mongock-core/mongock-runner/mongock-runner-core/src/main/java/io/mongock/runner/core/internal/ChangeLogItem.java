@@ -22,6 +22,8 @@ public class ChangeLogItem<CHANGESET extends ChangeSetItem> {
 
   private final boolean failFast;
 
+  private final boolean transactional;
+
   private final List<CHANGESET> changeSetItems;
 
   private final List<CHANGESET> beforeChangeSetsItems;
@@ -46,7 +48,6 @@ public class ChangeLogItem<CHANGESET extends ChangeSetItem> {
         runAlways,
         systemVersion,
         failFast,
-        transactional,
         executionMethod,
         rollbackExecutionMethod);
     List<ChangeSetItem> changeSetBeforeList = new ArrayList<>();
@@ -68,6 +69,7 @@ public class ChangeLogItem<CHANGESET extends ChangeSetItem> {
         changeLogClass,
         order,
         failFast,
+        transactional,
         Collections.singletonList(changeSet),
         changeSetBeforeList);
 
@@ -78,13 +80,14 @@ public class ChangeLogItem<CHANGESET extends ChangeSetItem> {
       String order,
       boolean failFast,
       List<C> changeSetElements) {
-    return new ChangeLogItem<>(type.getName(), type, order, failFast, changeSetElements, Collections.emptyList());
+    return new ChangeLogItem<>(type.getName(), type, order, failFast, true,  changeSetElements, Collections.emptyList());
   }
 
   public ChangeLogItem(String id,
                        Class<?> type,
                        String order,
                        boolean failFast,
+                       boolean transactional,
                        List<CHANGESET> changeSetElements,
                        List<CHANGESET> beforeChangeSetsItems) {
     if (id == null || id.trim().isEmpty()) {
@@ -94,6 +97,7 @@ public class ChangeLogItem<CHANGESET extends ChangeSetItem> {
     this.type = type;
     this.order = order;
     this.failFast = failFast;
+    this.transactional = transactional;
     this.changeSetItems = changeSetElements != null ? changeSetElements : new ArrayList<>();
     this.beforeChangeSetsItems = beforeChangeSetsItems != null ? beforeChangeSetsItems : new ArrayList<>();
   }
@@ -112,6 +116,10 @@ public class ChangeLogItem<CHANGESET extends ChangeSetItem> {
 
   public boolean isFailFast() {
     return failFast;
+  }
+
+  public boolean isTransactional() {
+    return transactional;
   }
 
   public List<CHANGESET> getChangeSetItems() {
@@ -140,4 +148,5 @@ public class ChangeLogItem<CHANGESET extends ChangeSetItem> {
   public int hashCode() {
     return Objects.hash(id);
   }
+
 }
