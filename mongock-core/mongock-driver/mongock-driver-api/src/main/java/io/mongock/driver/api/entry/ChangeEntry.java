@@ -115,6 +115,7 @@ public class ChangeEntry {
     this.errorTrace = errorTrace;
   }
 
+
   public static ChangeEntry instance(String executionId,
                                      String author,
                                      ChangeState state,

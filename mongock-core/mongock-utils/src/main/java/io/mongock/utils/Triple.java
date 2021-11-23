@@ -3,7 +3,7 @@ package io.mongock.utils;
 import java.util.Objects;
 
 public class Triple<F,S,T> extends Pair<F,S> {
-  private final T third;
+  private T third;
 
   public Triple(F first, S second, T third) {
     super(first, second);
@@ -14,17 +14,21 @@ public class Triple<F,S,T> extends Pair<F,S> {
     return third;
   }
 
+  public void setThird(T third) {
+    this.third = third;
+  }
+
   @Override
   public boolean equals(Object o) {
     if (this == o) return true;
-    if (!(o instanceof Triple)) return false;
+    if (o == null || getClass() != o.getClass()) return false;
     if (!super.equals(o)) return false;
     Triple<?, ?, ?> triple = (Triple<?, ?, ?>) o;
-    return getThird().equals(triple.getThird());
+    return Objects.equals(third, triple.third);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(super.hashCode(), getThird());
+    return Objects.hash(super.hashCode(), third);
   }
 }
