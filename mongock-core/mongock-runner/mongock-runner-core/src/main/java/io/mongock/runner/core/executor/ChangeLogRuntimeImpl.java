@@ -20,6 +20,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Parameter;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.function.Function;
@@ -39,18 +40,21 @@ public class ChangeLogRuntimeImpl implements ChangeLogRuntime {
   private final Function<Class<?>, Object> instantiatorForAnnotations;//todo remove this
   private final DependencyManager dependencyManager;
   private final Function<Parameter, String> parameterNameProvider;
+  private final Set<Class<?>> nonProxyableTypes;
 
-  public ChangeLogRuntimeImpl(DependencyManager dependencyManager, Function<Parameter, String> parameterNameProvider) {
-    this(DEFAULT_FUNC_FOR_ANNOTATIONS, dependencyManager, parameterNameProvider);
+  public ChangeLogRuntimeImpl(DependencyManager dependencyManager, Function<Parameter, String> parameterNameProvider, List<Class<?>> nonProxyableTypes) {
+    this(DEFAULT_FUNC_FOR_ANNOTATIONS, dependencyManager, parameterNameProvider, nonProxyableTypes);
   }
 
   @Deprecated
   public ChangeLogRuntimeImpl(Function<Class<?>, Object> instantiatorForAnnotations,
                               DependencyManager dependencyManager,
-                              Function<Parameter, String> parameterNameProvider) {
+                              Function<Parameter, String> parameterNameProvider,
+                              List<Class<?>> nonProxyableTypes) {
     this.instantiatorForAnnotations = instantiatorForAnnotations != null ? instantiatorForAnnotations : DEFAULT_FUNC_FOR_ANNOTATIONS;
     this.dependencyManager = dependencyManager;
     this.parameterNameProvider = parameterNameProvider;
+    this.nonProxyableTypes = new HashSet<>(nonProxyableTypes);
   }
 
   @Override
@@ -102,8 +106,11 @@ public class ChangeLogRuntimeImpl implements ChangeLogRuntime {
 
   private Object getParameter(Class<?> parameterType, Parameter parameter) {
     String name = getParameterName(parameter);
+    boolean makeItProxy = !parameterType.isAnnotationPresent(NonLockGuarded.class)
+        && !parameter.isAnnotationPresent(NonLockGuarded.class)
+        && !nonProxyableTypes.contains(parameterType);
     return dependencyManager
-        .getDependency(parameterType, name, !parameterType.isAnnotationPresent(NonLockGuarded.class) && !parameter.isAnnotationPresent(NonLockGuarded.class))
+        .getDependency(parameterType, name, makeItProxy)
         .orElseThrow(() -> new DependencyInjectionException(parameterType, name));
   }
 

@@ -55,7 +55,6 @@ public abstract class RunnerBuilderBase<
   //todo move to config
   private String executionId = String.format("%s-%d", LocalDateTime.now(), new Random().nextInt(999));
 
-
   protected RunnerBuilderBase(BuilderType type,
                               ExecutorFactory<CHANGELOG, ? extends ChangeSetItem, CONFIG> executorFactory,
                               ChangeLogServiceBase<CHANGELOG, CHANGESET> changeLogService,
@@ -242,12 +241,17 @@ public abstract class RunnerBuilderBase<
   }
 
   protected  Executor buildExecutor(Operation operation, ConnectionDriver driver) {
+    ChangeLogRuntimeImpl changeLogRuntime = new ChangeLogRuntimeImpl(
+        changeLogInstantiatorFunctionForAnnotations,
+        dependencyManager,
+        parameterNameFunction,
+        driver.getNonProxyableTypes());
     return executorFactory.getExecutor(
         operation,
         executionId,
         getChangeLogs(),
         driver,
-        new ChangeLogRuntimeImpl(changeLogInstantiatorFunctionForAnnotations, dependencyManager, parameterNameFunction),
+        changeLogRuntime,
         config
     );
   }

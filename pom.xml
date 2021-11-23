@@ -9,7 +9,7 @@
 
   <groupId>io.mongock</groupId>
   <artifactId>mongock</artifactId>
-  <version>5.0.25-SNAPSHOT</version>
+  <version>5.0.26-SNAPSHOT</version>
   <packaging>pom</packaging>
 
   <modules>
