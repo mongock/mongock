@@ -21,12 +21,8 @@ public class ChangeSetItem {
   private final Method method;
 
   private final boolean failFast;
-
-  private final boolean transactional;
   
   private final Method rollbackMethod;
-
-
 
   public ChangeSetItem(String id,
                        String author,
@@ -34,7 +30,6 @@ public class ChangeSetItem {
                        boolean runAlways,
                        String systemVersion,
                        boolean failFast,
-                       boolean transactional,
                        Method changeSetMethod,
                        Method rollbackMethod) {
     if (id == null || id.trim().isEmpty()) {
@@ -50,7 +45,6 @@ public class ChangeSetItem {
     this.systemVersion = systemVersion;
     this.method = changeSetMethod;
     this.failFast = failFast;
-    this.transactional = transactional;
     this.rollbackMethod = rollbackMethod;
   }
 
@@ -91,9 +85,6 @@ public class ChangeSetItem {
     return this instanceof BeforeChangeSetItem;
   }
 
-  public boolean isTransactional() {
-    return transactional;
-  }
 
   @Override
   public boolean equals(Object o) {
@@ -118,7 +109,6 @@ public class ChangeSetItem {
     sb.append(", systemVersion='").append(systemVersion).append('\'');
     sb.append(", method=").append(method);
     sb.append(", failFast=").append(failFast);
-    sb.append(", transactional=").append(transactional);
     sb.append(", rollbackMethod=").append(rollbackMethod);
     sb.append('}');
     return sb.toString();

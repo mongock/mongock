@@ -12,6 +12,7 @@ import io.mongock.driver.api.entry.ExecutedChangeEntry;
 import io.mongock.driver.api.lock.LockManager;
 import io.mongock.runner.core.executor.Executor;
 import io.mongock.runner.core.executor.changelog.ChangeLogRuntime;
+import io.mongock.runner.core.internal.BeforeChangeSetItem;
 import io.mongock.runner.core.internal.ChangeLogItem;
 import io.mongock.runner.core.internal.ChangeSetItem;
 import io.mongock.utils.Triple;
@@ -109,7 +110,7 @@ public abstract class MigrationExecutorBase<CONFIG extends ChangeExecutorConfigu
   protected void processMigration(Collection<ChangeLogItem<ChangeSetItem>> changeLogs, String executionId, String executionHostname) {
     prepareForStageExecutionIfApply(isStrategyPerMigration());
     driver.getTransactioner()
-        .filter(t -> isStrategyPerMigration() && isTransactional())
+        .filter(t -> isStrategyPerMigration() && isDriverTransactional())
         .orElse(Runnable::run)
         .executeInTransaction(() -> processChangeLogs(executionId, executionHostname, changeLogs));
   }
@@ -125,7 +126,7 @@ public abstract class MigrationExecutorBase<CONFIG extends ChangeExecutorConfigu
       //if strategy == changeLog only needs to store the processed changeSets per changeLog
       prepareForStageExecutionIfApply(isStrategyPerChangeUnit());
       Object changeLogInstance = getChangeLogInstance(changeLog.getType());
-      loopRawChangeSets(executionId, executionHostname, changeLogInstance, changeLog.getBeforeItems());
+      loopRawChangeSets(executionId, executionHostname, changeLogInstance, changeLog, changeLog.getBeforeItems());
       processChangeLogInTransactionIfApplies(executionId, executionHostname, changeLogInstance, changeLog);
     } catch (Exception e) {
       if (changeLog.isFailFast()) {
@@ -140,38 +141,24 @@ public abstract class MigrationExecutorBase<CONFIG extends ChangeExecutorConfigu
     return changeLogRuntime.getInstance(changeLogClass);
   }
 
-  protected void processChangeLogInTransactionIfApplies(String executionId, String executionHostname, Object changeLogInstance, ChangeLogItem<ChangeSetItem> changeLogItem) {
+  protected void processChangeLogInTransactionIfApplies(String executionId, String executionHostname, Object changeLogInstance, ChangeLogItem<ChangeSetItem> changeLog) {
     driver.getTransactioner()
-        .filter(c -> isStrategyPerChangeUnit() && isTransactional())
+        .filter(c -> isDriverTransactional() && isStrategyPerChangeUnit() && changeLog.isTransactional())
         .orElse(Runnable::run)
-        .executeInTransaction(() -> loopRawChangeSets(executionId, executionHostname, changeLogInstance, changeLogItem.getChangeSetItems()));
+        .executeInTransaction(() -> loopRawChangeSets(executionId, executionHostname, changeLogInstance, changeLog, changeLog.getChangeSetItems()));
   }
 
-  protected void loopRawChangeSets(String executionId, String executionHostName, Object changeLogInstance, List<? extends ChangeSetItem> changeSets) {
+  protected void loopRawChangeSets(String executionId, String executionHostName, Object changeLogInstance, ChangeLogItem<ChangeSetItem> changeLog, List<? extends ChangeSetItem> changeSets) {
     for (ChangeSetItem changeSet : changeSets) {
-      saveChangeSetToRollbackIfApply(changeLogInstance, changeSet);
+      //if driver is transactional or, being the strategy per ChangeUnit, the changeSet is non-transactional(before or changeLog flagged as non-transactional)
+      //the changeSet needs to be queued to be rolled back, in case a change fails
+      if (!isDriverTransactional() || (isStrategyPerChangeUnit() && (changeSet instanceof BeforeChangeSetItem || !changeLog.isTransactional()))) {
+        changeSetsToRollBack.push(new Triple<>(changeLogInstance, changeSet, null));
+      }
       processSingleChangeSet(executionId, executionHostName, changeLogInstance, changeSet);
     }
   }
 
-  private void saveChangeSetToRollbackIfApply(Object changeLogInstance, ChangeSetItem changeSet) {
-    if (shouldChangeSetBeStoredToRollback(changeSet)) {
-      changeSetsToRollBack.push(new Triple<>(changeLogInstance, changeSet, null));
-    }
-  }
-
-  /**
-   * Should be added for manual rollback if
-   * - Non-native-transactional environment OR
-   * - the transactional strategy is per changeUnit and the changeSet is NOT transactional
-   * (beforeChangeSets are not transactional by definition)
-   *
-   * @param changeSet
-   * @return if the changeSet should mark to be manually rolled back
-   */
-  private boolean shouldChangeSetBeStoredToRollback(ChangeSetItem changeSet) {
-    return !isTransactional() || (isStrategyPerChangeUnit() && !changeSet.isTransactional());
-  }
 
   /**
    * changeSetsToRollBack collection contains "all and only" the changeSets to rollback "manually" in case of any
@@ -428,7 +415,7 @@ public abstract class MigrationExecutorBase<CONFIG extends ChangeExecutorConfigu
     this.executedChangeEntries = this.driver.getChangeEntryService().getExecuted();
   }
 
-  protected final boolean isTransactional() {
+  protected final boolean isDriverTransactional() {
     return globalTransactionEnabled == null ? driver.isTransactionable() : globalTransactionEnabled && driver.isTransactionable();
   }
 
