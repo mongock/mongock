@@ -1,19 +1,20 @@
 package io.mongock.runner.core.executor.operation.change;
 
-import io.mongock.driver.api.entry.ChangeType;
-import io.mongock.runner.core.internal.ChangeLogItem;
-import io.mongock.runner.core.internal.ChangeSetItem;
+import com.google.gson.Gson;
 import io.mongock.api.config.TransactionStrategy;
 import io.mongock.api.config.executor.ChangeExecutorConfiguration;
 import io.mongock.api.exception.MongockException;
 import io.mongock.driver.api.driver.ConnectionDriver;
 import io.mongock.driver.api.entry.ChangeEntry;
 import io.mongock.driver.api.entry.ChangeState;
+import io.mongock.driver.api.entry.ChangeType;
 import io.mongock.driver.api.entry.ExecutedChangeEntry;
 import io.mongock.driver.api.lock.LockManager;
 import io.mongock.runner.core.executor.Executor;
 import io.mongock.runner.core.executor.changelog.ChangeLogRuntime;
-import io.mongock.utils.Pair;
+import io.mongock.runner.core.internal.ChangeLogItem;
+import io.mongock.runner.core.internal.ChangeSetItem;
+import io.mongock.utils.Triple;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -25,6 +26,8 @@ import java.net.InetAddress;
 import java.util.ArrayDeque;
 import java.util.Collection;
 import java.util.Deque;
+import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -44,7 +47,7 @@ public abstract class MigrationExecutorBase<CONFIG extends ChangeExecutorConfigu
   private static final Logger logger = LoggerFactory.getLogger(MigrationExecutorBase.class);
 
   protected final Boolean globalTransactionEnabled;
-  protected final Deque<Pair<Object, ChangeSetItem>> changeSetsToRollBack = new ArrayDeque<>();
+  protected final Deque<Triple<Object, ChangeSetItem, Exception>> changeSetsToRollBack = new ArrayDeque<>();
   protected final ConnectionDriver driver;
   protected final String serviceIdentifier;
   protected final boolean trackIgnored;
@@ -153,7 +156,7 @@ public abstract class MigrationExecutorBase<CONFIG extends ChangeExecutorConfigu
 
   private void saveChangeSetToRollbackIfApply(Object changeLogInstance, ChangeSetItem changeSet) {
     if (shouldChangeSetBeStoredToRollback(changeSet)) {
-      changeSetsToRollBack.push(new Pair<>(changeLogInstance, changeSet));
+      changeSetsToRollBack.push(new Triple<>(changeLogInstance, changeSet, null));
     }
   }
 
@@ -184,11 +187,11 @@ public abstract class MigrationExecutorBase<CONFIG extends ChangeExecutorConfigu
    * - strategy == CHANGE_LOG and non-transactional: It should contain all the executed changeSets in the current
    * changeLog, main and before, in execution reverse order
    */
-  protected void rollbackProcessedChangeSetsIfApply(String executionId, String hostname, Deque<Pair<Object, ChangeSetItem>> processedChangeSets) {
+  protected void rollbackProcessedChangeSetsIfApply(String executionId, String hostname, Deque<Triple<Object, ChangeSetItem, Exception>> processedChangeSets) {
     logger.info("Mongock migration aborted and DB transaction not enabled. Starting manual rollback process");
-    processedChangeSets.forEach(pair -> {
+    processedChangeSets.forEach(triple -> {
       try {
-        rollbackIfPresentAndTrackChangeEntry(executionId, hostname, pair.getFirst(), pair.getSecond());
+        rollbackIfPresentAndTrackChangeEntry(executionId, hostname, triple.getFirst(), triple.getSecond(), triple.getThird());
       } catch (Exception e) {
         throw e instanceof MongockException ? (MongockException) e : new MongockException(e);
       }
@@ -200,7 +203,7 @@ public abstract class MigrationExecutorBase<CONFIG extends ChangeExecutorConfigu
     try {
       executeAndLogChangeSet(executionId, executionHostname, changeLogInstance, changeSet);
     } catch (Exception e) {
-      processExceptionOnChangeSetExecution(e, changeSet.getMethod(), changeSet.isFailFast());
+      processExceptionOnChangeSetExecution(e, changeSet, changeSet.isFailFast());
     }
   }
 
@@ -247,7 +250,7 @@ public abstract class MigrationExecutorBase<CONFIG extends ChangeExecutorConfigu
       }
     } catch (Exception ex) {
       logger.debug("failure when executing changeSet[{}]", changeSetItem.getId());
-      changeEntry = buildFailedChangeEntry(executionId, executionHostname, changeSetItem, -1L, FAILED, type, ex);
+      changeEntry = buildFailedChangeEntry(executionId, executionHostname, changeSetItem, -1L, FAILED, type, ex, null);
       throw ex;
     } finally {
       if (changeEntry != null) {
@@ -267,22 +270,33 @@ public abstract class MigrationExecutorBase<CONFIG extends ChangeExecutorConfigu
     }
   }
 
-  protected void rollbackIfPresentAndTrackChangeEntry(String executionId, String executionHostname, Object changeLogInstance, ChangeSetItem changeSetItem) throws InvocationTargetException, IllegalAccessException {
+  protected void rollbackIfPresentAndTrackChangeEntry(String executionId,
+                                                      String executionHostname,
+                                                      Object changeLogInstance,
+                                                      ChangeSetItem changeSetItem,
+                                                      Exception changeSetException) throws InvocationTargetException, IllegalAccessException {
 
     if (changeSetItem.getRollbackMethod().isPresent()) {
       logger.debug("rolling back changeSet[{}]", changeSetItem.getId());
-      Optional<Exception> exceptionOpt = Optional.empty();
+      Optional<Exception> rollbackExceptionOpt = Optional.empty();
       try {
         executeChangeSetMethod(changeSetItem.getRollbackMethod().get(), changeLogInstance);
         logger.debug("successfully rolled back changeSet[{}]", changeSetItem.getId());
       } catch (Exception ex) {
         logger.debug("failure when rolling back changeSet[{}]:\n{}", changeSetItem.getId(), ex.getMessage());
-        exceptionOpt = Optional.of(ex);
+        rollbackExceptionOpt = Optional.of(ex);
         throw ex;
       } finally {
         ChangeType type = changeSetItem.isBeforeChangeSets() ? BEFORE_EXECUTION : EXECUTION;
-        ChangeEntry changeEntry = exceptionOpt.map(ex -> buildFailedChangeEntry(executionId, executionHostname, changeSetItem, -1L, ROLLBACK_FAILED, type, ex))
-                .orElseGet(() -> buildChangeEntry(executionId, executionHostname, changeSetItem, -1L, ROLLED_BACK, type));
+
+        ChangeEntry changeEntry = buildFailedChangeEntry(
+            executionId,
+            executionHostname,
+            changeSetItem,
+            -1L, ROLLED_BACK,
+            type,
+            changeSetException,
+            rollbackExceptionOpt.orElse(null));
         logChangeEntry(changeEntry, changeSetItem, false);
         trackChangeEntry(changeSetItem, changeEntry, false);
       }
@@ -337,7 +351,18 @@ public abstract class MigrationExecutorBase<CONFIG extends ChangeExecutorConfigu
                                                long executionTimeMillis,
                                                ChangeState state,
                                                ChangeType type,
-                                               Exception ex) {
+                                               Exception executionException,
+                                               Exception rollbackException) {
+    String errorTrace;
+    if (rollbackException == null) {
+      errorTrace = io.mongock.utils.StringUtils.getStackTrace(executionException);
+    } else {
+      Map<String, String> errorMap = new HashMap<>();
+      errorMap.put("execution-error", io.mongock.utils.StringUtils.getStackTrace(executionException));
+      errorMap.put("rollback-error", io.mongock.utils.StringUtils.getStackTrace(rollbackException));
+      errorTrace = new Gson().toJson(errorMap);
+    }
+
     return ChangeEntry.failedInstance(
         executionId,
         StringUtils.isNotEmpty(changeSetItem.getAuthor()) ? changeSetItem.getAuthor() : defaultAuthor,
@@ -349,8 +374,8 @@ public abstract class MigrationExecutorBase<CONFIG extends ChangeExecutorConfigu
         executionTimeMillis,
         executionHostname,
         metadata,
-        io.mongock.utils.StringUtils.getStackTrace(ex)
-        );
+        errorTrace
+    );
   }
 
 
@@ -360,16 +385,30 @@ public abstract class MigrationExecutorBase<CONFIG extends ChangeExecutorConfigu
     return System.currentTimeMillis() - startingTime;
   }
 
-  protected void processExceptionOnChangeSetExecution(Exception exception, Method method, boolean throwException) {
+  protected void processExceptionOnChangeSetExecution(Exception exception, ChangeSetItem changeSetItem, boolean throwException) {
     String exceptionMsg = exception instanceof InvocationTargetException
         ? ((InvocationTargetException) exception).getTargetException().getMessage()
         : exception.getMessage();
+    Method method = changeSetItem.getMethod();
     String finalMessage = String.format("Error in method[%s.%s] : %s", method.getDeclaringClass().getSimpleName(), method.getName(), exceptionMsg);
+    updateRollbackChangeSet(changeSetItem, exception);
     if (throwException) {
       throw new MongockException(finalMessage, exception);
 
     } else {
       logger.warn(finalMessage, exception);
+    }
+  }
+
+  private void updateRollbackChangeSet(ChangeSetItem changeSetItem, Exception exception) {
+    Iterator<Triple<Object, ChangeSetItem, Exception>> iterator = changeSetsToRollBack.iterator();
+    boolean finished = false;
+    while (iterator.hasNext() && !finished) {
+      Triple<Object, ChangeSetItem, Exception> item = iterator.next();
+      if (changeSetItem.getId().equals(item.getSecond().getId())) {
+        item.setThird(exception);
+        finished = true;
+      }
     }
   }
 
