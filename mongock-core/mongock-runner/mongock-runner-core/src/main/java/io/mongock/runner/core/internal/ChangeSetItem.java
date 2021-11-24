@@ -1,11 +1,15 @@
 package io.mongock.runner.core.internal;
 
 import io.mongock.api.exception.MongockException;
+import io.mongock.driver.api.entry.ChangeType;
 import io.mongock.driver.api.util.ChangePrintable;
 
 import java.lang.reflect.Method;
 import java.util.Objects;
 import java.util.Optional;
+
+import static io.mongock.driver.api.entry.ChangeType.BEFORE_EXECUTION;
+import static io.mongock.driver.api.entry.ChangeType.EXECUTION;
 
 public class ChangeSetItem implements ChangePrintable {
 
@@ -56,8 +60,8 @@ public class ChangeSetItem implements ChangePrintable {
   }
 
   @Override
-  public String getTypeString() {
-    return this instanceof BeforeChangeSetItem ? "before-execution" : "execution";
+  public ChangeType getType() {
+    return this instanceof BeforeChangeSetItem ? BEFORE_EXECUTION : EXECUTION;
   }
 
   @Override

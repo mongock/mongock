@@ -186,11 +186,6 @@ public class ChangeEntry implements ChangePrintable {
   }
 
   @Override
-  public String getTypeString() {
-    return type == BEFORE_EXECUTION ? "before-execution" : "execution";
-  }
-
-  @Override
   public String getAuthor() {
     return this.author;
   }
