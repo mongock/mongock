@@ -1,12 +1,13 @@
 package io.mongock.runner.core.internal;
 
 import io.mongock.api.exception.MongockException;
+import io.mongock.driver.api.util.ChangePrintable;
 
 import java.lang.reflect.Method;
 import java.util.Objects;
 import java.util.Optional;
 
-public class ChangeSetItem {
+public class ChangeSetItem implements ChangePrintable {
 
   private final String id;
 
@@ -49,12 +50,29 @@ public class ChangeSetItem {
   }
 
 
+  @Override
   public String getId() {
     return id;
   }
 
+  @Override
+  public String getTypeString() {
+    return this instanceof BeforeChangeSetItem ? "before-execution" : "execution";
+  }
+
+  @Override
   public String getAuthor() {
     return author;
+  }
+
+  @Override
+  public String getChangeLogClassString() {
+    return method.getDeclaringClass().getSimpleName();
+  }
+
+  @Override
+  public String getMethodNameString() {
+    return method.getName();
   }
 
   public String getOrder() {
@@ -114,16 +132,6 @@ public class ChangeSetItem {
     return sb.toString();
   }
 
-  public String toPrettyString() {
-    String type = this instanceof BeforeChangeSetItem ? "before-execution" : "execution";
-    return "{" +
-        "\"id\"=\"" + id + "\"" +
-        ", \"type\"=\"" + type + "\"" +
-        ", \"author\"=\"" + author + "\"" +
-        ", \"class\"=\"" + method.getDeclaringClass().getSimpleName() + "\"" +
-        ", \"method\"=\"" + method.getName() + "\"" +
-        '}';
-  }
 
 
 }

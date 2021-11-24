@@ -1,6 +1,7 @@
 package io.mongock.driver.api.entry;
 
 import io.mongock.api.exception.MongockException;
+import io.mongock.driver.api.util.ChangePrintable;
 import io.mongock.utils.StringUtils;
 import io.mongock.utils.field.Field;
 
@@ -15,6 +16,7 @@ import static io.mongock.driver.api.entry.ChangeState.EXECUTED;
 import static io.mongock.driver.api.entry.ChangeState.FAILED;
 import static io.mongock.driver.api.entry.ChangeState.ROLLBACK_FAILED;
 import static io.mongock.driver.api.entry.ChangeState.ROLLED_BACK;
+import static io.mongock.driver.api.entry.ChangeType.BEFORE_EXECUTION;
 import static io.mongock.utils.field.Field.KeyType.PRIMARY;
 
 /**
@@ -23,7 +25,7 @@ import static io.mongock.utils.field.Field.KeyType.PRIMARY;
  *
  * @since 27/07/2014
  */
-public class ChangeEntry {
+public class ChangeEntry implements ChangePrintable {
 
   public static final String KEY_EXECUTION_ID = "executionId";
   public static final String KEY_CHANGE_ID = "changeId";
@@ -178,8 +180,29 @@ public class ChangeEntry {
     return this.changeId;
   }
 
+  @Override
+  public String getId() {
+    return getChangeId();
+  }
+
+  @Override
+  public String getTypeString() {
+    return type == BEFORE_EXECUTION ? "before-execution" : "execution";
+  }
+
+  @Override
   public String getAuthor() {
     return this.author;
+  }
+
+  @Override
+  public String getChangeLogClassString() {
+    return StringUtils.getSimpleClassName(changeLogClass);
+  }
+
+  @Override
+  public String getMethodNameString() {
+    return getChangeSetMethod();
   }
 
   public Date getTimestamp() {
@@ -231,15 +254,6 @@ public class ChangeEntry {
         ", metadata=" + metadata +
         ", executionMillis=" + executionMillis +
         ", executionHostname='" + executionHostname + '\'' +
-        '}';
-  }
-
-  public String toPrettyString() {
-    return "ChangeEntry{" +
-        "\"id\"=\"" + changeId + "\"" +
-        ", \"author\"=\"" + author + "\"" +
-        ", \"class\"=\"" + StringUtils.getSimpleClassName(changeLogClass) + "\"" +
-        ", \"method\"=\"" + changeSetMethod + "\"" +
         '}';
   }
 
