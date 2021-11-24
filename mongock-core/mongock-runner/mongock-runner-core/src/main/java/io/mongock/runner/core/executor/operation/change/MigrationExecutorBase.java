@@ -130,6 +130,7 @@ public abstract class MigrationExecutorBase<CONFIG extends ChangeExecutorConfigu
       processChangeLogInTransactionIfApplies(executionId, executionHostname, changeLogInstance, changeLog);
       // if strategy == changeLog , regardless if the changeLog is transactional, the queue for the changeSets
       // to rollback need to be cleared
+      //todo add a test to ensure this condition
       clearChangeSetsToRollbackIfApply(isStrategyPerChangeUnit());
     } catch (Exception e) {
       if (changeLog.isFailFast()) {

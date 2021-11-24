@@ -115,8 +115,10 @@ public class ChangeSetItem {
   }
 
   public String toPrettyString() {
-    return "ChangeEntry{" +
+    String type = this instanceof BeforeChangeSetItem ? "before-execution" : "execution";
+    return "{" +
         "\"id\"=\"" + id + "\"" +
+        ", \"type\"=\"" + type + "\"" +
         ", \"author\"=\"" + author + "\"" +
         ", \"class\"=\"" + method.getDeclaringClass().getSimpleName() + "\"" +
         ", \"method\"=\"" + method.getName() + "\"" +
