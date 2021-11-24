@@ -123,11 +123,14 @@ public abstract class MigrationExecutorBase<CONFIG extends ChangeExecutorConfigu
 
   protected void processSingleChangeLog(String executionId, String executionHostname, ChangeLogItem<ChangeSetItem> changeLog) {
     try {
-      //if strategy == changeLog only needs to store the processed changeSets per changeLog
+      // if strategy == changeLog only needs to store the processed changeSets per changeLog
       prepareForStageExecutionIfApply(isStrategyPerChangeUnit() && changeLog.isTransactional());
       Object changeLogInstance = getChangeLogInstance(changeLog.getType());
       loopRawChangeSets(executionId, executionHostname, changeLogInstance, changeLog, changeLog.getBeforeItems());
       processChangeLogInTransactionIfApplies(executionId, executionHostname, changeLogInstance, changeLog);
+      // if strategy == changeLog , regardless if the changeLog is transactional, the queue for the changeSets
+      // to rollback need to be cleared
+      clearChangeSetsToRollbackIfApply(isStrategyPerChangeUnit());
     } catch (Exception e) {
       if (changeLog.isFailFast()) {
         rollbackProcessedChangeSetsIfApply(executionId, executionHostname, changeSetsToRollBack);
@@ -430,6 +433,11 @@ public abstract class MigrationExecutorBase<CONFIG extends ChangeExecutorConfigu
   protected void prepareForStageExecutionIfApply(boolean applyPreparation) {
     if (applyPreparation) {
       driver.prepareForExecutionBlock();
+    }
+  }
+
+  protected void clearChangeSetsToRollbackIfApply(boolean applyPreparation) {
+    if (applyPreparation) {
       changeSetsToRollBack.clear();
     }
   }
