@@ -124,7 +124,7 @@ public abstract class MigrationExecutorBase<CONFIG extends ChangeExecutorConfigu
   protected void processSingleChangeLog(String executionId, String executionHostname, ChangeLogItem<ChangeSetItem> changeLog) {
     try {
       //if strategy == changeLog only needs to store the processed changeSets per changeLog
-      prepareForStageExecutionIfApply(isStrategyPerChangeUnit());
+      prepareForStageExecutionIfApply(isStrategyPerChangeUnit() && changeLog.isTransactional());
       Object changeLogInstance = getChangeLogInstance(changeLog.getType());
       loopRawChangeSets(executionId, executionHostname, changeLogInstance, changeLog, changeLog.getBeforeItems());
       processChangeLogInTransactionIfApplies(executionId, executionHostname, changeLogInstance, changeLog);
