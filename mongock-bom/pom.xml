@@ -23,23 +23,37 @@
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
     <maven.javadoc.failOnError>false</maven.javadoc.failOnError>
 
+    <core.version>${project.version}</core.version>
+    <mongodb.version>${project.version}</mongodb.version>
+    <dynamodb.version>5.0.27.BETA-SNAPSHOT</dynamodb.version>
   </properties>
 
   <dependencyManagement>
     <dependencies>
 
+      <!-- Core -->
       <dependency>
         <groupId>io.mongock</groupId>
         <artifactId>mongock-core-bom</artifactId>
-        <version>${project.version}</version>
+        <version>${core.version}</version>
         <type>pom</type>
         <scope>import</scope>
       </dependency>
 
+      <!-- MongoDB -->
       <dependency>
         <groupId>io.mongock</groupId>
         <artifactId>mongock-driver-mongodb-bom</artifactId>
-        <version>${project.version}</version>
+        <version>${mongodb.version}</version>
+        <type>pom</type>
+        <scope>import</scope>
+      </dependency>
+
+      <!-- DynamoDB -->
+      <dependency>
+        <groupId>io.mongock</groupId>
+        <artifactId>mongock-driver-dynamodb-bom</artifactId>
+        <version>${dynamodb.version}</version>
         <type>pom</type>
         <scope>import</scope>
       </dependency>
