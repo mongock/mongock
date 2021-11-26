@@ -23,9 +23,9 @@
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
     <maven.javadoc.failOnError>false</maven.javadoc.failOnError>
 
-    <core.version>5.0.27-SNAPSHOT</core.version>
-    <mongodb.version>5.0.27-SNAPSHOT</mongodb.version>
-    <dynamodb.version>5.0.27.BETA-SNAPSHOT</dynamodb.version>
+    <core.version>5.0.27</core.version>
+    <mongodb.version>5.0.27</mongodb.version>
+    <dynamodb.version>5.0.27.BETA</dynamodb.version>
   </properties>
 
   <dependencyManagement>
