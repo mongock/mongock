@@ -3,7 +3,7 @@ package io.mongock.runner.spring.base.importers;
 import java.util.Arrays;
 import java.util.List;
 
-public class MongoSpringDataImporter implements ContextImporter {
+public class MongoDBSpringDataImporter implements ContextImporter {
 
   private final static String PACKAGE_TEMPLATE = "io.mongock.driver.mongodb.springdata.v%s.";
   private final static String DRIVER_TEMPLATE = PACKAGE_TEMPLATE + "SpringDataMongoV%sDriver";

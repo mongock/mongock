@@ -22,8 +22,9 @@ public class MongockDriverContextSelectorUtil {
   
   public static String[] selectImports(List<ContextImporter> contextImporters) {
     return contextImporters.stream()
-        .map(contextImporter -> contextImporter.getPaths())
+        .map(ContextImporter::getPaths)
         .filter(Objects::nonNull)
+        .filter(array-> array.length > 0)
         .findFirst()
         .orElseThrow(() -> new MongockException(String.format("\n\n%s\n\n", generateDriverNotFoundError(contextImporters))));
   }

@@ -6,7 +6,7 @@ import org.springframework.context.annotation.Configuration
 
 @Configuration
 @ConfigurationProperties("mongock.dynamo-db")
-class DynamoDBConfiguration {
+open class DynamoDBConfiguration {
     var provisionedThroughput = ProvisionedThroughput(50L, 50L)
 
 }
