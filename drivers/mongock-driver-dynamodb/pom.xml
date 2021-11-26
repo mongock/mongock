@@ -5,12 +5,12 @@
   <parent>
     <artifactId>drivers</artifactId>
     <groupId>io.mongock</groupId>
-    <version>5.0.27-SNAPSHOT</version>
+    <version>5.0.28-SNAPSHOT</version>
   </parent>
   <modelVersion>4.0.0</modelVersion>
   <packaging>pom</packaging>
 
-  <version>5.0.27.BETA-SNAPSHOT</version>
+  <version>5.0.28.BETA-SNAPSHOT</version>
   <name>DynamoDB driver parent</name>
   <artifactId>mongock-driver-dynamodb</artifactId>
   <description>DynamoDB tool for tracking, managing and applying database schema changes</description>
@@ -25,7 +25,7 @@
     <java.version>1.8</java.version>
     <kotlin.version>1.6.0</kotlin.version>
     <dokka.version>1.4.32</dokka.version>
-    <mongock.community.version>5.0.27-SNAPSHOT</mongock.community.version>
+    <mongock.community.version>5.0.28-SNAPSHOT</mongock.community.version>
   </properties>
 
 </project>

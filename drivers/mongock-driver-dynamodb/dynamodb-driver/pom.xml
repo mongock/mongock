@@ -5,7 +5,7 @@
   <parent>
     <artifactId>mongock-driver-dynamodb</artifactId>
     <groupId>io.mongock</groupId>
-    <version>5.0.27.BETA-SNAPSHOT</version>
+    <version>5.0.28.BETA-SNAPSHOT</version>
   </parent>
   <modelVersion>4.0.0</modelVersion>
 
