@@ -23,9 +23,6 @@
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
     <maven.javadoc.failOnError>false</maven.javadoc.failOnError>
 
-    <core.version>5.0.27</core.version>
-    <mongodb.version>5.0.27</mongodb.version>
-    <dynamodb.version>5.0.27.BETA</dynamodb.version>
   </properties>
 
   <dependencyManagement>
@@ -35,7 +32,7 @@
       <dependency>
         <groupId>io.mongock</groupId>
         <artifactId>mongock-core-bom</artifactId>
-        <version>${core.version}</version>
+        <version>${project.version}</version>
         <type>pom</type>
         <scope>import</scope>
       </dependency>
@@ -44,19 +41,11 @@
       <dependency>
         <groupId>io.mongock</groupId>
         <artifactId>mongock-driver-mongodb-bom</artifactId>
-        <version>${mongodb.version}</version>
+        <version>${project.version}</version>
         <type>pom</type>
         <scope>import</scope>
       </dependency>
 
-      <!-- DynamoDB -->
-      <dependency>
-        <groupId>io.mongock</groupId>
-        <artifactId>mongock-driver-dynamodb-bom</artifactId>
-        <version>${dynamodb.version}</version>
-        <type>pom</type>
-        <scope>import</scope>
-      </dependency>
     </dependencies>
   </dependencyManagement>
 
