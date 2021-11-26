@@ -1,0 +1,186 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <parent>
+    <artifactId>mongock-driver-dynamodb</artifactId>
+    <groupId>io.mongock</groupId>
+    <version>5.0.27.BETA-SNAPSHOT</version>
+  </parent>
+  <modelVersion>4.0.0</modelVersion>
+
+
+  <artifactId>dynamodb-driver</artifactId>
+
+  <properties>
+    <java.version>1.8</java.version>
+    <maven.compiler.source>8</maven.compiler.source>
+    <maven.compiler.target>8</maven.compiler.target>
+    <kotlin.compiler.incremental>true</kotlin.compiler.incremental>
+    <kotlin.compiler.jvmtarget>1.8</kotlin.compiler.jvmtarget>
+
+    <dynamodb.version>[1.12.0, 2.0.0)</dynamodb.version>
+    <kotlin-logging-jvm.version>2.0.11</kotlin-logging-jvm.version>
+    <aws-java-sdk-dynamodb.version>1.12.111</aws-java-sdk-dynamodb.version>
+    <gson.version>2.8.9</gson.version>
+    <jackson-annotations.version>2.13.0</jackson-annotations.version>
+    <kotest.version>4.6.3</kotest.version>
+    <testcontainers.version>1.16.2</testcontainers.version>
+    <maven-surefire-plugin.version>2.22.2</maven-surefire-plugin.version>
+  </properties>
+
+  <dependencyManagement>
+    <dependencies>
+      <!-- MONGOCK CORE-->
+      <dependency>
+        <groupId>io.mongock</groupId>
+        <artifactId>mongock-driver-dynamodb-bom</artifactId>
+        <version>${project.version}</version>
+        <type>pom</type>
+        <scope>import</scope>
+      </dependency>
+    </dependencies>
+  </dependencyManagement>
+
+  <dependencies>
+    <dependency>
+      <groupId>org.jetbrains.kotlin</groupId>
+      <artifactId>kotlin-stdlib-jdk8</artifactId>
+      <version>${kotlin.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>io.github.microutils</groupId>
+      <artifactId>kotlin-logging-jvm</artifactId>
+      <version>${kotlin-logging-jvm.version}</version>
+    </dependency>
+
+    <!-- CORE DEPENDENCIES -->
+    <dependency>
+      <groupId>io.mongock</groupId>
+      <artifactId>mongock-driver-core</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>io.mongock</groupId>
+      <artifactId>mongock-api</artifactId>
+    </dependency>
+
+    <dependency>
+      <groupId>com.amazonaws</groupId>
+      <artifactId>aws-java-sdk-dynamodb</artifactId>
+      <version>${aws-java-sdk-dynamodb.version}</version>
+      <scope>provided</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>com.google.code.gson</groupId>
+      <artifactId>gson</artifactId>
+      <version>${gson.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>com.fasterxml.jackson.core</groupId>
+      <artifactId>jackson-annotations</artifactId>
+      <version>${jackson-annotations.version}</version>
+    </dependency>
+
+    <!-- TEST DEPENDENCIES -->
+    <dependency>
+      <groupId>io.kotest</groupId>
+      <artifactId>kotest-runner-junit5-jvm</artifactId>
+      <version>${kotest.version}</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>io.kotest</groupId>
+      <artifactId>kotest-assertions-core-jvm</artifactId>
+      <version>${kotest.version}</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>io.kotest</groupId>
+      <artifactId>kotest-property-jvm</artifactId>
+      <version>${kotest.version}</version>
+      <scope>test</scope>
+    </dependency>
+
+
+
+    <dependency>
+      <groupId>org.testcontainers</groupId>
+      <artifactId>testcontainers</artifactId>
+      <version>${testcontainers.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.testcontainers</groupId>
+      <artifactId>dynalite</artifactId>
+      <version>${testcontainers.version}</version>
+      <scope>test</scope>
+    </dependency>
+
+  </dependencies>
+
+
+
+
+  <build>
+    <sourceDirectory>${project.basedir}/src/main/kotlin</sourceDirectory>
+    <testSourceDirectory>${project.basedir}/src/test/kotlin</testSourceDirectory>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-surefire-plugin</artifactId>
+        <version>${maven-surefire-plugin.version}</version>
+      </plugin>
+
+      <plugin>
+        <groupId>org.jetbrains.kotlin</groupId>
+        <artifactId>kotlin-maven-plugin</artifactId>
+        <version>${kotlin.version}</version>
+        <executions>
+          <execution>
+            <id>compile</id>
+            <goals>
+              <goal>compile</goal>
+            </goals>
+            <configuration>
+            </configuration>
+          </execution>
+          <execution>
+            <id>test-compile</id>
+            <goals>
+              <goal>test-compile</goal>
+            </goals>
+            <configuration>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+
+      <plugin>
+        <groupId>org.jetbrains.dokka</groupId>
+        <artifactId>dokka-maven-plugin</artifactId>
+        <executions>
+          <execution>
+            <phase>package</phase>
+            <id>attach-javadocs-dokka</id>
+            <goals>
+              <goal>javadocJar</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+      <plugin>
+        <artifactId>maven-javadoc-plugin</artifactId>
+        <executions>
+          <execution>
+            <phase>package</phase>
+            <id>attach-javadocs-javadoc</id>
+            <goals>
+              <goal>jar</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+
+    </plugins>
+  </build>
+</project>
