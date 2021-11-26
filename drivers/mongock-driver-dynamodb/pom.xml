@@ -25,7 +25,7 @@
     <java.version>1.8</java.version>
     <kotlin.version>1.6.0</kotlin.version>
     <dokka.version>1.4.32</dokka.version>
-    <mongock.community.version>5.0.27-SNAPSHOT</mongock.community.version>
+    <mongock.community.version>${parent.parent.version}</mongock.community.version>
   </properties>
 
 </project>
