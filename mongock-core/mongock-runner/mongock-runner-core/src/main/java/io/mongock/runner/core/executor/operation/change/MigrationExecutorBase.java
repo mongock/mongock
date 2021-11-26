@@ -154,7 +154,7 @@ public abstract class MigrationExecutorBase<CONFIG extends ChangeExecutorConfigu
 
   protected void loopRawChangeSets(String executionId, String executionHostName, Object changeLogInstance, ChangeLogItem<ChangeSetItem> changeLog, List<? extends ChangeSetItem> changeSets) {
     for (ChangeSetItem changeSet : changeSets) {
-      //if driver is transactional or, being the strategy per ChangeUnit, the changeSet is non-transactional(before or changeLog flagged as non-transactional)
+      //if driver is no transactional or, being the strategy per ChangeUnit, the changeSet is non-transactional(before or changeLog flagged as non-transactional)
       //the changeSet needs to be queued to be rolled back, in case a change fails
       if (!isDriverTransactional() || (isStrategyPerChangeUnit() && (changeSet instanceof BeforeChangeSetItem || !changeLog.isTransactional()))) {
         changeSetsToRollBack.push(new Triple<>(changeLogInstance, changeSet, null));
