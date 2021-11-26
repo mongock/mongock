@@ -5,7 +5,7 @@
 
   <name>Mongock community</name>
   <description>Mongock community parent project</description>
-  <url>https://github.com/cloudyrock/mongock</url>
+  <url>https://github.com/mongock/mongock</url>
 
   <groupId>io.mongock</groupId>
   <artifactId>mongock</artifactId>
@@ -45,19 +45,33 @@
   </licenses>
 
   <scm>
-    <connection>scm:git:git@github.com:cloudyrock/mongock.git</connection>
-    <developerConnection>scm:git:https://github.com/cloudyrock/mongock.git</developerConnection>
-    <url>https://github.com/cloudyrock/mongock</url>
+    <connection>scm:git:git@github.com:mongock/mongock.git</connection>
+    <developerConnection>scm:git:https://github.com/mongock/mongock.git</developerConnection>
+    <url>https://github.com/mongock/mongock</url>
     <tag>mongock-5.0.0-SNAPSHOT</tag>
   </scm>
+
   <developers>
     <developer>
       <id>dieppa</id>
       <name>Antonio Perez Dieppa</name>
+      <email>aperezdieppa@mongock.io</email>
+      <organization>Mongock</organization>
+      <organizationUrl>https://www.mongock.io</organizationUrl>
     </developer>
     <developer>
       <id>osantana85</id>
       <name>Oliver Santana Martín</name>
+      <email>osantana@mongock.io</email>
+      <organization>Mongock</organization>
+      <organizationUrl>https://www.mongock.io</organizationUrl>
+    </developer>
+    <developer>
+      <id>dhivesh</id>
+      <name>Dhivesh Sadhwani</name>
+      <email>dhivesh.sadhwani@mongock.io</email>
+      <organization>Mongock</organization>
+      <organizationUrl>https://www.mongock.io</organizationUrl>
     </developer>
   </developers>
 
