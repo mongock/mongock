@@ -1,0 +1,2 @@
+org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
+  io.mongock.driver.mongodb.springdata.v2.SpringDataMongoV2Driver
