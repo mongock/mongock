@@ -3,6 +3,7 @@ package io.mongock.driver.mongodb.springdata.v2.config;
 import io.mongock.api.config.MongockConfiguration;
 import io.mongock.driver.mongodb.springdata.v2.SpringDataMongoV2Driver;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnExpression;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
 import org.springframework.data.mongodb.MongoTransactionManager;
@@ -11,8 +12,8 @@ import org.springframework.data.mongodb.core.MongoTemplate;
 import java.util.Optional;
 
 @Configuration
-@Import(MongoDBConfiguration.class)
 @ConditionalOnExpression("${mongock.enabled:true}")
+@EnableConfigurationProperties(MongoDBConfiguration.class)
 public class SpringDataMongoV2Context extends SpringDataMongoV2ContextBase<MongockConfiguration, SpringDataMongoV2Driver> {
 
   @Override
