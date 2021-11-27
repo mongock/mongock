@@ -10,7 +10,7 @@
   <modelVersion>4.0.0</modelVersion>
 
   <name>Mongock main BOM for community distribution</name>
-  <artifactId>mongock-bom</artifactId>
+  <artifactId>mongock-community-bom</artifactId>
   <packaging>pom</packaging>
   <description>Mongock for community dependency management</description>
   <url>https://github.com/mongock/mongock/mongock-bom</url>
@@ -23,9 +23,6 @@
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
     <maven.javadoc.failOnError>false</maven.javadoc.failOnError>
 
-    <core.version>${project.version}</core.version>
-    <mongodb.version>${project.version}</mongodb.version>
-    <dynamodb.version>5.0.28.BETA-SNAPSHOT</dynamodb.version>
   </properties>
 
   <dependencyManagement>
@@ -35,7 +32,7 @@
       <dependency>
         <groupId>io.mongock</groupId>
         <artifactId>mongock-core-bom</artifactId>
-        <version>${core.version}</version>
+        <version>${project.version}</version>
         <type>pom</type>
         <scope>import</scope>
       </dependency>
@@ -44,19 +41,11 @@
       <dependency>
         <groupId>io.mongock</groupId>
         <artifactId>mongock-driver-mongodb-bom</artifactId>
-        <version>${mongodb.version}</version>
+        <version>${project.version}</version>
         <type>pom</type>
         <scope>import</scope>
       </dependency>
 
-      <!-- DynamoDB -->
-      <dependency>
-        <groupId>io.mongock</groupId>
-        <artifactId>mongock-driver-dynamodb-bom</artifactId>
-        <version>${dynamodb.version}</version>
-        <type>pom</type>
-        <scope>import</scope>
-      </dependency>
     </dependencies>
   </dependencyManagement>
 

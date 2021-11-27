@@ -15,7 +15,7 @@
   <modules>
     <module>mongock-core</module>
     <module>drivers</module>
-    <module>mongock-bom</module>
+    <module>mongock-community-bom</module>
   </modules>
 
 
