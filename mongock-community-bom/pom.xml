@@ -10,7 +10,7 @@
   <modelVersion>4.0.0</modelVersion>
 
   <name>Mongock main BOM for community distribution</name>
-  <artifactId>mongock-bom</artifactId>
+  <artifactId>mongock-community-bom</artifactId>
   <packaging>pom</packaging>
   <description>Mongock for community dependency management</description>
   <url>https://github.com/mongock/mongock/mongock-bom</url>
