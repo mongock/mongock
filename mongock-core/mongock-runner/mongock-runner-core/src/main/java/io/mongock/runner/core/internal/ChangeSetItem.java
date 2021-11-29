@@ -39,8 +39,7 @@ public class ChangeSetItem implements ChangePrintable {
                        Method rollbackMethod) {
     if (id == null || id.trim().isEmpty()) {
       throw new MongockException("id cannot be null or empty.");
-    }
-    else if (author == null) {
+    } else if (author == null) {
       throw new MongockException("author cannot be null.");
     }
     this.id = id;

@@ -1,6 +1,7 @@
 package io.mongock.runner.core.internal;
 
 import io.mongock.api.exception.MongockException;
+import io.mongock.utils.StringUtils;
 
 import java.lang.reflect.Method;
 import java.util.ArrayList;
@@ -41,7 +42,7 @@ public class ChangeLogItem<CHANGESET extends ChangeSetItem> {
       Method rollbackExecutionMethod,
       Method beforeMethod,
       Method rollbackBeforeMethod) {
-    if(author == null || author.trim().isEmpty()) {
+    if(!StringUtils.hasText(author)) {
       throw new MongockException("author cannot be null or empty.");
     }
     ChangeSetItem changeSet = new ChangeSetItem(
