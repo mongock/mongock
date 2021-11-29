@@ -41,6 +41,9 @@ public class ChangeLogItem<CHANGESET extends ChangeSetItem> {
       Method rollbackExecutionMethod,
       Method beforeMethod,
       Method rollbackBeforeMethod) {
+    if(author == null || author.trim().isEmpty()) {
+      throw new MongockException("author cannot be null or empty.");
+    }
     ChangeSetItem changeSet = new ChangeSetItem(
         baseId,
         author,
