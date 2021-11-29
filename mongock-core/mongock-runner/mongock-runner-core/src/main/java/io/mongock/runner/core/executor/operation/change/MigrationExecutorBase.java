@@ -55,7 +55,6 @@ public abstract class MigrationExecutorBase<CONFIG extends ChangeExecutorConfigu
   protected final Set<ChangeLogItem<ChangeSetItem>> changeLogs;
   protected final Map<String, Object> metadata;
   private final ChangeLogRuntime changeLogRuntime;
-  private final String defaultAuthor;
   protected boolean executionInProgress = false;
   protected final String executionId;
   private final TransactionStrategy transactionStrategy;
@@ -76,7 +75,6 @@ public abstract class MigrationExecutorBase<CONFIG extends ChangeExecutorConfigu
     this.changeLogs = changeLogs;
     this.globalTransactionEnabled = config.getTransactionEnabled().orElse(null);
     this.transactionStrategy = config.getTransactionStrategy();
-    this.defaultAuthor = config.getDefaultMigrationAuthor();
   }
 
   @Override
@@ -338,7 +336,7 @@ public abstract class MigrationExecutorBase<CONFIG extends ChangeExecutorConfigu
     if(executionException == null && rollbackException == null) {
       return ChangeEntry.instance(
           executionId,
-          StringUtils.isNotEmpty(changeSetItem.getAuthor()) ? changeSetItem.getAuthor() : defaultAuthor,
+          changeSetItem.getAuthor(),
           state,
           type,
           changeSetItem.getId(),
@@ -356,7 +354,7 @@ public abstract class MigrationExecutorBase<CONFIG extends ChangeExecutorConfigu
     }
     return ChangeEntry.failedInstance(
         executionId,
-        StringUtils.isNotEmpty(changeSetItem.getAuthor()) ? changeSetItem.getAuthor() : defaultAuthor,
+        changeSetItem.getAuthor(),
         state,
         type,
         changeSetItem.getId(),

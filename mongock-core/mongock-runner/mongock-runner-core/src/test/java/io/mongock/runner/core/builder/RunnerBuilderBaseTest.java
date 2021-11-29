@@ -39,6 +39,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -151,6 +152,26 @@ public class RunnerBuilderBaseTest {
     exceptionExpected.expect(MongockException.class);
     exceptionExpected.expectMessage("ChangeLogService error");
     builder.buildRunner();
+
+
+  }
+
+
+  @Test
+  public void shouldPassDefaultAuthorToChangeLogService() {
+
+    ChangeLogService changeLogService = new ChangeLogService();
+    ChangeLogService changeLogServiceSpy = spy(changeLogService);
+
+    RunnerBuilderBase builder = runnerBuilderBaseInstance(changeLogServiceSpy);
+    builder.setDriver(driver);
+    MongockConfiguration config = new MongockConfiguration();
+    config.setChangeLogsScanPackage(Collections.singletonList("package"));
+    builder.setConfig(config);
+
+    builder.buildRunner();
+
+    Mockito.verify(changeLogServiceSpy).setDefaultMigrationAuthor("default_author");
 
 
   }

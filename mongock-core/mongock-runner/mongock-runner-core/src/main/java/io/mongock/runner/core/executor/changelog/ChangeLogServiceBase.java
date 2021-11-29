@@ -49,6 +49,7 @@ public abstract class ChangeLogServiceBase<CHANGELOG extends ChangeLogItem<CHANG
   private List<Class<?>> changeLogsBaseClassList = Collections.emptyList();
   private ArtifactVersion startSystemVersion = new DefaultArtifactVersion("0");
   private ArtifactVersion endSystemVersion = new DefaultArtifactVersion(String.valueOf(Integer.MAX_VALUE));
+  private String defaultMigrationAuthor = null;
 
   public ChangeLogServiceBase(AnnotationProcessor annotationProcessor, LegacyAnnotationProcessor<CHANGESET> legacyAnnotationProcessor) {
     this.legacyAnnotationProcessor = legacyAnnotationProcessor;
@@ -105,6 +106,14 @@ public abstract class ChangeLogServiceBase<CHANGELOG extends ChangeLogItem<CHANG
 
   protected Optional<Function<Class<?>, Object>> getChangeLogInstantiator() {
     return Optional.ofNullable(changeLogInstantiator);
+  }
+
+  public String getDefaultMigrationAuthor() {
+    return defaultMigrationAuthor;
+  }
+
+  public void setDefaultMigrationAuthor(String defaultMigrationAuthor) {
+    this.defaultMigrationAuthor = defaultMigrationAuthor;
   }
 
   @Override

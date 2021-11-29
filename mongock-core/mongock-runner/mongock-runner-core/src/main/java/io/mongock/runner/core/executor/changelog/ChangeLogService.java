@@ -7,6 +7,7 @@ import io.mongock.api.exception.MongockException;
 import io.mongock.runner.core.annotation.AnnotationProcessor;
 import io.mongock.runner.core.annotation.LegacyAnnotationProcessor;
 import io.mongock.runner.core.annotation.LegacyLegacyAnnotationProcessor;
+import io.mongock.utils.StringUtils;
 
 import java.lang.reflect.AnnotatedElement;
 import java.util.ArrayList;
@@ -67,7 +68,7 @@ public class ChangeLogService extends ChangeLogServiceBase<ChangeLogItem<ChangeS
     return ChangeLogItem.getFromAnnotation(
         changeUnitClass,
         changeUnit.id(),
-        changeUnit.author(),
+        StringUtils.hasText(changeUnit.author()) ? changeUnit.author() : getDefaultMigrationAuthor(),
         changeUnit.order(),
         changeUnit.failFast(),
         changeUnit.transactional(),

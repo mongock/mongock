@@ -175,13 +175,14 @@ public abstract class RunnerBuilderBase<
   private SortedSet<CHANGELOG> getChangeLogs() {
     List<Class<?>> changeLogsScanClasses = new ArrayList<>();
     List<String> changeLogsScanPackage = new ArrayList<>();
-    for (String itemPath : config.getChangeLogsScanPackage()) {
+    for (String itemPath : config.getMigrationScanPackage()) {
       try {
         changeLogsScanClasses.add(ClassLoader.getSystemClassLoader().loadClass(itemPath));
       } catch (ClassNotFoundException e) {
         changeLogsScanPackage.add(itemPath);
       }
     }
+    changeLogService.setDefaultMigrationAuthor(config.getDefaultMigrationAuthor());
     changeLogService.setChangeLogsBasePackageList(changeLogsScanPackage);
     changeLogService.setChangeLogsBaseClassList(changeLogsScanClasses);
     changeLogService.setStartSystemVersion(config.getStartSystemVersion());
