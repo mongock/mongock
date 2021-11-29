@@ -17,6 +17,8 @@ import io.mongock.runner.core.changelogs.test1.ChangeLogSuccess11;
 import io.mongock.runner.core.changelogs.test1.ChangeLogSuccess12;
 import io.mongock.runner.core.changelogs.withDuplications.changesetsduplicated.ChangeLogDuplicated1;
 import io.mongock.runner.core.changelogs.withRollback.BasicChangeLogWithRollback;
+import io.mongock.runner.core.changelogs.with_author_empty.ChangeLogWithAuthorEmpty;
+import io.mongock.runner.core.changelogs.with_author_empty.ChangeUnitWithAuthorEmpty;
 import io.mongock.runner.core.changelogs.withnoannotations.ChangeLogNormal;
 import io.mongock.runner.core.executor.changelog.ChangeLogService;
 import io.mongock.runner.core.internal.ChangeLogItem;
@@ -106,6 +108,35 @@ public class ChangeLogServiceTest {
     // ChangeLog annotated class, with no annotated changeSet
     changeLogItem = changeLogItemList.get(2);
     assertEquals(0, changeLogItem.getChangeSetItems().size());
+  }
+
+
+  @Test
+  public void shouldNotThrowException_whenAuthorIsEmpty_IfOldChangeLog() {
+    List<ChangeLogItem<ChangeSetItem>> changeLogItemList = new ArrayList<>(new ChangeLogService(
+        Collections.emptyList(),
+        Collections.singletonList(ChangeLogWithAuthorEmpty.class),
+        "0",
+        "9999"
+    ).fetchChangeLogs());
+    assertEquals(1, changeLogItemList.size());
+    ChangeSetItem changeSetItem = changeLogItemList.get(0).getChangeSetItems().get(0);
+    assertEquals("changeSet_0", changeSetItem.getId());
+
+  }
+
+  @Test
+  public void shouldNotThrowException_whenAuthorIsEmpty_IfChanngeUnit() {
+    List<ChangeLogItem<ChangeSetItem>> changeLogItemList = new ArrayList<>(new ChangeLogService(
+        Collections.emptyList(),
+        Collections.singletonList(ChangeUnitWithAuthorEmpty.class),
+        "0",
+        "9999"
+    ).fetchChangeLogs());
+    assertEquals(1, changeLogItemList.size());
+    ChangeSetItem changeSetItem = changeLogItemList.get(0).getChangeSetItems().get(0);
+    assertEquals("changeSet_0", changeSetItem.getId());
+
   }
 
   @Test
