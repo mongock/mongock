@@ -73,11 +73,11 @@ public class ChangeLogServiceTest {
 
     MongockException ex = Assert.assertThrows(MongockException.class, () ->
         new ArrayList<>(new ChangeLogService(
-          Collections.singletonList(ChangeLogDuplicated1.class.getPackage().getName()),
-          Collections.emptyList(),
-          "0",
-          "9999"
-      ).fetchChangeLogs())
+            Collections.singletonList(ChangeLogDuplicated1.class.getPackage().getName()),
+            Collections.emptyList(),
+            "0",
+            "9999"
+        ).fetchChangeLogs())
     );
 
     assertTrue(ex.getMessage().contains("duplicated"));
@@ -126,17 +126,15 @@ public class ChangeLogServiceTest {
   }
 
   @Test
-  public void shouldNotThrowException_whenAuthorIsEmpty_IfChanngeUnit() {
-    List<ChangeLogItem<ChangeSetItem>> changeLogItemList = new ArrayList<>(new ChangeLogService(
-        Collections.emptyList(),
-        Collections.singletonList(ChangeUnitWithAuthorEmpty.class),
-        "0",
-        "9999"
-    ).fetchChangeLogs());
-    assertEquals(1, changeLogItemList.size());
-    ChangeSetItem changeSetItem = changeLogItemList.get(0).getChangeSetItems().get(0);
-    assertEquals("changeSet_0", changeSetItem.getId());
-
+  public void shouldThrowException_whenAuthorIsEmpty_IfChangeUnit() {
+    MongockException ex = Assert.assertThrows(MongockException.class, () ->
+        new ChangeLogService(
+            Collections.emptyList(),
+            Collections.singletonList(ChangeUnitWithAuthorEmpty.class),
+            "0",
+            "9999"
+        ).fetchChangeLogs());
+    assertEquals("author cannot be null or empty.", ex.getMessage());
   }
 
   @Test
@@ -252,12 +250,12 @@ public class ChangeLogServiceTest {
     ChangeSetItem changeSet2 = changeLogPackage.getChangeSetItems().get(0);
     ChangeSetItem changeSet3 = changeLogPackage.getChangeSetItems().get(1);
 
-    
+
     assertEquals("no_package", changeSet2.getId());
     assertEquals("noPackage", changeSet2.getMethod().getName());
     assertEquals("no_package_2", changeSet3.getId());
     assertEquals("noPackage2", changeSet3.getMethod().getName());
-    
+
 
     //package 2
     changeLogPackage = changeLogItemList.get(2);
@@ -291,7 +289,7 @@ public class ChangeLogServiceTest {
 
     assertEquals(2, changeLogItemList.size());
     changeLogItemList.forEach(changeLogItem -> assertTrue(changeLogItem.getType() == Comparator1ChangeLog.class
-            || changeLogItem.getType() == Comparator2ChangeLog.class));
+        || changeLogItem.getType() == Comparator2ChangeLog.class));
 
   }
 
@@ -528,7 +526,7 @@ public class ChangeLogServiceTest {
     //changeset
     assertEquals(AnnotatedChangeLog.class.getSimpleName(), changeSetItem.getId());
     assertEquals("changeSet", changeSetItem.getMethod().getName());
-    assertFalse( changeSetItem.getRollbackMethod().isPresent());
+    assertFalse(changeSetItem.getRollbackMethod().isPresent());
     assertEquals("mongock_test", changeSetItem.getAuthor());
     assertEquals("3", changeLogItem.getOrder());
     assertEquals("1", changeSetItem.getOrder());
@@ -559,7 +557,7 @@ public class ChangeLogServiceTest {
     //changeset
     assertEquals(AnnotatedChangeLog.class.getSimpleName(), changeSetItem.getId());
     assertEquals("changeSet", changeSetItem.getMethod().getName());
-    assertFalse( changeSetItem.getRollbackMethod().isPresent());
+    assertFalse(changeSetItem.getRollbackMethod().isPresent());
     assertEquals("mongock_test", changeSetItem.getAuthor());
     assertEquals("3", changeLogItem.getOrder());
     assertEquals("1", changeSetItem.getOrder());
@@ -626,7 +624,7 @@ public class ChangeLogServiceTest {
     assertEquals(0, annotatedChangeLogItem.getBeforeItems().size());
     assertEquals(AnnotatedChangeLog.class.getSimpleName(), annotatedChangeSetItem.getId());
     assertEquals("changeSet", annotatedChangeSetItem.getMethod().getName());
-    assertFalse( annotatedChangeSetItem.getRollbackMethod().isPresent());
+    assertFalse(annotatedChangeSetItem.getRollbackMethod().isPresent());
     assertEquals("mongock_test", annotatedChangeSetItem.getAuthor());
     assertEquals("3", annotatedChangeLogItem.getOrder());
     assertEquals("1", annotatedChangeSetItem.getOrder());
