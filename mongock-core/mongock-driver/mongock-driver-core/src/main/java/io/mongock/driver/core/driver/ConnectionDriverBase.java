@@ -26,8 +26,8 @@ public abstract class ConnectionDriverBase implements ConnectionDriver {
 
   protected boolean initialized = false;
   protected LockManager lockManager = null;
-  protected String migrationRepositoryName2;
-  protected String lockRepositoryName2 ;
+  protected String migrationRepositoryName;
+  protected String lockRepositoryName;
   protected boolean indexCreation = true;
 
 
@@ -69,27 +69,27 @@ public abstract class ConnectionDriverBase implements ConnectionDriver {
 
   @Override
   public final void setMigrationRepositoryName(String migrationRepositoryName) {
-    if(migrationRepositoryName != null || this.migrationRepositoryName2 == null) {
-      this.migrationRepositoryName2 = migrationRepositoryName;
+    if(migrationRepositoryName != null || this.migrationRepositoryName == null) {
+      this.migrationRepositoryName = migrationRepositoryName;
     }
   }
 
   @Override
   public final void setLockRepositoryName(String lockRepositoryName) {
-    if(lockRepositoryName != null || this.lockRepositoryName2 == null) {
-      this.lockRepositoryName2 = lockRepositoryName;
+    if(lockRepositoryName != null || this.lockRepositoryName == null) {
+      this.lockRepositoryName = lockRepositoryName;
     }
   }
 
   @Override
   public final String getMigrationRepositoryName() {
-    return migrationRepositoryName2 != null ? migrationRepositoryName2 : DEFAULT_MIGRATION_REPOSITORY_NAME;
+    return migrationRepositoryName != null ? migrationRepositoryName : DEFAULT_MIGRATION_REPOSITORY_NAME;
   };
 
   @Override
   public final String getLockRepositoryName() {
 
-    return lockRepositoryName2 != null ? lockRepositoryName2 : DEFAULT_LOCK_REPOSITORY_NAME;
+    return lockRepositoryName != null ? lockRepositoryName : DEFAULT_LOCK_REPOSITORY_NAME;
   }
 
 
