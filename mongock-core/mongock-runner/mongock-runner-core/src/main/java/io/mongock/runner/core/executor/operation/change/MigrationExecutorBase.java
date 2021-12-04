@@ -347,10 +347,11 @@ public abstract class MigrationExecutorBase<CONFIG extends ChangeExecutorConfigu
           metadata);
     }
     Map<String, String> errorMap = new HashMap<>();
-    errorMap.put("execution-error", io.mongock.utils.StringUtils.getStackTrace(executionException));
+    if (executionException != null) {
+      errorMap.put("execution-error", io.mongock.utils.StringUtils.getStackTrace(executionException));
+    }
     if (rollbackException != null) {
       errorMap.put("rollback-error", io.mongock.utils.StringUtils.getStackTrace(rollbackException));
-
     }
     return ChangeEntry.failedInstance(
         executionId,
