@@ -4,7 +4,7 @@
 
 ### PRIORITY
 
-[Choose the label best describe the severity of your issue: CRITICAL, normal or minor]
+[CRITICAL, NORMAL or MINOR]
 
 ### Steps to Reproduce
 
@@ -30,7 +30,7 @@
 
 ### Link to repository using Mongock
 
-[While no mandatory, accessing to the real code that uses Mongock, would help to solve the issue]
+[While not mandatory, accessing to the real code that uses Mongock, would help to solve the issue]
 
 ### Additional Information
 
