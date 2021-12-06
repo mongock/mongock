@@ -7,7 +7,8 @@
 
 
 ## Getting started
-<p style="background-color: #e7f6f0; background-position: 9px 0px; background-repeat: no-repeat; border: solid 1px #27ae60; border-radius: 6px;line-height: 18px;overflow: hidden;padding: 15px 60px;">
+
+<p style="background-color: #e7f6f0;border: solid 1px #27ae60;;padding: 15px 60px;">
 If you want to contribute making a pr, visit our [contribution requested page](https://github.com/mongock/mongock/labels/contribution-requested) and you will find good candidates
 </p>
  
