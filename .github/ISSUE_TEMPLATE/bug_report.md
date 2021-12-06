@@ -1,38 +1,41 @@
----
-name: Bug report
-about: Create a report to help us improve
-title: ''
-labels: ''
-assignees: ''
 
----
+## Description
 
-**Describe the bug**
-A clear and concise description of what the bug is.
+[Description of the issue]
 
-**To Reproduce**
-Steps to reproduce the behavior:
-1. Go to '...'
-2. Click on '....'
-3. Scroll down to '....'
-4. See error
+## PRIORITY
 
-**Expected behavior**
-A clear and concise description of what you expected to happen.
+[CRITICAL, NORMAL or MINOR]
 
-**Screenshots**
-If applicable, add screenshots to help explain your problem.
+## Version and environment
 
-**Desktop (please complete the following information):**
- - OS: [e.g. iOS]
- - Browser [e.g. chrome, safari]
- - Version [e.g. 22]
+### Mongock
+- Mongock version
+- Modules involved(springboot, standalone, MongoDB, DynamoDB, etc.)
+- How Mongock is used(builder or annotation approach, etc.)
 
-**Smartphone (please complete the following information):**
- - Device: [e.g. iPhone6]
- - OS: [e.g. iOS8.1]
- - Browser [e.g. stock browser, safari]
- - Version [e.g. 22]
+### Environment
+- Framework and libraries versions. Especially those that affect directly to Mongock(Spring, Spring data, MongoDB driver, etc.)
+- Infrastructure: Kubernetes, Docker, SO, etc.
 
-**Additional context**
-Add any other context about the problem here.
+## Steps to Reproduce
+
+1. [First Step]
+2. [Second Step]
+3. [and so on...]
+
+## Behaviour
+
+**Expected behavior:** [What you expect to happen]
+
+**Actual behavior:** [What actually happens]
+
+**How often the bug happens:** [What percentage of the time does it reproduce?]
+
+## Link to repository using Mongock
+
+[While not mandatory, accessing to the real code that uses Mongock, would help to solve the issue]
+
+## Additional context
+
+[Any additional information, logs, screenshots, configuration or data that might be necessary to reproduce or understand the issue]
