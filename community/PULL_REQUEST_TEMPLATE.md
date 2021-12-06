@@ -1,7 +1,7 @@
 ### Requirements
 
-* Any PR should come from an registered issue
-* Filling out the template is required. Any pull request that does not include enough information to be reviewed in a timely manner may be closed at the maintainers' discretion.
+* Any PR should come from a registered issue
+* Filling out the template isd required. Any pull request that does not include enough information to be reviewed in a timely manner may be closed at the maintainers' discretion.
 * All new code requires tests
 * All new code requires to fit the code standards
 
