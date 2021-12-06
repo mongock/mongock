@@ -1,6 +1,6 @@
  # Contributing to Mongock project
 
- :+1::tada: First off, thanks for taking the time to contribute! :tada::+1:
+:tada: First off, thanks for taking the time to contribute! :tada:
 
  The following is a set of guidelines for contributing to Mongock project which is hosted on GitHub. These are mostly guidelines, not rules. Use your best judgment, and feel
  free to propose changes to this document in a pull request.
@@ -8,23 +8,21 @@
 
 ## Getting started
 
+> :boom::rocket: Visit our page of [requested contribution](https://github.com/mongock/mongock/labels/contribution-requested) to find out the best candidates and which of them are rewarded!!
 
-> :boom::rocket: If you want to contribute by making a [pull request](#pull-requests), visit our [contribution requested page](https://github.com/mongock/mongock/labels/contribution-requested) and you will find good candidates
-
- 
 Contributions are made to this repo via **issues**, **discussions** and **pull request**.
 
 Within the Pull Request section, there is a special kind of contribution that deserves special attention:  [Creation of new drivers](#providing-a-new-driver)
 
 
-### Issues
+## Issues
 For raising a new issue, please visit this [link](https://github.com/mongock/mongock/issues/new?assignees=&labels=&template=bug_report.md&title=), fills the template and submit it. 
 You will hear from us shortly.
 
-### Discussions
+## Discussions
 For general **Q&A**s, **Ideas**, **comment on any release** or anything you want to raise, but it's not an issue, please visit the [discussion page](https://github.com/mongock/mongock/discussions)
 
-### Pull requests
+## Pull requests
 
 To perform a pull request, please follow these steps:
 1. Create an issue spotting the bug or change your PR will address
@@ -39,7 +37,7 @@ To perform a pull request, please follow these steps:
 
 Contributors making pull requests, will be listed in our [contributor page](https://www.mongock.io/v5/contribution/contributors)
 
-### Providing a new driver
+## Providing a new driver
 
 Submitting a new driver is considered the highest level of external contribution. On top of being in our [contributor page](https://www.mongock.io/v5/contribution/contributors), this kind o contribution are often compensated with bounties.
 
