@@ -6,15 +6,20 @@
 
 [CRITICAL, NORMAL or MINOR]
 
+### Version and environment
+#### Mongock
+- Mongock version
+- Modules used(springboot, standalone, MongoDB, DynamoDB, etc.)
+- How Mongock is used(builder or annotation approach, etc.)
+#### Environment 
+- Framework and libraries versions. Especially those that affect directly to Mongock(Spring, Spring data, MongoDB driver, etc.)
+- Infrastructure: Kubernetes, Docker, SO, etc.
+
 ### Steps to Reproduce
 
 1. [First Step]
 2. [Second Step]
 3. [and so on...]
-
-### Specific scenario
-
-[You can describe your specific scenario and how this bugs is affecting you]
 
 ### Behaviour
 
@@ -24,14 +29,10 @@
 
 **Reproduces how often:** [What percentage of the time does it reproduce?]
 
-### Version
-
-[You can get this information from your maven pom or gradle build file]
-
 ### Link to repository using Mongock
 
 [While not mandatory, accessing to the real code that uses Mongock, would help to solve the issue]
 
 ### Additional Information
 
-[Any additional information, configuration or data that might be necessary to reproduce the issue]
+[Any additional information, logs, screenshots, configuration or data that might be necessary to reproduce or understand the issue]

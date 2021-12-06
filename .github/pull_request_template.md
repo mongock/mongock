@@ -1,18 +1,20 @@
+### Issue reference
 
-## Title of the work done
-Brief title of the PR
+[Reference or link to the issue covered in the PR]
 
+### Description and context
 
-## Issue
+[The code should be self explanatory. However this should help us to understand what your code does, any specific pattern or design used, etc.]
 
-> [Issue <ISSUE_NUMBE>](https://github.com/mongock/mongock/issues/<ISSUE_NUMBE>)
+### Benefits
 
-## Description and context
+[What benefits will be realized by the code change?]
 
-A clear and concise description/explanation.
+### Possible Drawbacks
 
+[What are the possible side-effects or negative impacts of the code change?]
 
-## Checklist before PR
+### Checklist 
 - [ ] Unit tests provided
 - [ ] Integration tests provided 
 - [ ] Documentation updated in [documentation project](https://github.com/mongock/mongock-docs)
