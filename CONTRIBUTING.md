@@ -8,9 +8,9 @@
 
 ## Getting started
 
-<p style="background-color: #e7f6f0;border: solid 1px #27ae60;;padding: 15px 60px;">
+<span style="background-color: #e7f6f0;border: solid 1px #27ae60;;padding: 15px 60px;">
 If you want to contribute making a pr, visit our [contribution requested page](https://github.com/mongock/mongock/labels/contribution-requested) and you will find good candidates
-</p>
+</span>
  
 Contributions are made to this repo via **issues**, **discussions** and **pull request**.
 
