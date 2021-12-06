@@ -8,9 +8,9 @@
 
 ## Getting started
 
-<span style="color: #e7f6f0">
-If you want to contribute making a pr, visit our [contribution requested page](https://github.com/mongock/mongock/labels/contribution-requested) and you will find good candidates
-</span>
+
+> :BOOM::BOOM: If you want to contribute making a pr, visit our [contribution requested page](https://github.com/mongock/mongock/labels/contribution-requested) and you will find good candidates
+
  
 Contributions are made to this repo via **issues**, **discussions** and **pull request**.
 
