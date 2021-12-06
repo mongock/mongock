@@ -43,7 +43,7 @@ Please read the [code of conduct][codeOfConduct] for details on our code of cond
 ## LICENSE
 Mongock propject is licensed under the [Apache License Version 2.0][apacheLicense]. See the [LICENSE][mongockLicense] file for details
 
-[contributing]: ./community/CONTRIBUTING.md
+[contributing]: CONTRIBUTING.md
 [codeOfConduct]: ./community/CODE_OF_CONDUCT.md
 [mongockLicense]: ./LICENSE.md
 

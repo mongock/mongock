@@ -28,7 +28,7 @@
 
 ## Code of Conduct
 
-This project and everyone participating in it is governed by the [Mongock Code of Conduct](CODE_OF_CONDUCT.md). By participating, you are expected to uphold this code. 
+This project and everyone participating in it is governed by the [Mongock Code of Conduct](community/CODE_OF_CONDUCT.md). By participating, you are expected to uphold this code. 
 Please report unacceptable behavior to [dev@cloudyrock.io][dev_email].
 
 ## It's just a question, I don't want to read this whole thing!!!
