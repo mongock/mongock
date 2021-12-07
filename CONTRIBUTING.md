@@ -19,7 +19,7 @@ You will hear from us shortly.
 **Contributor raising a valid issue(or solving it) will get listed in our [contributor list](https://github.com/mongock/mongock/blob/master/CONTRIBUTORS.md).**
 
 ## Discussions :loud_sound:
-For general **Q&A**s, **Ideas**, **comment on any release** or anything you want to raise, but it's not an issue, please visit the [discussion page](https://github.com/mongock/mongock/discussions).
+For general **Q&A**s, **ideas**, comment on any **release** or anything you want to raise, but it's not an issue, please visit the [discussion page](https://github.com/mongock/mongock/discussions).
 
 
 **Contributor starting a valid discussion(or participates in it) will get listed in our [contributor list](https://github.com/mongock/mongock/blob/master/CONTRIBUTORS.md).**
@@ -28,9 +28,6 @@ For general **Q&A**s, **Ideas**, **comment on any release** or anything you want
 ## Code contribution :boom:
 
 This type of contribution consists in actually getting involved in the Mongock's development. It's performed by raising a pull request for a given issue.
-
-Within this area, contributing in the development of new drivers gets special attention, and it will be rewarded with bounties mos of the cases. Contact the [mongock team](mailto:development@mongock.io) for mor information.
-
 
 ### Pull requests 
 
@@ -47,13 +44,11 @@ To perform a pull request, please follow these steps:
 **Contributor raising successful pul request will get listed with special mention in our [contributor list](https://github.com/mongock/mongock/blob/master/CONTRIBUTORS.md).**
 
 
-Contributors making pull requests, will be listed in our [contributor page](https://www.mongock.io/v5/contribution/contributors)
-
 ### Implementing a new driver
 
-Providing a new driver is considered the highest level of external contribution. On top of being in our [contributor page](https://www.mongock.io/v5/contribution/contributors), these kind of contributions are often compensated with bounties.
+Providing a new driver is considered the highest level of external contribution. On top of being in our [contributor page](https://www.mongock.io/v5/contribution/contributors), these kind of contributions are often **compensated with bounties**.
 
-If you want to contribute by providing a driver that is not in our [bounty-list](https://github.com/mongock/mongock/labels/Bounty%20%3Amoney_mouth_face%3A%3Amoneybag%3A), feel free to contact us [here](mailto:support@mongock.io) to check if that specific driver is subject to any bounty.
+If you want to contribute by providing a driver that is not in our [suggested list of drivers](https://github.com/mongock/mongock/labels/driver-requested), feel free to contact us [here](mailto:support@mongock.io) to suggest a new one!
 
 To submit a new driver, please follow these steps:
 
@@ -61,7 +56,7 @@ To submit a new driver, please follow these steps:
 2. Follow the instructions in the README.md inside the repo.
 3. Once you are happy with your changes, raise a pull request as explained in the [pull requests section](#pull-requests)
 
-**Contributor providing a new valid drivers will get listed with special mention in our [contributor list](https://github.com/mongock/mongock/blob/master/CONTRIBUTORS.md) and rewarded with bounties**
+**Contributor providing a new valid driver will be rewarded and listed with special mention in our [contributor list](https://github.com/mongock/mongock/blob/master/CONTRIBUTORS.md)**
 
 ## Rewards :moneybag::moneybag:
 
