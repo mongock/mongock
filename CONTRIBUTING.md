@@ -85,4 +85,3 @@ Steps to work on a bounty-rewarded contribution
 3. Once you have decided in which issue you want to work on(and making sure it's ont already assigned to any other contributor), make a comment in the ticket itself claiming you will be working on it and make yourself an assignee
 
 
-> :rocket: If you are thinking in **providing a new driver that's not listed, it's very likely we'll provide a bounty for it anyway.**. Ask the [mongock team](mailto:development@mongock.io)
