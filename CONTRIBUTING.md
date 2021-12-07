@@ -25,14 +25,14 @@ For general **Q&A**s, **Ideas**, **comment on any release** or anything you want
 **Contributor starting a valid discussion(or participates in it) will get listed in our [contributor list](https://github.com/mongock/mongock/blob/master/CONTRIBUTORS.md).**
 
 
-## Code contribution :boom::boom:
+## Code contribution :boom:
 
 This type of contribution consists in actually getting involved in the Mongock's development. It's performed by raising a pull request for a given issue.
 
 Within this area, contributing in the development of new drivers gets special attention, and it will be rewarded with bounties mos of the cases. Contact the [mongock team](mailto:development@mongock.io) for mor information.
 
 
-### Pull requests :white_check_mark:
+### Pull requests 
 
 To perform a pull request, please follow these steps:
 1. Create an issue spotting the bug or change your PR will address
@@ -49,7 +49,7 @@ To perform a pull request, please follow these steps:
 
 Contributors making pull requests, will be listed in our [contributor page](https://www.mongock.io/v5/contribution/contributors)
 
-### Providing a new driver :sunglasses:
+### Implementing a new driver
 
 Submitting a new driver is considered the highest level of external contribution. On top of being in our [contributor page](https://www.mongock.io/v5/contribution/contributors), this kind o contribution are often compensated with bounties.
 
@@ -72,8 +72,9 @@ a rewarding plan to try to compensate the effort and obviously motivate them to 
 
 - **Discussion rewarding:** Similarly to issues, discussions are really helpful to improve the Mongock project. This area focuses less in fixing, but really helps us in getting new ideas or approaches. In the same way as issues, any contributor who starts(or participates in) a discussion will be recognised and listed in our [contributor list](https://github.com/mongock/mongock/blob/master/CONTRIBUTORS.md).
 
-- **Code contribution rewarding:** This is the highest level of external contribution. In this case the contributor not only gets listed into our [contributor list](https://github.com/mongock/mongock/blob/master/CONTRIBUTORS.md), but obtains a special mention. For requested features we often provide bounties to motivate our community. Visit our list [requested contributions](https://github.com/mongock/mongock/labels/contribution-requested) and see if there is any with a bounty label, indicating the amount :stuck_out_tongue_winking_eye:
+- **Code contribution rewarding:** In this case the contributor not only gets listed into our [contributor list](https://github.com/mongock/mongock/blob/master/CONTRIBUTORS.md), also obtains a special mention. For requested features we often provide bounties to motivate our community. Visit our list [requested contributions](https://github.com/mongock/mongock/labels/contribution-requested) and see if there is any with a bounty label, indicating the amount :stuck_out_tongue_winking_eye:
 
+- **Adding a new driver:** This is a special case within the `code contribution`. You can check our [suggested list of drivers](https://github.com/mongock/mongock/labels/driver-requested) of suggest a different by contacting us [here](mailto:development@mongock.io)
 
 ### Bounty rewarding 
 
