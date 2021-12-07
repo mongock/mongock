@@ -6,9 +6,9 @@
  free to propose changes to this document in a pull request.
 
 
-## Getting started
+## Getting started :rocket:
 
-> :boom::rocket: Visit our page of [requested contribution](https://github.com/mongock/mongock/labels/contribution-requested) to find out the best candidates and which of them are rewarded!!
+> :boom: Visit our page of [requested contribution](https://github.com/mongock/mongock/labels/contribution-requested) to find out the best candidates and which of them are rewarded!!
 
 Contributions are made to this repo via **issues**, **discussions** and **code contributions**.
 
@@ -17,10 +17,6 @@ For raising a new issue, please visit this [link](https://github.com/mongock/mon
 You will hear from us shortly.
 
 **Contributor raising a valid issue(or solving it) will get listed in our [contributor list](https://github.com/mongock/mongock/blob/master/CONTRIBUTORS.md).**
-
-
-## Discussions :speaking_head:
-
 
 ## Discussions :loud_sound:
 For general **Q&A**s, **Ideas**, **comment on any release** or anything you want to raise, but it's not an issue, please visit the [discussion page](https://github.com/mongock/mongock/discussions).
@@ -79,7 +75,7 @@ a rewarding plan to try to compensate the effort and obviously motivate them to 
 - **Code contribution rewarding:** This is the highest level of external contribution. In this case the contributor not only gets listed into our [contributor list](https://github.com/mongock/mongock/blob/master/CONTRIBUTORS.md), but obtains a special mention. For requested features we often provide bounties to motivate our community. Visit our list [requested contributions](https://github.com/mongock/mongock/labels/contribution-requested) and see if there is any with a bounty label, indicating the amount :stuck_out_tongue_winking_eye:
 
 
-## Bounty rewarding :money_mouth_face:
+### Bounty rewarding 
 
 Steps to work on a bounty-rewarded contribution
 
