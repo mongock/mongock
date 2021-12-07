@@ -12,28 +12,31 @@
 
 Contributions are made to this repo via **issues**, **discussions** and **code contributions**.
 
-## Issues
+## Issues :bug:
 For raising a new issue, please visit this [link](https://github.com/mongock/mongock/issues/new?assignees=&labels=&template=bug_report.md&title=), fills the template and submit it. 
 You will hear from us shortly.
 
 **Contributor raising a valid issue(or solving it) will get listed in our [contributor list](https://github.com/mongock/mongock/blob/master/CONTRIBUTORS.md).**
 
 
-## Discussions
+## Discussions :speaking_head:
+
+
+## Discussions :loud_sound:
 For general **Q&A**s, **Ideas**, **comment on any release** or anything you want to raise, but it's not an issue, please visit the [discussion page](https://github.com/mongock/mongock/discussions).
 
 
 **Contributor starting a valid discussion(or participates in it) will get listed in our [contributor list](https://github.com/mongock/mongock/blob/master/CONTRIBUTORS.md).**
 
 
-## Code contribution
+## Code contribution :boom::boom:
 
 This type of contribution consists in actually getting involved in the Mongock's development. It's performed by raising a pull request for a given issue.
 
 Within this area, contributing in the development of new drivers gets special attention, and it will be rewarded with bounties mos of the cases. Contact the [mongock team](mailto:development@mongock.io) for mor information.
 
 
-### Pull requests
+### Pull requests :white_check_mark:
 
 To perform a pull request, please follow these steps:
 1. Create an issue spotting the bug or change your PR will address
