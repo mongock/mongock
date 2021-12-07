@@ -74,7 +74,7 @@ a rewarding plan to try to compensate the effort and obviously motivate them to 
 
 - **Code contribution rewarding:** In this case the contributor not only gets listed into our [contributor list](https://github.com/mongock/mongock/blob/master/CONTRIBUTORS.md), also obtains a special mention. For requested features we often provide bounties to motivate our community. Visit our list [requested contributions](https://github.com/mongock/mongock/labels/contribution-requested) and see if there is any with a bounty label, indicating the amount :stuck_out_tongue_winking_eye:
 
-- **Adding a new driver:** This is a special case within the `code contribution`. You can check our [suggested list of drivers](https://github.com/mongock/mongock/labels/driver-requested) of suggest a different by contacting us [here](mailto:development@mongock.io)
+- **Adding a new driver:** This is a special case within the `code contribution`. You can check our [suggested list of drivers](https://github.com/mongock/mongock/labels/driver-requested), or suggest a different by contacting us [here](mailto:development@mongock.io)
 
 ### Bounty rewarding 
 
