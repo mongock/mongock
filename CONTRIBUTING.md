@@ -43,14 +43,17 @@ You will hear from us shortly.
 
 
 ## Discussions
-For general **Q&A**s, **Ideas**, **comment on any release** or anything you want to raise, but it's not an issue, please visit the [discussion page](https://github.com/mongock/mongock/discussions)
+For general **Q&A**s, **Ideas**, **comment on any release** or anything you want to raise, but it's not an issue, please visit the [discussion page](https://github.com/mongock/mongock/discussions).
+
 
 **Any contributor who starts a valid discussion(or participates in it) will get listed in our [contributor list](https://github.com/mongock/mongock/blob/master/CONTRIBUTORS.md).**
 
 
 ## Code contribution
 
-Code contributions are highl
+This type of contribution consists in actually getting involved in the Mongock's development. It's performed by raising a pull request for a given issue.
+
+Within this area, contributing in the development of new drivers gets special attention, and it will be rewarded with bounties mos of the cases. Contact the [mongock team](mailto:development@mongock.io) for mor information.
 
 
 ### Pull requests
