@@ -17,18 +17,18 @@ Contributions are made to this repo via **issues**, **discussions** and **code c
 We really value those open-source enthusiasts that want to contribute to the software community, and specially those that help Mongock to get better. That's why we have set
 a rewarding plan to try to compensate the effort and contribution, and obviously motivate them to be part of the Mongock's community.
 
-- Issue rewarding
+- **Issue rewarding**
 
 Submitting an issue is really important in an open-source project and requires an effort from the issuer to submit a valid one, that really represents a problem(or enhancement), and the time to explaining corretly.
 
 For this reason our contributors that raise a valid issue will be recognised and listed in our [contributor list](https://github.com/mongock/mongock/blob/master/CONTRIBUTORS.md).
 
-- Discussion rewarding
+- **Discussion rewarding**
 Similarly to issues, discussions are really helpful to improve Mongock.This area focus less in fixing, but really helps us in getting new idea or approaches.
   
 In the same way as issues, any contributor who starts(or participates in) a discussion will be recognised and listed in our [contributor list](https://github.com/mongock/mongock/blob/master/CONTRIBUTORS.md).
 
-- Code contributions
+- **Code contribution rewarding**
 
 This is obviously the highest level of external contribution. In this case the contributor is not only listed into our [contributor list](https://github.com/mongock/mongock/blob/master/CONTRIBUTORS.md), but gets also a special mention.
 
