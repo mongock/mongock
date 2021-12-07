@@ -21,9 +21,7 @@ a rewarding plan to try to compensate the effort and obviously motivate them to 
 Submitting good issues  that represent real problems(or enhancements) is very important in an open-source project, and requires time and effort. This is why contributors that raise a valid issue will be recognised and listed in our [contributor list](https://github.com/mongock/mongock/blob/master/CONTRIBUTORS.md).
 
 - **Discussion rewarding**
-Similarly to issues, discussions are really helpful to improve Mongock.This area focus less in fixing, but really helps us in getting new idea or approaches.
-  
-In the same way as issues, any contributor who starts(or participates in) a discussion will be recognised and listed in our [contributor list](https://github.com/mongock/mongock/blob/master/CONTRIBUTORS.md).
+Similarly to issues, discussions are really helpful to improve the Mongock project. This area focuses less in fixing, but really helps us in getting new ideas or approaches. In the same way as issues, any contributor who starts(or participates in) a discussion will be recognised and listed in our [contributor list](https://github.com/mongock/mongock/blob/master/CONTRIBUTORS.md).
 
 - **Code contribution rewarding**
 
