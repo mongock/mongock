@@ -50,7 +50,7 @@ To perform a pull request, please follow these steps:
 
 Contributors making pull requests, will be listed in our [contributor page](https://www.mongock.io/v5/contribution/contributors)
 
-### Providing a new driver
+### Providing a new driver :sunglasses:
 
 Submitting a new driver is considered the highest level of external contribution. On top of being in our [contributor page](https://www.mongock.io/v5/contribution/contributors), this kind o contribution are often compensated with bounties.
 
@@ -64,7 +64,7 @@ To submit a new driver, please follow these steps:
 
 **Contributor providing a new driver will get listed with special mention in our [contributor list](https://github.com/mongock/mongock/blob/master/CONTRIBUTORS.md) and most of the case it will subject to bounty rewards**
 
-## Rewards
+## Rewards :moneybag::moneybag:
 
 We really value those open-source enthusiasts that want to contribute to the software community, and specially those that help Mongock to get better. That's why we have set
 a rewarding plan to try to compensate the effort and obviously motivate them to be part of the Mongock's community.
@@ -76,7 +76,7 @@ a rewarding plan to try to compensate the effort and obviously motivate them to 
 - **Code contribution rewarding:** This is the highest level of external contribution. In this case the contributor not only gets listed into our [contributor list](https://github.com/mongock/mongock/blob/master/CONTRIBUTORS.md), but obtains a special mention. For requested features we often provide bounties to motivate our community. Visit our list [requested contributions](https://github.com/mongock/mongock/labels/contribution-requested) and see if there is any with a bounty label, indicating the amount :stuck_out_tongue_winking_eye:
 
 
-## Bounty rewarding
+## Bounty rewarding :money_mouth_face:
 
 Steps to work on a bounty-rewarded contribution
 
