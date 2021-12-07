@@ -39,14 +39,14 @@ Steps to work on a bounty-rewarded contribution
 For raising a new issue, please visit this [link](https://github.com/mongock/mongock/issues/new?assignees=&labels=&template=bug_report.md&title=), fills the template and submit it. 
 You will hear from us shortly.
 
-**Any contributor who raises a valid issue will get listed in our [contributor list](https://github.com/mongock/mongock/blob/master/CONTRIBUTORS.md).**
+**Contributor raising a valid issue(or solving it) will get listed in our [contributor list](https://github.com/mongock/mongock/blob/master/CONTRIBUTORS.md).**
 
 
 ## Discussions
 For general **Q&A**s, **Ideas**, **comment on any release** or anything you want to raise, but it's not an issue, please visit the [discussion page](https://github.com/mongock/mongock/discussions).
 
 
-**Any contributor who starts a valid discussion(or participates in it) will get listed in our [contributor list](https://github.com/mongock/mongock/blob/master/CONTRIBUTORS.md).**
+**Contributor starting a valid discussion(or participates in it) will get listed in our [contributor list](https://github.com/mongock/mongock/blob/master/CONTRIBUTORS.md).**
 
 
 ## Code contribution
@@ -68,6 +68,8 @@ To perform a pull request, please follow these steps:
 7. Raise a pull request for the actual change in the Mongock project, filling up the form you will find and providing the documentation pull request.
 8. We'll review both of them shortly and will let you know if any further change or explanation is required or we have everything we need to merge into `develop` branch
 
+**Contributor raising successful pul request will get listed with special mention in our [contributor list](https://github.com/mongock/mongock/blob/master/CONTRIBUTORS.md).**
+
 
 Contributors making pull requests, will be listed in our [contributor page](https://www.mongock.io/v5/contribution/contributors)
 
@@ -83,3 +85,4 @@ To submit a new driver, please follow these steps:
 2. Follow the instructions in the README.md inside the repo.
 3. Once you are happy with your changes, raise a pull request as explained in the [pull requests section](#pull-requests)
 
+**Contributor providing a new driver will get listed with special mention in our [contributor list](https://github.com/mongock/mongock/blob/master/CONTRIBUTORS.md) and most of the case it will subject to bounty rewards**
