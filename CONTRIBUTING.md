@@ -48,7 +48,7 @@ To perform a pull request, please follow these steps:
 
 Providing a new driver is considered the highest level of external contribution. On top of being in our [contributor page](https://www.mongock.io/v5/contribution/contributors), these kind of contributions are often **compensated with bounties**.
 
-If you want to contribute by providing a driver that is not in our [suggested list of drivers](https://github.com/mongock/mongock/labels/driver-requested), feel free to contact us [here](mailto:support@mongock.io) to suggest a new one!
+If you want to implement a driver not listed in our [suggested drivers](https://github.com/mongock/mongock/labels/driver-requested), feel free to contact us [here](mailto:support@mongock.io) to make a suggestion.
 
 To submit a new driver, please follow these steps:
 
