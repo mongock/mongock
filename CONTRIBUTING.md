@@ -15,13 +15,10 @@ Contributions are made to this repo via **issues**, **discussions** and **code c
 ## Rewards
 
 We really value those open-source enthusiasts that want to contribute to the software community, and specially those that help Mongock to get better. That's why we have set
-a rewarding plan to try to compensate the effort and contribution, and obviously motivate them to be part of the Mongock's community.
+a rewarding plan to try to compensate the effort and obviously motivate them to be part of the Mongock's community.
 
 - **Issue rewarding**
-
-Submitting an issue is really important in an open-source project and requires an effort from the issuer to submit a valid one, that really represents a problem(or enhancement), and the time to explaining corretly.
-
-For this reason our contributors that raise a valid issue will be recognised and listed in our [contributor list](https://github.com/mongock/mongock/blob/master/CONTRIBUTORS.md).
+Submitting good issues  that represent real problems(or enhancements) is very important in an open-source project, and requires time and effort. This is why contributors that raise a valid issue will be recognised and listed in our [contributor list](https://github.com/mongock/mongock/blob/master/CONTRIBUTORS.md).
 
 - **Discussion rewarding**
 Similarly to issues, discussions are really helpful to improve Mongock.This area focus less in fixing, but really helps us in getting new idea or approaches.
