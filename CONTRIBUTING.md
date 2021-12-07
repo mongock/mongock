@@ -1,4 +1,4 @@
- # Contributing to Mongock project
+# Contributing to Mongock project
 
 :tada: First off, thanks for taking the time to contribute! :tada:
 
@@ -34,7 +34,7 @@ This is obviously the highest level of external contribution. In this case the c
 
 Apart from highlighting the effort of "getting the hands dirty", when there is a special requirement for a feature/fix, we provide bounties to motivate our community. Visit our list [requested contributions](https://github.com/mongock/mongock/labels/contribution-requested) and see if there is any with a bounty label, indicating the amount :stuck_out_tongue_winking_eye:
 
-### Bounty rewarding
+## Bounty rewarding
 
 Steps to work on a bounty-rewarded contribution
 
