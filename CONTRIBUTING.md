@@ -49,13 +49,13 @@ Steps to work on a bounty-rewarded contribution
 For raising a new issue, please visit this [link](https://github.com/mongock/mongock/issues/new?assignees=&labels=&template=bug_report.md&title=), fills the template and submit it. 
 You will hear from us shortly.
 
-Any contributor who raises a valid issue will get listed in our [contributor list](https://github.com/mongock/mongock/blob/master/CONTRIBUTORS.md).
+**Any contributor who raises a valid issue will get listed in our [contributor list](https://github.com/mongock/mongock/blob/master/CONTRIBUTORS.md).**
 
 
 ## Discussions
 For general **Q&A**s, **Ideas**, **comment on any release** or anything you want to raise, but it's not an issue, please visit the [discussion page](https://github.com/mongock/mongock/discussions)
 
-Any contributor who starts a valid discussion(or participates in it) will get listed in our [contributor list](https://github.com/mongock/mongock/blob/master/CONTRIBUTORS.md).
+**Any contributor who starts a valid discussion(or participates in it) will get listed in our [contributor list](https://github.com/mongock/mongock/blob/master/CONTRIBUTORS.md).**
 
 
 ## Code contribution
