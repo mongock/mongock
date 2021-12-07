@@ -30,7 +30,7 @@ In the same way as issues, any contributor who starts(or participates in) a disc
 
 - **Code contribution rewarding**
 
-This is obviously the highest level of external contribution. In this case the contributor is not only listed into our [contributor list](https://github.com/mongock/mongock/blob/master/CONTRIBUTORS.md), but gets also a special mention.
+This is the highest level of external contribution. In this case the contributor is not only listed into our [contributor list](https://github.com/mongock/mongock/blob/master/CONTRIBUTORS.md), but gets also a special mention.
 
 Apart from highlighting the effort of "getting the hands dirty", when there is a special requirement for a feature/fix, we provide bounties to motivate our community. Visit our list [requested contributions](https://github.com/mongock/mongock/labels/contribution-requested) and see if there is any with a bounty label, indicating the amount :stuck_out_tongue_winking_eye:
 
@@ -60,6 +60,7 @@ For general **Q&A**s, **Ideas**, **comment on any release** or anything you want
 
 ## Code contribution
 
+Code contributions are highl
 
 
 ### Pull requests
