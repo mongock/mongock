@@ -98,7 +98,7 @@ public interface ChangeLogScanner<SELF extends ChangeLogScanner<SELF, CONFIG>, C
   }
 
   /**
-   * Deprecated. Use addChangeLogsScanPackage instead
+   * Deprecated. Use addMigrationScanPackage instead
    */
   @Deprecated
   default SELF addChangeLogsScanPackage(String migrationScanPackage) {
@@ -106,7 +106,7 @@ public interface ChangeLogScanner<SELF extends ChangeLogScanner<SELF, CONFIG>, C
   }
 
   /**
-   * Deprecated. Use addChangeLogClasses instead
+   * Deprecated. Use addMigrationClasses instead
    */
   @Deprecated
   default SELF addChangeLogClasses(List<Class<?>> classes) {
@@ -114,7 +114,7 @@ public interface ChangeLogScanner<SELF extends ChangeLogScanner<SELF, CONFIG>, C
   }
 
   /**
-   * Deprecated. Use addChangeLogClass instead
+   * Deprecated. Use addMigrationClass instead
    */
   @Deprecated
   default SELF addChangeLogClass(Class<?> clazz) {
