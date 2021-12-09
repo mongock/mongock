@@ -28,6 +28,18 @@ The official documentation is [here][documentation_link], where you can find eve
 ## Examples
 [Mongock examples](https://github.com/mongock/mongock-examples)
     
+## Questions
+Before rasing a question, please check it hasn't been alerady answered in
+1. [Our FAQ section](https://mongock.io/v5/FAQ/index.html)
+2. [Github Q&A section](https://github.com/mongock/mongock/discussions/categories/q-a)
+3. [Stackoverflow](https://stackoverflow.com/search?q=mongock)
+    
+If you cannot find the answer you are looking for, feel free to raise a new question in the [Q&A section](https://github.com/mongock/mongock/discussions/categories/q-a)
+
+## Issues
+
+To raise a new issue, please take a look to [this guide](https://www.mongock.io/v5/contributing/index.html)
+
 ## Contributing
 :tada: First off, thanks for taking the time to contribute! :tada:
 
