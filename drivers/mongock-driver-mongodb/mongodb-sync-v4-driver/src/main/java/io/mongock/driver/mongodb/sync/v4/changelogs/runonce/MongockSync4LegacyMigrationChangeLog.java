@@ -5,6 +5,7 @@ import com.github.cloudyrock.mongock.ChangeSet;
 import io.changock.migration.api.annotations.NonLockGuarded;
 import io.changock.migration.api.annotations.NonLockGuardedType;
 import io.mongock.api.config.LegacyMigration;
+import io.mongock.driver.api.common.SystemChange;
 import io.mongock.driver.api.entry.ChangeEntryService;
 import io.mongock.driver.mongodb.sync.v4.changelogs.LegacyService;
 import com.mongodb.client.MongoDatabase;
@@ -12,6 +13,7 @@ import com.mongodb.client.MongoDatabase;
 import javax.inject.Named;
 
 @ChangeLog(order = "00001")
+@SystemChange(updatesSystemTable = true)
 public class MongockSync4LegacyMigrationChangeLog {
 
 
