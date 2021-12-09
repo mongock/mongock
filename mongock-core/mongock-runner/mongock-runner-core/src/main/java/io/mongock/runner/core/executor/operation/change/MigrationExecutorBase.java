@@ -4,6 +4,7 @@ import com.google.gson.Gson;
 import io.mongock.api.config.TransactionStrategy;
 import io.mongock.api.config.executor.ChangeExecutorConfiguration;
 import io.mongock.api.exception.MongockException;
+import io.mongock.driver.api.common.SystemChange;
 import io.mongock.driver.api.driver.ConnectionDriver;
 import io.mongock.driver.api.entry.ChangeEntry;
 import io.mongock.driver.api.entry.ChangeState;
@@ -126,9 +127,12 @@ public abstract class MigrationExecutorBase<CONFIG extends ChangeExecutorConfigu
       Object changeLogInstance = getChangeLogInstance(changeLog.getType());
       loopRawChangeSets(executionId, executionHostname, changeLogInstance, changeLog, changeLog.getBeforeItems());
       processChangeLogInTransactionIfApplies(executionId, executionHostname, changeLogInstance, changeLog);
+      // todo add a test to ensure the following condition
       // if strategy == changeLog , regardless if the changeLog is transactional, the queue for the changeSets
       // to rollback need to be cleared
-      //todo add a test to ensure this condition
+      if(changeLog.getType().isAnnotationPresent(SystemChange.class) && changeLog.getType().getAnnotation(SystemChange.class).updatesSystemTable()) {
+        loadExecutedChangeEntries();
+      }
       clearChangeSetsToRollbackIfApply(isStrategyPerChangeUnit());
     } catch (Exception e) {
       if (changeLog.isFailFast()) {
