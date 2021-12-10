@@ -5,7 +5,7 @@ import io.mongock.api.annotations.Execution;
 import io.mongock.api.annotations.RollbackExecution;
 import io.mongock.driver.api.common.SystemChange;
 
-@ChangeUnit(id="new-change-unit", order = "2", author = "mongock_test", systemVersion = "1")
+@ChangeUnit(id="new-change-unit", order = "1", author = "mongock_test", systemVersion = "1")
 public class NewChangeUnit {
 
   public static boolean isExecuted = false;

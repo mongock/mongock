@@ -12,6 +12,7 @@ import io.mongock.runner.core.changelogs.instantiator.good.ChangeLogCustomConstr
 import io.mongock.runner.core.changelogs.multipackage.ChangeLogNoPackage;
 import io.mongock.runner.core.changelogs.multipackage.package1.ChangeLogMultiPackage1;
 import io.mongock.runner.core.changelogs.multipackage.package2.ChangeLogMultiPackage2;
+import io.mongock.runner.core.changelogs.system.SystemChangeUnit;
 import io.mongock.runner.core.changelogs.systemversion.ChangeLogSystemVersion;
 import io.mongock.runner.core.changelogs.test1.ChangeLogSuccess11;
 import io.mongock.runner.core.changelogs.test1.ChangeLogSuccess12;
@@ -239,6 +240,19 @@ public class ChangeLogServiceTest {
 
   }
 
+  @Test
+  public void shouldReturnSystemChangelogsFirst() {
+    List<ChangeLogItem<ChangeSetItem>> changeLogItemList = new ArrayList<>(new ChangeLogService(
+        Collections.singletonList(SystemChangeUnit.class.getPackage().getName()),
+        Collections.emptyList(),
+        "0",
+        "9999"
+    ).fetchChangeLogs());
+
+    assertEquals(2, changeLogItemList.size());
+    assertEquals("system-change-unit", changeLogItemList.get(0).getChangeSetItems().get(0).getId());
+    assertEquals("new-change-unit", changeLogItemList.get(1).getChangeSetItems().get(0).getId());
+  }
 
   @Test
   public void shouldReturnChangeSetsFromMultiplePackagesAndIsolatedClassesAndKeepsOrder() {
