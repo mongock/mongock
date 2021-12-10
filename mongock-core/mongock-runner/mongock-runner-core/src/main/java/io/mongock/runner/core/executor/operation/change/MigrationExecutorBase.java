@@ -133,6 +133,9 @@ public abstract class MigrationExecutorBase<CONFIG extends ChangeExecutorConfigu
       if(changeLog.getType().isAnnotationPresent(SystemChange.class) && changeLog.getType().getAnnotation(SystemChange.class).updatesSystemTable()) {
         loadExecutedChangeEntries();
       }
+
+      System.out.println("\n\nEXECUTED List");
+      executedChangeEntries.forEach(c-> System.out.println(c.getChangeId()));
       clearChangeSetsToRollbackIfApply(isStrategyPerChangeUnit());
     } catch (Exception e) {
       if (changeLog.isFailFast()) {
