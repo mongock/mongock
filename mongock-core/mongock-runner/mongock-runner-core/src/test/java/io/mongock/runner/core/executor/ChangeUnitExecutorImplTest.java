@@ -1,8 +1,6 @@
 package io.mongock.runner.core.executor;
 
 
-import io.mongock.runner.core.internal.ChangeLogItem;
-import io.mongock.runner.core.internal.ChangeSetItem;
 import io.mongock.api.config.LegacyMigration;
 import io.mongock.api.config.LegacyMigrationMappingFields;
 import io.mongock.api.config.MongockConfiguration;
@@ -26,6 +24,8 @@ import io.mongock.runner.core.changelogs.legacymigration.LegacyMigrationChangeLo
 import io.mongock.runner.core.changelogs.skipmigration.alreadyexecuted.ChangeLogAlreadyExecuted;
 import io.mongock.runner.core.changelogs.skipmigration.runalways.ChangeLogAlreadyExecutedRunAlways;
 import io.mongock.runner.core.changelogs.skipmigration.withnochangeset.ChangeLogWithNoChangeSet;
+import io.mongock.runner.core.changelogs.system.NewChangeUnit;
+import io.mongock.runner.core.changelogs.system.SystemChangeUnit;
 import io.mongock.runner.core.changelogs.withRollback.AdvanceChangeLogWithBefore;
 import io.mongock.runner.core.changelogs.withRollback.AdvanceChangeLogWithBeforeAndChangeSetFailing;
 import io.mongock.runner.core.changelogs.withRollback.BasicChangeLogWithExceptionInChangeSetAndRollback;
@@ -33,6 +33,8 @@ import io.mongock.runner.core.changelogs.withRollback.BasicChangeLogWithExceptio
 import io.mongock.runner.core.executor.changelog.ChangeLogService;
 import io.mongock.runner.core.executor.dependency.DependencyManager;
 import io.mongock.runner.core.executor.operation.change.MigrationExecutor;
+import io.mongock.runner.core.internal.ChangeLogItem;
+import io.mongock.runner.core.internal.ChangeSetItem;
 import io.mongock.runner.core.util.DummyDependencyClass;
 import io.mongock.runner.core.util.InterfaceDependencyImpl;
 import io.mongock.runner.core.util.InterfaceDependencyImplNoLockGarded;
@@ -102,12 +104,32 @@ public class ChangeUnitExecutorImplTest {
     runChangeLogsTest(true);
   }
 
+  @Test
+  public void shouldRefreshExecutedChangelogs_WhenSystemChangeLogIsExecuted_IfFlagUpdatesSystemTableIsTrue() {
+    when(changeEntryService.getExecuted())
+        .thenReturn(Collections.emptyList())
+        .thenReturn(Collections.emptyList())
+        .thenReturn(Arrays.asList(
+            generateExecutedChangeEntry("system-change-unit", "mongock_test"),
+            generateExecutedChangeEntry("new-change-unit", "mongock_test")));
+    new MigrationExecutor(
+        "",
+        createInitialChangeLogsByPackage(SystemChangeUnit.class),
+        driver,
+        getChangeLogRuntime(new DependencyManager()),
+        new MongockConfiguration()
+    ).executeMigration();
+
+    assertTrue(SystemChangeUnit.isExecuted);
+    assertFalse(NewChangeUnit.isExecuted);
+  }
+
   @SuppressWarnings("unchecked")
   private void runChangeLogsTest(boolean trackingIgnored) throws InterruptedException {
 
     // given
     injectDummyDependency(DummyDependencyClass.class, new DummyDependencyClass());
-    when(changeEntryService.getExecuted()).thenReturn(Arrays.asList(generateExecutedChangeEntry("alreadyExecuted", "executor")));
+    when(changeEntryService.getExecuted()).thenReturn(Collections.singletonList(generateExecutedChangeEntry("alreadyExecuted", "executor")));
 
     // when
     MongockConfiguration config = new MongockConfiguration();
@@ -169,7 +191,7 @@ public class ChangeUnitExecutorImplTest {
   @SuppressWarnings("unchecked")
   public void shouldAbortMigrationButSaveFailedChangeSet_IfChangeSetThrowsException() throws InterruptedException {
     // given
-    injectDummyDependency(DummyDependencyClass.class, new DummyDependencyClass());    
+    injectDummyDependency(DummyDependencyClass.class, new DummyDependencyClass());
     when(changeEntryService.getExecuted()).thenReturn(Arrays.asList(generateExecutedChangeEntry("runAlwaysAndAlreadyExecutedChangeSet", "executor")));
 
     // when
@@ -178,7 +200,7 @@ public class ChangeUnitExecutorImplTest {
       config.setServiceIdentifier("myService");
       config.setTrackIgnored(false);
       DependencyManager dm = new DependencyManager();
-      MigrationExecutor executor = new MigrationExecutor("", createInitialChangeLogsByPackage(ExecutorWithFailFastChangeLog.class), driver,  getChangeLogRuntime(dm), config);
+      MigrationExecutor executor = new MigrationExecutor("", createInitialChangeLogsByPackage(ExecutorWithFailFastChangeLog.class), driver, getChangeLogRuntime(dm), config);
       executor
           .executeMigration();
     } catch (Exception ex) {
@@ -222,7 +244,7 @@ public class ChangeUnitExecutorImplTest {
   public void shouldThrowException_ifNoArgumentFound() {
     // given
     when(changeEntryService.getExecuted()).thenReturn(Collections.emptyList());
-    
+
     // then
     exceptionExpected.expect(MongockException.class);
     exceptionExpected.expectMessage("Error in method[ExecutorChangeLog.newChangeSet] : Wrong parameter[DummyDependencyClass]");
@@ -456,8 +478,8 @@ public class ChangeUnitExecutorImplTest {
   public void shouldReturnProxy_IfStandardDependency() {
     // given
     when(changeEntryService.getExecuted()).thenReturn(Arrays.asList(
-            generateExecutedChangeEntry("withInterfaceParameter2", "executor"),
-            generateExecutedChangeEntry("withNonLockGuardedParameter", "executor")
+        generateExecutedChangeEntry("withInterfaceParameter2", "executor"),
+        generateExecutedChangeEntry("withNonLockGuardedParameter", "executor")
     ));
 
     // when
@@ -480,8 +502,8 @@ public class ChangeUnitExecutorImplTest {
   public void proxyReturnedShouldReturnAProxy_whenCallingAMethod_IfInterface() {
     // given
     when(changeEntryService.getExecuted()).thenReturn(Arrays.asList(
-            generateExecutedChangeEntry("withInterfaceParameter", "executor"),
-            generateExecutedChangeEntry("withNonLockGuardedParameter", "executor")
+        generateExecutedChangeEntry("withInterfaceParameter", "executor"),
+        generateExecutedChangeEntry("withNonLockGuardedParameter", "executor")
     ));
 
     // when
@@ -504,8 +526,8 @@ public class ChangeUnitExecutorImplTest {
   public void shouldNotReturnProxy_IfClassAnnotatedWithNonLockGuarded() {
     // given
     when(changeEntryService.getExecuted()).thenReturn(Arrays.asList(
-            generateExecutedChangeEntry("withInterfaceParameter2", "executor"),
-            generateExecutedChangeEntry("withNonLockGuardedParameter", "executor")
+        generateExecutedChangeEntry("withInterfaceParameter2", "executor"),
+        generateExecutedChangeEntry("withNonLockGuardedParameter", "executor")
     ));
 
     // when
@@ -528,8 +550,8 @@ public class ChangeUnitExecutorImplTest {
   public void shouldNotReturnProxy_IfParameterAnnotatedWithNonLockGuarded() {
     // given
     when(changeEntryService.getExecuted()).thenReturn(Arrays.asList(
-            generateExecutedChangeEntry("withInterfaceParameter", "executor"),
-            generateExecutedChangeEntry("withInterfaceParameter2", "executor")
+        generateExecutedChangeEntry("withInterfaceParameter", "executor"),
+        generateExecutedChangeEntry("withInterfaceParameter2", "executor")
     ));
 
     // when
@@ -552,7 +574,7 @@ public class ChangeUnitExecutorImplTest {
   public void shouldInjectLegacyMigrationList_whenNamed() throws InterruptedException {
     // given
     when(changeEntryService.getExecuted()).thenReturn(Collections.emptyList());
-    
+
     // when
     when(driver.getLockManager()).thenReturn(lockManager);
     LegacyMigrationMappingFields mappingFields = new LegacyMigrationMappingFields();
@@ -584,7 +606,7 @@ public class ChangeUnitExecutorImplTest {
   @Test
   public void shouldSkipMigration_whenChangeLogWithNoChangeSet() {
     // given
-    
+
     when(driver.getLockManager()).thenReturn(lockManager);
     // when
     MongockConfiguration config = new MongockConfiguration();
@@ -604,8 +626,8 @@ public class ChangeUnitExecutorImplTest {
   public void shouldSkipMigration_whenAllChangeSetItemsAlreadyExecuted() {
     // given
     when(changeEntryService.getExecuted()).thenReturn(Arrays.asList(
-            generateExecutedChangeEntry("alreadyExecuted", "executor"),
-            generateExecutedChangeEntry("alreadyExecuted2", "executor")
+        generateExecutedChangeEntry("alreadyExecuted", "executor"),
+        generateExecutedChangeEntry("alreadyExecuted2", "executor")
     ));
 
     when(driver.getLockManager()).thenReturn(lockManager);
@@ -629,8 +651,8 @@ public class ChangeUnitExecutorImplTest {
     // given
     injectDummyDependency(DummyDependencyClass.class, new DummyDependencyClass());
     when(changeEntryService.getExecuted()).thenReturn(Arrays.asList(
-            generateExecutedChangeEntry("alreadyExecuted", "executor"),
-            generateExecutedChangeEntry("alreadyExecuted2", "executor")
+        generateExecutedChangeEntry("alreadyExecuted", "executor"),
+        generateExecutedChangeEntry("alreadyExecuted2", "executor")
     ));
 
     when(driver.getLockManager()).thenReturn(lockManager);
@@ -657,9 +679,9 @@ public class ChangeUnitExecutorImplTest {
     // given
     injectDummyDependency(DummyDependencyClass.class, new DummyDependencyClass());
     when(changeEntryService.getExecuted()).thenReturn(Arrays.asList(
-            generateExecutedChangeEntry("alreadyExecuted", "executor"),
-            generateExecutedChangeEntry("alreadyExecuted2", "executor"),
-            generateExecutedChangeEntry("alreadyExecutedRunAlways", "executor")
+        generateExecutedChangeEntry("alreadyExecuted", "executor"),
+        generateExecutedChangeEntry("alreadyExecuted2", "executor"),
+        generateExecutedChangeEntry("alreadyExecutedRunAlways", "executor")
     ));
 
     when(driver.getLockManager()).thenReturn(lockManager);
