@@ -5,8 +5,8 @@ import io.mongock.driver.mongodb.springdata.v3.SpringDataMongoV3Driver;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnExpression;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.data.mongodb.MongoTransactionManager;
 import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.transaction.PlatformTransactionManager;
 
 import java.util.Optional;
 
@@ -19,7 +19,7 @@ public class SpringDataMongoV3Context extends SpringDataMongoV3ContextBase<Mongo
   protected SpringDataMongoV3Driver buildDriver(MongoTemplate mongoTemplate,
                                                 MongockConfiguration config,
                                                 MongoDBConfiguration mongoDbConfig,
-                                                Optional<MongoTransactionManager> txManagerOpt) {
+                                                Optional<PlatformTransactionManager> txManagerOpt) {
     return SpringDataMongoV3Driver.withLockStrategy(
         mongoTemplate,
         config.getLockAcquiredForMillis(),

@@ -1,18 +1,18 @@
 package io.mongock.driver.mongodb.springdata.v3;
 
+import com.github.cloudyrock.mongock.driver.mongodb.springdata.v3.decorator.impl.MongockTemplate;
+import io.mongock.api.exception.MongockException;
 import io.mongock.driver.api.driver.ChangeSetDependency;
 import io.mongock.driver.api.driver.ChangeSetDependencyBuildable;
 import io.mongock.driver.api.driver.Transactioner;
 import io.mongock.driver.api.entry.ChangeEntryService;
-import com.github.cloudyrock.mongock.driver.mongodb.springdata.v3.decorator.impl.MongockTemplate;
 import io.mongock.driver.mongodb.sync.v4.driver.MongoSync4DriverGeneric;
-import io.mongock.api.exception.MongockException;
 import io.mongock.utils.annotation.NotThreadSafe;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.data.mongodb.MongoTransactionManager;
 import org.springframework.data.mongodb.SessionSynchronization;
 import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.TransactionDefinition;
 import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.DefaultTransactionDefinition;
@@ -25,7 +25,7 @@ public abstract class SpringDataMongoV3DriverBase extends MongoSync4DriverGeneri
   protected static final Logger logger = LoggerFactory.getLogger(SpringDataMongoV3DriverBase.class);
 
   protected final MongoTemplate mongoTemplate;
-  protected MongoTransactionManager txManager;
+  protected PlatformTransactionManager txManager;
 
   protected SpringDataMongoV3DriverBase(MongoTemplate mongoTemplate,
                                     long lockAcquiredForMillis,
@@ -84,7 +84,7 @@ public abstract class SpringDataMongoV3DriverBase extends MongoSync4DriverGeneri
     this.txManager = null;
   }
 
-  public void enableTransactionWithTxManager(MongoTransactionManager txManager) {
+  public void enableTransactionWithTxManager(PlatformTransactionManager txManager) {
     this.txManager = txManager;
   }
 
@@ -108,7 +108,7 @@ public abstract class SpringDataMongoV3DriverBase extends MongoSync4DriverGeneri
 
   }
 
-  protected TransactionStatus getTxStatus(MongoTransactionManager txManager) {
+  protected TransactionStatus getTxStatus(PlatformTransactionManager txManager) {
     DefaultTransactionDefinition def = new DefaultTransactionDefinition();
 // explicitly setting the transaction name is something that can be done only programmatically
     def.setName("mongock-transaction-spring-data-3");
