@@ -11,9 +11,12 @@ import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.data.mongodb.core.query.Update;
 
+import java.util.List;
+
 public class SpringDataMongoV2ChangeEntryRepository extends Mongo3ChangeEntryRepository implements ChangeEntryRepositoryWithEntity<Document> {
 
   private final MongoTemplate mongoTemplate;
+  private final String collectionName;
 
   public SpringDataMongoV2ChangeEntryRepository(MongoTemplate mongoTemplate, String collectionName) {
     this(mongoTemplate, collectionName, ReadWriteConfiguration.getDefault());
@@ -24,9 +27,8 @@ public class SpringDataMongoV2ChangeEntryRepository extends Mongo3ChangeEntryRep
                                                 ReadWriteConfiguration readWriteConfiguration) {
     super(mongoTemplate.getCollection(collectionName), readWriteConfiguration);
     this.mongoTemplate = mongoTemplate;
+    this.collectionName = collectionName;
   }
-
-
 
   @Override
   public void saveOrUpdate(ChangeEntry changeEntry) throws MongockException {
@@ -37,6 +39,11 @@ public class SpringDataMongoV2ChangeEntryRepository extends Mongo3ChangeEntryRep
             Criteria.where(KEY_CHANGE_ID).is(changeEntry.getChangeId()),
             Criteria.where(KEY_AUTHOR).is(changeEntry.getAuthor())));
     mongoTemplate.upsert(filter, getUpdateFromEntity(changeEntry), collection.getNamespace().getCollectionName());
+  }
+
+  @Override
+  public List<ChangeEntry> getEntriesLog() {
+    return mongoTemplate.findAll(ChangeEntry.class, collectionName);
   }
 
   private Update getUpdateFromEntity(ChangeEntry changeEntry) {

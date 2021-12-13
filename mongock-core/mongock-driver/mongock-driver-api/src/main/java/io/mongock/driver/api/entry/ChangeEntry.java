@@ -77,6 +77,8 @@ public class ChangeEntry implements ChangePrintable {
   @Field(KEY_ERROR_TRACE)
   protected String errorTrace;
 
+  public ChangeEntry() {}
+
   public ChangeEntry(String executionId,
                      String changeId,
                      String author,
