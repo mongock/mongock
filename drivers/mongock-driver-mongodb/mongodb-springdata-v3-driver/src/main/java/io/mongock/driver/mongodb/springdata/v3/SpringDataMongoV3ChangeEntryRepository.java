@@ -5,6 +5,7 @@ import io.mongock.driver.core.entry.ChangeEntryRepositoryWithEntity;
 import io.mongock.driver.mongodb.sync.v4.repository.MongoSync4ChangeEntryRepository;
 import io.mongock.driver.mongodb.sync.v4.repository.ReadWriteConfiguration;
 import io.mongock.api.exception.MongockException;
+import io.mongock.utils.field.ChangeEntryFields;
 import org.bson.Document;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
@@ -30,9 +31,9 @@ public class SpringDataMongoV3ChangeEntryRepository extends MongoSync4ChangeEntr
 
     Query filter = new Query().addCriteria(new Criteria()
         .andOperator(
-            Criteria.where(KEY_EXECUTION_ID).is(changeEntry.getExecutionId()),
-            Criteria.where(KEY_CHANGE_ID).is(changeEntry.getChangeId()),
-            Criteria.where(KEY_AUTHOR).is(changeEntry.getAuthor())));
+            Criteria.where(ChangeEntryFields.KEY_EXECUTION_ID).is(changeEntry.getExecutionId()),
+            Criteria.where(ChangeEntryFields.KEY_CHANGE_ID).is(changeEntry.getChangeId()),
+            Criteria.where(ChangeEntryFields.KEY_AUTHOR).is(changeEntry.getAuthor())));
     mongoTemplate.upsert(filter, getUpdateFromEntity(changeEntry), collection.getNamespace().getCollectionName());
   }
 
