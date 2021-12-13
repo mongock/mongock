@@ -4,6 +4,7 @@ import com.mongodb.client.MongoDatabase;
 import io.changock.migration.api.annotations.NonLockGuarded;
 import io.changock.migration.api.annotations.NonLockGuardedType;
 import io.mongock.api.annotations.ChangeUnit;
+import io.mongock.api.annotations.Execution;
 import io.mongock.api.annotations.RollbackExecution;
 import io.mongock.api.config.LegacyMigration;
 import io.mongock.driver.api.common.SystemChange;
@@ -17,6 +18,7 @@ import javax.inject.Named;
 @ChangeUnit(id = "mongock-legacy-migration", author = "mongock", order = "00001", runAlways = true)
 public class MongockSync4LegacyMigrationChangeRunAlwaysLog {
 
+  @Execution
   public void mongockSpringLegacyMigration(@NonLockGuarded(NonLockGuardedType.NONE)
                                            @Named("legacy-migration") LegacyMigration legacyMigration,
                                            MongoDatabase mongoDatabase,
