@@ -1,20 +1,24 @@
 package io.mongock.driver.mongodb.v3.changelogs.runonce;
 
-import com.github.cloudyrock.mongock.ChangeLog;
-import com.github.cloudyrock.mongock.ChangeSet;
+import com.mongodb.client.MongoDatabase;
 import io.changock.migration.api.annotations.NonLockGuarded;
 import io.changock.migration.api.annotations.NonLockGuardedType;
+import io.mongock.api.annotations.ChangeUnit;
+import io.mongock.api.annotations.Execution;
+import io.mongock.api.annotations.RollbackExecution;
 import io.mongock.api.config.LegacyMigration;
+import io.mongock.driver.api.common.SystemChange;
 import io.mongock.driver.api.entry.ChangeEntryService;
 import io.mongock.driver.mongodb.v3.changelogs.LegacyService;
-import com.mongodb.client.MongoDatabase;
 
 import javax.inject.Named;
 
-@ChangeLog(order = "00001")
-public class MongockV3LegacyMigrationChangeLog extends LegacyService {
 
-  @ChangeSet(id = "mongock-legacy-migration", author = "mongock", order = "00001")
+@SystemChange(updatesSystemTable = true)
+@ChangeUnit(id = "mongock-legacy-migration", author = "mongock", order = "00001")
+public class MongockV3LegacyMigrationChangeLog {
+
+  @Execution
   public void mongockSpringLegacyMigration(@NonLockGuarded(NonLockGuardedType.NONE)
                                            @Named("legacy-migration") LegacyMigration legacyMigration,
                                            MongoDatabase mongoDatabase,
@@ -22,4 +26,7 @@ public class MongockV3LegacyMigrationChangeLog extends LegacyService {
     new LegacyService().executeMigration(legacyMigration, mongoDatabase, changeEntryService);
   }
 
+  @RollbackExecution
+  public void rollbackIgnored() {
+  }
 }

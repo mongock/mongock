@@ -231,8 +231,11 @@ public abstract class ChangeLogServiceBase<CHANGELOG extends ChangeLogItem<CHANG
     public int compare(CHANGELOG changeLog1, CHANGELOG changeLog2) {
       String val1 = changeLog1.getOrder();
       String val2 = changeLog2.getOrder();
-
-      if (StringUtils.hasText(val1) && StringUtils.hasText(val2) && !val1.equals(val2)) {
+      if(changeLog1.isSystem() && !changeLog2.isSystem()) {
+        return -1;
+      } else if(changeLog2.isSystem() && !changeLog1.isSystem()) {
+        return 1;
+      }else if (StringUtils.hasText(val1) && StringUtils.hasText(val2) && !val1.equals(val2)) {
         return val1.compareTo(val2);
       } else if (StringUtils.hasText(val1) && !StringUtils.hasText(val2)) {
         return -1;
