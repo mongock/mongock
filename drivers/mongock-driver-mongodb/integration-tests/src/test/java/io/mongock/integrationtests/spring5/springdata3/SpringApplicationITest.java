@@ -24,6 +24,8 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
 import org.junit.jupiter.params.provider.ValueSource;
 import org.springframework.beans.BeanInstantiationException;
 import org.springframework.beans.factory.BeanCreationException;
@@ -38,6 +40,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
+import java.util.stream.Stream;
 
 import static org.awaitility.Awaitility.await;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -62,26 +65,42 @@ class SpringApplicationITest {
     }
   }
 
+  private static Stream<Arguments> SpringApplicationShouldRunChangeLogsProvider() {
+    return Stream.of(
+        Arguments.of("mongo:4.2.6", false),
+        Arguments.of("mongo:3.6.3", false),
+        Arguments.of("mongo:4.2.6", true),
+        Arguments.of("mongo:3.6.3", true)
+    );
+  }
+
   @ParameterizedTest
-  @ValueSource(strings = {"mongo:4.2.6", "mongo:3.6.3"})
-  void SpringApplicationShouldRunChangeLogs(String mongoVersion) {
-    ctx = RuntimeTestUtil.startSpringAppWithMongoDbVersionAndDefaultPackage(mongoVersion);
+  @MethodSource("SpringApplicationShouldRunChangeLogsProvider")
+  void SpringApplicationShouldRunChangeLogs(String mongoVersion, boolean sleuthEnabled) {
+    ctx = RuntimeTestUtil.startSpringAppWithMongoDbVersionAndDefaultPackage(mongoVersion, sleuthEnabled);
     assertEquals(ClientInitializerChangeLog.INITIAL_CLIENTS, ctx.getBean(ClientRepository.class).count());
   }
 
+  private static Stream<Arguments> provider() {
+    return Stream.of(
+        Arguments.of("mongo:4.2.6", false),
+        Arguments.of("mongo:4.2.6", true)
+    );
+  }
 
   @ParameterizedTest
-  @ValueSource(strings = {"mongo:4.2.6"})
-  void ApplicationRunnerShouldBeInjected(String mongoVersion) {
-    ctx = RuntimeTestUtil.startSpringAppWithMongoDbVersionAndDefaultPackage(mongoVersion);
+  @MethodSource("provider")
+  void ApplicationRunnerShouldBeInjected(String mongoVersion, boolean sleuthEnabled) {
+    ctx = RuntimeTestUtil.startSpringAppWithMongoDbVersionAndDefaultPackage(mongoVersion, sleuthEnabled);
     ctx.getBean(MongockApplicationRunner.class);
   }
 
 
   @ParameterizedTest
-  @ValueSource(strings = {"mongo:4.2.6"})
-  void ApplicationRunnerShouldNotBeInjected_IfDisabledByProperties(String mongoVersion) {
+  @MethodSource("provider")
+  void ApplicationRunnerShouldNotBeInjected_IfDisabledByProperties(String mongoVersion, boolean sleuthEnabled) {
     Map<String, String> parameters = new HashMap<>();
+    parameters.put("spring.sleuth.enabled", String.valueOf(sleuthEnabled));
     parameters.put("mongock.enabled", "false");
     parameters.put("mongock.changeLogsScanPackage", "io.mongock.integrationtests.spring5.springdata3.changelogs.client");
     parameters.put("mongock.transactionable", "false");
@@ -97,9 +116,9 @@ class SpringApplicationITest {
 
 
   @ParameterizedTest
-  @ValueSource(strings = {"mongo:4.2.6"})
-  void InitializingBeanShouldNotBeInjected(String mongoVersion) {
-    ctx = RuntimeTestUtil.startSpringAppWithMongoDbVersionAndDefaultPackage(mongoVersion);
+  @MethodSource("provider")
+  void InitializingBeanShouldNotBeInjected(String mongoVersion, boolean sleuthEnabled) {
+    ctx = RuntimeTestUtil.startSpringAppWithMongoDbVersionAndDefaultPackage(mongoVersion, sleuthEnabled);
     Exception ex = assertThrows(
         NoSuchBeanDefinitionException.class,
         () -> ctx.getBean(MongockInitializingBeanRunner.class),
@@ -111,11 +130,11 @@ class SpringApplicationITest {
   }
 
   @ParameterizedTest
-  @ValueSource(strings = {"mongo:4.2.6"})
-  void shouldThrowExceptionWhenScanPackageNotSpecified(String mongoVersion) {
+  @MethodSource("provider")
+  void shouldThrowExceptionWhenScanPackageNotSpecified(String mongoVersion, boolean sleuthEnabled) {
     Exception ex = assertThrows(
         BeanCreationException.class,
-        () -> RuntimeTestUtil.startSpringAppWithMongoDbVersionAndNoPackage(mongoVersion));
+        () -> RuntimeTestUtil.startSpringAppWithMongoDbVersionAndNoPackage(mongoVersion, sleuthEnabled));
     Throwable BeanInstantiationEx = ex.getCause();
     assertEquals(BeanInstantiationException.class, BeanInstantiationEx.getClass());
     Throwable mongockEx = BeanInstantiationEx.getCause();
@@ -124,12 +143,13 @@ class SpringApplicationITest {
   }
 
   @ParameterizedTest
-  @ValueSource(strings = {"mongo:4.2.6"})
-  void shouldRollBack_IfTransaction_WhenExceptionInChangeLog(String mongoDbVersion) {
+  @MethodSource("provider")
+  void shouldRollBack_IfTransaction_WhenExceptionInChangeLog(String mongoDbVersion, boolean sleuthEnabled) {
     MongoContainer mongoContainer = RuntimeTestUtil.startMongoDbContainer(mongoDbVersion);
     MongoCollection clientsCollection = MongoClients.create(mongoContainer.getReplicaSetUrl()).getDatabase(RuntimeTestUtil.DEFAULT_DATABASE_NAME).getCollection(Mongock4Spring5SpringData3App.CLIENTS_COLLECTION_NAME);
     try {
       Map<String, String> parameters = new HashMap<>();
+      parameters.put("spring.sleuth.enabled", String.valueOf(sleuthEnabled));
       parameters.put("mongock.changeLogsScanPackage", RollbackChangeLog.class.getPackage().getName());
       ctx = RuntimeTestUtil.startSpringAppWithParameters(mongoContainer, parameters);
     } catch (Exception ex) {
@@ -142,11 +162,11 @@ class SpringApplicationITest {
   }
 
   @ParameterizedTest
-  @ValueSource(strings = {"mongo:4.2.6"})
+  @MethodSource("provider")
   @DisplayName("SHOULD automatically rollback changeSet and manually before " +
       "WHEN  second changeLog fails at changeSet " +
       "IF strategy is changeLog and  transactional")
-  public void shouldNotRollbackFirstChangeLogAndRollbackAutomaticallyChangeSetOfSecondChangeLogAndManuallyBeforeOfSecondChangeLog_whenSecondChangeLogFailAtChangeSet_ifStrategyIsChangeLogAndTransactional(String mongoVersion) {
+  public void shouldNotRollbackFirstChangeLogAndRollbackAutomaticallyChangeSetOfSecondChangeLogAndManuallyBeforeOfSecondChangeLog_whenSecondChangeLogFailAtChangeSet_ifStrategyIsChangeLogAndTransactional(String mongoVersion, boolean sleuthEnabled) {
     // given
     MongoContainer mongoContainer = RuntimeTestUtil.startMongoDbContainer(mongoVersion);
     MongoDatabase database = MongoClients.create(mongoContainer.getReplicaSetUrl()).getDatabase(RuntimeTestUtil.DEFAULT_DATABASE_NAME);
@@ -156,14 +176,15 @@ class SpringApplicationITest {
     SpringDataAdvanceChangeLog.clear();
     SpringDataAdvanceChangeLogWithChangeSetFailing.clear();
     Map<String, String> parameters = new HashMap<>();
+    parameters.put("spring.sleuth.enabled", String.valueOf(sleuthEnabled));
     parameters.put("mongock.changeLogsScanPackage", String.format("%s,%s", SpringDataAdvanceChangeLog.class.getName(), SpringDataAdvanceChangeLogWithChangeSetFailing.class.getName()));
-    IllegalStateException  ex = Assertions.assertThrows(IllegalStateException.class,
+    IllegalStateException ex = Assertions.assertThrows(IllegalStateException.class,
         () -> ctx = RuntimeTestUtil.startSpringAppWithParameters(mongoContainer, parameters)
     );
 
     assertTrue(ex.getCause().getMessage().contains("Expected exception"));
 
-    
+
     Assertions.assertFalse(SpringDataAdvanceChangeLog.rollbackBeforeCalled, "(1)AdvanceChangeLogWithBefore's Rollback before method wasn't executed");
     Assertions.assertFalse(SpringDataAdvanceChangeLog.rollbackCalled, "(2)AdvanceChangeLogWithBefore's Rollback method wasn't executed");
 
@@ -195,24 +216,25 @@ class SpringApplicationITest {
   }
 
   @ParameterizedTest
-  @ValueSource(strings = {"mongo:4.2.6"})
+  @MethodSource("provider")
   @DisplayName("SHOULD rollback Manually only changeSets of last changLog and store change entries " +
       "WHEN  second changeLog fails at changeSet " +
       "IF strategy is migration and non transactional")
-  public void shouldRollbackManuallyOnlyChangeSetsOfLastChangelogAndStoreChangeEntry_whenSecondChangeLogFailAtChangeSet_ifStrategyIsMigrationAndNonTransactional(String mongoVersion) throws InterruptedException {
-      MongoContainer mongoContainer = RuntimeTestUtil.startMongoDbContainer(mongoVersion);
-      MongoDatabase database = MongoClients.create(mongoContainer.getReplicaSetUrl()).getDatabase(RuntimeTestUtil.DEFAULT_DATABASE_NAME);
+  public void shouldRollbackManuallyOnlyChangeSetsOfLastChangelogAndStoreChangeEntry_whenSecondChangeLogFailAtChangeSet_ifStrategyIsMigrationAndNonTransactional(String mongoVersion, boolean sleuthEnabled) throws InterruptedException {
+    MongoContainer mongoContainer = RuntimeTestUtil.startMongoDbContainer(mongoVersion);
+    MongoDatabase database = MongoClients.create(mongoContainer.getReplicaSetUrl()).getDatabase(RuntimeTestUtil.DEFAULT_DATABASE_NAME);
 
     // checks the four rollbacks were called
-      SpringDataAdvanceChangeLog.clear();
-      SpringDataAdvanceChangeLogWithChangeSetFailing.clear();
-      Map<String, String> parameters = new HashMap<>();
-      parameters.put("mongock.transactionStrategy", "EXECUTION");
-      parameters.put("mongock.transactionEnabled", "false");
-      parameters.put("mongock.changeLogsScanPackage", String.format("%s,%s", SpringDataAdvanceChangeLog.class.getName(), SpringDataAdvanceChangeLogWithChangeSetFailing.class.getName()));
-      IllegalStateException  ex = Assertions.assertThrows(IllegalStateException.class,
-          () -> ctx = RuntimeTestUtil.startSpringAppWithParameters(mongoContainer, parameters)
-      );
+    SpringDataAdvanceChangeLog.clear();
+    SpringDataAdvanceChangeLogWithChangeSetFailing.clear();
+    Map<String, String> parameters = new HashMap<>();
+    parameters.put("spring.sleuth.enabled", String.valueOf(sleuthEnabled));
+    parameters.put("mongock.transactionStrategy", "EXECUTION");
+    parameters.put("mongock.transactionEnabled", "false");
+    parameters.put("mongock.changeLogsScanPackage", String.format("%s,%s", SpringDataAdvanceChangeLog.class.getName(), SpringDataAdvanceChangeLogWithChangeSetFailing.class.getName()));
+    IllegalStateException ex = Assertions.assertThrows(IllegalStateException.class,
+        () -> ctx = RuntimeTestUtil.startSpringAppWithParameters(mongoContainer, parameters)
+    );
 
 
     // checks the four rollbacks were called
@@ -240,24 +262,25 @@ class SpringApplicationITest {
 
   }
 
-    @ParameterizedTest
-  @ValueSource(strings = {"mongo:4.2.6"})
+  @ParameterizedTest
+  @MethodSource("provider")
   @DisplayName("SHOULD rollback Manually only changeSets of last changLog and store change entries " +
       "WHEN  second changeLog fails at changeSet " +
       "IF strategy is changeLog and non transactional")
-  public void shouldRollbackManuallyOnlyChangeSetsOfLastChangelogAndStoreChangeEntry_whenSecondChangeLogFailAtChangeSet_ifStrategyIsChangeLogAndNonTransactional(String mongoVersion) throws InterruptedException {
-      MongoContainer mongoContainer = RuntimeTestUtil.startMongoDbContainer(mongoVersion);
-      MongoDatabase database = MongoClients.create(mongoContainer.getReplicaSetUrl()).getDatabase(RuntimeTestUtil.DEFAULT_DATABASE_NAME);
+  public void shouldRollbackManuallyOnlyChangeSetsOfLastChangelogAndStoreChangeEntry_whenSecondChangeLogFailAtChangeSet_ifStrategyIsChangeLogAndNonTransactional(String mongoVersion, boolean sleuthEnabled) throws InterruptedException {
+    MongoContainer mongoContainer = RuntimeTestUtil.startMongoDbContainer(mongoVersion);
+    MongoDatabase database = MongoClients.create(mongoContainer.getReplicaSetUrl()).getDatabase(RuntimeTestUtil.DEFAULT_DATABASE_NAME);
 
     // given
-      SpringDataAdvanceChangeLog.clear();
-      SpringDataAdvanceChangeLogWithChangeSetFailing.clear();
-      Map<String, String> parameters = new HashMap<>();
-      parameters.put("mongock.transactionEnabled", "false");
-      parameters.put("mongock.changeLogsScanPackage", String.format("%s,%s", SpringDataAdvanceChangeLog.class.getName(), SpringDataAdvanceChangeLogWithChangeSetFailing.class.getName()));
-      IllegalStateException  ex = Assertions.assertThrows(IllegalStateException.class,
-          () -> ctx = RuntimeTestUtil.startSpringAppWithParameters(mongoContainer, parameters)
-      );
+    SpringDataAdvanceChangeLog.clear();
+    SpringDataAdvanceChangeLogWithChangeSetFailing.clear();
+    Map<String, String> parameters = new HashMap<>();
+    parameters.put("spring.sleuth.enabled", String.valueOf(sleuthEnabled));
+    parameters.put("mongock.transactionEnabled", "false");
+    parameters.put("mongock.changeLogsScanPackage", String.format("%s,%s", SpringDataAdvanceChangeLog.class.getName(), SpringDataAdvanceChangeLogWithChangeSetFailing.class.getName()));
+    IllegalStateException ex = Assertions.assertThrows(IllegalStateException.class,
+        () -> ctx = RuntimeTestUtil.startSpringAppWithParameters(mongoContainer, parameters)
+    );
 
     // checks the four rollbacks were called
     assertTrue(SpringDataAdvanceChangeLogWithChangeSetFailing.rollbackCalledLatch.await(5, TimeUnit.NANOSECONDS), "AdvanceChangeLogWithBeforeAndChangeSetFailing's Rollback method wasn't executed");
@@ -285,26 +308,25 @@ class SpringApplicationITest {
   }
 
 
-
-   
   @ParameterizedTest
-  @ValueSource(strings = {"mongo:4.2.6"})
+  @MethodSource("provider")
   @DisplayName("SHOULD rollback automatically everything and no changeEntry should be present " +
       "WHEN  second changeLog fails at changeSet " +
       "IF strategy is migration and  transactional")
-  public void shouldRollbackAutomaticallyEverythingAndNoChangeEntryShouldBePresent_whenSecondChangeLogFailAtChangeSet_ifStrategyIsMigrationAndTransactional(String mongoVersion) {
+  public void shouldRollbackAutomaticallyEverythingAndNoChangeEntryShouldBePresent_whenSecondChangeLogFailAtChangeSet_ifStrategyIsMigrationAndTransactional(String mongoVersion, boolean sleuthEnabled) {
     MongoContainer mongoContainer = RuntimeTestUtil.startMongoDbContainer(mongoVersion);
     MongoDatabase database = MongoClients.create(mongoContainer.getReplicaSetUrl()).getDatabase(RuntimeTestUtil.DEFAULT_DATABASE_NAME);
 
     SpringDataAdvanceChangeLog.clear();
     SpringDataAdvanceChangeLogWithChangeSetFailing.clear();
     Map<String, String> parameters = new HashMap<>();
+    parameters.put("spring.sleuth.enabled", String.valueOf(sleuthEnabled));
     parameters.put("mongock.transactionStrategy", "EXECUTION");
     parameters.put("mongock.changeLogsScanPackage", String.format("%s,%s", SpringDataAdvanceChangeLog.class.getName(), SpringDataAdvanceChangeLogWithChangeSetFailing.class.getName()));
-    IllegalStateException  ex = Assertions.assertThrows(IllegalStateException.class,
+    IllegalStateException ex = Assertions.assertThrows(IllegalStateException.class,
         () -> ctx = RuntimeTestUtil.startSpringAppWithParameters(mongoContainer, parameters)
     );
-    
+
     Assertions.assertFalse(SpringDataAdvanceChangeLog.rollbackBeforeCalled, "AdvanceChangeLogWithBefore's Rollback before method wasn't executed");
     Assertions.assertFalse(SpringDataAdvanceChangeLog.rollbackCalled, "AdvanceChangeLogWithBefore's Rollback method wasn't executed");
 
@@ -319,17 +341,18 @@ class SpringApplicationITest {
   }
 
   @ParameterizedTest
-  @ValueSource(strings = {"mongo:4.2.6"})
+  @MethodSource("provider")
   @DisplayName("SHOULD not rollback " +
       "WHEN changeSet runs normally " +
       "IF strategy is changeLog and  transactional")
-  public void shouldNotRollback_WhenChangeSetRunsNormally_IfStrategyChangeLogAndTransactional(String mongoVersion) {
+  public void shouldNotRollback_WhenChangeSetRunsNormally_IfStrategyChangeLogAndTransactional(String mongoVersion, boolean sleuthEnabled) {
     MongoContainer mongoContainer = RuntimeTestUtil.startMongoDbContainer(mongoVersion);
     MongoDatabase database = MongoClients.create(mongoContainer.getReplicaSetUrl()).getDatabase(RuntimeTestUtil.DEFAULT_DATABASE_NAME);
 
     SpringDataAdvanceChangeLog.clear();
     Map<String, String> parameters = new HashMap<>();
-    parameters.put("mongock.changeLogsScanPackage",SpringDataAdvanceChangeLog.class.getName());
+    parameters.put("spring.sleuth.enabled", String.valueOf(sleuthEnabled));
+    parameters.put("mongock.changeLogsScanPackage", SpringDataAdvanceChangeLog.class.getName());
     ctx = RuntimeTestUtil.startSpringAppWithParameters(mongoContainer, parameters);
 
 
@@ -356,19 +379,20 @@ class SpringApplicationITest {
   }
 
   @ParameterizedTest
-  @ValueSource(strings = {"mongo:4.2.6"})
+  @MethodSource("provider")
   @DisplayName("SHOULD not run changeSet " +
       "WHEN strategy is changeLog and  transactional " +
       "IF before throws exception")
-  public void shouldNotRunChangeSet_WhenStrategyIsChangeLogAndTransactional_IfBeforeThrowsException(String mongoVersion) {
+  public void shouldNotRunChangeSet_WhenStrategyIsChangeLogAndTransactional_IfBeforeThrowsException(String mongoVersion, boolean sleuthEnabled) {
     MongoContainer mongoContainer = RuntimeTestUtil.startMongoDbContainer(mongoVersion);
     MongoDatabase database = MongoClients.create(mongoContainer.getReplicaSetUrl()).getDatabase(RuntimeTestUtil.DEFAULT_DATABASE_NAME);
 
     SpringDataAdvanceChangeLog.clear();
     SpringDataAdvanceChangeLogWithChangeSetFailing.clear();
     Map<String, String> parameters = new HashMap<>();
+    parameters.put("spring.sleuth.enabled", String.valueOf(sleuthEnabled));
     parameters.put("mongock.changeLogsScanPackage", SpringDataAdvanceChangeLogWithBeforeFailing.class.getName());
-    IllegalStateException  ex = Assertions.assertThrows(IllegalStateException.class,
+    IllegalStateException ex = Assertions.assertThrows(IllegalStateException.class,
         () -> ctx = RuntimeTestUtil.startSpringAppWithParameters(mongoContainer, parameters)
     );
 
@@ -393,27 +417,27 @@ class SpringApplicationITest {
   }
 
   @ParameterizedTest
-  @ValueSource(strings = {"mongo:4.2.6"})
-  void shouldCommit_IfTransaction_WhenChangeLogOK(String mongoDbVersion) {
-    ctx = RuntimeTestUtil.startSpringAppWithMongoDbVersionAndPackage(mongoDbVersion, TransactionSuccessfulChangeLog.class.getPackage().getName());
+  @MethodSource("provider")
+  void shouldCommit_IfTransaction_WhenChangeLogOK(String mongoDbVersion, boolean sleuthEnabled) {
+    ctx = RuntimeTestUtil.startSpringAppWithMongoDbVersionAndPackage(mongoDbVersion, TransactionSuccessfulChangeLog.class.getPackage().getName(), sleuthEnabled);
 
     // then
     assertEquals(10, ctx.getBean(ClientRepository.class).count());
   }
 
   @ParameterizedTest
-  @ValueSource(strings = {"mongo:4.2.6"})
-  void shouldCommit_IfChangeLogFail_WhenNonFailFast(String mongoDbVersion) {
-    ctx = RuntimeTestUtil.startSpringAppWithMongoDbVersionAndPackage(mongoDbVersion, CommitNonFailFastChangeLog.class.getPackage().getName());
+  @MethodSource("provider")
+  void shouldCommit_IfChangeLogFail_WhenNonFailFast(String mongoDbVersion, boolean sleuthEnabled) {
+    ctx = RuntimeTestUtil.startSpringAppWithMongoDbVersionAndPackage(mongoDbVersion, CommitNonFailFastChangeLog.class.getPackage().getName(), sleuthEnabled);
 
     // then
     assertEquals(10, ctx.getBean(ClientRepository.class).count());
   }
 
   @ParameterizedTest
-  @ValueSource(strings = {"mongo:4.2.6"})
-  void shouldNotExecuteTransaction_IfConfigurationTransactionDisabled(String mongoDbVersion) {
-    ctx = RuntimeTestUtil.startSpringAppWithTransactionDisabledMongoDbVersionAndPackage(mongoDbVersion, CommitNonFailFastChangeLog.class.getPackage().getName());
+  @MethodSource("provider")
+  void shouldNotExecuteTransaction_IfConfigurationTransactionDisabled(String mongoDbVersion, boolean sleuthEnabled) {
+    ctx = RuntimeTestUtil.startSpringAppWithTransactionDisabledMongoDbVersionAndPackage(mongoDbVersion, CommitNonFailFastChangeLog.class.getPackage().getName(), sleuthEnabled);
 
     // then
     assertEquals(10, ctx.getBean(ClientRepository.class).count());
