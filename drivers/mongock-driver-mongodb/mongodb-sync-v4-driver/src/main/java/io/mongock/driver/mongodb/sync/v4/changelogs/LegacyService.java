@@ -43,6 +43,7 @@ public class LegacyService {
     try {
       validateLegacyMigration(legacyMigration);
       List<ChangeEntry> changesToMigrate = getOriginalMigrationAsChangeEntryList(mongoDatabase.getCollection(legacyMigration.getOrigin()), legacyMigration);
+
       for (ChangeEntry originalChange : changesToMigrate) {
         if (!changeEntryService.isAlreadyExecuted(originalChange.getChangeId(), originalChange.getAuthor())) {
           logTracking(originalChange);

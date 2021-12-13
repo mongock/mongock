@@ -12,9 +12,12 @@ import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.data.mongodb.core.query.Update;
 
+import java.util.List;
+
 public class SpringDataMongoV3ChangeEntryRepository extends MongoSync4ChangeEntryRepository implements ChangeEntryRepositoryWithEntity<Document> {
 
   private final MongoTemplate mongoTemplate;
+  private final String collectionName;
 
   public SpringDataMongoV3ChangeEntryRepository(MongoTemplate mongoTemplate, String collectionName) {
     this(mongoTemplate, collectionName, ReadWriteConfiguration.getDefault());
@@ -23,6 +26,7 @@ public class SpringDataMongoV3ChangeEntryRepository extends MongoSync4ChangeEntr
   public SpringDataMongoV3ChangeEntryRepository(MongoTemplate mongoTemplate, String collectionName, ReadWriteConfiguration readWriteConfiguration) {
     super(mongoTemplate.getCollection(collectionName), readWriteConfiguration);
     this.mongoTemplate = mongoTemplate;
+    this.collectionName = collectionName;
   }
 
 
@@ -36,6 +40,12 @@ public class SpringDataMongoV3ChangeEntryRepository extends MongoSync4ChangeEntr
             Criteria.where(ChangeEntryFields.KEY_AUTHOR).is(changeEntry.getAuthor())));
     mongoTemplate.upsert(filter, getUpdateFromEntity(changeEntry), collection.getNamespace().getCollectionName());
   }
+
+
+//  @Override
+//  public List<ChangeEntry> getEntriesLog() {
+//    return mongoTemplate.findAll(ChangeEntry.class, collectionName);
+//  }
 
   private Update getUpdateFromEntity(ChangeEntry changeEntry) {
     Update updateChangeEntry = new Update();

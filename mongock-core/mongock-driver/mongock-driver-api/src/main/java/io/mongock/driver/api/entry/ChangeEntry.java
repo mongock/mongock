@@ -41,41 +41,31 @@ public class ChangeEntry implements ChangePrintable {
   public static final String KEY_ERROR_TRACE = "errorTrace";
 
 
-  @Field(value = KEY_EXECUTION_ID, type = PRIMARY)
   protected String executionId;
 
-  @Field(value = KEY_CHANGE_ID, type = PRIMARY)
   protected String changeId;
 
-  @Field(value = KEY_AUTHOR, type = PRIMARY)
   protected String author;
 
-  @Field(KEY_TIMESTAMP)
   protected Date timestamp;
 
-  @Field(KEY_STATE)
   protected ChangeState state;
 
-  @Field(KEY_TYPE)
   protected ChangeType type;
 
-  @Field(KEY_CHANGELOG_CLASS)
   protected String changeLogClass;
 
-  @Field(KEY_CHANGESET_METHOD)
   protected String changeSetMethod;
 
-  @Field(KEY_METADATA)
   protected Object metadata;
 
-  @Field(KEY_EXECUTION_MILLIS)
   protected long executionMillis;
 
-  @Field(KEY_EXECUTION_HOST_NAME)
   protected String executionHostname;
 
-  @Field(KEY_ERROR_TRACE)
   protected String errorTrace;
+
+  public ChangeEntry() {}
 
   public ChangeEntry(String executionId,
                      String changeId,
@@ -261,5 +251,23 @@ public class ChangeEntry implements ChangePrintable {
 
   public boolean isExecuted() {
     return state == null || EXECUTED == state;
+  }
+
+  @Override
+  public boolean equals(Object o) {
+    if (this == o) return true;
+    if (!(o instanceof ChangeEntry)) return false;
+
+    ChangeEntry that = (ChangeEntry) o;
+
+    if (getChangeId() != null ? !getChangeId().equals(that.getChangeId()) : that.getChangeId() != null) return false;
+    return getAuthor() != null ? getAuthor().equals(that.getAuthor()) : that.getAuthor() == null;
+  }
+
+  @Override
+  public int hashCode() {
+    int result = getChangeId() != null ? getChangeId().hashCode() : 0;
+    result = 31 * result + (getAuthor() != null ? getAuthor().hashCode() : 0);
+    return result;
   }
 }
