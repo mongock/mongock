@@ -144,7 +144,7 @@ public abstract class RunnerBuilderBase<
     logger.info("Mongock runner {} version[{}]", getType(), getVersion());
     validateConfigurationAndInjections(driver);
     try {
-      beforeBuildRunner();
+      beforeBuildRunner(driver);
       return new MongockRunnerImpl(
           buildExecutor(operation, driver),
           config.isThrowExceptionIfCannotObtainLock(),
@@ -157,7 +157,7 @@ public abstract class RunnerBuilderBase<
     }
   }
 
-  protected void beforeBuildRunner() {
+  protected void beforeBuildRunner(ConnectionDriver driver) {
     if (config.getLegacyMigration() != null) {
       DriverLegaciable legaciableDriver = this.getDriverLegaciable();
       if (legaciableDriver != null) {
