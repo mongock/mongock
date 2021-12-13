@@ -1,10 +1,10 @@
 package io.mongock.driver.mongodb.springdata.v2;
 
+import io.mongock.api.exception.MongockException;
 import io.mongock.driver.api.entry.ChangeEntry;
 import io.mongock.driver.core.entry.ChangeEntryRepositoryWithEntity;
 import io.mongock.driver.mongodb.v3.repository.Mongo3ChangeEntryRepository;
 import io.mongock.driver.mongodb.v3.repository.ReadWriteConfiguration;
-import io.mongock.api.exception.MongockException;
 import org.bson.Document;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;

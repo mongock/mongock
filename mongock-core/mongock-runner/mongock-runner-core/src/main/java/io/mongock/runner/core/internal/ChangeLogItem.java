@@ -29,6 +29,8 @@ public class ChangeLogItem<CHANGESET extends ChangeSetItem> {
 
   private final List<CHANGESET> beforeChangeSetsItems;
 
+  private final boolean system;
+
   public static ChangeLogItem<ChangeSetItem> getFromAnnotation(
       Class<?> changeLogClass,
       String baseId,
@@ -41,7 +43,8 @@ public class ChangeLogItem<CHANGESET extends ChangeSetItem> {
       Method executionMethod,
       Method rollbackExecutionMethod,
       Method beforeMethod,
-      Method rollbackBeforeMethod) {
+      Method rollbackBeforeMethod,
+      boolean system) {
     if(!StringUtils.hasText(author)) {
       throw new MongockException("author cannot be null or empty.");
     }
@@ -75,7 +78,8 @@ public class ChangeLogItem<CHANGESET extends ChangeSetItem> {
         failFast,
         transactional,
         Collections.singletonList(changeSet),
-        changeSetBeforeList);
+        changeSetBeforeList,
+        system);
 
   }
 
@@ -83,8 +87,9 @@ public class ChangeLogItem<CHANGESET extends ChangeSetItem> {
       Class<?> type,
       String order,
       boolean failFast,
-      List<C> changeSetElements) {
-    return new ChangeLogItem<>(type.getName(), type, order, failFast, true,  changeSetElements, Collections.emptyList());
+      List<C> changeSetElements,
+      boolean system) {
+    return new ChangeLogItem<>(type.getName(), type, order, failFast, true,  changeSetElements, Collections.emptyList(), system);
   }
 
   public ChangeLogItem(String id,
@@ -93,7 +98,8 @@ public class ChangeLogItem<CHANGESET extends ChangeSetItem> {
                        boolean failFast,
                        boolean transactional,
                        List<CHANGESET> changeSetElements,
-                       List<CHANGESET> beforeChangeSetsItems) {
+                       List<CHANGESET> beforeChangeSetsItems,
+                       boolean system) {
     if (id == null || id.trim().isEmpty()) {
       throw new MongockException("id cannot be null or empty.");
     }
@@ -104,6 +110,7 @@ public class ChangeLogItem<CHANGESET extends ChangeSetItem> {
     this.transactional = transactional;
     this.changeSetItems = changeSetElements != null ? changeSetElements : new ArrayList<>();
     this.beforeChangeSetsItems = beforeChangeSetsItems != null ? beforeChangeSetsItems : new ArrayList<>();
+    this.system = system;
   }
 
   public String getId() {
@@ -139,6 +146,9 @@ public class ChangeLogItem<CHANGESET extends ChangeSetItem> {
     return Stream.concat(beforeChangeSetsItems.stream(),changeSetItems.stream()).collect(Collectors.toList());
   }
 
+  public boolean isSystem() {
+    return system;
+  }
 
   @Override
   public boolean equals(Object o) {

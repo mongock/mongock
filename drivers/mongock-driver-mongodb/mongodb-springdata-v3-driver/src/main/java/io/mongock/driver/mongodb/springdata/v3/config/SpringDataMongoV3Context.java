@@ -9,9 +9,11 @@ import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.transaction.PlatformTransactionManager;
 
 import java.util.Optional;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 
 @Configuration
 @ConditionalOnExpression("${mongock.enabled:true}")
+@ConditionalOnBean(MongockConfiguration.class)
 @EnableConfigurationProperties(MongoDBConfiguration.class)
 public class SpringDataMongoV3Context extends SpringDataMongoV3ContextBase<MongockConfiguration, SpringDataMongoV3Driver> {
 

@@ -1,5 +1,6 @@
 package io.mongock.runner.core.executor.changelog;
 
+import io.mongock.driver.api.common.SystemChange;
 import io.mongock.runner.core.internal.ChangeLogItem;
 import io.mongock.runner.core.internal.ChangeSetItem;
 import io.mongock.api.annotations.ChangeUnit;
@@ -77,7 +78,8 @@ public class ChangeLogService extends ChangeLogServiceBase<ChangeLogItem<ChangeS
         annotationProcessor.getExecuteMethod(changeUnitClass),
         annotationProcessor.getRollbackMethod(changeUnitClass),
         annotationProcessor.getBeforeMethod(changeUnitClass).orElse(null),
-        annotationProcessor.getRollbackBeforeMethod(changeUnitClass).orElse(null)
+        annotationProcessor.getRollbackBeforeMethod(changeUnitClass).orElse(null),
+        changeUnitClass.isAnnotationPresent(SystemChange.class)
 
     );
   }
@@ -89,7 +91,8 @@ public class ChangeLogService extends ChangeLogServiceBase<ChangeLogItem<ChangeS
         changeLogClass,
         annProcessor.getChangeLogOrder(changeLogClass),
         annProcessor.isFailFast(changeLogClass),
-        fetchListOfChangeSetsFromClass(changeLogClass));
+        fetchListOfChangeSetsFromClass(changeLogClass),
+        changeLogClass.isAnnotationPresent(SystemChange.class));
   }
 
 }

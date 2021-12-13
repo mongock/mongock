@@ -268,7 +268,7 @@ class DummyRunnerBuilder extends RunnerBuilderBase<DummyRunnerBuilder, ChangeLog
   }
 
   @Override
-  protected void beforeBuildRunner() {
+  protected void beforeBuildRunner(ConnectionDriver driver) {
   }
 
   @Override

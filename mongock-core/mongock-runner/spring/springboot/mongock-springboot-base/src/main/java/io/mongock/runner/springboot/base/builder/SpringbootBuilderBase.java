@@ -104,8 +104,8 @@ public abstract class SpringbootBuilderBase<
 
 
   @Override
-  protected void beforeBuildRunner() {
-    super.beforeBuildRunner();
+  protected void beforeBuildRunner(ConnectionDriver driver) {
+    super.beforeBuildRunner(driver);
     DependencyContext dependencyContext = getDependencyManager().getDependencyContext();
     Environment environment = ((SpringDependencyContext) dependencyContext).getSpringContext().getEnvironment();
     //if cli active(mongock-cli-profile), the runner needs to be disabled

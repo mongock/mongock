@@ -47,7 +47,7 @@ class RunnerLegacyMigrationITest extends ApplicationRunnerTestBase {
         runRunnerWithLegacyMigration(2, true);
 
         // then
-        LegacyMigrationUtils.checkLegacyMigration(mongoTemplate.getDb().getCollection(Constants.CHANGELOG_COLLECTION_NAME), true, 1);
+        LegacyMigrationUtils.checkLegacyMigration(mongoTemplate.getCollection(Constants.CHANGELOG_COLLECTION_NAME), true, 1);
     }
 
     private void runRunnerWithLegacyMigration(int executions, boolean runAlways) throws Exception {
