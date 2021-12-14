@@ -1,16 +1,16 @@
 package io.mongock.driver.mongodb.v3.changelogs;
 
+import com.mongodb.client.FindIterable;
+import com.mongodb.client.MongoCollection;
+import com.mongodb.client.MongoDatabase;
 import io.changock.migration.api.annotations.NonLockGuarded;
 import io.changock.migration.api.annotations.NonLockGuardedType;
 import io.mongock.api.config.LegacyMigration;
 import io.mongock.api.config.LegacyMigrationMappingFields;
+import io.mongock.api.exception.MongockException;
 import io.mongock.driver.api.entry.ChangeEntry;
 import io.mongock.driver.api.entry.ChangeEntryService;
 import io.mongock.driver.api.entry.ChangeState;
-import io.mongock.api.exception.MongockException;
-import com.mongodb.client.FindIterable;
-import com.mongodb.client.MongoCollection;
-import com.mongodb.client.MongoDatabase;
 import io.mongock.driver.api.entry.ChangeType;
 import org.bson.Document;
 import org.slf4j.Logger;
@@ -44,18 +44,52 @@ public class LegacyService {
     try {
       validateLegacyMigration(legacyMigration);
       List<ChangeEntry> changesToMigrate = getOriginalMigrationAsChangeEntryList(mongoDatabase.getCollection(legacyMigration.getOrigin()), legacyMigration);
+      Set<String> allMigratedChanges = changeEntryService.getEntriesLog()
+          .stream()
+          .map(c -> String.format("%s-%s", c.getChangeId(), c.getAuthor()))
+          .collect(Collectors.toSet());
       Set<String> executedChanges = changeEntryService.getExecuted()
           .stream()
-          .map(c-> String.format("%s-%s", c.getChangeId(), c.getAuthor()))
+          .map(c -> String.format("%s-%s", c.getChangeId(), c.getAuthor()))
           .collect(Collectors.toSet());
 
+      /**
+       * For each change from the origin:
+       * - if it's in the target and in executed state, it's fine. Nothing is done
+       * - If it's in target but not in executed state, another changeEntry is inserted with the same (id,author), state= origin.state and date = NOW
+       * - If it's not in target, another changeEntry is inserted with the same (id,author), state= origin.state and date = origin.date
+       *
+       * Explanation:
+       * - if a change is already in target in a non executed state, it is probably in a corrupted state. So the origin change is migrated with date=now,
+       * so it's the one it will be prioritised over the older ones
+       */
       for (ChangeEntry originalChange : changesToMigrate) {
-        if (!executedChanges.contains(String.format("%s-%s",originalChange.getChangeId(), originalChange.getAuthor()))) {
-          logTracking(originalChange);
-          changeEntryService.saveOrUpdate(originalChange);
-          logSuccessfullyTracked(originalChange);
-        } else {
+        boolean hasBeenPreviouslyMigrated = allMigratedChanges.contains(String.format("%s-%s", originalChange.getChangeId(), originalChange.getAuthor()));
+        boolean migratedAndExecutedState = executedChanges.contains(String.format("%s-%s", originalChange.getChangeId(), originalChange.getAuthor()));
+        if (migratedAndExecutedState) {
           logAlreadyTracked(originalChange);
+        } else {
+          final ChangeEntry changeToInsert;
+          if (hasBeenPreviouslyMigrated) {
+            changeToInsert = new ChangeEntry(
+                originalChange.getExecutionId(),
+                originalChange.getChangeId(),
+                originalChange.getAuthor(),
+                new Date(),
+                originalChange.getState(),
+                originalChange.getType(),
+                originalChange.getChangeLogClass(),
+                originalChange.getChangeSetMethod(),
+                originalChange.getExecutionMillis(),
+                originalChange.getExecutionHostname(),
+                originalChange.getMetadata(),
+                originalChange.getErrorTrace().orElse(""));
+          } else {
+            changeToInsert = originalChange;
+          }
+          logTracking(changeToInsert);
+          changeEntryService.saveOrUpdate(changeToInsert);
+          logSuccessfullyTracked(changeToInsert);
         }
         changesMigrated++;
       }
