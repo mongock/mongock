@@ -18,16 +18,12 @@ import static io.mongock.driver.api.entry.ChangeState.ROLLBACK_FAILED;
 public interface ChangeEntryService extends RepositoryIndexable, Process {
 
   /**
-   * Retrieves if a changeSet with given changeSetId and author hasn't been already executed. This means
-   * there is no changeSet in the changeLog store for the given changeSetId and author, or its state is not
-   * EXECUTED.
-   *
-   * @param changeSetId changeSet id
-   * @param author      changeSet's author
-   * @return true if it has not been executed yet, false otherwise
-   * @throws MongockException if anything goes wrong
+   * NOT USED
    */
-  boolean isAlreadyExecuted(String changeSetId, String author) throws MongockException;
+  @Deprecated
+  default boolean isAlreadyExecuted(String changeSetId, String author) {
+    throw new UnsupportedOperationException("THIS IS DEPRECATED AND WILL BE REMOVED");
+  }
 
   /**
    * Retrieves a list with current executed entries ordered by execution timestamp.

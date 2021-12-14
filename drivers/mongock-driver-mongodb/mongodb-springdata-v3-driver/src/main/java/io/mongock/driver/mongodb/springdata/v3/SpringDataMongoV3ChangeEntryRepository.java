@@ -1,10 +1,10 @@
 package io.mongock.driver.mongodb.springdata.v3;
 
+import io.mongock.api.exception.MongockException;
 import io.mongock.driver.api.entry.ChangeEntry;
 import io.mongock.driver.core.entry.ChangeEntryRepositoryWithEntity;
 import io.mongock.driver.mongodb.sync.v4.repository.MongoSync4ChangeEntryRepository;
 import io.mongock.driver.mongodb.sync.v4.repository.ReadWriteConfiguration;
-import io.mongock.api.exception.MongockException;
 import org.bson.Document;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
@@ -51,8 +51,4 @@ public class SpringDataMongoV3ChangeEntryRepository extends MongoSync4ChangeEntr
     entityDocu.forEach(updateChangeEntry::set);
     return updateChangeEntry;
   }
-
-
-
-
 }

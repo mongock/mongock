@@ -115,41 +115,6 @@ public class MongoSync4ChangeEntryRepository extends MongoSync4RepositoryBase<Ch
       return false;
     }
   }
-  
-  @Override
-  public List<ExecutedChangeEntry> getExecuted() throws MongockException {
-    Bson matchExecutedOrRolledBack = Aggregates.match(Filters.or(
-        Filters.eq(KEY_STATE, ChangeState.EXECUTED.name()),
-        Filters.eq(KEY_STATE, ChangeState.ROLLED_BACK.name()),
-        Filters.eq(KEY_STATE, null),
-        Filters.exists(KEY_STATE, false)
-    ));
-    Bson previousSort = Aggregates.sort(Sorts.descending(KEY_TIMESTAMP));
-    Bson group = Aggregates.group(Projections.fields(Filters.eq(KEY_CHANGE_ID, "$" + KEY_CHANGE_ID), Filters.eq(KEY_AUTHOR, "$" + KEY_AUTHOR)),
-                                  Accumulators.first(KEY_CHANGE_ID, "$" + KEY_CHANGE_ID),
-                                  Accumulators.first(KEY_AUTHOR, "$" + KEY_AUTHOR),
-                                  Accumulators.first(KEY_STATE, "$" + KEY_STATE),
-                                  Accumulators.first(KEY_TIMESTAMP, "$" + KEY_TIMESTAMP),
-                                  Accumulators.first(KEY_CHANGELOG_CLASS, "$" + KEY_CHANGELOG_CLASS),
-                                  Accumulators.first(KEY_CHANGESET_METHOD, "$" + KEY_CHANGESET_METHOD));
-    Bson projection = Aggregates.project(Projections.fields(Projections.include(KEY_CHANGE_ID, KEY_AUTHOR, KEY_STATE, KEY_TIMESTAMP, KEY_CHANGELOG_CLASS, KEY_CHANGESET_METHOD), Projections.excludeId()));
-    Bson finalSort = Aggregates.sort(Sorts.ascending(KEY_TIMESTAMP));
-    Bson matchOnlyExecuted = Aggregates.match(Filters.or(
-        Filters.eq(KEY_STATE, ChangeState.EXECUTED.name()),
-        Filters.eq(KEY_STATE, null),
-        Filters.exists(KEY_STATE, false)
-    ));
-    
-    return collection.aggregate(Arrays.asList(matchExecutedOrRolledBack, previousSort, group, projection, matchOnlyExecuted, finalSort))
-                     .into(new ArrayList<>())
-                     .stream()
-                     .map(entry -> new ExecutedChangeEntry(entry.getString(KEY_CHANGE_ID),
-                                                           entry.getString(KEY_AUTHOR),
-                                                           entry.getDate(KEY_TIMESTAMP),
-                                                           entry.getString(KEY_CHANGELOG_CLASS),
-                                                           entry.getString(KEY_CHANGESET_METHOD)))
-                     .collect(Collectors.toList());
-  }
 
   @Override
   public List<ChangeEntry> getEntriesLog() {
