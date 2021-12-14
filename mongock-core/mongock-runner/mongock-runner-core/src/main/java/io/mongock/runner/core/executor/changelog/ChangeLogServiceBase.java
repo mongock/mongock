@@ -1,13 +1,13 @@
 package io.mongock.runner.core.executor.changelog;
 
 import com.github.cloudyrock.mongock.ChangeLog;
+import io.mongock.api.annotations.ChangeUnit;
+import io.mongock.api.exception.MongockException;
+import io.mongock.driver.api.common.Validable;
 import io.mongock.runner.core.annotation.AnnotationProcessor;
 import io.mongock.runner.core.annotation.LegacyAnnotationProcessor;
 import io.mongock.runner.core.internal.ChangeLogItem;
 import io.mongock.runner.core.internal.ChangeSetItem;
-import io.mongock.api.annotations.ChangeUnit;
-import io.mongock.api.exception.MongockException;
-import io.mongock.driver.api.common.Validable;
 import io.mongock.utils.CollectionUtils;
 import io.mongock.utils.StringUtils;
 import org.apache.maven.artifact.versioning.ArtifactVersion;
@@ -26,6 +26,7 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeSet;
+import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -129,8 +130,10 @@ public abstract class ChangeLogServiceBase<CHANGELOG extends ChangeLogItem<CHANG
     TreeSet<CHANGELOG> changeLogs = mergeChangeLogClassesAndPackages()
         .stream()
         .filter(changeLogClass -> this.profileFilter != null ? this.profileFilter.apply(changeLogClass) : true)
+        //the following checks that if the class is annotated with changeUnit, it satisfies the systemVersion
+        .filter(changeLogClass -> !changeLogClass.isAnnotationPresent(ChangeUnit.class) || isWithinVersion(changeLogClass.getAnnotation(ChangeUnit.class).systemVersion()))
         .map(this::buildChangeLogObject)
-        .collect(Collectors.toCollection(() -> new TreeSet<>(new ChangeLogComparator())));
+        .collect(Collectors.toCollection(() -> new TreeSet<>(new ChangeLogComparator<>())));
     validateDuplications(changeLogs);
     return changeLogs;
   }
@@ -148,8 +151,8 @@ public abstract class ChangeLogServiceBase<CHANGELOG extends ChangeLogItem<CHANG
     //the following check is needed because reflection library will bring the entire classpath in case the changeLogsBasePackageList is empty
     final Stream<Class<?>> scannedPackageStream = changeLogsBasePackageList != null && !changeLogsBasePackageList.isEmpty()
         ? Stream.concat(
-          new Reflections(changeLogsBasePackageList).getTypesAnnotatedWith(ChangeLog.class).stream(),
-          new Reflections(changeLogsBasePackageList).getTypesAnnotatedWith(ChangeUnit.class).stream())
+        new Reflections(changeLogsBasePackageList).getTypesAnnotatedWith(ChangeLog.class).stream(),
+        new Reflections(changeLogsBasePackageList).getTypesAnnotatedWith(ChangeUnit.class).stream())
         : Stream.empty();
     return Stream.concat(changeLogsBaseClassList.stream(), scannedPackageStream).collect(Collectors.toSet());
   }
@@ -162,36 +165,30 @@ public abstract class ChangeLogServiceBase<CHANGELOG extends ChangeLogItem<CHANG
 
 
   private List<CHANGESET> getChangeSetWithCompanionMethods(List<Method> allMethods) throws MongockException {
-    //list to be returned
-    List<CHANGESET> result = new ArrayList<>();
     Set<String> changeSetIdsAlreadyProcessed = new HashSet<>();
-    allMethods.stream().filter(legacyAnnotationProcessor::isMethodAnnotatedAsChange).collect(Collectors.toList())
-        .forEach(changeSetMethod -> {
-          String changeSetId = legacyAnnotationProcessor.getId(changeSetMethod);
-          CHANGESET changeSetItem = legacyAnnotationProcessor.getChangePerformerItem(changeSetMethod, null);
-          checkChangeSetDuplication(changeSetIdsAlreadyProcessed, changeSetId);
-          changeSetIdsAlreadyProcessed.add(changeSetId);
-          if (isChangeSetWithinSystemVersionRange(changeSetItem)) {
-            result.add(changeSetItem);
-          }
-        });
-    return result;
+    Consumer<String> addIfNotDuplicatedOrException = changeSetId -> {
+      if (changeSetIdsAlreadyProcessed.contains(changeSetId)) {
+        throw new MongockException(String.format("Duplicated changeset id found: '%s'", changeSetId));
+      }
+      changeSetIdsAlreadyProcessed.add(changeSetId);
+    };
+    return allMethods.stream()
+        .filter(legacyAnnotationProcessor::isMethodAnnotatedAsChange)
+        .map(changeSetMethod -> legacyAnnotationProcessor.getChangePerformerItem(changeSetMethod, null))
+        .peek(changeSetItem -> addIfNotDuplicatedOrException.accept(changeSetItem.getId()))
+        .filter(changeSetItem -> isWithinVersion(changeSetItem.getSystemVersion()))
+        .collect(Collectors.toList());
   }
 
-  //todo Create a SystemVersionChecker
-  private boolean isChangeSetWithinSystemVersionRange(CHANGESET changeSetAnn) {
-    boolean isWithinVersion = false;
-    String versionString = changeSetAnn.getSystemVersion();
+
+  private boolean isWithinVersion(String versionString) {
     ArtifactVersion version = new DefaultArtifactVersion(versionString);
-    if (version.compareTo(startSystemVersion) >= 0 && version.compareTo(endSystemVersion) <= 0) {
-      isWithinVersion = true;
-    }
-    return isWithinVersion;
+    return version.compareTo(startSystemVersion) >= 0 && version.compareTo(endSystemVersion) <= 0;
   }
 
   private CHANGELOG buildChangeLogObject(Class<?> changeLogClass) {
     try {
-      return isLegacyAnnotation(changeLogClass)
+      return !changeLogClass.isAnnotationPresent(ChangeUnit.class)
           ? buildChangeLogInstanceFromLegacy(changeLogClass)
           : buildChangeLogInstance(changeLogClass);
     } catch (MongockException ex) {
@@ -201,78 +198,14 @@ public abstract class ChangeLogServiceBase<CHANGELOG extends ChangeLogItem<CHANG
     }
   }
 
-  private boolean isLegacyAnnotation(Class<?> changeLogClass) {
-    return !changeLogClass.isAnnotationPresent(ChangeUnit.class);
-  }
-
   protected abstract CHANGELOG buildChangeLogInstance(Class<?> changeLogClass) throws MongockException;
 
   protected abstract CHANGELOG buildChangeLogInstanceFromLegacy(Class<?> changeLogClass) throws MongockException;
 
-  private class ChangeSetComparator implements Comparator<CHANGESET>, Serializable {
-    private static final long serialVersionUID = -854690868262484102L;
-
-    @Override
-    public int compare(CHANGESET c1, CHANGESET c2) {
-      return c1.getOrder().compareTo(c2.getOrder());
-    }
-  }
-
-  private class ChangeLogComparator implements Comparator<CHANGELOG>, Serializable {
-    private static final long serialVersionUID = -358162121872177974L;
 
 
 
-    /**
-     * if order1 and order2 are not null and different, it return their compare. If one of then is null, the other is first.
-     * If both are null or equals, they are compare bby their names
-     */
-    @Override
-    public int compare(CHANGELOG changeLog1, CHANGELOG changeLog2) {
-      String val1 = changeLog1.getOrder();
-      String val2 = changeLog2.getOrder();
-      if(changeLog1.isSystem() && !changeLog2.isSystem()) {
-        return -1;
-      } else if(changeLog2.isSystem() && !changeLog1.isSystem()) {
-        return 1;
-      }else if (StringUtils.hasText(val1) && StringUtils.hasText(val2) && !val1.equals(val2)) {
-        return val1.compareTo(val2);
-      } else if (StringUtils.hasText(val1) && !StringUtils.hasText(val2)) {
-        return -1;
-      } else if (StringUtils.hasText(val2) && !StringUtils.hasText(val1)) {
-        return 1;
-      } else {
-        return changeLog1.getType().getCanonicalName().compareTo(changeLog2.getType().getCanonicalName());
-      }
 
-    }
-  }
-
-
-  private void checkChangeSetDuplication(Set<String> changeSetIdsAlreadyProcessed, String changeSetId) {
-    if (changeSetIdsAlreadyProcessed.contains(changeSetId)) {
-      throw new MongockException(String.format("Duplicated changeset id found: '%s'", changeSetId));
-    }
-  }
-
-  private void checkRollbackMatchesChangeSet(Set<String> changeSetIds, Method method, String rollbackId) {
-    if (!changeSetIds.contains(rollbackId)) {
-      throw new MongockException(String.format(
-          "Rollback method[%s] in class[%s] with id[%s] doesn't match any changeSet",
-          method.getName(),
-          method.getDeclaringClass().getSimpleName(),
-          rollbackId));
-    }
-  }
-
-  private void checkRollbackDuplication(Set<String> rollbacksAlreadyProcessed, String rollbackId) {
-    if (rollbacksAlreadyProcessed.contains(rollbackId)) {
-      throw new MongockException(String.format(
-          "Multiple rollbacks matching the same changeSetId[%s]. Only one rollback allowed per changeSet",
-          rollbackId
-      ));
-    }
-  }
 
   protected List<CHANGESET> fetchListOfChangeSetsFromClass(Class<?> type) {
     return getAllChanges(type)
@@ -288,8 +221,8 @@ public abstract class ChangeLogServiceBase<CHANGELOG extends ChangeLogItem<CHANG
   }
 
   private class ThrowableHashSet extends HashSet<ChangeSetItem> {
-    public void addAndThrow(ChangeSetItem  e) {
-      if(!add(e)) throw new MongockException("Change with id[%s] duplicated", e.getId());
+    public void addAndThrow(ChangeSetItem e) {
+      if (!add(e)) throw new MongockException("Change with id[%s] duplicated", e.getId());
     }
   }
 }
