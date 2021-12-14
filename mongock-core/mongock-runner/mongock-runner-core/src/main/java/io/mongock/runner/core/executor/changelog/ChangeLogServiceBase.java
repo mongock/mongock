@@ -130,6 +130,8 @@ public abstract class ChangeLogServiceBase<CHANGELOG extends ChangeLogItem<CHANG
     TreeSet<CHANGELOG> changeLogs = mergeChangeLogClassesAndPackages()
         .stream()
         .filter(changeLogClass -> this.profileFilter != null ? this.profileFilter.apply(changeLogClass) : true)
+        //the following checks that if the class is annotated with changeUnit, it satisfies the systemVersion
+        .filter(changeLogClass -> !changeLogClass.isAnnotationPresent(ChangeUnit.class) || isWithinVersion(changeLogClass.getAnnotation(ChangeUnit.class).systemVersion()))
         .map(this::buildChangeLogObject)
         .collect(Collectors.toCollection(() -> new TreeSet<>(new ChangeLogComparator<>())));
     validateDuplications(changeLogs);
@@ -174,15 +176,10 @@ public abstract class ChangeLogServiceBase<CHANGELOG extends ChangeLogItem<CHANG
         .filter(legacyAnnotationProcessor::isMethodAnnotatedAsChange)
         .map(changeSetMethod -> legacyAnnotationProcessor.getChangePerformerItem(changeSetMethod, null))
         .peek(changeSetItem -> addIfNotDuplicatedOrException.accept(changeSetItem.getId()))
-        .filter(this::isChangeSetWithinSystemVersionRange)
+        .filter(changeSetItem -> isWithinVersion(changeSetItem.getSystemVersion()))
         .collect(Collectors.toList());
   }
 
-  //todo Create a SystemVersionChecker
-  private boolean isChangeSetWithinSystemVersionRange(CHANGESET changeSetAnn) {
-    String versionString = changeSetAnn.getSystemVersion();
-    return isWithinVersion(versionString);
-  }
 
   private boolean isWithinVersion(String versionString) {
     ArtifactVersion version = new DefaultArtifactVersion(versionString);

@@ -14,6 +14,9 @@ import io.mongock.runner.core.changelogs.multipackage.package1.ChangeLogMultiPac
 import io.mongock.runner.core.changelogs.multipackage.package2.ChangeLogMultiPackage2;
 import io.mongock.runner.core.changelogs.system.SystemChangeUnit;
 import io.mongock.runner.core.changelogs.systemversion.ChangeLogSystemVersion;
+import io.mongock.runner.core.changelogs.systemversion.ChangeUnitSystemVersion1;
+import io.mongock.runner.core.changelogs.systemversion.ChangeUnitSystemVersion3;
+import io.mongock.runner.core.changelogs.systemversion.ChangeUnitSystemVersion6;
 import io.mongock.runner.core.changelogs.test1.ChangeLogSuccess11;
 import io.mongock.runner.core.changelogs.test1.ChangeLogSuccess12;
 import io.mongock.runner.core.changelogs.withDuplications.changesetsduplicated.ChangeLogDuplicated1;
@@ -178,40 +181,52 @@ public class ChangeLogServiceTest {
 
   @Test
   public void shouldReturnOnlyChangeSetsWithinSystemVersionRangeInclusive() {
-    List<? extends ChangeSetItem> allChangeSets = getChangeSetItems("0", "9");
+    List<? extends ChangeSetItem> allChangeSets = getChangeSetItems("0", "9", ChangeLogSystemVersion.class);
     assertEquals(6, allChangeSets.size());
 
-    List<? extends ChangeSetItem> systemVersionedChangeSets = getChangeSetItems("2", "4");
+    List<? extends ChangeSetItem> systemVersionedChangeSets = getChangeSetItems("2", "4", ChangeLogSystemVersion.class);
     assertEquals(3, systemVersionedChangeSets.size());
     systemVersionedChangeSets.stream()
         .map(ChangeSetItem::getId)
         .collect(Collectors.toList())
         .containsAll(Arrays.asList("ChangeSet_2", "ChangeSet_3.0", "ChangeSet_4"));
 
-    systemVersionedChangeSets = getChangeSetItems("3", "4");
+    systemVersionedChangeSets = getChangeSetItems("3", "4", ChangeLogSystemVersion.class);
     assertEquals(2, systemVersionedChangeSets.size());
     systemVersionedChangeSets.stream()
         .map(ChangeSetItem::getId)
         .collect(Collectors.toList())
         .containsAll(Arrays.asList("ChangeSet_3.0", "ChangeSet_4"));
 
-    systemVersionedChangeSets = getChangeSetItems("3", "2018");
+    systemVersionedChangeSets = getChangeSetItems("3", "2018", ChangeLogSystemVersion.class);
     assertEquals(5, systemVersionedChangeSets.size());
     systemVersionedChangeSets.stream()
         .map(ChangeSetItem::getId)
         .collect(Collectors.toList())
         .containsAll(Arrays.asList("ChangeSet_3.0", "ChangeSet_4", "ChangeSet_5", "ChangeSet_6", "ChangeSet_2018"));
+
+
+    systemVersionedChangeSets = getChangeSetItems("2", "3", ChangeUnitSystemVersion3.class, ChangeUnitSystemVersion6.class, ChangeUnitSystemVersion1.class);
+    assertEquals(1, systemVersionedChangeSets.size());
+    systemVersionedChangeSets.stream()
+        .map(ChangeSetItem::getId)
+        .collect(Collectors.toList())
+        .containsAll(Collections.singletonList("change-unit-system-version-3"));
+
+
   }
 
-  private List<? extends ChangeSetItem> getChangeSetItems(String startingVersion, String endingVersion) {
+  private List<? extends ChangeSetItem> getChangeSetItems(String startingVersion, String endingVersion, Class<?>... changeClasses) {
     return new ArrayList<>(new ChangeLogService(
-        Collections.singletonList(ChangeLogSystemVersion.class.getPackage().getName()),
         Collections.emptyList(),
+        Arrays.asList(changeClasses),
         startingVersion,
         endingVersion)
         .fetchChangeLogs())
-        .get(0)
-        .getChangeSetItems();
+        .stream()
+        .map(ChangeLogItem::getChangeSetItems)
+        .flatMap(List::stream)
+        .collect(Collectors.toList());
   }
 
 
