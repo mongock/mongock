@@ -31,7 +31,7 @@ public class LegacyServiceTest {
 
 
   @Test
-  public void test() {
+  public void legacyServiceWithCorruptedState() {
     long now = System.currentTimeMillis();
     ChangeEntryService changeEntryService = mockChangeEntryService();
 
