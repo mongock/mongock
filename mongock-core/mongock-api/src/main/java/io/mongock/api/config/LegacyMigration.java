@@ -16,6 +16,8 @@ public class LegacyMigration {
 
   private boolean runAlways = false;
 
+  private boolean repair = false;
+
 
   public LegacyMigration() {
   }
@@ -24,31 +26,6 @@ public class LegacyMigration {
     setOrigin(origin);
   }
 
-  public LegacyMigration(String origin,
-                         boolean failFast,
-                         String changeId,
-                         String author,
-                         String timestamp,
-                         String changeLogClass,
-                         String changeSetMethod) {
-
-    this(origin, failFast, changeId, author, timestamp, changeLogClass, changeSetMethod, null, null);
-  }
-
-  public LegacyMigration(String origin,
-                         boolean failFast,
-                         String changeId,
-                         String author,
-                         String timestamp,
-                         String changeLogClass,
-                         String changeSetMethod,
-                         String metadata,
-                         Integer changesCountExpectation) {
-    setOrigin(origin);
-    setFailFast(failFast);
-    setChangesCountExpectation(changesCountExpectation);
-    setMappingFields(new LegacyMigrationMappingFields(changeId, author, timestamp, changeLogClass, changeSetMethod, metadata));
-  }
 
   public LegacyMigrationMappingFields getMappingFields() {
     return mappingFields;
@@ -88,6 +65,16 @@ public class LegacyMigration {
 
   public void setFailFast(boolean failFast) {
     this.failFast = failFast;
+  }
+
+
+
+  public boolean isRepair() {
+    return repair;
+  }
+
+  public void setRepair(boolean repair) {
+    this.repair = repair;
   }
 
   //TODO remove this legacy methods

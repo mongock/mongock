@@ -25,6 +25,8 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 public class LegacyService {
 
@@ -42,8 +44,13 @@ public class LegacyService {
     try {
       validateLegacyMigration(legacyMigration);
       List<ChangeEntry> changesToMigrate = getOriginalMigrationAsChangeEntryList(mongoDatabase.getCollection(legacyMigration.getOrigin()), legacyMigration);
+      Set<String> executedChanges = changeEntryService.getExecuted()
+          .stream()
+          .map(c-> String.format("%s-%s", c.getChangeId(), c.getAuthor()))
+          .collect(Collectors.toSet());
+
       for (ChangeEntry originalChange : changesToMigrate) {
-        if (!changeEntryService.isAlreadyExecuted(originalChange.getChangeId(), originalChange.getAuthor())) {
+        if (!executedChanges.contains(String.format("%s-%s",originalChange.getChangeId(), originalChange.getAuthor()))) {
           logTracking(originalChange);
           changeEntryService.saveOrUpdate(originalChange);
           logSuccessfullyTracked(originalChange);
