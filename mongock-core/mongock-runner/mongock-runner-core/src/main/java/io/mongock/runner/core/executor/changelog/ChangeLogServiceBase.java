@@ -166,7 +166,7 @@ public abstract class ChangeLogServiceBase<CHANGELOG extends ChangeLogItem<CHANG
     Set<String> changeSetIdsAlreadyProcessed = new HashSet<>();
     Consumer<String> addIfNotDuplicatedOrException = changeSetId -> {
       if (changeSetIdsAlreadyProcessed.contains(changeSetId)) {
-        throw new MongockException(String.format("Duplicated changeSet id found: '%s'", changeSetId));
+        throw new MongockException(String.format("Duplicated changeset id found: '%s'", changeSetId));
       }
       changeSetIdsAlreadyProcessed.add(changeSetId);
     };

@@ -5,7 +5,7 @@ import io.mongock.runner.core.internal.ChangeSetItem;
 import java.io.Serializable;
 import java.util.Comparator;
 
-public class ChangeSetComparator<CHANGESET extends ChangeSetItem> implements Comparator<CHANGESET>, Serializable {
+class ChangeSetComparator<CHANGESET extends ChangeSetItem> implements Comparator<CHANGESET>, Serializable {
   private static final long serialVersionUID = -854690868262484102L;
 
   @Override

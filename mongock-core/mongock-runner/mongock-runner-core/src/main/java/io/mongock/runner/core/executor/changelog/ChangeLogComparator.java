@@ -6,7 +6,7 @@ import io.mongock.utils.StringUtils;
 import java.io.Serializable;
 import java.util.Comparator;
 
-public class ChangeLogComparator<CHANGELOG extends ChangeLogItem<?>> implements Comparator<CHANGELOG>, Serializable {
+class ChangeLogComparator<CHANGELOG extends ChangeLogItem<?>> implements Comparator<CHANGELOG>, Serializable {
   private static final long serialVersionUID = -358162121872177974L;
 
 
