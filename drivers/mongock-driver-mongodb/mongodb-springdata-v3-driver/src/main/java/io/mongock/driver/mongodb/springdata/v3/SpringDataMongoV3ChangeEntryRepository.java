@@ -1,26 +1,17 @@
 package io.mongock.driver.mongodb.springdata.v3;
 
+import io.mongock.api.exception.MongockException;
 import io.mongock.driver.api.entry.ChangeEntry;
-import io.mongock.driver.api.entry.ExecutedChangeEntry;
 import io.mongock.driver.core.entry.ChangeEntryRepositoryWithEntity;
 import io.mongock.driver.mongodb.sync.v4.repository.MongoSync4ChangeEntryRepository;
 import io.mongock.driver.mongodb.sync.v4.repository.ReadWriteConfiguration;
-import io.mongock.api.exception.MongockException;
 import org.bson.Document;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.data.mongodb.core.query.Update;
 
-import java.util.Comparator;
 import java.util.List;
-import java.util.Map;
-import java.util.function.Predicate;
-import java.util.stream.Collectors;
-
-import static io.mongock.driver.api.entry.ChangeState.FAILED;
-import static io.mongock.driver.api.entry.ChangeState.IGNORED;
-import static io.mongock.driver.api.entry.ChangeState.ROLLBACK_FAILED;
 
 public class SpringDataMongoV3ChangeEntryRepository extends MongoSync4ChangeEntryRepository implements ChangeEntryRepositoryWithEntity<Document> {
 
