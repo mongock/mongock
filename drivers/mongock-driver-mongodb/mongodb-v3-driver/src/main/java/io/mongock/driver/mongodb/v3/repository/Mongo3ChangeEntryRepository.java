@@ -99,20 +99,6 @@ public class Mongo3ChangeEntryRepository extends Mongo3RepositoryBase<ChangeEntr
   public Mongo3ChangeEntryRepository(MongoCollection<Document> collection,  ReadWriteConfiguration readWriteConfiguration) {
     super(collection, new String[]{KEY_EXECUTION_ID, KEY_AUTHOR, KEY_CHANGE_ID}, readWriteConfiguration);
   }
-  
-  @Override
-  public boolean isAlreadyExecuted(String changeSetId, String author) throws MongockException {
-    Document entry = collection.find(buildSearchQueryDBObject(changeSetId, author)).sort(Sorts.descending(KEY_TIMESTAMP)).first();    
-    if (entry != null && !entry.isEmpty()) {
-      String entryState = entry.getString(KEY_STATE);
-      return entryState == null ||
-             entryState.isEmpty() ||
-             entryState.equals(ChangeState.EXECUTED.name());
-    }
-    else {
-      return false;
-    }
-  }
 
   @Override
   public List<ChangeEntry> getEntriesLog() {

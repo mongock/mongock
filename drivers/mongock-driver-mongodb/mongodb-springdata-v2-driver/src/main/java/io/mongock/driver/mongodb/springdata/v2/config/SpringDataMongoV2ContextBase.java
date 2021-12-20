@@ -17,9 +17,9 @@ public abstract class SpringDataMongoV2ContextBase<CONFIG extends MongockConfigu
 
   @Bean
   public ConnectionDriver connectionDriver(MongoTemplate mongoTemplate,
-                                                        CONFIG config,
-                                                        MongoDBConfiguration mongoDbConfig,
-                                                        Optional<PlatformTransactionManager> txManagerOpt) {
+                                           CONFIG config,
+                                           MongoDBConfiguration mongoDbConfig,
+                                           Optional<PlatformTransactionManager> txManagerOpt) {
     DRIVER driver = buildDriver(mongoTemplate, config, mongoDbConfig, txManagerOpt);
     setGenericDriverConfig(config, txManagerOpt, driver);
     setMongoDBConfig(mongoDbConfig, driver);
@@ -33,8 +33,8 @@ public abstract class SpringDataMongoV2ContextBase<CONFIG extends MongockConfigu
                                         Optional<PlatformTransactionManager> txManagerOpt);
 
   private void setGenericDriverConfig(CONFIG config,
-                                              Optional<PlatformTransactionManager> txManagerOpt,
-                                              DRIVER driver) {
+                                      Optional<PlatformTransactionManager> txManagerOpt,
+                                      DRIVER driver) {
     txManagerOpt.ifPresent(driver::enableTransactionWithTxManager);
     driver.setChangeLogRepositoryName(config.getChangeLogRepositoryName());
     driver.setLockRepositoryName(config.getLockRepositoryName());

@@ -11,8 +11,6 @@ import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.data.mongodb.core.query.Update;
 
-import java.util.List;
-
 public class SpringDataMongoV3ChangeEntryRepository extends MongoSync4ChangeEntryRepository implements ChangeEntryRepositoryWithEntity<Document> {
 
   private final MongoTemplate mongoTemplate;
@@ -40,10 +38,6 @@ public class SpringDataMongoV3ChangeEntryRepository extends MongoSync4ChangeEntr
     mongoTemplate.upsert(filter, getUpdateFromEntity(changeEntry), collection.getNamespace().getCollectionName());
   }
 
-  @Override
-  public List<ChangeEntry> getEntriesLog() {
-    return mongoTemplate.findAll(ChangeEntry.class, collectionName);
-  }
 
   private Update getUpdateFromEntity(ChangeEntry changeEntry) {
     Update updateChangeEntry = new Update();
