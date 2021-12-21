@@ -35,6 +35,7 @@ public abstract class SpringDataMongoV3DriverBase extends MongoSync4DriverGeneri
                                         long lockTryFrequencyMillis) {
     super(mongoTemplate.getDb(), lockAcquiredForMillis, lockQuitTryingAfterMillis, lockTryFrequencyMillis);
     this.mongoTemplate = mongoTemplate;
+    disableTransaction();
   }
 
 
