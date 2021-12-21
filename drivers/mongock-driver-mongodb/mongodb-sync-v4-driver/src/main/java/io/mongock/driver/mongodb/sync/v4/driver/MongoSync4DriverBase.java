@@ -17,7 +17,6 @@ public abstract class MongoSync4DriverBase extends MongoSync4DriverGeneric {
 
   private final MongoClient mongoClient;
   protected ClientSession clientSession;
-  private boolean transactionEnabled = true;
 
   protected MongoSync4DriverBase(MongoClient mongoClient,
                                  String databaseName,
@@ -67,10 +66,6 @@ public abstract class MongoSync4DriverBase extends MongoSync4DriverGeneric {
       operation.run();
       return "Mongock transaction operation";
     };
-  }
-
-  public void disableTransaction() {
-    transactionEnabled = false;
   }
 
   @Override

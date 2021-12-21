@@ -33,11 +33,12 @@ public abstract class MongoCore3DriverGeneric extends ConnectionDriverBase imple
   protected Mongo3ChangeEntryRepository changeEntryRepository;
   protected Mongo3LockRepository lockRepository;
   protected Set<ChangeSetDependency> dependencies;
-  protected TransactionOptions txOptions;
   private WriteConcern writeConcern;
   private ReadConcern readConcern;
   private ReadPreference readPreference;
+  protected TransactionOptions txOptions;
   protected final MongoDatabase mongoDatabase;
+  protected boolean transactionEnabled = true;
 
   protected MongoCore3DriverGeneric(MongoDatabase mongoDatabase,
                                  long lockAcquiredForMillis,
@@ -45,15 +46,6 @@ public abstract class MongoCore3DriverGeneric extends ConnectionDriverBase imple
                                  long lockTryFrequencyMillis) {
     super(lockAcquiredForMillis, lockQuitTryingAfterMillis, lockTryFrequencyMillis);
     this.mongoDatabase = mongoDatabase;
-  }
-
-  /**
-   * When using Java MongoDB driver directly, it sets the transaction options for all the Mongock's transactions.
-   * Default: readPreference: primary, readConcern and writeConcern: majority
-   * @param txOptions transaction options
-   */
-  public void setTransactionOptions(TransactionOptions txOptions) {
-    this.txOptions = txOptions;
   }
 
   public void setWriteConcern(WriteConcern writeConcern) {
@@ -66,6 +58,16 @@ public abstract class MongoCore3DriverGeneric extends ConnectionDriverBase imple
 
   public void setReadPreference(ReadPreference readPreference) {
     this.readPreference = readPreference;
+  }
+
+  @Override
+  public void disableTransaction() {
+    transactionEnabled = false;
+  }
+
+  @Override
+  public void enableTransaction() {
+    transactionEnabled = true;
   }
 
   @Override
@@ -115,14 +117,10 @@ public abstract class MongoCore3DriverGeneric extends ConnectionDriverBase imple
     dependencies = new HashSet<>();
     dependencies.add(new ChangeSetDependency(MongoDatabase.class, mongoDatabase, true));
     dependencies.add(new ChangeSetDependency(ChangeEntryService.class, getChangeEntryService(), false));
-    this.txOptions = txOptions != null ? txOptions : buildDefaultTxOptions();
-  }
-
-  private TransactionOptions buildDefaultTxOptions() {
-    return TransactionOptions.builder()
-        .readPreference(ReadPreference.primary())
-        .readConcern(ReadConcern.MAJORITY)
-        .writeConcern(WriteConcern.MAJORITY)
+    txOptions = TransactionOptions.builder()
+        .writeConcern(getWriteConcern())
+        .readConcern(getReadConcern())
+        .readPreference(getReadPreference())
         .build();
   }
 
@@ -134,5 +132,37 @@ public abstract class MongoCore3DriverGeneric extends ConnectionDriverBase imple
     );
   }
 
+
+  protected ReadPreference getReadPreference() {
+    return readPreference != null ? readPreference : DEFAULT_READ_PREFERENCE;
+  }
+
+  protected ReadConcern getReadConcern() {
+    return readConcern != null ? readConcern : DEFAULT_READ_CONCERN;
+  }
+
+  protected WriteConcern getWriteConcern() {
+    return writeConcern != null ? writeConcern : DEFAULT_WRITE_CONCERN;
+  }
+
+
+  /**
+   * Will be removed in next major release.
+   *
+   * If not set already will set the writeConcern, readConcern and readPreference
+   * Use instead setWriteConcern, setReadConcern and
+   */
+  @Deprecated
+  public void setTransactionOptions(TransactionOptions txOptions) {
+    if(writeConcern == null) {
+      setWriteConcern(txOptions.getWriteConcern());
+    }
+    if(readConcern == null) {
+      setReadConcern(txOptions.getReadConcern());
+    }
+    if(readPreference == null) {
+      setReadPreference(txOptions.getReadPreference());
+    }
+  }
 
 }

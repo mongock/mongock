@@ -13,7 +13,6 @@ import org.springframework.transaction.PlatformTransactionManager;
 import java.util.Optional;
 
 public abstract class SpringDataMongoV2ContextBase<CONFIG extends MongockConfiguration, DRIVER extends SpringDataMongoV2DriverBase> {
-  private static final Logger logger = LoggerFactory.getLogger(SpringDataMongoV2ContextBase.class);
 
   @Bean
   public ConnectionDriver connectionDriver(MongoTemplate mongoTemplate,
@@ -35,8 +34,8 @@ public abstract class SpringDataMongoV2ContextBase<CONFIG extends MongockConfigu
   private void setGenericDriverConfig(CONFIG config,
                                       Optional<PlatformTransactionManager> txManagerOpt,
                                       DRIVER driver) {
-    txManagerOpt.ifPresent(driver::enableTransactionWithTxManager);
-    driver.setChangeLogRepositoryName(config.getChangeLogRepositoryName());
+    txManagerOpt.ifPresent(tx -> driver.enableTransaction());
+    driver.setMigrationRepositoryName(config.getMigrationRepositoryName());
     driver.setLockRepositoryName(config.getLockRepositoryName());
     driver.setIndexCreation(config.isIndexCreation());
   }

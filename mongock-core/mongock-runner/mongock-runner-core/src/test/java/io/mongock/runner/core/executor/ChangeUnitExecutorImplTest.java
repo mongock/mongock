@@ -90,7 +90,7 @@ public class ChangeUnitExecutorImplTest {
     transactionableDriver = mock(TransactionableConnectionDriver.class);
     when(transactionableDriver.getLockManager()).thenReturn(lockManager);
     when(transactionableDriver.getChangeEntryService()).thenReturn(changeEntryService);
-    when(transactionableDriver.getTransactioner()).thenReturn(Optional.of(Runnable::run));
+    when(transactionableDriver.getTransactioner()).thenReturn(Optional.of(new NonTransactioner()));
   }
 
   @Test

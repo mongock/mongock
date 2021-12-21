@@ -35,8 +35,8 @@ public abstract class SpringDataMongoV3ContextBase<CONFIG extends MongockConfigu
   private void setGenericDriverConfig(CONFIG config,
                                       Optional<PlatformTransactionManager> txManagerOpt,
                                       DRIVER driver) {
-    txManagerOpt.ifPresent(driver::enableTransactionWithTxManager);
-    driver.setChangeLogRepositoryName(config.getChangeLogRepositoryName());
+    txManagerOpt.ifPresent(tx -> driver.enableTransaction());
+    driver.setMigrationRepositoryName(config.getMigrationRepositoryName());
     driver.setLockRepositoryName(config.getLockRepositoryName());
     driver.setIndexCreation(config.isIndexCreation());
   }
