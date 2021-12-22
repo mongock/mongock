@@ -13,11 +13,10 @@ import java.util.Optional;
 import java.util.Set;
 
 @NotThreadSafe
-public abstract  class MongoCore3DriverBase extends MongoCore3DriverGeneric {
+public  abstract class MongoCore3DriverBase extends MongoCore3DriverGeneric {
 
   private final MongoClient mongoClient;
   protected ClientSession clientSession;
-  private boolean transactionEnabled = true;
 
   protected MongoCore3DriverBase(MongoClient mongoClient,
                              String databaseName,
@@ -69,9 +68,6 @@ public abstract  class MongoCore3DriverBase extends MongoCore3DriverGeneric {
     };
   }
 
-  public void disableTransaction() {
-    transactionEnabled = false;
-  }
 
   @Override
   public Optional<Transactioner> getTransactioner() {

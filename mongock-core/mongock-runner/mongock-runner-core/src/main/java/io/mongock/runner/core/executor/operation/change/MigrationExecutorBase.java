@@ -12,6 +12,7 @@ import io.mongock.driver.api.entry.ChangeType;
 import io.mongock.driver.api.entry.ExecutedChangeEntry;
 import io.mongock.driver.api.lock.LockManager;
 import io.mongock.runner.core.executor.Executor;
+import io.mongock.runner.core.executor.NonTransactioner;
 import io.mongock.runner.core.executor.changelog.ChangeLogRuntime;
 import io.mongock.runner.core.internal.BeforeChangeSetItem;
 import io.mongock.runner.core.internal.ChangeLogItem;
@@ -26,7 +27,6 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.net.InetAddress;
 import java.util.ArrayDeque;
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Deque;
 import java.util.HashMap;
@@ -111,7 +111,7 @@ public abstract class MigrationExecutorBase<CONFIG extends ChangeExecutorConfigu
     prepareForStageExecutionIfApply(isStrategyPerMigration());
     driver.getTransactioner()
         .filter(t -> isStrategyPerMigration() && isDriverTransactional())
-        .orElse(Runnable::run)
+        .orElse(new NonTransactioner())
         .executeInTransaction(() -> processChangeLogs(executionId, executionHostname, changeLogs));
   }
 
@@ -152,7 +152,7 @@ public abstract class MigrationExecutorBase<CONFIG extends ChangeExecutorConfigu
   protected void processChangeLogInTransactionIfApplies(String executionId, String executionHostname, Object changeLogInstance, ChangeLogItem<ChangeSetItem> changeLog) {
     driver.getTransactioner()
         .filter(c -> isDriverTransactional() && isStrategyPerChangeUnit() && changeLog.isTransactional())
-        .orElse(Runnable::run)
+        .orElse(new NonTransactioner())
         .executeInTransaction(() -> loopRawChangeSets(executionId, executionHostname, changeLogInstance, changeLog, changeLog.getChangeSetItems()));
   }
 

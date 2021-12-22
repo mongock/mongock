@@ -1,30 +1,24 @@
 package io.mongock.driver.mongodb.sync.v4.repository;
 
-import io.mongock.driver.api.entry.ChangeEntry;
-import io.mongock.driver.api.entry.ChangeState;
-import io.mongock.driver.api.entry.ExecutedChangeEntry;
-import io.mongock.driver.core.entry.ChangeEntryRepositoryWithEntity;
-import io.mongock.api.exception.MongockException;
-
 import com.mongodb.client.ClientSession;
 import com.mongodb.client.MongoCollection;
-import com.mongodb.client.model.Accumulators;
-import com.mongodb.client.model.Aggregates;
 import com.mongodb.client.model.Filters;
-import com.mongodb.client.model.Projections;
-import com.mongodb.client.model.Sorts;
 import com.mongodb.client.model.UpdateOptions;
+import com.mongodb.client.result.InsertOneResult;
 import com.mongodb.client.result.UpdateResult;
+import io.mongock.api.exception.MongockException;
+import io.mongock.driver.api.entry.ChangeEntry;
+import io.mongock.driver.api.entry.ChangeState;
+import io.mongock.driver.api.entry.ChangeType;
+import io.mongock.driver.core.entry.ChangeEntryRepositoryWithEntity;
 import org.bson.Document;
 import org.bson.conversions.Bson;
 
-import com.mongodb.client.result.InsertOneResult;
-import io.mongock.driver.api.entry.ChangeType;
-
 import java.lang.reflect.Field;
 import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -46,8 +40,8 @@ public class MongoSync4ChangeEntryRepository extends MongoSync4RepositoryBase<Ch
 
   static {
     try {
-       Field field = ChangeEntry.class.getDeclaredField("executionId");
-       field.setAccessible(true);
+      Field field = ChangeEntry.class.getDeclaredField("executionId");
+      field.setAccessible(true);
       KEY_EXECUTION_ID = field.getAnnotation(io.mongock.utils.field.Field.class).value();
 
       field = ChangeEntry.class.getDeclaredField("changeId");
@@ -57,7 +51,7 @@ public class MongoSync4ChangeEntryRepository extends MongoSync4RepositoryBase<Ch
       field = ChangeEntry.class.getDeclaredField("state");
       field.setAccessible(true);
       KEY_STATE = field.getAnnotation(io.mongock.utils.field.Field.class).value();
-      
+
       field = ChangeEntry.class.getDeclaredField("type");
       field.setAccessible(true);
       KEY_TYPE = field.getAnnotation(io.mongock.utils.field.Field.class).value();
@@ -77,15 +71,15 @@ public class MongoSync4ChangeEntryRepository extends MongoSync4RepositoryBase<Ch
       field = ChangeEntry.class.getDeclaredField("changeSetMethod");
       field.setAccessible(true);
       KEY_CHANGESET_METHOD = field.getAnnotation(io.mongock.utils.field.Field.class).value();
-      
+
       field = ChangeEntry.class.getDeclaredField("metadata");
       field.setAccessible(true);
       KEY_METADATA = field.getAnnotation(io.mongock.utils.field.Field.class).value();
-      
+
       field = ChangeEntry.class.getDeclaredField("executionMillis");
       field.setAccessible(true);
       KEY_EXECUTION_MILLIS = field.getAnnotation(io.mongock.utils.field.Field.class).value();
-      
+
       field = ChangeEntry.class.getDeclaredField("executionHostname");
       field.setAccessible(true);
       KEY_EXECUTION_HOSTNAME = field.getAnnotation(io.mongock.utils.field.Field.class).value();
@@ -103,20 +97,6 @@ public class MongoSync4ChangeEntryRepository extends MongoSync4RepositoryBase<Ch
   }
 
   @Override
-  public boolean isAlreadyExecuted(String changeSetId, String author) throws MongockException {
-    Document entry = collection.find(buildSearchQueryDBObject(changeSetId, author)).sort(Sorts.descending(KEY_TIMESTAMP)).first();    
-    if (entry != null && !entry.isEmpty()) {
-      String entryState = entry.getString(KEY_STATE);
-      return entryState == null ||
-             entryState.isEmpty() ||
-             entryState.equals(ChangeState.EXECUTED.name());
-    }
-    else {
-      return false;
-    }
-  }
-
-  @Override
   public List<ChangeEntry> getEntriesLog() {
     return collection.find()
             .into(new ArrayList<>())
@@ -126,11 +106,11 @@ public class MongoSync4ChangeEntryRepository extends MongoSync4RepositoryBase<Ch
                                   entry.getString(KEY_CHANGE_ID),
                                   entry.getString(KEY_AUTHOR),
                                   entry.getDate(KEY_TIMESTAMP),
-                                  entry.getString(KEY_STATE) != null 
-                                          ? ChangeState.valueOf(entry.getString(KEY_STATE)) 
+                                  entry.getString(KEY_STATE) != null
+                                          ? ChangeState.valueOf(entry.getString(KEY_STATE))
                                           : null,
-                                  entry.getString(KEY_TYPE) != null 
-                                          ? ChangeType.valueOf(entry.getString(KEY_TYPE)) 
+                                  entry.getString(KEY_TYPE) != null
+                                          ? ChangeType.valueOf(entry.getString(KEY_TYPE))
                                           : null,
                                   entry.getString(KEY_CHANGELOG_CLASS),
                                   entry.getString(KEY_CHANGESET_METHOD),
@@ -173,27 +153,4 @@ public class MongoSync4ChangeEntryRepository extends MongoSync4RepositoryBase<Ch
   private Optional<ClientSession> getClientSession() {
     return Optional.ofNullable(clientSession);
   }
-
-
-  /**
-   * Check if a changeSet with given changeSetId and author and
-   * (state == EXECUTED OR state == ROLLED_BACK OR state == null OR estate doesn't exists)
-   * @param changeSetId changeSetId
-   * @param author author
-   * @return query filter object
-   */
-  protected Bson buildSearchQueryDBObject(String changeSetId, String author) {
-    Bson executedStateOrNoExisting = Filters.or(
-        Filters.eq(KEY_STATE, ChangeState.EXECUTED.name()),
-        Filters.eq(KEY_STATE, ChangeState.ROLLED_BACK.name()),
-        Filters.eq(KEY_STATE, null),
-        Filters.exists(KEY_STATE, false)
-    );
-    return Filters.and(
-        Filters.eq(KEY_CHANGE_ID, changeSetId),
-        Filters.eq(KEY_AUTHOR, author),
-        executedStateOrNoExisting
-    );
-  }
-
 }

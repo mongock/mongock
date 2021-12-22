@@ -13,13 +13,12 @@ import org.springframework.transaction.PlatformTransactionManager;
 import java.util.Optional;
 
 public abstract class SpringDataMongoV2ContextBase<CONFIG extends MongockConfiguration, DRIVER extends SpringDataMongoV2DriverBase> {
-  private static final Logger logger = LoggerFactory.getLogger(SpringDataMongoV2ContextBase.class);
 
   @Bean
   public ConnectionDriver connectionDriver(MongoTemplate mongoTemplate,
-                                                        CONFIG config,
-                                                        MongoDBConfiguration mongoDbConfig,
-                                                        Optional<PlatformTransactionManager> txManagerOpt) {
+                                           CONFIG config,
+                                           MongoDBConfiguration mongoDbConfig,
+                                           Optional<PlatformTransactionManager> txManagerOpt) {
     DRIVER driver = buildDriver(mongoTemplate, config, mongoDbConfig, txManagerOpt);
     setGenericDriverConfig(config, txManagerOpt, driver);
     setMongoDBConfig(mongoDbConfig, driver);
@@ -33,10 +32,10 @@ public abstract class SpringDataMongoV2ContextBase<CONFIG extends MongockConfigu
                                         Optional<PlatformTransactionManager> txManagerOpt);
 
   private void setGenericDriverConfig(CONFIG config,
-                                              Optional<PlatformTransactionManager> txManagerOpt,
-                                              DRIVER driver) {
-    txManagerOpt.ifPresent(driver::enableTransactionWithTxManager);
-    driver.setChangeLogRepositoryName(config.getChangeLogRepositoryName());
+                                      Optional<PlatformTransactionManager> txManagerOpt,
+                                      DRIVER driver) {
+    txManagerOpt.ifPresent(tx -> driver.enableTransaction());
+    driver.setMigrationRepositoryName(config.getMigrationRepositoryName());
     driver.setLockRepositoryName(config.getLockRepositoryName());
     driver.setIndexCreation(config.isIndexCreation());
   }

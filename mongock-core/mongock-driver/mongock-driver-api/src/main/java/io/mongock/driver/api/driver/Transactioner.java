@@ -1,6 +1,10 @@
 package io.mongock.driver.api.driver;
 
-@FunctionalInterface
 public interface Transactioner {
+
+  void disableTransaction();
+
+  void enableTransaction();
+
   void executeInTransaction(Runnable operation);
 }

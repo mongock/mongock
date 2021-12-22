@@ -1,6 +1,7 @@
 package io.mongock.driver.mongodb.springdata.v3;
 
 import com.github.cloudyrock.mongock.driver.mongodb.springdata.v3.decorator.impl.MongockTemplate;
+import com.mongodb.TransactionOptions;
 import io.mongock.api.exception.MongockException;
 import io.mongock.driver.api.driver.ChangeSetDependency;
 import io.mongock.driver.api.driver.ChangeSetDependencyBuildable;
@@ -10,6 +11,7 @@ import io.mongock.driver.mongodb.sync.v4.driver.MongoSync4DriverGeneric;
 import io.mongock.utils.annotation.NotThreadSafe;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.data.mongodb.MongoTransactionManager;
 import org.springframework.data.mongodb.SessionSynchronization;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.transaction.PlatformTransactionManager;
@@ -25,14 +27,15 @@ public abstract class SpringDataMongoV3DriverBase extends MongoSync4DriverGeneri
   protected static final Logger logger = LoggerFactory.getLogger(SpringDataMongoV3DriverBase.class);
 
   protected final MongoTemplate mongoTemplate;
-  protected PlatformTransactionManager txManager;
+  protected MongoTransactionManager txManager;
 
   protected SpringDataMongoV3DriverBase(MongoTemplate mongoTemplate,
-                                    long lockAcquiredForMillis,
-                                    long lockQuitTryingAfterMillis,
-                                    long lockTryFrequencyMillis) {
+                                        long lockAcquiredForMillis,
+                                        long lockQuitTryingAfterMillis,
+                                        long lockTryFrequencyMillis) {
     super(mongoTemplate.getDb(), lockAcquiredForMillis, lockQuitTryingAfterMillis, lockTryFrequencyMillis);
     this.mongoTemplate = mongoTemplate;
+    disableTransaction();
   }
 
 
@@ -45,7 +48,6 @@ public abstract class SpringDataMongoV3DriverBase extends MongoSync4DriverGeneri
   }
 
 
-
   @Override
   public void specificInitialization() {
     super.specificInitialization();
@@ -55,6 +57,8 @@ public abstract class SpringDataMongoV3DriverBase extends MongoSync4DriverGeneri
         impl -> new MongockTemplate((MongoTemplate) impl),
         true));
     dependencies.add(new ChangeSetDependency(MongoTemplate.class, this.mongoTemplate));
+
+    txManager = new MongoTransactionManager(mongoTemplate.getMongoDbFactory(), txOptions);
   }
 
   public MongockTemplate getMongockTemplate() {
@@ -74,23 +78,15 @@ public abstract class SpringDataMongoV3DriverBase extends MongoSync4DriverGeneri
   @Override
   public ChangeEntryService getChangeEntryService() {
     if (changeEntryRepository == null) {
-      changeEntryRepository = new SpringDataMongoV3ChangeEntryRepository(mongoTemplate, getMigrationRepositoryName(), getReadWriteConfiguration());
+      changeEntryRepository = new SpringDataMongoV3ChangeEntryRepository(mongoTemplate, getMigrationRepositoryName(), getReadWriteConfiguration(), isTransactionable());
       changeEntryRepository.setIndexCreation(isIndexCreation());
     }
     return changeEntryRepository;
   }
 
-  public void disableTransaction() {
-    this.txManager = null;
-  }
-
-  public void enableTransactionWithTxManager(PlatformTransactionManager txManager) {
-    this.txManager = txManager;
-  }
-
   @Override
   public Optional<Transactioner> getTransactioner() {
-    return Optional.ofNullable(txManager != null ? this : null);
+    return Optional.ofNullable(transactionEnabled ? this : null);
   }
 
   @Override
@@ -114,5 +110,11 @@ public abstract class SpringDataMongoV3DriverBase extends MongoSync4DriverGeneri
     def.setName("mongock-transaction-spring-data-3");
     def.setPropagationBehavior(TransactionDefinition.PROPAGATION_REQUIRED);
     return txManager.getTransaction(def);
+  }
+
+
+  @Deprecated
+  public void enableTransactionWithTxManager(PlatformTransactionManager txManager) {
+    enableTransaction();
   }
 }

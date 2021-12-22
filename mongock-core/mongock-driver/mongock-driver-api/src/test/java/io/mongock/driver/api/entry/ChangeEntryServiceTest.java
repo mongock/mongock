@@ -236,11 +236,6 @@ public class ChangeEntryServiceTest {
     }
 
     @Override
-    public boolean isAlreadyExecuted(String changeSetId, String author) throws MongockException {
-      return false;
-    }
-
-    @Override
     public void saveOrUpdate(ChangeEntry changeEntry) throws MongockException {
 
     }

@@ -6,6 +6,7 @@ import io.mongock.driver.core.entry.ChangeEntryRepositoryWithEntity;
 import io.mongock.driver.mongodb.v3.repository.Mongo3ChangeEntryRepository;
 import io.mongock.driver.mongodb.v3.repository.ReadWriteConfiguration;
 import org.bson.Document;
+import org.springframework.data.mongodb.core.MongoOperations;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
@@ -15,41 +16,37 @@ import java.util.List;
 
 public class SpringDataMongoV2ChangeEntryRepository extends Mongo3ChangeEntryRepository implements ChangeEntryRepositoryWithEntity<Document> {
 
-  private final MongoTemplate mongoTemplate;
-  private final String collectionName;
+  private final MongoOperations mongoOperations;
+  private final boolean transactionable;
 
-  public SpringDataMongoV2ChangeEntryRepository(MongoTemplate mongoTemplate, String collectionName) {
-    this(mongoTemplate, collectionName, ReadWriteConfiguration.getDefault());
-  }
-
-  public SpringDataMongoV2ChangeEntryRepository(MongoTemplate mongoTemplate,
-                                                String collectionName,
-                                                ReadWriteConfiguration readWriteConfiguration) {
-    super(mongoTemplate.getCollection(collectionName), readWriteConfiguration);
-    this.mongoTemplate = mongoTemplate;
-    this.collectionName = collectionName;
+  public SpringDataMongoV2ChangeEntryRepository(MongoOperations mongoOperations,
+                                                 String collectionName,
+                                                 ReadWriteConfiguration readWriteConfiguration,
+                                                 boolean transactionable) {
+    super(mongoOperations.getCollection(collectionName), readWriteConfiguration);
+    this.mongoOperations = mongoOperations;
+    this.transactionable = transactionable;
   }
 
   @Override
   public void saveOrUpdate(ChangeEntry changeEntry) throws MongockException {
 
-    Query filter = new Query().addCriteria(new Criteria()
-        .andOperator(
-            Criteria.where(KEY_EXECUTION_ID).is(changeEntry.getExecutionId()),
-            Criteria.where(KEY_CHANGE_ID).is(changeEntry.getChangeId()),
-            Criteria.where(KEY_AUTHOR).is(changeEntry.getAuthor())));
-    mongoTemplate.upsert(filter, getUpdateFromEntity(changeEntry), collection.getNamespace().getCollectionName());
-  }
-
-  @Override
-  public List<ChangeEntry> getEntriesLog() {
-    return mongoTemplate.findAll(ChangeEntry.class, collectionName);
+    if (transactionable) {
+      //if transaction is enabled, it will delegate the write concern to the transactionManager
+      Query filter = new Query().addCriteria(new Criteria()
+          .andOperator(
+              Criteria.where(KEY_EXECUTION_ID).is(changeEntry.getExecutionId()),
+              Criteria.where(KEY_CHANGE_ID).is(changeEntry.getChangeId()),
+              Criteria.where(KEY_AUTHOR).is(changeEntry.getAuthor())));
+      mongoOperations.upsert(filter, getUpdateFromEntity(changeEntry), collection.getNamespace().getCollectionName());
+    } else {
+      super.saveOrUpdate(changeEntry);
+    }
   }
 
   private Update getUpdateFromEntity(ChangeEntry changeEntry) {
     Update updateChangeEntry = new Update();
-    Document entityDocu = toEntity(changeEntry);
-    entityDocu.forEach(updateChangeEntry::set);
+    toEntity(changeEntry).forEach(updateChangeEntry::set);
     return updateChangeEntry;
   }
 

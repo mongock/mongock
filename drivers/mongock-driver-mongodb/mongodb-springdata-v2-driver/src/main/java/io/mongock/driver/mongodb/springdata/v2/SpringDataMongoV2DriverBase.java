@@ -10,6 +10,7 @@ import io.mongock.driver.mongodb.v3.driver.MongoCore3DriverGeneric;
 import io.mongock.utils.annotation.NotThreadSafe;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.data.mongodb.MongoTransactionManager;
 import org.springframework.data.mongodb.SessionSynchronization;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.transaction.PlatformTransactionManager;
@@ -20,7 +21,7 @@ import org.springframework.transaction.support.DefaultTransactionDefinition;
 import java.util.Optional;
 
 @NotThreadSafe
-public abstract class SpringDataMongoV2DriverBase extends MongoCore3DriverGeneric {
+public  class SpringDataMongoV2DriverBase extends MongoCore3DriverGeneric {
 
   protected static final Logger logger = LoggerFactory.getLogger(SpringDataMongoV2DriverBase.class);
 
@@ -33,6 +34,7 @@ public abstract class SpringDataMongoV2DriverBase extends MongoCore3DriverGeneri
                                     long lockTryFrequencyMillis) {
     super(mongoTemplate.getDb(), lockAcquiredForMillis, lockQuitTryingAfterMillis, lockTryFrequencyMillis);
     this.mongoTemplate = mongoTemplate;
+    disableTransaction();
   }
 
 
@@ -53,6 +55,8 @@ public abstract class SpringDataMongoV2DriverBase extends MongoCore3DriverGeneri
         impl -> new MongockTemplate((MongoTemplate) impl),
         true));
     dependencies.add(new ChangeSetDependency(MongoTemplate.class, this.mongoTemplate));
+
+    txManager = new MongoTransactionManager(mongoTemplate.getMongoDbFactory(), txOptions);
   }
 
   public MongockTemplate getMongockTemplate() {
@@ -72,23 +76,15 @@ public abstract class SpringDataMongoV2DriverBase extends MongoCore3DriverGeneri
   @Override
   public ChangeEntryService getChangeEntryService() {
     if (changeEntryRepository == null) {
-      changeEntryRepository = new SpringDataMongoV2ChangeEntryRepository(mongoTemplate, getMigrationRepositoryName(), getReadWriteConfiguration());
+      changeEntryRepository = new SpringDataMongoV2ChangeEntryRepository(mongoTemplate, getMigrationRepositoryName(), getReadWriteConfiguration(), isTransactionable());
       changeEntryRepository.setIndexCreation(isIndexCreation());
     }
     return changeEntryRepository;
   }
 
-  public void disableTransaction() {
-    this.txManager = null;
-  }
-
-  public void enableTransactionWithTxManager(PlatformTransactionManager txManager) {
-    this.txManager = txManager;
-  }
-
   @Override
   public Optional<Transactioner> getTransactioner() {
-    return Optional.ofNullable(txManager != null ? this : null);
+    return Optional.ofNullable(transactionEnabled ? this : null);
   }
 
   @Override
@@ -109,8 +105,14 @@ public abstract class SpringDataMongoV2DriverBase extends MongoCore3DriverGeneri
   protected TransactionStatus getTxStatus(PlatformTransactionManager txManager) {
     DefaultTransactionDefinition def = new DefaultTransactionDefinition();
 // explicitly setting the transaction name is something that can be done only programmatically
-    def.setName("mongock-transaction-spring-data-3");
+    def.setName("mongock-transaction-spring-data-2");
     def.setPropagationBehavior(TransactionDefinition.PROPAGATION_REQUIRED);
     return txManager.getTransaction(def);
+  }
+
+
+  @Deprecated
+  public void enableTransactionWithTxManager(PlatformTransactionManager txManager) {
+    enableTransaction();
   }
 }
