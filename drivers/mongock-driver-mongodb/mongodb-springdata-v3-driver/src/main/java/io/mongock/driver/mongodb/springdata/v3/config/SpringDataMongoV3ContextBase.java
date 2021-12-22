@@ -17,9 +17,9 @@ public abstract class SpringDataMongoV3ContextBase<CONFIG extends MongockConfigu
 
   @Bean
   public ConnectionDriver connectionDriver(MongoTemplate mongoTemplate,
-                                                         CONFIG config,
-                                                         MongoDBConfiguration mongoDbConfig,
-                                                         Optional<PlatformTransactionManager> txManagerOpt) {
+                                           CONFIG config,
+                                           MongoDBConfiguration mongoDbConfig,
+                                           Optional<PlatformTransactionManager> txManagerOpt) {
     DRIVER driver = buildDriver(mongoTemplate, config, mongoDbConfig, txManagerOpt);
     setGenericDriverConfig(config, txManagerOpt, driver);
     setMongoDBConfig(mongoDbConfig, driver);
@@ -35,7 +35,7 @@ public abstract class SpringDataMongoV3ContextBase<CONFIG extends MongockConfigu
   private void setGenericDriverConfig(CONFIG config,
                                       Optional<PlatformTransactionManager> txManagerOpt,
                                       DRIVER driver) {
-    txManagerOpt.ifPresent(tx -> driver.enableTransaction());
+    txManagerOpt.filter(tx -> config.getTransactionEnabled().orElse(true)).ifPresent(tx -> driver.enableTransaction());
     driver.setMigrationRepositoryName(config.getMigrationRepositoryName());
     driver.setLockRepositoryName(config.getLockRepositoryName());
     driver.setIndexCreation(config.isIndexCreation());

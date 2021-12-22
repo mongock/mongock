@@ -4,8 +4,6 @@ import com.mongodb.ReadConcern;
 import io.mongock.api.config.MongockConfiguration;
 import io.mongock.driver.api.driver.ConnectionDriver;
 import io.mongock.driver.mongodb.springdata.v2.SpringDataMongoV2DriverBase;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Bean;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.transaction.PlatformTransactionManager;
@@ -34,7 +32,7 @@ public abstract class SpringDataMongoV2ContextBase<CONFIG extends MongockConfigu
   private void setGenericDriverConfig(CONFIG config,
                                       Optional<PlatformTransactionManager> txManagerOpt,
                                       DRIVER driver) {
-    txManagerOpt.ifPresent(tx -> driver.enableTransaction());
+    txManagerOpt.filter(tx -> config.getTransactionEnabled().orElse(true)).ifPresent(tx -> driver.enableTransaction());
     driver.setMigrationRepositoryName(config.getMigrationRepositoryName());
     driver.setLockRepositoryName(config.getLockRepositoryName());
     driver.setIndexCreation(config.isIndexCreation());
