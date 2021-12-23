@@ -4,6 +4,10 @@ import io.mongock.utils.TimeService;
 import io.mongock.utils.annotation.NotThreadSafe;
 import com.mongodb.client.MongoClient;
 
+import static io.mongock.utils.Constants.DEFAULT_LOCK_ACQUIRED_FOR_MILLIS;
+import static io.mongock.utils.Constants.DEFAULT_QUIT_TRYING_AFTER_MILLIS;
+import static io.mongock.utils.Constants.DEFAULT_TRY_FREQUENCY_MILLIS;
+
 @NotThreadSafe
 public class MongoCore3Driver extends MongoCore3DriverBase {
 
@@ -22,7 +26,7 @@ public class MongoCore3Driver extends MongoCore3DriverBase {
 
   //TODO CENTRALIZE DEFAULT PROPERTIES
   public static MongoCore3Driver withDefaultLock(MongoClient mongoClient, String databaseName) {
-    return MongoCore3Driver.withLockStrategy(mongoClient, databaseName, 60 * 1000L, 3 * 60 * 1000L, 1000L);
+    return MongoCore3Driver.withLockStrategy(mongoClient, databaseName, DEFAULT_LOCK_ACQUIRED_FOR_MILLIS, DEFAULT_QUIT_TRYING_AFTER_MILLIS, DEFAULT_TRY_FREQUENCY_MILLIS);
   }
 
   public static MongoCore3Driver withLockStrategy(MongoClient mongoClient,
