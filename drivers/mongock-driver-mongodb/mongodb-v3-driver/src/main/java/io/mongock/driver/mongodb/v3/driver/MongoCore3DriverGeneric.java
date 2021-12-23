@@ -1,23 +1,23 @@
 package io.mongock.driver.mongodb.v3.driver;
 
-import io.mongock.driver.api.driver.ChangeSetDependency;
-import io.mongock.driver.api.driver.DriverLegaciable;
-import io.mongock.driver.api.entry.ChangeEntryService;
-import io.mongock.driver.core.driver.TransactionalConnectionDriverBase;
-import io.mongock.driver.core.lock.LockRepositoryWithEntity;
-import io.mongock.driver.mongodb.v3.changelogs.runalways.MongockV3LegacyMigrationChangeRunAlwaysLog;
-import io.mongock.driver.mongodb.v3.changelogs.runonce.MongockV3LegacyMigrationChangeLog;
-import io.mongock.driver.mongodb.v3.repository.Mongo3ChangeEntryRepository;
-import io.mongock.driver.mongodb.v3.repository.Mongo3LockRepository;
-import io.mongock.driver.mongodb.v3.repository.ReadWriteConfiguration;
-import io.mongock.api.exception.MongockException;
-import io.mongock.utils.annotation.NotThreadSafe;
 import com.mongodb.ReadConcern;
 import com.mongodb.ReadPreference;
 import com.mongodb.TransactionOptions;
 import com.mongodb.WriteConcern;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
+import io.mongock.api.exception.MongockException;
+import io.mongock.driver.api.driver.ChangeSetDependency;
+import io.mongock.driver.api.driver.DriverLegaciable;
+import io.mongock.driver.api.entry.ChangeEntryService;
+import io.mongock.driver.core.driver.TransactionalConnectionDriverBase;
+import io.mongock.driver.core.lock.LockRepository;
+import io.mongock.driver.mongodb.v3.changelogs.runalways.MongockV3LegacyMigrationChangeRunAlwaysLog;
+import io.mongock.driver.mongodb.v3.changelogs.runonce.MongockV3LegacyMigrationChangeLog;
+import io.mongock.driver.mongodb.v3.repository.Mongo3ChangeEntryRepository;
+import io.mongock.driver.mongodb.v3.repository.Mongo3LockRepository;
+import io.mongock.driver.mongodb.v3.repository.ReadWriteConfiguration;
+import io.mongock.utils.annotation.NotThreadSafe;
 import org.bson.Document;
 
 import java.util.HashSet;
@@ -70,7 +70,7 @@ public abstract class MongoCore3DriverGeneric extends TransactionalConnectionDri
   }
 
   @Override
-  protected LockRepositoryWithEntity getLockRepository() {
+  protected LockRepository getLockRepository() {
     if (lockRepository == null) {
       MongoCollection<Document> collection = mongoDatabase.getCollection(getLockRepositoryName());
       lockRepository = new Mongo3LockRepository(collection, getReadWriteConfiguration());
