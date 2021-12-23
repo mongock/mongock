@@ -17,7 +17,6 @@ public abstract class ConnectionDriverBase implements ConnectionDriver {
   private static final String DEFAULT_MIGRATION_REPOSITORY_NAME = "mongockChangeLog";
   private static final String DEFAULT_LOCK_REPOSITORY_NAME = "mongockLock";
 
-  private static final TimeService TIME_SERVICE = new TimeService();
 
   //Lock
   protected final long lockAcquiredForMillis;
