@@ -3,7 +3,7 @@ package io.mongock.driver.core.driver;
 
 import io.mongock.api.exception.MongockException;
 import io.mongock.driver.api.driver.ChangeSetDependency;
-import io.mongock.driver.api.driver.Transactioner;
+import io.mongock.driver.api.driver.Transactionable;
 import io.mongock.driver.api.entry.ChangeEntryService;
 import io.mongock.driver.api.lock.LockManager;
 import io.mongock.driver.core.lock.LockRepositoryWithEntity;
@@ -108,7 +108,7 @@ public class ConnectionDriverBaseTest {
 
 
     @Override
-    public Optional<Transactioner> getTransactioner() {
+    public Optional<Transactionable> getTransactioner() {
       return Optional.empty();
     }
   }

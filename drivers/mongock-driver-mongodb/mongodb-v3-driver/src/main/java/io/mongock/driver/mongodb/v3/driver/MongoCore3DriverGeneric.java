@@ -1,9 +1,10 @@
 package io.mongock.driver.mongodb.v3.driver;
 
 import io.mongock.driver.api.driver.ChangeSetDependency;
-import io.mongock.driver.api.driver.Transactioner;
+import io.mongock.driver.api.driver.Transactionable;
 import io.mongock.driver.api.entry.ChangeEntryService;
 import io.mongock.driver.core.driver.ConnectionDriverBase;
+import io.mongock.driver.core.driver.TransactionableConnectionDriverBase;
 import io.mongock.driver.core.lock.LockRepositoryWithEntity;
 import io.mongock.driver.mongodb.v3.changelogs.runalways.MongockV3LegacyMigrationChangeRunAlwaysLog;
 import io.mongock.driver.mongodb.v3.changelogs.runonce.MongockV3LegacyMigrationChangeLog;
@@ -24,7 +25,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 @NotThreadSafe
-public abstract class MongoCore3DriverGeneric extends ConnectionDriverBase implements Transactioner {
+public abstract class MongoCore3DriverGeneric extends TransactionableConnectionDriverBase {
 
   private static final WriteConcern DEFAULT_WRITE_CONCERN = WriteConcern.MAJORITY.withJournal(true);
   private static final ReadConcern DEFAULT_READ_CONCERN = ReadConcern.MAJORITY;
@@ -38,7 +39,6 @@ public abstract class MongoCore3DriverGeneric extends ConnectionDriverBase imple
   private ReadPreference readPreference;
   protected TransactionOptions txOptions;
   protected final MongoDatabase mongoDatabase;
-  protected boolean transactionEnabled = true;
 
   protected MongoCore3DriverGeneric(MongoDatabase mongoDatabase,
                                  long lockAcquiredForMillis,
@@ -58,16 +58,6 @@ public abstract class MongoCore3DriverGeneric extends ConnectionDriverBase imple
 
   public void setReadPreference(ReadPreference readPreference) {
     this.readPreference = readPreference;
-  }
-
-  @Override
-  public void disableTransaction() {
-    transactionEnabled = false;
-  }
-
-  @Override
-  public void enableTransaction() {
-    transactionEnabled = true;
   }
 
   @Override

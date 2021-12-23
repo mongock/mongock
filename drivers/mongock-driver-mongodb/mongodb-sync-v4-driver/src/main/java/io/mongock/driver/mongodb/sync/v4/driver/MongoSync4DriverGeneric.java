@@ -8,9 +8,10 @@ import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
 import io.mongock.api.exception.MongockException;
 import io.mongock.driver.api.driver.ChangeSetDependency;
-import io.mongock.driver.api.driver.Transactioner;
+import io.mongock.driver.api.driver.Transactionable;
 import io.mongock.driver.api.entry.ChangeEntryService;
 import io.mongock.driver.core.driver.ConnectionDriverBase;
+import io.mongock.driver.core.driver.TransactionableConnectionDriverBase;
 import io.mongock.driver.core.lock.LockRepositoryWithEntity;
 import io.mongock.driver.mongodb.sync.v4.changelogs.runalways.MongockSync4LegacyMigrationChangeRunAlwaysLog;
 import io.mongock.driver.mongodb.sync.v4.changelogs.runonce.MongockSync4LegacyMigrationChangeLog;
@@ -21,10 +22,9 @@ import io.mongock.utils.annotation.NotThreadSafe;
 import org.bson.Document;
 
 import java.util.HashSet;
-import java.util.Set;
 
 @NotThreadSafe
-public abstract class MongoSync4DriverGeneric extends ConnectionDriverBase implements Transactioner {
+public abstract class MongoSync4DriverGeneric extends TransactionableConnectionDriverBase {
 
 
   private static final WriteConcern DEFAULT_WRITE_CONCERN = WriteConcern.MAJORITY.withJournal(true);
@@ -38,7 +38,6 @@ public abstract class MongoSync4DriverGeneric extends ConnectionDriverBase imple
   private ReadPreference readPreference;
   protected TransactionOptions txOptions;
   protected final MongoDatabase mongoDatabase;
-  protected boolean transactionEnabled = true;
 
   protected MongoSync4DriverGeneric(MongoDatabase mongoDatabase,
                                     long lockAcquiredForMillis,
@@ -59,16 +58,6 @@ public abstract class MongoSync4DriverGeneric extends ConnectionDriverBase imple
 
   public void setReadPreference(ReadPreference readPreference) {
     this.readPreference = readPreference;
-  }
-
-  @Override
-  public void disableTransaction() {
-    transactionEnabled = false;
-  }
-
-  @Override
-  public void enableTransaction() {
-    transactionEnabled = true;
   }
 
   @Override

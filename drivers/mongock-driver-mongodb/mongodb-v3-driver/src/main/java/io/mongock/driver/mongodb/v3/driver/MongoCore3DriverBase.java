@@ -1,7 +1,6 @@
 package io.mongock.driver.mongodb.v3.driver;
 
-import io.mongock.driver.api.driver.ChangeSetDependency;
-import io.mongock.driver.api.driver.Transactioner;
+import io.mongock.driver.api.driver.Transactionable;
 import io.mongock.api.exception.MongockException;
 import io.mongock.utils.annotation.NotThreadSafe;
 import com.mongodb.MongoClientException;
@@ -10,7 +9,6 @@ import com.mongodb.client.MongoClient;
 import com.mongodb.client.TransactionBody;
 
 import java.util.Optional;
-import java.util.Set;
 
 @NotThreadSafe
 public  abstract class MongoCore3DriverBase extends MongoCore3DriverGeneric {
@@ -59,7 +57,7 @@ public  abstract class MongoCore3DriverBase extends MongoCore3DriverGeneric {
 
 
   @Override
-  public Optional<Transactioner> getTransactioner() {
+  public Optional<Transactionable> getTransactioner() {
     return Optional.ofNullable(transactionEnabled ? this : null);
   }
 }

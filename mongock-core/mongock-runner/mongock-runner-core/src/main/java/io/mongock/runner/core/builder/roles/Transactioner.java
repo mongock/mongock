@@ -2,7 +2,9 @@ package io.mongock.runner.core.builder.roles;
 
 import io.mongock.api.config.MongockConfiguration;
 
-public interface Transactionable<SELF extends Transactionable<SELF, CONFIG>, CONFIG extends MongockConfiguration>
+//setTransactionEnable will be moved to driver
+@Deprecated
+public interface Transactioner<SELF extends Transactioner<SELF, CONFIG>, CONFIG extends MongockConfiguration>
     extends Configurable<SELF, CONFIG>, SelfInstanstiator<SELF> {
   /**
    * Indicates if Mongock should run in transaction mode or not
