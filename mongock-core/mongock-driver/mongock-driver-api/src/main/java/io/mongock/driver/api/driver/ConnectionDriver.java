@@ -34,7 +34,7 @@ public interface ConnectionDriver extends Validable, DriverLegaciable {
    *
    * @return the Transactioner
    */
-  Optional<Transactionable> getTransactioner();
+  Optional<Transactional> getTransactioner();
 
   default boolean isTransactionable() {
     return getTransactioner().isPresent();

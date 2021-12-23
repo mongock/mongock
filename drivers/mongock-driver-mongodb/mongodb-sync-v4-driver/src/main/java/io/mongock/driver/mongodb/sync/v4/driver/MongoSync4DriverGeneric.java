@@ -8,10 +8,8 @@ import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
 import io.mongock.api.exception.MongockException;
 import io.mongock.driver.api.driver.ChangeSetDependency;
-import io.mongock.driver.api.driver.Transactionable;
 import io.mongock.driver.api.entry.ChangeEntryService;
-import io.mongock.driver.core.driver.ConnectionDriverBase;
-import io.mongock.driver.core.driver.TransactionableConnectionDriverBase;
+import io.mongock.driver.core.driver.TransactionalConnectionDriverBase;
 import io.mongock.driver.core.lock.LockRepositoryWithEntity;
 import io.mongock.driver.mongodb.sync.v4.changelogs.runalways.MongockSync4LegacyMigrationChangeRunAlwaysLog;
 import io.mongock.driver.mongodb.sync.v4.changelogs.runonce.MongockSync4LegacyMigrationChangeLog;
@@ -24,7 +22,7 @@ import org.bson.Document;
 import java.util.HashSet;
 
 @NotThreadSafe
-public abstract class MongoSync4DriverGeneric extends TransactionableConnectionDriverBase {
+public abstract class MongoSync4DriverGeneric extends TransactionalConnectionDriverBase {
 
 
   private static final WriteConcern DEFAULT_WRITE_CONCERN = WriteConcern.MAJORITY.withJournal(true);

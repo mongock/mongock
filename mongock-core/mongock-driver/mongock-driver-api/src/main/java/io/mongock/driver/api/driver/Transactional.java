@@ -1,6 +1,6 @@
 package io.mongock.driver.api.driver;
 
-public interface Transactionable {
+public interface Transactional {
 
   void disableTransaction();
 

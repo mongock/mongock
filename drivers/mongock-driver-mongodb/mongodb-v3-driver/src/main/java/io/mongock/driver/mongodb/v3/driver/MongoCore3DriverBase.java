@@ -1,6 +1,6 @@
 package io.mongock.driver.mongodb.v3.driver;
 
-import io.mongock.driver.api.driver.Transactionable;
+import io.mongock.driver.api.driver.Transactional;
 import io.mongock.api.exception.MongockException;
 import io.mongock.utils.annotation.NotThreadSafe;
 import com.mongodb.MongoClientException;
@@ -57,7 +57,7 @@ public  abstract class MongoCore3DriverBase extends MongoCore3DriverGeneric {
 
 
   @Override
-  public Optional<Transactionable> getTransactioner() {
+  public Optional<Transactional> getTransactioner() {
     return Optional.ofNullable(transactionEnabled ? this : null);
   }
 }
