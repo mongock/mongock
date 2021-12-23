@@ -33,7 +33,6 @@ public abstract class MongoSync4DriverGeneric extends ConnectionDriverBase imple
 
   protected MongoSync4ChangeEntryRepository changeEntryRepository;
   protected MongoSync4LockRepository lockRepository;
-  protected Set<ChangeSetDependency> dependencies;
   private WriteConcern writeConcern;
   private ReadConcern readConcern;
   private ReadPreference readPreference;
@@ -104,14 +103,6 @@ public abstract class MongoSync4DriverGeneric extends ConnectionDriverBase imple
   @Override
   public Class getLegacyMigrationChangeLogClass(boolean runAlways) {
     return runAlways ? MongockSync4LegacyMigrationChangeRunAlwaysLog.class : MongockSync4LegacyMigrationChangeLog.class;
-  }
-
-  @Override
-  public Set<ChangeSetDependency> getDependencies() {
-    if (dependencies == null) {
-      throw new MongockException("Driver not initialized");
-    }
-    return dependencies;
   }
 
   @Override

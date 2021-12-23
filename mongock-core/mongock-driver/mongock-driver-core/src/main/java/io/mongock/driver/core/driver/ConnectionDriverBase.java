@@ -29,6 +29,7 @@ public abstract class ConnectionDriverBase implements ConnectionDriver {
   protected String migrationRepositoryName;
   protected String lockRepositoryName;
   protected boolean indexCreation = true;
+  protected Set<ChangeSetDependency> dependencies;
 
 
   protected ConnectionDriverBase(long lockAcquiredForMillis, long lockQuitTryingAfterMillis, long lockTryFrequencyMillis) {
@@ -92,7 +93,6 @@ public abstract class ConnectionDriverBase implements ConnectionDriver {
     return lockRepositoryName != null ? lockRepositoryName : DEFAULT_LOCK_REPOSITORY_NAME;
   }
 
-
   public boolean isIndexCreation() {
     return indexCreation;
   }
@@ -111,6 +111,13 @@ public abstract class ConnectionDriverBase implements ConnectionDriver {
   public void runValidation() throws MongockException {
   }
 
+  @Override
+  public Set<ChangeSetDependency> getDependencies() {
+    if (dependencies == null) {
+      throw new MongockException("Driver not initialized");
+    }
+    return dependencies;
+  }
 
   @Deprecated
   public void setChangeLogRepositoryName(String migrationRepositoryName) {

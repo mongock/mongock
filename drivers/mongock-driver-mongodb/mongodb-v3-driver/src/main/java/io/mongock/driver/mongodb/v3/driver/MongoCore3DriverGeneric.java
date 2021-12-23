@@ -105,14 +105,6 @@ public abstract class MongoCore3DriverGeneric extends ConnectionDriverBase imple
   }
 
   @Override
-  public Set<ChangeSetDependency> getDependencies() {
-    if (dependencies == null) {
-      throw new MongockException("Driver not initialized");
-    }
-    return dependencies;
-  }
-
-  @Override
   public void specificInitialization() {
     dependencies = new HashSet<>();
     dependencies.add(new ChangeSetDependency(MongoDatabase.class, mongoDatabase, true));
