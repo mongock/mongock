@@ -17,6 +17,10 @@ public abstract class ConnectionDriverBase implements ConnectionDriver {
   private static final String DEFAULT_MIGRATION_REPOSITORY_NAME = "mongockChangeLog";
   private static final String DEFAULT_LOCK_REPOSITORY_NAME = "mongockLock";
 
+  protected static long DEFAULT_LOCK_ACQUIRED_FOR_MILLIS = 60 * 1000L;//1 minute
+  protected static long DEFAULT_QUIT_TRYING_AFTER_MILLIS = 3 * 60 * 1000L;//3 minutes
+  protected static long DEFAULT_TRY_FREQUENCY_MILLIS = 1000L;//1 second
+
 
   //Lock
   protected final long lockAcquiredForMillis;

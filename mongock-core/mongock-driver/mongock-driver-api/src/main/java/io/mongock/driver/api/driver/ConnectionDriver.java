@@ -44,7 +44,6 @@ public interface ConnectionDriver extends Validable {
 
   void setLockRepositoryName(String lockRepositoryName);
 
-
   String getMigrationRepositoryName();
 
   String getLockRepositoryName();

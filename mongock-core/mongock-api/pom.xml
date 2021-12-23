@@ -19,13 +19,29 @@
     <maven.javadoc.failOnError>false</maven.javadoc.failOnError>
   </properties>
 
+
+  <dependencyManagement>
+    <dependencies>
+      <dependency>
+        <groupId>io.mongock</groupId>
+        <artifactId>mongock-core-bom</artifactId>
+        <version>${project.version}</version>
+        <type>pom</type>
+        <scope>import</scope>
+      </dependency>
+    </dependencies>
+  </dependencyManagement>
+
   <dependencies>
     <dependency>
       <groupId>org.slf4j</groupId>
       <artifactId>slf4j-api</artifactId>
       <version>1.7.25</version>
     </dependency>
-
+    <dependency>
+      <groupId>io.mongock</groupId>
+      <artifactId>mongock-utils</artifactId>
+    </dependency>
 
     <!-- TESTS -->
     <dependency>
