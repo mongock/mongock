@@ -1,6 +1,7 @@
 package io.mongock.driver.mongodb.v3.driver;
 
 import io.mongock.driver.api.driver.ChangeSetDependency;
+import io.mongock.driver.api.driver.DriverLegaciable;
 import io.mongock.driver.api.entry.ChangeEntryService;
 import io.mongock.driver.core.driver.TransactionalConnectionDriverBase;
 import io.mongock.driver.core.lock.LockRepositoryWithEntity;
@@ -23,7 +24,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 @NotThreadSafe
-public abstract class MongoCore3DriverGeneric extends TransactionalConnectionDriverBase {
+public abstract class MongoCore3DriverGeneric extends TransactionalConnectionDriverBase implements DriverLegaciable {
 
   private static final WriteConcern DEFAULT_WRITE_CONCERN = WriteConcern.MAJORITY.withJournal(true);
   private static final ReadConcern DEFAULT_READ_CONCERN = ReadConcern.MAJORITY;

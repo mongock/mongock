@@ -53,9 +53,10 @@ public class RunnerBuilderBaseTest {
   private static final long LOCK_QUIT_TRY_MILLIS = 3 * 60 * 1000L;
 
   private static final Map<String, Object> METADATA = new HashMap<>();
+
   @Rule
   public ExpectedException exceptionExpected = ExpectedException.none();
-  ConnectionDriver driver = mock(ConnectionDriver.class);
+  LegaciableConnectionDriver driver = mock(LegaciableConnectionDriver.class);
   Map<String, Object> metadata = new HashMap<>();
 
   @Before

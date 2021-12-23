@@ -3,6 +3,7 @@ package io.mongock.driver.core.driver;
 
 import io.mongock.api.exception.MongockException;
 import io.mongock.driver.api.driver.ChangeSetDependency;
+import io.mongock.driver.api.driver.DriverLegaciable;
 import io.mongock.driver.api.driver.Transactional;
 import io.mongock.driver.api.entry.ChangeEntryService;
 import io.mongock.driver.api.lock.LockManager;
@@ -42,7 +43,7 @@ public class ConnectionDriverBaseTest {
   }
 
 
-  static class ConnectionDriverBaseTestImpl extends ConnectionDriverBase {
+  static class ConnectionDriverBaseTestImpl extends ConnectionDriverBase implements DriverLegaciable {
 
     private final LockRepositoryWithEntity lockRepository;
     private final ChangeEntryService changeEntryService;
