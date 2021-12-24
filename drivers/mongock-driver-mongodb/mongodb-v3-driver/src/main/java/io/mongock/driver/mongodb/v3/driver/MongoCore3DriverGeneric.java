@@ -32,7 +32,6 @@ public abstract class MongoCore3DriverGeneric extends TransactionalConnectionDri
 
   protected Mongo3ChangeEntryRepository changeEntryRepository;
   protected Mongo3LockRepository lockRepository;
-  protected Set<ChangeSetDependency> dependencies;
   private WriteConcern writeConcern;
   private ReadConcern readConcern;
   private ReadPreference readPreference;

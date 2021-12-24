@@ -11,6 +11,7 @@ import io.mongock.driver.api.driver.ChangeSetDependency;
 import io.mongock.driver.api.driver.DriverLegaciable;
 import io.mongock.driver.api.entry.ChangeEntryService;
 import io.mongock.driver.core.driver.TransactionalConnectionDriverBase;
+import io.mongock.driver.core.lock.LockRepository;
 import io.mongock.driver.core.lock.LockRepositoryWithEntity;
 import io.mongock.driver.mongodb.sync.v4.changelogs.runalways.MongockSync4LegacyMigrationChangeRunAlwaysLog;
 import io.mongock.driver.mongodb.sync.v4.changelogs.runonce.MongockSync4LegacyMigrationChangeLog;
@@ -70,7 +71,7 @@ public abstract class MongoSync4DriverGeneric extends TransactionalConnectionDri
   }
 
   @Override
-  protected LockRepositoryWithEntity getLockRepository() {
+  protected LockRepository getLockRepository() {
     if (lockRepository == null) {
       MongoCollection<Document> collection = mongoDatabase.getCollection(getLockRepositoryName());
       lockRepository = new MongoSync4LockRepository(collection, getReadWriteConfiguration());
