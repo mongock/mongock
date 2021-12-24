@@ -14,9 +14,11 @@ Lightweight Java based migration tool
 [![Bugs](https://sonarcloud.io/api/project_badges/measure?project=com.github.cloudyrock.mongock&metric=bugs)](https://sonarcloud.io/component_measures?id=com.github.cloudyrock.mongock&metric=bugs)
 [![Vulnerabilities](https://sonarcloud.io/api/project_badges/measure?project=com.github.cloudyrock.mongock&metric=vulnerabilities)](https://sonarcloud.io/component_measures?id=com.github.cloudyrock.mongock&metric=vulnerabilities)
     
+
+> 🎉 Mongock has a new [Gitter channel](https://gitter.im/mongock/community)!    
+    
 > 🚀 Mongock 5 is released!! It comes with tons of highlights!
     
-   
 **Mongock** is a Java based migration tool as part of your application code. It allows developers to have ownership and control over data migrations during the deployment process, allowing safer migrations in distributed systems as code and data changes are shipped together.  
     
 ## Stay tuned 
@@ -33,8 +35,9 @@ Before rasing a question, please check it hasn't been alerady answered in
 1. [Our FAQ section](https://mongock.io/v5/FAQ/index.html)
 2. [Github Q&A section](https://github.com/mongock/mongock/discussions/categories/q-a)
 3. [Stackoverflow](https://stackoverflow.com/search?q=mongock)
+4. [Gitter channel](https://gitter.im/mongock/community)
     
-If you cannot find the answer you are looking for, feel free to raise a new question in the [Q&A section](https://github.com/mongock/mongock/discussions/categories/q-a)
+If you cannot find the answer you are looking for, feel free to raise a new question in our [Gitter channel](https://gitter.im/mongock/community) or [Q&A section](https://github.com/mongock/mongock/discussions/categories/q-a)
 
 ## Issues
 
