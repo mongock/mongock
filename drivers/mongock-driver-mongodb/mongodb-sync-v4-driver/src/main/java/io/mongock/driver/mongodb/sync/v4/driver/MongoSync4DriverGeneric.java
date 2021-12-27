@@ -96,7 +96,6 @@ public abstract class MongoSync4DriverGeneric extends TransactionalConnectionDri
 
   @Override
   public void specificInitialization() {
-    dependencies = new HashSet<>();
     dependencies.add(new ChangeSetDependency(MongoDatabase.class, mongoDatabase, true));
     dependencies.add(new ChangeSetDependency(ChangeEntryService.class, getChangeEntryService(), false));
     txOptions = TransactionOptions.builder()

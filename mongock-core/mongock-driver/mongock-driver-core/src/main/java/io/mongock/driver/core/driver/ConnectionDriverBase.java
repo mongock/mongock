@@ -10,6 +10,7 @@ import io.mongock.driver.core.lock.LockRepository;
 import io.mongock.utils.TimeService;
 import io.mongock.utils.annotation.NotThreadSafe;
 
+import java.util.HashSet;
 import java.util.Set;
 
 @NotThreadSafe
@@ -50,6 +51,7 @@ public abstract class ConnectionDriverBase implements ConnectionDriver {
           .build();
       ChangeEntryService changeEntryService = getChangeEntryService();
       changeEntryService.initialize();
+      dependencies = new HashSet<>();
       specificInitialization();
     }
   }
