@@ -10,14 +10,13 @@ import io.mongock.driver.core.lock.LockRepository;
 import io.mongock.utils.TimeService;
 import io.mongock.utils.annotation.NotThreadSafe;
 
+import java.util.HashSet;
 import java.util.Set;
 
 @NotThreadSafe
 public abstract class ConnectionDriverBase implements ConnectionDriver {
   private static final String DEFAULT_MIGRATION_REPOSITORY_NAME = "mongockChangeLog";
   private static final String DEFAULT_LOCK_REPOSITORY_NAME = "mongockLock";
-
-  private static final TimeService TIME_SERVICE = new TimeService();
 
   //Lock
   protected final long lockAcquiredForMillis;
@@ -29,6 +28,7 @@ public abstract class ConnectionDriverBase implements ConnectionDriver {
   protected String migrationRepositoryName;
   protected String lockRepositoryName;
   protected boolean indexCreation = true;
+  protected Set<ChangeSetDependency> dependencies;
 
 
   protected ConnectionDriverBase(long lockAcquiredForMillis, long lockQuitTryingAfterMillis, long lockTryFrequencyMillis) {
@@ -51,6 +51,7 @@ public abstract class ConnectionDriverBase implements ConnectionDriver {
           .build();
       ChangeEntryService changeEntryService = getChangeEntryService();
       changeEntryService.initialize();
+      dependencies = new HashSet<>();
       specificInitialization();
     }
   }
@@ -63,7 +64,7 @@ public abstract class ConnectionDriverBase implements ConnectionDriver {
     return lockManager;
   }
 
-  public boolean isInitialized() {
+  protected boolean isInitialized() {
     return initialized;
   }
 
@@ -81,18 +82,6 @@ public abstract class ConnectionDriverBase implements ConnectionDriver {
     }
   }
 
-  @Override
-  public final String getMigrationRepositoryName() {
-    return migrationRepositoryName != null ? migrationRepositoryName : DEFAULT_MIGRATION_REPOSITORY_NAME;
-  };
-
-  @Override
-  public final String getLockRepositoryName() {
-
-    return lockRepositoryName != null ? lockRepositoryName : DEFAULT_LOCK_REPOSITORY_NAME;
-  }
-
-
   public boolean isIndexCreation() {
     return indexCreation;
   }
@@ -107,10 +96,15 @@ public abstract class ConnectionDriverBase implements ConnectionDriver {
     //TODO not mandatory
   }
 
-  @Override
-  public void runValidation() throws MongockException {
-  }
 
+
+  @Override
+  public Set<ChangeSetDependency> getDependencies() {
+    if (dependencies == null) {
+      throw new MongockException("Driver not initialized");
+    }
+    return dependencies;
+  }
 
   @Deprecated
   public void setChangeLogRepositoryName(String migrationRepositoryName) {
@@ -122,6 +116,14 @@ public abstract class ConnectionDriverBase implements ConnectionDriver {
     if(dependencies != null) {
       dependencies.removeIf(d-> type.isAssignableFrom(d.getType()));
     }
+  }
+
+  protected final String getMigrationRepositoryName() {
+    return migrationRepositoryName != null ? migrationRepositoryName : DEFAULT_MIGRATION_REPOSITORY_NAME;
+  }
+
+  protected final String getLockRepositoryName() {
+    return lockRepositoryName != null ? lockRepositoryName : DEFAULT_LOCK_REPOSITORY_NAME;
   }
 
 }

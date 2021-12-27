@@ -1,5 +1,6 @@
 package io.mongock.api.config;
 
+import io.mongock.utils.Constants;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
@@ -37,7 +38,7 @@ public class MongockConfigurationTest {
 
   @Test
   public void shouldReturnDefaultQuitTryingAfterMillis_WhenNothingIsSet() {
-    assertEquals(MongockConfiguration.DEFAULT_QUIT_TRYING_AFTER_MILLIS, new MongockConfiguration().getLockQuitTryingAfterMillis());
+    assertEquals(Constants.DEFAULT_QUIT_TRYING_AFTER_MILLIS, new MongockConfiguration().getLockQuitTryingAfterMillis());
   }
 
   @Test

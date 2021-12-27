@@ -1,6 +1,7 @@
 package io.mongock.api.config;
 
 import io.mongock.api.config.executor.ExecutorConfiguration;
+import io.mongock.utils.Constants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -10,10 +11,14 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 
+import static io.mongock.utils.Constants.DEFAULT_LOCK_ACQUIRED_FOR_MILLIS;
+import static io.mongock.utils.Constants.DEFAULT_QUIT_TRYING_AFTER_MILLIS;
+import static io.mongock.utils.Constants.DEFAULT_TRY_FREQUENCY_MILLIS;
+
 public class MongockConfiguration implements ExecutorConfiguration {
 
+
   public static final String DEFAULT_MIGRATION_AUTHOR = "default_author";
-  public static final long DEFAULT_QUIT_TRYING_AFTER_MILLIS = 3 * 60 * 1000L;
   private static final Logger logger = LoggerFactory.getLogger(MongockConfiguration.class);
   private final static String LEGACY_DEFAULT_MIGRATION_REPOSITORY_NAME = "mongockChangeLog";
   private final static String LEGACY_DEFAULT_LOCK_REPOSITORY_NAME = "mongockLock";
@@ -45,7 +50,7 @@ public class MongockConfiguration implements ExecutorConfiguration {
    * Default 1 minute.
    * Minimum 3 seconds.
    */
-  private long lockAcquiredForMillis = 60 * 1000L;
+  private long lockAcquiredForMillis = DEFAULT_LOCK_ACQUIRED_FOR_MILLIS;
 
   /**
    * The time after what Mongock will quit trying to acquire the lock, in case it's acquired
@@ -61,7 +66,7 @@ public class MongockConfiguration implements ExecutorConfiguration {
    * Default 1 second.
    * Minimum 500 millis.
    */
-  private long lockTryFrequencyMillis = 1000L;
+  private long lockTryFrequencyMillis = DEFAULT_TRY_FREQUENCY_MILLIS;
 
   /**
    * Mongock will throw MongockException if lock can not be obtained. Default true

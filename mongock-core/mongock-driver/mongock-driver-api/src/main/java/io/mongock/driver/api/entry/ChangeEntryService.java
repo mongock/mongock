@@ -80,11 +80,11 @@ public interface ChangeEntryService extends RepositoryIndexable, Process {
 
 
   /**
-   * If there is already an ChangeEntry the same executionId, id and author, it will be updated. Otherwise,
-   * this method will be inserted.
+   * If there is already an ChangeEntry with the same  key(executionId, id and author), it's updated. Otherwise,
+   * the new changeEntry is inserted.
    *
-   * @param changeEntry Entry to be inserted
-   * @throws MongockException if any i/o exception or already inserted
+   * @param changeEntry Entry to be upsert
+   * @throws MongockException if any i/o exception occurs
    */
   void saveOrUpdate(ChangeEntry changeEntry) throws MongockException;
 

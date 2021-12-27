@@ -8,9 +8,10 @@ import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
 import io.mongock.api.exception.MongockException;
 import io.mongock.driver.api.driver.ChangeSetDependency;
-import io.mongock.driver.api.driver.Transactioner;
+import io.mongock.driver.api.driver.DriverLegaciable;
 import io.mongock.driver.api.entry.ChangeEntryService;
-import io.mongock.driver.core.driver.ConnectionDriverBase;
+import io.mongock.driver.core.driver.TransactionalConnectionDriverBase;
+import io.mongock.driver.core.lock.LockRepository;
 import io.mongock.driver.core.lock.LockRepositoryWithEntity;
 import io.mongock.driver.mongodb.sync.v4.changelogs.runalways.MongockSync4LegacyMigrationChangeRunAlwaysLog;
 import io.mongock.driver.mongodb.sync.v4.changelogs.runonce.MongockSync4LegacyMigrationChangeLog;
@@ -21,10 +22,9 @@ import io.mongock.utils.annotation.NotThreadSafe;
 import org.bson.Document;
 
 import java.util.HashSet;
-import java.util.Set;
 
 @NotThreadSafe
-public abstract class MongoSync4DriverGeneric extends ConnectionDriverBase implements Transactioner {
+public abstract class MongoSync4DriverGeneric extends TransactionalConnectionDriverBase implements DriverLegaciable {
 
 
   private static final WriteConcern DEFAULT_WRITE_CONCERN = WriteConcern.MAJORITY.withJournal(true);
@@ -33,13 +33,11 @@ public abstract class MongoSync4DriverGeneric extends ConnectionDriverBase imple
 
   protected MongoSync4ChangeEntryRepository changeEntryRepository;
   protected MongoSync4LockRepository lockRepository;
-  protected Set<ChangeSetDependency> dependencies;
   private WriteConcern writeConcern;
   private ReadConcern readConcern;
   private ReadPreference readPreference;
   protected TransactionOptions txOptions;
   protected final MongoDatabase mongoDatabase;
-  protected boolean transactionEnabled = true;
 
   protected MongoSync4DriverGeneric(MongoDatabase mongoDatabase,
                                     long lockAcquiredForMillis,
@@ -63,16 +61,6 @@ public abstract class MongoSync4DriverGeneric extends ConnectionDriverBase imple
   }
 
   @Override
-  public void disableTransaction() {
-    transactionEnabled = false;
-  }
-
-  @Override
-  public void enableTransaction() {
-    transactionEnabled = true;
-  }
-
-  @Override
   public void runValidation() throws MongockException {
     if (mongoDatabase == null) {
       throw new MongockException("MongoDatabase cannot be null");
@@ -83,7 +71,7 @@ public abstract class MongoSync4DriverGeneric extends ConnectionDriverBase imple
   }
 
   @Override
-  protected LockRepositoryWithEntity getLockRepository() {
+  protected LockRepository getLockRepository() {
     if (lockRepository == null) {
       MongoCollection<Document> collection = mongoDatabase.getCollection(getLockRepositoryName());
       lockRepository = new MongoSync4LockRepository(collection, getReadWriteConfiguration());
@@ -107,16 +95,7 @@ public abstract class MongoSync4DriverGeneric extends ConnectionDriverBase imple
   }
 
   @Override
-  public Set<ChangeSetDependency> getDependencies() {
-    if (dependencies == null) {
-      throw new MongockException("Driver not initialized");
-    }
-    return dependencies;
-  }
-
-  @Override
   public void specificInitialization() {
-    dependencies = new HashSet<>();
     dependencies.add(new ChangeSetDependency(MongoDatabase.class, mongoDatabase, true));
     dependencies.add(new ChangeSetDependency(ChangeEntryService.class, getChangeEntryService(), false));
     txOptions = TransactionOptions.builder()

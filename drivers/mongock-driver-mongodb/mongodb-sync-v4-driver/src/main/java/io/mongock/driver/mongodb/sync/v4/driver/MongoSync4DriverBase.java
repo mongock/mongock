@@ -1,7 +1,7 @@
 package io.mongock.driver.mongodb.sync.v4.driver;
 
 import io.mongock.driver.api.driver.ChangeSetDependency;
-import io.mongock.driver.api.driver.Transactioner;
+import io.mongock.driver.api.driver.Transactional;
 import io.mongock.api.exception.MongockException;
 import io.mongock.utils.annotation.NotThreadSafe;
 import com.mongodb.MongoClientException;
@@ -69,7 +69,7 @@ public abstract class MongoSync4DriverBase extends MongoSync4DriverGeneric {
   }
 
   @Override
-  public Optional<Transactioner> getTransactioner() {
+  public Optional<Transactional> getTransactioner() {
     return Optional.ofNullable(transactionEnabled ? this : null);
   }
 }

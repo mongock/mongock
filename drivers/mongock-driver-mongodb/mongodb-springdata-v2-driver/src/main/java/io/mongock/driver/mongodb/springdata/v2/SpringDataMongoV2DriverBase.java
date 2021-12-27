@@ -4,7 +4,7 @@ import com.github.cloudyrock.mongock.driver.mongodb.springdata.v2.decorator.impl
 import io.mongock.api.exception.MongockException;
 import io.mongock.driver.api.driver.ChangeSetDependency;
 import io.mongock.driver.api.driver.ChangeSetDependencyBuildable;
-import io.mongock.driver.api.driver.Transactioner;
+import io.mongock.driver.api.driver.Transactional;
 import io.mongock.driver.api.entry.ChangeEntryService;
 import io.mongock.driver.mongodb.v3.driver.MongoCore3DriverGeneric;
 import io.mongock.utils.annotation.NotThreadSafe;
@@ -83,7 +83,7 @@ public  class SpringDataMongoV2DriverBase extends MongoCore3DriverGeneric {
   }
 
   @Override
-  public Optional<Transactioner> getTransactioner() {
+  public Optional<Transactional> getTransactioner() {
     return Optional.ofNullable(transactionEnabled ? this : null);
   }
 

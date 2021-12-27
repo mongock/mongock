@@ -10,7 +10,7 @@ import io.mongock.runner.core.builder.roles.MongockRunnable;
 import io.mongock.runner.core.builder.roles.ServiceIdentificable;
 import io.mongock.runner.core.builder.roles.SystemVersionable;
 import io.mongock.runner.core.builder.roles.TransactionStrategiable;
-import io.mongock.runner.core.builder.roles.Transactionable;
+import io.mongock.runner.core.builder.roles.Transactioner;
 import io.mongock.runner.core.event.EventPublisher;
 
 @SuppressWarnings("all")
@@ -26,7 +26,7 @@ public interface RunnerBuilder<
 		DependencyInjectable<SELF>,
 		ServiceIdentificable<SELF, CONFIG>,
     MongockRunnable<SELF, CONFIG>,
-		Transactionable<SELF, CONFIG>,
+        Transactioner<SELF, CONFIG>,
 		TransactionStrategiable<SELF, CONFIG> {
   
   SELF setEventPublisher(EventPublisher eventPublisher);

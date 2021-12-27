@@ -1,30 +1,30 @@
 package io.mongock.driver.mongodb.v3.driver;
 
-import io.mongock.driver.api.driver.ChangeSetDependency;
-import io.mongock.driver.api.driver.Transactioner;
-import io.mongock.driver.api.entry.ChangeEntryService;
-import io.mongock.driver.core.driver.ConnectionDriverBase;
-import io.mongock.driver.core.lock.LockRepositoryWithEntity;
-import io.mongock.driver.mongodb.v3.changelogs.runalways.MongockV3LegacyMigrationChangeRunAlwaysLog;
-import io.mongock.driver.mongodb.v3.changelogs.runonce.MongockV3LegacyMigrationChangeLog;
-import io.mongock.driver.mongodb.v3.repository.Mongo3ChangeEntryRepository;
-import io.mongock.driver.mongodb.v3.repository.Mongo3LockRepository;
-import io.mongock.driver.mongodb.v3.repository.ReadWriteConfiguration;
-import io.mongock.api.exception.MongockException;
-import io.mongock.utils.annotation.NotThreadSafe;
 import com.mongodb.ReadConcern;
 import com.mongodb.ReadPreference;
 import com.mongodb.TransactionOptions;
 import com.mongodb.WriteConcern;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
+import io.mongock.api.exception.MongockException;
+import io.mongock.driver.api.driver.ChangeSetDependency;
+import io.mongock.driver.api.driver.DriverLegaciable;
+import io.mongock.driver.api.entry.ChangeEntryService;
+import io.mongock.driver.core.driver.TransactionalConnectionDriverBase;
+import io.mongock.driver.core.lock.LockRepository;
+import io.mongock.driver.mongodb.v3.changelogs.runalways.MongockV3LegacyMigrationChangeRunAlwaysLog;
+import io.mongock.driver.mongodb.v3.changelogs.runonce.MongockV3LegacyMigrationChangeLog;
+import io.mongock.driver.mongodb.v3.repository.Mongo3ChangeEntryRepository;
+import io.mongock.driver.mongodb.v3.repository.Mongo3LockRepository;
+import io.mongock.driver.mongodb.v3.repository.ReadWriteConfiguration;
+import io.mongock.utils.annotation.NotThreadSafe;
 import org.bson.Document;
 
 import java.util.HashSet;
 import java.util.Set;
 
 @NotThreadSafe
-public abstract class MongoCore3DriverGeneric extends ConnectionDriverBase implements Transactioner {
+public abstract class MongoCore3DriverGeneric extends TransactionalConnectionDriverBase implements DriverLegaciable {
 
   private static final WriteConcern DEFAULT_WRITE_CONCERN = WriteConcern.MAJORITY.withJournal(true);
   private static final ReadConcern DEFAULT_READ_CONCERN = ReadConcern.MAJORITY;
@@ -32,13 +32,11 @@ public abstract class MongoCore3DriverGeneric extends ConnectionDriverBase imple
 
   protected Mongo3ChangeEntryRepository changeEntryRepository;
   protected Mongo3LockRepository lockRepository;
-  protected Set<ChangeSetDependency> dependencies;
   private WriteConcern writeConcern;
   private ReadConcern readConcern;
   private ReadPreference readPreference;
   protected TransactionOptions txOptions;
   protected final MongoDatabase mongoDatabase;
-  protected boolean transactionEnabled = true;
 
   protected MongoCore3DriverGeneric(MongoDatabase mongoDatabase,
                                  long lockAcquiredForMillis,
@@ -61,16 +59,6 @@ public abstract class MongoCore3DriverGeneric extends ConnectionDriverBase imple
   }
 
   @Override
-  public void disableTransaction() {
-    transactionEnabled = false;
-  }
-
-  @Override
-  public void enableTransaction() {
-    transactionEnabled = true;
-  }
-
-  @Override
   public void runValidation() throws MongockException {
     if (mongoDatabase == null) {
       throw new MongockException("MongoDatabase cannot be null");
@@ -81,7 +69,7 @@ public abstract class MongoCore3DriverGeneric extends ConnectionDriverBase imple
   }
 
   @Override
-  protected LockRepositoryWithEntity getLockRepository() {
+  protected LockRepository getLockRepository() {
     if (lockRepository == null) {
       MongoCollection<Document> collection = mongoDatabase.getCollection(getLockRepositoryName());
       lockRepository = new Mongo3LockRepository(collection, getReadWriteConfiguration());
@@ -105,16 +93,7 @@ public abstract class MongoCore3DriverGeneric extends ConnectionDriverBase imple
   }
 
   @Override
-  public Set<ChangeSetDependency> getDependencies() {
-    if (dependencies == null) {
-      throw new MongockException("Driver not initialized");
-    }
-    return dependencies;
-  }
-
-  @Override
   public void specificInitialization() {
-    dependencies = new HashSet<>();
     dependencies.add(new ChangeSetDependency(MongoDatabase.class, mongoDatabase, true));
     dependencies.add(new ChangeSetDependency(ChangeEntryService.class, getChangeEntryService(), false));
     txOptions = TransactionOptions.builder()

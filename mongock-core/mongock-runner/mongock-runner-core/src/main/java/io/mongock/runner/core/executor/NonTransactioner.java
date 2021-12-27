@@ -1,8 +1,8 @@
 package io.mongock.runner.core.executor;
 
-import io.mongock.driver.api.driver.Transactioner;
+import io.mongock.driver.api.driver.Transactional;
 
-public class NonTransactioner implements Transactioner {
+public class NonTransactioner implements Transactional {
 
   @Override
   public void disableTransaction() {
