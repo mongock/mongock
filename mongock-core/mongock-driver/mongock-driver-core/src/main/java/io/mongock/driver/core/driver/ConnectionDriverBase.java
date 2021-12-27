@@ -82,17 +82,6 @@ public abstract class ConnectionDriverBase implements ConnectionDriver {
     }
   }
 
-  @Override
-  public final String getMigrationRepositoryName() {
-    return migrationRepositoryName != null ? migrationRepositoryName : DEFAULT_MIGRATION_REPOSITORY_NAME;
-  };
-
-  @Override
-  public final String getLockRepositoryName() {
-
-    return lockRepositoryName != null ? lockRepositoryName : DEFAULT_LOCK_REPOSITORY_NAME;
-  }
-
   public boolean isIndexCreation() {
     return indexCreation;
   }
@@ -107,9 +96,7 @@ public abstract class ConnectionDriverBase implements ConnectionDriver {
     //TODO not mandatory
   }
 
-  @Override
-  public void runValidation() throws MongockException {
-  }
+
 
   @Override
   public Set<ChangeSetDependency> getDependencies() {
@@ -129,6 +116,14 @@ public abstract class ConnectionDriverBase implements ConnectionDriver {
     if(dependencies != null) {
       dependencies.removeIf(d-> type.isAssignableFrom(d.getType()));
     }
+  }
+
+  protected final String getMigrationRepositoryName() {
+    return migrationRepositoryName != null ? migrationRepositoryName : DEFAULT_MIGRATION_REPOSITORY_NAME;
+  }
+
+  protected final String getLockRepositoryName() {
+    return lockRepositoryName != null ? lockRepositoryName : DEFAULT_LOCK_REPOSITORY_NAME;
   }
 
 }

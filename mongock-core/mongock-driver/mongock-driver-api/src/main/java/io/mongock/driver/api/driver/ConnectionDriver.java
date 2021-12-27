@@ -1,5 +1,6 @@
 package io.mongock.driver.api.driver;
 
+import io.mongock.api.exception.MongockException;
 import io.mongock.driver.api.common.Validable;
 import io.mongock.driver.api.entry.ChangeEntryService;
 import io.mongock.driver.api.lock.LockManager;
@@ -10,6 +11,7 @@ import java.util.Optional;
 import java.util.Set;
 
 public interface ConnectionDriver extends Validable {
+
   void initialize();
 
   LockManager getLockManager();
@@ -22,13 +24,6 @@ public interface ConnectionDriver extends Validable {
    */
   Set<ChangeSetDependency> getDependencies();
 
-  default List<Class<?>> getNonProxyableTypes() {
-    return Collections.emptyList();
-  }
-
-  default void prepareForExecutionBlock() {
-  }
-
   /**
    * If transaction available, returns the Transactioner
    *
@@ -36,15 +31,24 @@ public interface ConnectionDriver extends Validable {
    */
   Optional<Transactional> getTransactioner();
 
-  default boolean isTransactionable() {
-    return getTransactioner().isPresent();
-  }
-
   void setMigrationRepositoryName(String migrationRepositoryName);
 
   void setLockRepositoryName(String lockRepositoryName);
 
-  String getMigrationRepositoryName();
+  /****************
+   * Default implementations
+   ****************/
+  default boolean isTransactionable() {
+    return getTransactioner().isPresent();
+  }
 
-  String getLockRepositoryName();
+  default void runValidation() throws MongockException {
+  }
+
+  default List<Class<?>> getNonProxyableTypes() {
+    return Collections.emptyList();
+  }
+
+  default void prepareForExecutionBlock() {
+  }
 }
