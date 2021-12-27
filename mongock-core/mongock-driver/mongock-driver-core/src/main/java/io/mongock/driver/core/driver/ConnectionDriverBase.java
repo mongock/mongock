@@ -64,7 +64,7 @@ public abstract class ConnectionDriverBase implements ConnectionDriver {
     return lockManager;
   }
 
-  public boolean isInitialized() {
+  protected boolean isInitialized() {
     return initialized;
   }
 
