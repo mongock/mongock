@@ -24,7 +24,6 @@ public abstract class TransactionalConnectionDriverBase extends ConnectionDriver
   }
 
   @Override
-  public void executeInTransaction(Runnable operation) {
-  }
+  public abstract void executeInTransaction(Runnable operation);
 
 }
