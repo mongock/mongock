@@ -118,11 +118,11 @@ public abstract class ConnectionDriverBase implements ConnectionDriver {
     }
   }
 
-  protected final String getMigrationRepositoryName() {
+  public final String getMigrationRepositoryName() {
     return migrationRepositoryName != null ? migrationRepositoryName : DEFAULT_MIGRATION_REPOSITORY_NAME;
   }
 
-  protected final String getLockRepositoryName() {
+  public final String getLockRepositoryName() {
     return lockRepositoryName != null ? lockRepositoryName : DEFAULT_LOCK_REPOSITORY_NAME;
   }
 
