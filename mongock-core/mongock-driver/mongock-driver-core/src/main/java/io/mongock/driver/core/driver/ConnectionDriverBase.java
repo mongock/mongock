@@ -41,20 +41,15 @@ public abstract class ConnectionDriverBase implements ConnectionDriver {
   @Override
   public final synchronized void initialize() {
     if (!initialized) {
-      initializeRepositories();
-      initialized = true;
-      lockRepository.initialize();
-      lockManager = DefaultLockManager.builder()
-          .setLockRepository(lockRepository)
-          .setLockAcquiredForMillis(lockAcquiredForMillis)
-          .setLockQuitTryingAfterMillis(lockQuitTryingAfterMillis)
-          .setLockTryFrequencyMillis(lockTryFrequencyMillis)
-          .build();
-      changeEntryRepository.initialize();
-      dependencies = new HashSet<>();
+      beforeParentInitialization();
+      commonInitialization();
       afterParentInitialization();
     }
   }
+
+  protected abstract void beforeParentInitialization();
+
+  protected void afterParentInitialization() {/**TODO not mandatory**/}
 
   @Override
   public LockManager getLockManager() {
@@ -72,20 +67,16 @@ public abstract class ConnectionDriverBase implements ConnectionDriver {
     return changeEntryRepository;
   }
 
-  protected boolean isInitialized() {
-    return initialized;
-  }
-
   @Override
   public final void setMigrationRepositoryName(String migrationRepositoryName) {
-    if(migrationRepositoryName != null || this.migrationRepositoryName == null) {
+    if (migrationRepositoryName != null || this.migrationRepositoryName == null) {
       this.migrationRepositoryName = migrationRepositoryName;
     }
   }
 
   @Override
   public final void setLockRepositoryName(String lockRepositoryName) {
-    if(lockRepositoryName != null || this.lockRepositoryName == null) {
+    if (lockRepositoryName != null || this.lockRepositoryName == null) {
       this.lockRepositoryName = lockRepositoryName;
     }
   }
@@ -98,13 +89,6 @@ public abstract class ConnectionDriverBase implements ConnectionDriver {
     this.indexCreation = indexCreation;
   }
 
-  protected abstract void initializeRepositories();
-
-  protected void afterParentInitialization() {
-    //TODO not mandatory
-  }
-
-
 
   @Override
   public Set<ChangeSetDependency> getDependencies() {
@@ -114,15 +98,10 @@ public abstract class ConnectionDriverBase implements ConnectionDriver {
     return dependencies;
   }
 
-  @Deprecated
-  public void setChangeLogRepositoryName(String migrationRepositoryName) {
-    setMigrationRepositoryName(migrationRepositoryName);
-  }
-
   //This should be injected as association
   protected void removeDependencyIfAssignableFrom(Set<ChangeSetDependency> dependencies, Class<?> type) {
-    if(dependencies != null) {
-      dependencies.removeIf(d-> type.isAssignableFrom(d.getType()));
+    if (dependencies != null) {
+      dependencies.removeIf(d -> type.isAssignableFrom(d.getType()));
     }
   }
 
@@ -134,4 +113,24 @@ public abstract class ConnectionDriverBase implements ConnectionDriver {
     return lockRepositoryName != null ? lockRepositoryName : DEFAULT_LOCK_REPOSITORY_NAME;
   }
 
+
+  private void commonInitialization() {
+    initialized = true;
+    lockRepository.initialize();
+    lockManager = DefaultLockManager.builder()
+        .setLockRepository(lockRepository)
+        .setLockAcquiredForMillis(lockAcquiredForMillis)
+        .setLockQuitTryingAfterMillis(lockQuitTryingAfterMillis)
+        .setLockTryFrequencyMillis(lockTryFrequencyMillis)
+        .build();
+    changeEntryRepository.initialize();
+    dependencies = new HashSet<>();
+  }
+
+
+  //DEPRECATIONS
+  @Deprecated
+  public void setChangeLogRepositoryName(String migrationRepositoryName) {
+    setMigrationRepositoryName(migrationRepositoryName);
+  }
 }

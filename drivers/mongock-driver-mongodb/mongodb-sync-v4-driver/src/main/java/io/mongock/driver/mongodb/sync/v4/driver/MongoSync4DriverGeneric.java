@@ -47,7 +47,7 @@ public abstract class MongoSync4DriverGeneric extends TransactionalConnectionDri
 
 
   @Override
-  protected void initializeRepositories() {
+  protected void beforeParentInitialization() {
     lockRepository = new MongoSync4LockRepository(mongoDatabase.getCollection(getLockRepositoryName()), getReadWriteConfiguration());
     lockRepository.setIndexCreation(isIndexCreation());
 

@@ -41,7 +41,7 @@ public abstract class MongoCore3DriverGeneric extends TransactionalConnectionDri
 
 
   @Override
-  protected void initializeRepositories() {
+  protected void beforeParentInitialization() {
     lockRepository = new Mongo3LockRepository(mongoDatabase.getCollection(getLockRepositoryName()), getReadWriteConfiguration());
     lockRepository.setIndexCreation(isIndexCreation());
 
@@ -70,17 +70,13 @@ public abstract class MongoCore3DriverGeneric extends TransactionalConnectionDri
     }
   }
 
-
+  //LEGACIALE
   @Override
   public Class getLegacyMigrationChangeLogClass(boolean runAlways) {
     return runAlways ? MongockV3LegacyMigrationChangeRunAlwaysLog.class : MongockV3LegacyMigrationChangeLog.class;
   }
 
-
-  /*************************
-   * Specific MongoDB configuration
-   *************************/
-
+  //SPECIFIC MONGODB CONFIGURATION
   public void setWriteConcern(WriteConcern writeConcern) {
     this.writeConcern = writeConcern;
   }

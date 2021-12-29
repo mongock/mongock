@@ -2,6 +2,8 @@ package io.mongock.driver.core.driver;
 
 import io.mongock.driver.api.driver.Transactional;
 
+import java.util.Optional;
+
 public abstract class TransactionalConnectionDriverBase extends ConnectionDriverBase implements Transactional {
 
 
@@ -21,6 +23,11 @@ public abstract class TransactionalConnectionDriverBase extends ConnectionDriver
   @Override
   public void enableTransaction() {
     transactionEnabled = true;
+  }
+
+  @Override
+  public final Optional<Transactional> getTransactioner() {
+    return Optional.ofNullable(transactionEnabled ? this : null);
   }
 
   @Override

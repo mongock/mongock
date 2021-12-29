@@ -73,9 +73,4 @@ public abstract class MongoSync4DriverBase extends MongoSync4DriverGeneric {
       return "Mongock transaction operation";
     };
   }
-
-  @Override
-  public Optional<Transactional> getTransactioner() {
-    return Optional.ofNullable(transactionEnabled ? this : null);
-  }
 }

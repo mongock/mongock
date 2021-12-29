@@ -60,9 +60,6 @@ public  class SpringDataMongoV2DriverBase extends MongoCore3DriverGeneric {
   }
 
   public MongockTemplate getMongockTemplate() {
-    if (!isInitialized()) {
-      throw new MongockException("Mongock Driver hasn't been initialized yet");
-    }
     return dependencies
         .stream()
         .filter(dependency -> MongockTemplate.class.isAssignableFrom(dependency.getType()))
@@ -71,12 +68,6 @@ public  class SpringDataMongoV2DriverBase extends MongoCore3DriverGeneric {
         .findAny()
         .orElseThrow(() -> new MongockException("Mongock Driver hasn't been initialized yet"));
 
-  }
-
-
-  @Override
-  public Optional<Transactional> getTransactioner() {
-    return Optional.ofNullable(transactionEnabled ? this : null);
   }
 
   @Override

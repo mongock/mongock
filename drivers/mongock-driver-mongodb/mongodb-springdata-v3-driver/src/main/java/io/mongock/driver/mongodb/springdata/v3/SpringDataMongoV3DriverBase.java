@@ -61,9 +61,6 @@ public abstract class SpringDataMongoV3DriverBase extends MongoSync4DriverGeneri
   }
 
   public MongockTemplate getMongockTemplate() {
-    if (!isInitialized()) {
-      throw new MongockException("Mongock Driver hasn't been initialized yet");
-    }
     return dependencies
         .stream()
         .filter(dependency -> MongockTemplate.class.isAssignableFrom(dependency.getType()))
@@ -72,11 +69,6 @@ public abstract class SpringDataMongoV3DriverBase extends MongoSync4DriverGeneri
         .findAny()
         .orElseThrow(() -> new MongockException("Mongock Driver hasn't been initialized yet"));
 
-  }
-
-  @Override
-  public Optional<Transactional> getTransactioner() {
-    return Optional.ofNullable(transactionEnabled ? this : null);
   }
 
   @Override
@@ -96,7 +88,6 @@ public abstract class SpringDataMongoV3DriverBase extends MongoSync4DriverGeneri
 
   protected TransactionStatus getTxStatus(PlatformTransactionManager txManager) {
     DefaultTransactionDefinition def = new DefaultTransactionDefinition();
-// explicitly setting the transaction name is something that can be done only programmatically
     def.setName("mongock-transaction-spring-data-3");
     def.setPropagationBehavior(TransactionDefinition.PROPAGATION_REQUIRED);
     return txManager.getTransaction(def);

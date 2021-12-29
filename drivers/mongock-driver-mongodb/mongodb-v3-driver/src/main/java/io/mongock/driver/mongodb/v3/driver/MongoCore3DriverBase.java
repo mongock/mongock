@@ -59,10 +59,4 @@ public abstract class MongoCore3DriverBase extends MongoCore3DriverGeneric {
       return "Mongock transaction operation";
     };
   }
-
-
-  @Override
-  public Optional<Transactional> getTransactioner() {
-    return Optional.ofNullable(transactionEnabled ? this : null);
-  }
 }

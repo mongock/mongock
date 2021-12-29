@@ -7,6 +7,7 @@ import io.mongock.driver.api.driver.DriverLegaciable;
 import io.mongock.driver.api.driver.Transactional;
 import io.mongock.driver.api.entry.ChangeEntryService;
 import io.mongock.driver.api.lock.LockManager;
+import io.mongock.driver.core.lock.LockRepository;
 import io.mongock.driver.core.lock.LockRepositoryWithEntity;
 import org.junit.Test;
 import org.mockito.Mockito;
@@ -45,16 +46,14 @@ public class ConnectionDriverBaseTest {
 
   static class ConnectionDriverBaseTestImpl extends ConnectionDriverBase implements DriverLegaciable {
 
-    private final LockRepositoryWithEntity lockRepository;
-    private final ChangeEntryService changeEntryService;
     private final LockManager lockManager;
 
 
     ConnectionDriverBaseTestImpl(long lockAcquiredForMinutes,
                                  long maxWaitingForLockMinutesEachTry,
                                  int maxTries,
-                                 LockRepositoryWithEntity lockRepository,
-                                 ChangeEntryService changeEntryService,
+                                 LockRepository lockRepository,
+                                 ChangeEntryService changeEntryRepository,
                                  LockManager lockManager) {
       super(
           minutesToMillis(lockAcquiredForMinutes),
@@ -62,7 +61,7 @@ public class ConnectionDriverBaseTest {
           1000L
       );
       this.lockRepository = lockRepository;
-      this.changeEntryService = changeEntryService;
+      this.changeEntryRepository = changeEntryRepository;
       this.lockManager = lockManager;
     }
 
@@ -83,8 +82,8 @@ public class ConnectionDriverBaseTest {
     }
 
     @Override
-    protected void initializeRepositories() {
-      changeEntryService.setIndexCreation(isIndexCreation());
+    protected void beforeParentInitialization() {
+      changeEntryRepository.setIndexCreation(isIndexCreation());
     }
 
     @Override
