@@ -70,25 +70,21 @@ public class ConnectionDriverBaseTest {
       return minutes * 60 * 1000;
     }
 
-    @Override
-    protected LockRepositoryWithEntity getLockRepository() {
-      return lockRepository;
-    }
 
     @Override
-    protected void specificInitialization() {
+    protected void afterParentInitialization() {
 
     }
 
-    @Override
-    public ChangeEntryService getChangeEntryService() {
-      changeEntryService.setIndexCreation(isIndexCreation());
-      return changeEntryService;
-    }
 
     @Override
     public LockManager getLockManager() {
       return lockManager;
+    }
+
+    @Override
+    protected void initializeRepositories() {
+      changeEntryService.setIndexCreation(isIndexCreation());
     }
 
     @Override

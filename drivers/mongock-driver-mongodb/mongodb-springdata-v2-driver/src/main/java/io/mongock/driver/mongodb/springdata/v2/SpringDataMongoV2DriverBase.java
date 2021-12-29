@@ -47,8 +47,8 @@ public  class SpringDataMongoV2DriverBase extends MongoCore3DriverGeneric {
   }
 
   @Override
-  public void specificInitialization() {
-    super.specificInitialization();
+  public void afterParentInitialization() {
+    super.afterParentInitialization();
     dependencies.add(new ChangeSetDependencyBuildable(
         MongockTemplate.class,
         MongoTemplate.class,
@@ -73,14 +73,6 @@ public  class SpringDataMongoV2DriverBase extends MongoCore3DriverGeneric {
 
   }
 
-  @Override
-  public ChangeEntryService getChangeEntryService() {
-    if (changeEntryRepository == null) {
-      changeEntryRepository = new SpringDataMongoV2ChangeEntryRepository(mongoTemplate, getMigrationRepositoryName(), getReadWriteConfiguration(), isTransactionable());
-      changeEntryRepository.setIndexCreation(isIndexCreation());
-    }
-    return changeEntryRepository;
-  }
 
   @Override
   public Optional<Transactional> getTransactioner() {

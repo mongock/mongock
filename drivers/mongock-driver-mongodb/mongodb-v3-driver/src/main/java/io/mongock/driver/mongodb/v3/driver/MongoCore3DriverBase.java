@@ -2,6 +2,7 @@ package io.mongock.driver.mongodb.v3.driver;
 
 import io.mongock.driver.api.driver.Transactional;
 import io.mongock.api.exception.MongockException;
+import io.mongock.driver.mongodb.v3.repository.Mongo3ChangeEntryRepository;
 import io.mongock.utils.annotation.NotThreadSafe;
 import com.mongodb.MongoClientException;
 import com.mongodb.client.ClientSession;
@@ -11,7 +12,7 @@ import com.mongodb.client.TransactionBody;
 import java.util.Optional;
 
 @NotThreadSafe
-public  abstract class MongoCore3DriverBase extends MongoCore3DriverGeneric {
+public abstract class MongoCore3DriverBase extends MongoCore3DriverGeneric {
 
   private final MongoClient mongoClient;
   protected ClientSession clientSession;
@@ -38,14 +39,18 @@ public  abstract class MongoCore3DriverBase extends MongoCore3DriverGeneric {
   public void executeInTransaction(Runnable operation) {
 
     try {
-      changeEntryRepository.setClientSession(clientSession);
+      getRepository().setClientSession(clientSession);
       clientSession.withTransaction(getTransactionBody(operation), txOptions);
     } catch (Exception ex) {
       throw new MongockException(ex);
     } finally {
-      changeEntryRepository.clearClientSession();
+      getRepository().clearClientSession();
       clientSession.close();
     }
+  }
+
+  private Mongo3ChangeEntryRepository getRepository() {
+    return (Mongo3ChangeEntryRepository)changeEntryRepository;
   }
 
   private TransactionBody<String> getTransactionBody(Runnable operation) {

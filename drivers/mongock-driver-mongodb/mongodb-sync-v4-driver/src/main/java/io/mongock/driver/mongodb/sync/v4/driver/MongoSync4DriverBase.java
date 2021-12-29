@@ -3,6 +3,7 @@ package io.mongock.driver.mongodb.sync.v4.driver;
 import io.mongock.driver.api.driver.ChangeSetDependency;
 import io.mongock.driver.api.driver.Transactional;
 import io.mongock.api.exception.MongockException;
+import io.mongock.driver.mongodb.sync.v4.repository.MongoSync4ChangeEntryRepository;
 import io.mongock.utils.annotation.NotThreadSafe;
 import com.mongodb.MongoClientException;
 import com.mongodb.client.ClientSession;
@@ -50,15 +51,20 @@ public abstract class MongoSync4DriverBase extends MongoSync4DriverGeneric {
 
   @Override
   public void executeInTransaction(Runnable operation) {
+
     try {
-      changeEntryRepository.setClientSession(clientSession);
+      getRepository().setClientSession(clientSession);
       clientSession.withTransaction(getTransactionBody(operation), txOptions);
     } catch (Exception ex) {
       throw new MongockException(ex);
     } finally {
-      changeEntryRepository.clearClientSession();
+      getRepository().clearClientSession();
       clientSession.close();
     }
+  }
+
+  private MongoSync4ChangeEntryRepository getRepository() {
+    return (MongoSync4ChangeEntryRepository)changeEntryRepository;
   }
 
   private TransactionBody<String> getTransactionBody(Runnable operation) {

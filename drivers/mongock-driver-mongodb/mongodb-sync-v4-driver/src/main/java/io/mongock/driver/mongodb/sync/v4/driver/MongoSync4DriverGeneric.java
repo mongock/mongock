@@ -31,8 +31,6 @@ public abstract class MongoSync4DriverGeneric extends TransactionalConnectionDri
   private static final ReadConcern DEFAULT_READ_CONCERN = ReadConcern.MAJORITY;
   private static final ReadPreference DEFAULT_READ_PREFERENCE = ReadPreference.primary();
 
-  protected MongoSync4ChangeEntryRepository changeEntryRepository;
-  protected MongoSync4LockRepository lockRepository;
   private WriteConcern writeConcern;
   private ReadConcern readConcern;
   private ReadPreference readPreference;
@@ -48,16 +46,24 @@ public abstract class MongoSync4DriverGeneric extends TransactionalConnectionDri
   }
 
 
-  public void setWriteConcern(WriteConcern writeConcern) {
-    this.writeConcern = writeConcern;
+  @Override
+  protected void initializeRepositories() {
+    lockRepository = new MongoSync4LockRepository(mongoDatabase.getCollection(getLockRepositoryName()), getReadWriteConfiguration());
+    lockRepository.setIndexCreation(isIndexCreation());
+
+    changeEntryRepository = new MongoSync4ChangeEntryRepository(mongoDatabase.getCollection(getMigrationRepositoryName()), getReadWriteConfiguration());
+    changeEntryRepository.setIndexCreation(isIndexCreation());
   }
 
-  public void setReadConcern(ReadConcern readConcern) {
-    this.readConcern = readConcern;
-  }
-
-  public void setReadPreference(ReadPreference readPreference) {
-    this.readPreference = readPreference;
+  @Override
+  public void afterParentInitialization() {
+    dependencies.add(new ChangeSetDependency(MongoDatabase.class, mongoDatabase, true));
+    dependencies.add(new ChangeSetDependency(ChangeEntryService.class, getChangeEntryService(), false));
+    txOptions = TransactionOptions.builder()
+        .writeConcern(getWriteConcern())
+        .readConcern(getReadConcern())
+        .readPreference(getReadPreference())
+        .build();
   }
 
   @Override
@@ -70,41 +76,28 @@ public abstract class MongoSync4DriverGeneric extends TransactionalConnectionDri
     }
   }
 
-  @Override
-  protected LockRepository getLockRepository() {
-    if (lockRepository == null) {
-      MongoCollection<Document> collection = mongoDatabase.getCollection(getLockRepositoryName());
-      lockRepository = new MongoSync4LockRepository(collection, getReadWriteConfiguration());
-      lockRepository.setIndexCreation(isIndexCreation());
-    }
-    return lockRepository;
-  }
-
-  @Override
-  public ChangeEntryService getChangeEntryService() {
-    if (changeEntryRepository == null) {
-      changeEntryRepository = new MongoSync4ChangeEntryRepository(mongoDatabase.getCollection(getMigrationRepositoryName()), getReadWriteConfiguration());
-      changeEntryRepository.setIndexCreation(isIndexCreation());
-    }
-    return changeEntryRepository;
-  }
 
   @Override
   public Class getLegacyMigrationChangeLogClass(boolean runAlways) {
     return runAlways ? MongockSync4LegacyMigrationChangeRunAlwaysLog.class : MongockSync4LegacyMigrationChangeLog.class;
   }
 
-  @Override
-  public void specificInitialization() {
-    dependencies.add(new ChangeSetDependency(MongoDatabase.class, mongoDatabase, true));
-    dependencies.add(new ChangeSetDependency(ChangeEntryService.class, getChangeEntryService(), false));
-    txOptions = TransactionOptions.builder()
-        .writeConcern(getWriteConcern())
-        .readConcern(getReadConcern())
-        .readPreference(getReadPreference())
-        .build();
+
+  /*************************
+   * Specific MongoDB configuration
+   *************************/
+
+  public void setWriteConcern(WriteConcern writeConcern) {
+    this.writeConcern = writeConcern;
   }
 
+  public void setReadConcern(ReadConcern readConcern) {
+    this.readConcern = readConcern;
+  }
+
+  public void setReadPreference(ReadPreference readPreference) {
+    this.readPreference = readPreference;
+  }
 
   protected ReadWriteConfiguration getReadWriteConfiguration() {
     return new ReadWriteConfiguration(

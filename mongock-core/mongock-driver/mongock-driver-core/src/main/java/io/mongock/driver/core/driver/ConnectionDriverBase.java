@@ -7,7 +7,6 @@ import io.mongock.driver.api.entry.ChangeEntryService;
 import io.mongock.driver.api.lock.LockManager;
 import io.mongock.driver.core.lock.DefaultLockManager;
 import io.mongock.driver.core.lock.LockRepository;
-import io.mongock.utils.TimeService;
 import io.mongock.utils.annotation.NotThreadSafe;
 
 import java.util.HashSet;
@@ -24,6 +23,8 @@ public abstract class ConnectionDriverBase implements ConnectionDriver {
   protected final long lockTryFrequencyMillis;
 
   protected boolean initialized = false;
+  protected LockRepository lockRepository;
+  protected ChangeEntryService changeEntryRepository;
   protected LockManager lockManager = null;
   protected String migrationRepositoryName;
   protected String lockRepositoryName;
@@ -38,10 +39,10 @@ public abstract class ConnectionDriverBase implements ConnectionDriver {
   }
 
   @Override
-  public final void initialize() {
+  public final synchronized void initialize() {
     if (!initialized) {
+      initializeRepositories();
       initialized = true;
-      LockRepository lockRepository = this.getLockRepository();
       lockRepository.initialize();
       lockManager = DefaultLockManager.builder()
           .setLockRepository(lockRepository)
@@ -49,10 +50,9 @@ public abstract class ConnectionDriverBase implements ConnectionDriver {
           .setLockQuitTryingAfterMillis(lockQuitTryingAfterMillis)
           .setLockTryFrequencyMillis(lockTryFrequencyMillis)
           .build();
-      ChangeEntryService changeEntryService = getChangeEntryService();
-      changeEntryService.initialize();
+      changeEntryRepository.initialize();
       dependencies = new HashSet<>();
-      specificInitialization();
+      afterParentInitialization();
     }
   }
 
@@ -62,6 +62,14 @@ public abstract class ConnectionDriverBase implements ConnectionDriver {
       throw new MongockException("Internal error: Driver needs to be initialized by the runner");
     }
     return lockManager;
+  }
+
+  @Override
+  public final ChangeEntryService getChangeEntryService() {
+    if (changeEntryRepository == null) {
+      throw new MongockException("Driver not initialized");
+    }
+    return changeEntryRepository;
   }
 
   protected boolean isInitialized() {
@@ -90,9 +98,9 @@ public abstract class ConnectionDriverBase implements ConnectionDriver {
     this.indexCreation = indexCreation;
   }
 
-  protected abstract LockRepository getLockRepository();
+  protected abstract void initializeRepositories();
 
-  protected void specificInitialization() {
+  protected void afterParentInitialization() {
     //TODO not mandatory
   }
 

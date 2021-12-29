@@ -4,34 +4,27 @@ import com.mongodb.ReadConcern;
 import com.mongodb.ReadPreference;
 import com.mongodb.TransactionOptions;
 import com.mongodb.WriteConcern;
-import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
 import io.mongock.api.exception.MongockException;
 import io.mongock.driver.api.driver.ChangeSetDependency;
 import io.mongock.driver.api.driver.DriverLegaciable;
 import io.mongock.driver.api.entry.ChangeEntryService;
 import io.mongock.driver.core.driver.TransactionalConnectionDriverBase;
-import io.mongock.driver.core.lock.LockRepository;
 import io.mongock.driver.mongodb.v3.changelogs.runalways.MongockV3LegacyMigrationChangeRunAlwaysLog;
 import io.mongock.driver.mongodb.v3.changelogs.runonce.MongockV3LegacyMigrationChangeLog;
 import io.mongock.driver.mongodb.v3.repository.Mongo3ChangeEntryRepository;
 import io.mongock.driver.mongodb.v3.repository.Mongo3LockRepository;
 import io.mongock.driver.mongodb.v3.repository.ReadWriteConfiguration;
 import io.mongock.utils.annotation.NotThreadSafe;
-import org.bson.Document;
-
-import java.util.HashSet;
-import java.util.Set;
 
 @NotThreadSafe
 public abstract class MongoCore3DriverGeneric extends TransactionalConnectionDriverBase implements DriverLegaciable {
+
 
   private static final WriteConcern DEFAULT_WRITE_CONCERN = WriteConcern.MAJORITY.withJournal(true);
   private static final ReadConcern DEFAULT_READ_CONCERN = ReadConcern.MAJORITY;
   private static final ReadPreference DEFAULT_READ_PREFERENCE = ReadPreference.primary();
 
-  protected Mongo3ChangeEntryRepository changeEntryRepository;
-  protected Mongo3LockRepository lockRepository;
   private WriteConcern writeConcern;
   private ReadConcern readConcern;
   private ReadPreference readPreference;
@@ -39,12 +32,54 @@ public abstract class MongoCore3DriverGeneric extends TransactionalConnectionDri
   protected final MongoDatabase mongoDatabase;
 
   protected MongoCore3DriverGeneric(MongoDatabase mongoDatabase,
-                                 long lockAcquiredForMillis,
-                                 long lockQuitTryingAfterMillis,
-                                 long lockTryFrequencyMillis) {
+                                    long lockAcquiredForMillis,
+                                    long lockQuitTryingAfterMillis,
+                                    long lockTryFrequencyMillis) {
     super(lockAcquiredForMillis, lockQuitTryingAfterMillis, lockTryFrequencyMillis);
     this.mongoDatabase = mongoDatabase;
   }
+
+
+  @Override
+  protected void initializeRepositories() {
+    lockRepository = new Mongo3LockRepository(mongoDatabase.getCollection(getLockRepositoryName()), getReadWriteConfiguration());
+    lockRepository.setIndexCreation(isIndexCreation());
+
+    changeEntryRepository = new Mongo3ChangeEntryRepository(mongoDatabase.getCollection(getMigrationRepositoryName()), getReadWriteConfiguration());
+    changeEntryRepository.setIndexCreation(isIndexCreation());
+  }
+
+  @Override
+  public void afterParentInitialization() {
+    dependencies.add(new ChangeSetDependency(MongoDatabase.class, mongoDatabase, true));
+    dependencies.add(new ChangeSetDependency(ChangeEntryService.class, getChangeEntryService(), false));
+    txOptions = TransactionOptions.builder()
+        .writeConcern(getWriteConcern())
+        .readConcern(getReadConcern())
+        .readPreference(getReadPreference())
+        .build();
+  }
+
+  @Override
+  public void runValidation() throws MongockException {
+    if (mongoDatabase == null) {
+      throw new MongockException("MongoDatabase cannot be null");
+    }
+    if (this.getLockManager() == null) {
+      throw new MongockException("Internal error: Driver needs to be initialized by the runner");
+    }
+  }
+
+
+  @Override
+  public Class getLegacyMigrationChangeLogClass(boolean runAlways) {
+    return runAlways ? MongockV3LegacyMigrationChangeRunAlwaysLog.class : MongockV3LegacyMigrationChangeLog.class;
+  }
+
+
+  /*************************
+   * Specific MongoDB configuration
+   *************************/
 
   public void setWriteConcern(WriteConcern writeConcern) {
     this.writeConcern = writeConcern;
@@ -58,59 +93,13 @@ public abstract class MongoCore3DriverGeneric extends TransactionalConnectionDri
     this.readPreference = readPreference;
   }
 
-  @Override
-  public void runValidation() throws MongockException {
-    if (mongoDatabase == null) {
-      throw new MongockException("MongoDatabase cannot be null");
-    }
-    if (this.getLockManager() == null) {
-      throw new MongockException("Internal error: Driver needs to be initialized by the runner");
-    }
-  }
-
-  @Override
-  protected LockRepository getLockRepository() {
-    if (lockRepository == null) {
-      MongoCollection<Document> collection = mongoDatabase.getCollection(getLockRepositoryName());
-      lockRepository = new Mongo3LockRepository(collection, getReadWriteConfiguration());
-      lockRepository.setIndexCreation(isIndexCreation());
-    }
-    return lockRepository;
-  }
-
-  @Override
-  public ChangeEntryService getChangeEntryService() {
-    if (changeEntryRepository == null) {
-      changeEntryRepository = new Mongo3ChangeEntryRepository(mongoDatabase.getCollection(getMigrationRepositoryName()), getReadWriteConfiguration());
-      changeEntryRepository.setIndexCreation(isIndexCreation());
-    }
-    return changeEntryRepository;
-  }
-
-  @Override
-  public Class getLegacyMigrationChangeLogClass(boolean runAlways) {
-    return runAlways ? MongockV3LegacyMigrationChangeRunAlwaysLog.class : MongockV3LegacyMigrationChangeLog.class;
-  }
-
-  @Override
-  public void specificInitialization() {
-    dependencies.add(new ChangeSetDependency(MongoDatabase.class, mongoDatabase, true));
-    dependencies.add(new ChangeSetDependency(ChangeEntryService.class, getChangeEntryService(), false));
-    txOptions = TransactionOptions.builder()
-        .writeConcern(getWriteConcern())
-        .readConcern(getReadConcern())
-        .readPreference(getReadPreference())
-        .build();
-  }
-
   protected ReadWriteConfiguration getReadWriteConfiguration() {
     return new ReadWriteConfiguration(
-        writeConcern != null ? writeConcern : DEFAULT_WRITE_CONCERN,
-        readConcern != null ? readConcern : DEFAULT_READ_CONCERN,
-        readPreference != null ? readPreference : DEFAULT_READ_PREFERENCE
+        getWriteConcern(),
+        getReadConcern(),
+        getReadPreference()
     );
   }
-
 
   protected ReadPreference getReadPreference() {
     return readPreference != null ? readPreference : DEFAULT_READ_PREFERENCE;

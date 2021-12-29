@@ -48,8 +48,8 @@ public abstract class SpringDataMongoV3DriverBase extends MongoSync4DriverGeneri
 
 
   @Override
-  public void specificInitialization() {
-    super.specificInitialization();
+  public void afterParentInitialization() {
+    super.afterParentInitialization();
     dependencies.add(new ChangeSetDependencyBuildable(
         MongockTemplate.class,
         MongoTemplate.class,
@@ -72,15 +72,6 @@ public abstract class SpringDataMongoV3DriverBase extends MongoSync4DriverGeneri
         .findAny()
         .orElseThrow(() -> new MongockException("Mongock Driver hasn't been initialized yet"));
 
-  }
-
-  @Override
-  public ChangeEntryService getChangeEntryService() {
-    if (changeEntryRepository == null) {
-      changeEntryRepository = new SpringDataMongoV3ChangeEntryRepository(mongoTemplate, getMigrationRepositoryName(), getReadWriteConfiguration(), isTransactionable());
-      changeEntryRepository.setIndexCreation(isIndexCreation());
-    }
-    return changeEntryRepository;
   }
 
   @Override
