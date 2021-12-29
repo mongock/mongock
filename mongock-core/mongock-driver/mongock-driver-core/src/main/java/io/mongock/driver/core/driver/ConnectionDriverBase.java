@@ -49,10 +49,10 @@ public abstract class ConnectionDriverBase implements ConnectionDriver {
 
   protected abstract void beforeParentInitialization();
 
-  protected void afterParentInitialization() {/**TODO not mandatory**/}
+  protected void afterParentInitialization() {/*OPTIONAL**/}
 
   @Override
-  public LockManager getLockManager() {
+  public final LockManager getLockManager() {
     if (lockManager == null) {
       throw new MongockException("Internal error: Driver needs to be initialized by the runner");
     }
@@ -98,7 +98,7 @@ public abstract class ConnectionDriverBase implements ConnectionDriver {
     return dependencies;
   }
 
-  //This should be injected as association
+  /*This should be injected as association**/
   protected void removeDependencyIfAssignableFrom(Set<ChangeSetDependency> dependencies, Class<?> type) {
     if (dependencies != null) {
       dependencies.removeIf(d -> type.isAssignableFrom(d.getType()));
@@ -128,7 +128,7 @@ public abstract class ConnectionDriverBase implements ConnectionDriver {
   }
 
 
-  //DEPRECATIONS
+  /*DEPRECATIONS**/
   @Deprecated
   public void setChangeLogRepositoryName(String migrationRepositoryName) {
     setMigrationRepositoryName(migrationRepositoryName);

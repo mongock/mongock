@@ -70,7 +70,7 @@ public abstract class MongoCore3DriverGeneric extends TransactionalConnectionDri
     }
   }
 
-  //LEGACIALE
+  /*LEGACIALE**/
   @Override
   public Class getLegacyMigrationChangeLogClass(boolean runAlways) {
     return runAlways ? MongockV3LegacyMigrationChangeRunAlwaysLog.class : MongockV3LegacyMigrationChangeLog.class;
