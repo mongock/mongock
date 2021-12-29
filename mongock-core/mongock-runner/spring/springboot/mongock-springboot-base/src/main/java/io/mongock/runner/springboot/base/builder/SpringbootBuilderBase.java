@@ -79,10 +79,20 @@ public abstract class SpringbootBuilderBase<
 
   public SELF setSpringContext(ApplicationContext springContext) {
     (getDependencyManager()).setContext(new SpringDependencyContext(springContext));
+    setEventPublisherInternal(springContext);
     return getInstance();
   }
 
+  /**
+   * Deprecated. Just use setSpringContext
+   */
+  @Deprecated
   public SELF setEventPublisher(ApplicationEventPublisher applicationEventPublisher) {
+    setEventPublisherInternal(applicationEventPublisher);
+    return getInstance();
+  }
+
+  private void setEventPublisherInternal(ApplicationEventPublisher applicationEventPublisher) {
     if (applicationEventPublisher == null) {
       throw new MongockException("EventPublisher cannot e null");
     }
@@ -91,7 +101,6 @@ public abstract class SpringbootBuilderBase<
         result -> applicationEventPublisher.publishEvent(new SpringMigrationSuccessEvent(this, result)),
         result -> applicationEventPublisher.publishEvent(new SpringMigrationFailureEvent(this, result))
     );
-    return getInstance();
   }
 
   public MongockApplicationRunner buildApplicationRunner() {
