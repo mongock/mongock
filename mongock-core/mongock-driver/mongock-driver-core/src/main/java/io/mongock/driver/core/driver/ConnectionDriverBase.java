@@ -52,7 +52,7 @@ public abstract class ConnectionDriverBase implements ConnectionDriver {
   protected void afterParentInitialization() {/*OPTIONAL**/}
 
   @Override
-  public final LockManager getLockManager() {
+  public LockManager getLockManager() {
     if (lockManager == null) {
       throw new MongockException("Internal error: Driver needs to be initialized by the runner");
     }
@@ -60,7 +60,7 @@ public abstract class ConnectionDriverBase implements ConnectionDriver {
   }
 
   @Override
-  public final ChangeEntryService getChangeEntryService() {
+  public ChangeEntryService getChangeEntryService() {
     if (changeEntryRepository == null) {
       throw new MongockException("Driver not initialized");
     }
