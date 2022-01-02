@@ -59,7 +59,7 @@ With new major releases we stop enhancing or adding new features to older versio
 Please read the [code of conduct][codeOfConduct] for details on our code of conduct.
 
 ## LICENSE
-Mongock propject is licensed under the [Apache License Version 2.0][apacheLicense]. See the [LICENSE][mongockLicense] file for details
+Mongock project is licensed under the [Apache License Version 2.0][apacheLicense]. See the [LICENSE][mongockLicense] file for details
 
 [codeOfConduct]: ./community/CODE_OF_CONDUCT.md
 [mongockLicense]: ./LICENSE.md
