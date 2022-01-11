@@ -16,9 +16,7 @@ import org.bson.conversions.Bson;
 
 import java.lang.reflect.Field;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -99,25 +97,21 @@ public class MongoSync4ChangeEntryRepository extends MongoSync4RepositoryBase<Ch
   @Override
   public List<ChangeEntry> getEntriesLog() {
     return collection.find()
-            .into(new ArrayList<>())
-            .stream()
-            .map(entry -> new ChangeEntry(
-                                  entry.getString(KEY_EXECUTION_ID),
-                                  entry.getString(KEY_CHANGE_ID),
-                                  entry.getString(KEY_AUTHOR),
-                                  entry.getDate(KEY_TIMESTAMP),
-                                  entry.getString(KEY_STATE) != null
-                                          ? ChangeState.valueOf(entry.getString(KEY_STATE))
-                                          : null,
-                                  entry.getString(KEY_TYPE) != null
-                                          ? ChangeType.valueOf(entry.getString(KEY_TYPE))
-                                          : null,
-                                  entry.getString(KEY_CHANGELOG_CLASS),
-                                  entry.getString(KEY_CHANGESET_METHOD),
-                                  entry.getLong(KEY_EXECUTION_MILLIS),
-                                  entry.getString(KEY_EXECUTION_HOSTNAME),
-                                  entry.get(KEY_METADATA)))
-            .collect(Collectors.toList());
+        .into(new ArrayList<>())
+        .stream()
+        .map(entry -> new ChangeEntry(
+            entry.getString(KEY_EXECUTION_ID),
+            entry.getString(KEY_CHANGE_ID),
+            entry.getString(KEY_AUTHOR),
+            entry.getDate(KEY_TIMESTAMP),
+            entry.containsKey(KEY_STATE) ? ChangeState.valueOf(entry.getString(KEY_STATE)) : null,
+            entry.containsKey(KEY_TYPE) ? ChangeType.valueOf(entry.getString(KEY_TYPE)) : null,
+            entry.getString(KEY_CHANGELOG_CLASS),
+            entry.getString(KEY_CHANGESET_METHOD),
+            entry.containsKey(KEY_EXECUTION_MILLIS) ? entry.getLong(KEY_EXECUTION_MILLIS) : -1L,
+            entry.getString(KEY_EXECUTION_HOSTNAME),
+            entry.get(KEY_METADATA)))
+        .collect(Collectors.toList());
   }
 
   @Override
@@ -128,6 +122,7 @@ public class MongoSync4ChangeEntryRepository extends MongoSync4RepositoryBase<Ch
         Filters.eq(KEY_AUTHOR, changeEntry.getAuthor())
     );
 
+    //TODO why we try to find with filter and later we upsert with the same filter?
     Document document = collection.find(filter).first();
     if (document != null) {
       toEntity(changeEntry).forEach(document::put);
