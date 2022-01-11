@@ -3,6 +3,7 @@ package io.mongock.driver.mongodb.sync.v4.repository;
 import com.mongodb.client.ClientSession;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.model.Filters;
+import com.mongodb.client.model.ReplaceOptions;
 import com.mongodb.client.model.UpdateOptions;
 import com.mongodb.client.result.InsertOneResult;
 import com.mongodb.client.result.UpdateResult;
@@ -13,16 +14,19 @@ import io.mongock.driver.api.entry.ChangeType;
 import io.mongock.driver.core.entry.ChangeEntryRepositoryWithEntity;
 import org.bson.Document;
 import org.bson.conversions.Bson;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.lang.reflect.Field;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
 public class MongoSync4ChangeEntryRepository extends MongoSync4RepositoryBase<ChangeEntry> implements ChangeEntryRepositoryWithEntity<Document> {
+
+  private final static Logger logger = LoggerFactory.getLogger(MongoSync4ChangeEntryRepository.class);
+
 
   protected static String KEY_EXECUTION_ID;
   protected static String KEY_CHANGE_ID;
@@ -99,25 +103,21 @@ public class MongoSync4ChangeEntryRepository extends MongoSync4RepositoryBase<Ch
   @Override
   public List<ChangeEntry> getEntriesLog() {
     return collection.find()
-            .into(new ArrayList<>())
-            .stream()
-            .map(entry -> new ChangeEntry(
-                                  entry.getString(KEY_EXECUTION_ID),
-                                  entry.getString(KEY_CHANGE_ID),
-                                  entry.getString(KEY_AUTHOR),
-                                  entry.getDate(KEY_TIMESTAMP),
-                                  entry.getString(KEY_STATE) != null
-                                          ? ChangeState.valueOf(entry.getString(KEY_STATE))
-                                          : null,
-                                  entry.getString(KEY_TYPE) != null
-                                          ? ChangeType.valueOf(entry.getString(KEY_TYPE))
-                                          : null,
-                                  entry.getString(KEY_CHANGELOG_CLASS),
-                                  entry.getString(KEY_CHANGESET_METHOD),
-                                  entry.getLong(KEY_EXECUTION_MILLIS),
-                                  entry.getString(KEY_EXECUTION_HOSTNAME),
-                                  entry.get(KEY_METADATA)))
-            .collect(Collectors.toList());
+        .into(new ArrayList<>())
+        .stream()
+        .map(entry -> new ChangeEntry(
+            entry.getString(KEY_EXECUTION_ID),
+            entry.getString(KEY_CHANGE_ID),
+            entry.getString(KEY_AUTHOR),
+            entry.getDate(KEY_TIMESTAMP),
+            entry.containsKey(KEY_STATE) ? ChangeState.valueOf(entry.getString(KEY_STATE)) : null,
+            entry.containsKey(KEY_TYPE) ? ChangeType.valueOf(entry.getString(KEY_TYPE)) : null,
+            entry.getString(KEY_CHANGELOG_CLASS),
+            entry.getString(KEY_CHANGESET_METHOD),
+            entry.containsKey(KEY_EXECUTION_MILLIS) ? entry.getLong(KEY_EXECUTION_MILLIS) : -1L,
+            entry.getString(KEY_EXECUTION_HOSTNAME),
+            entry.get(KEY_METADATA)))
+        .collect(Collectors.toList());
   }
 
   @Override
@@ -128,17 +128,12 @@ public class MongoSync4ChangeEntryRepository extends MongoSync4RepositoryBase<Ch
         Filters.eq(KEY_AUTHOR, changeEntry.getAuthor())
     );
 
-    Document document = collection.find(filter).first();
-    if (document != null) {
-      toEntity(changeEntry).forEach(document::put);
-      UpdateResult result = getClientSession()
-          .map(clientSession -> collection.updateOne(clientSession, filter, new Document("$set", document), new UpdateOptions().upsert(true)))
-          .orElseGet(() -> collection.updateOne(filter, new Document("$set", document), new UpdateOptions().upsert(true)));
-    } else {
-      InsertOneResult result = getClientSession()
-          .map(clientSession -> collection.insertOne(clientSession, toEntity(changeEntry)))
-          .orElseGet(() -> collection.insertOne(toEntity(changeEntry)));
-    }
+    Document entryDocument = toEntity(changeEntry);
+    UpdateResult result = getClientSession()
+        .map(clientSession -> collection.replaceOne(clientSession, filter, entryDocument, new ReplaceOptions().upsert(true)))
+        .orElseGet(() -> collection.replaceOne(filter, entryDocument, new ReplaceOptions().upsert(true)));
+    logger.debug("SaveOrUpdate[{}] with result" +
+        "\n[upsertId:{}, matches: {}, modifies: {}, acknowledged: {}]", changeEntry, result.getUpsertedId(), result.getMatchedCount(), result.getModifiedCount(), result.wasAcknowledged());
   }
 
 
