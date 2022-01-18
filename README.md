@@ -61,7 +61,7 @@ Please read the [code of conduct][codeOfConduct] for details on our code of cond
 ## LICENSE
 Mongock project is licensed under the [Apache License Version 2.0][apacheLicense]. See the [LICENSE][mongockLicense] file for details
 
-[codeOfConduct]: ./community/CODE_OF_CONDUCT.md
+[codeOfConduct]: ./CODE_OF_CONDUCT.md
 [mongockLicense]: ./LICENSE.md
 
 [apacheLicense]: http://www.apache.org/licenses/LICENSE-2.0.html
