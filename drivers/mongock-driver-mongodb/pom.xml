@@ -10,7 +10,7 @@
 
   <name>MongoDB driver parent</name>
   <description>MongoDB tool for tracking, managing and applying database schema changes</description>
-  <url>https://github.com/cloudyrock/mongock</url>
+  <url>https://github.com/mongock/mongock</url>
 
   <artifactId>mongock-driver-mongodb</artifactId>
   <packaging>pom</packaging>

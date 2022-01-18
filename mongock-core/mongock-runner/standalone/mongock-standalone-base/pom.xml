@@ -14,7 +14,7 @@
 
   <name>Mongock standalone base</name>
   <description>Base project for standalone runner</description>
-  <url>https://github.com/cloudyrock/mongock-standalone</url>
+  <url>https://github.com/mongock/mongock-core</url>
 
 
   <properties>

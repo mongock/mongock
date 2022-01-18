@@ -12,7 +12,7 @@
   <artifactId>mongock-standalone</artifactId>
   <name>Mongock standalone runner</name>
   <description>Standalone runner for Mongock</description>
-  <url>https://github.com/cloudyrock/mongock-standalone</url>
+  <url>https://github.com/mongock/mongock-core</url>
 
 
   <properties>

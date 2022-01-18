@@ -13,7 +13,7 @@
   <packaging>pom</packaging>
   <name>Mongock core</name>
   <description>Migration runner classes base for</description>
-  <url>https://github.com/cloudyrock/mongock-core</url>
+  <url>https://github.com/mongock/mongock-core</url>
   <modules>
     <module>mongock-api</module>
     <module>mongock-driver</module>

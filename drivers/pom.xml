@@ -10,7 +10,7 @@
 
   <name>Mongock community drivers</name>
   <description>Mongock parent project for community drivers</description>
-  <url>https://github.com/cloudyrock/mongock</url>
+  <url>https://github.com/mongock/mongock</url>
 
   <artifactId>drivers</artifactId>
   <packaging>pom</packaging>

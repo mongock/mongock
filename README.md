@@ -32,7 +32,7 @@ The official documentation is [here][documentation_link], where you can find eve
     
 ## Questions
 Before rasing a question, please check it hasn't been alerady answered in
-1. [Our FAQ section](https://mongock.io/v5/FAQ/index.html)
+1. [Our FAQ section](https://docs.mongock.io/v5/FAQ/index.html)
 2. [Github Q&A section](https://github.com/mongock/mongock/discussions/categories/q-a)
 3. [Stackoverflow](https://stackoverflow.com/search?q=mongock)
 4. [Gitter channel](https://gitter.im/mongock/community)
