@@ -13,7 +13,7 @@
   <artifactId>mongock-community-bom</artifactId>
   <packaging>pom</packaging>
   <description>Mongock for community dependency management</description>
-  <url>https://github.com/mongock/mongock/mongock-bom</url>
+  <url>https://github.com/mongock/mongock</url>
 
   <properties>
     <java.version>1.8</java.version>
