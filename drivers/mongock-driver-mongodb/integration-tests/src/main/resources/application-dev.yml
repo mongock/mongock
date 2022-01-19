@@ -3,7 +3,3 @@ mongock:
     - io.mongock.integrationtests.spring5.springdata3.changelogs.client
   trackIgnored: true
   transactionable: false
-
-  #    - com.github.cloudyrock.mongock.integrationtests.spring5.springdata3.changelogs.client.initializer2
-  #    - com.github.cloudyrock.mongock.integrationtests.spring5.springdata3.changelogs.client.updater
-  #    - com.github.cloudyrock.mongock.integrationtests.spring5.springdata3.changelogs.client.ClientUpdater2ChangeLog
