@@ -6,7 +6,7 @@ import io.mongock.driver.api.driver.ChangeSetDependency;
 import io.mongock.driver.api.driver.ConnectionDriver;
 import io.mongock.driver.api.entry.ChangeEntry;
 import io.mongock.driver.api.entry.ChangeEntryService;
-import io.mongock.driver.api.entry.ExecutedChangeEntry;
+import io.mongock.driver.api.entry.ChangeEntryExecuted;
 import io.mongock.driver.api.lock.LockManager;
 import io.mongock.runner.springboot.profiles.enseuredecorators.EnsureDecoratorChangerLog;
 import io.mongock.runner.springboot.profiles.integration.IntegrationProfiledChangerLog;
@@ -140,8 +140,8 @@ public class SpringMongockApplicationRunnerBaseTest {
   public void shouldReturnProxy_IfStandardDependency() throws Exception {
     // given
     when(changeEntryService.getExecuted()).thenReturn(Arrays.asList(
-            generateExecutedChangeEntry("withInterfaceParameter2", "executor"),
-            generateExecutedChangeEntry("withClassNotInterfacedParameter", "executor")
+            generateChangeEntryExecuted("withInterfaceParameter2", "executor"),
+            generateChangeEntryExecuted("withClassNotInterfacedParameter", "executor")
     ));
 
     // when
@@ -155,8 +155,8 @@ public class SpringMongockApplicationRunnerBaseTest {
   public void proxyReturnedShouldReturnAProxy_whenCallingAMethod_IfInterface() throws Exception {
     // given
     when(changeEntryService.getExecuted()).thenReturn(Arrays.asList(
-            generateExecutedChangeEntry("withInterfaceParameter", "executor"),
-            generateExecutedChangeEntry("withClassNotInterfacedParameter", "executor")
+            generateChangeEntryExecuted("withInterfaceParameter", "executor"),
+            generateChangeEntryExecuted("withClassNotInterfacedParameter", "executor")
     ));
 
     // when
@@ -171,8 +171,8 @@ public class SpringMongockApplicationRunnerBaseTest {
   public void shouldNotReturnProxy_IfClassAnnotatedWithNonLockGuarded() throws Exception {
     // given
     when(changeEntryService.getExecuted()).thenReturn(Arrays.asList(
-            generateExecutedChangeEntry("withInterfaceParameter2", "executor"),
-            generateExecutedChangeEntry("withClassNotInterfacedParameter", "executor")
+            generateChangeEntryExecuted("withInterfaceParameter2", "executor"),
+            generateChangeEntryExecuted("withClassNotInterfacedParameter", "executor")
     ));
     when(springContext.getBean(InterfaceDependency.class)).thenReturn(new InterfaceDependencyImplNoLockGarded());
 
@@ -188,9 +188,9 @@ public class SpringMongockApplicationRunnerBaseTest {
   public void shouldNotReturnProxy_IfParameterAnnotatedWithNonLockGuarded() throws Exception {
     // given
     when(changeEntryService.getExecuted()).thenReturn(Arrays.asList(
-            generateExecutedChangeEntry("withInterfaceParameter", "executor"),
-            generateExecutedChangeEntry("withInterfaceParameter2", "executor"),
-            generateExecutedChangeEntry("withClassNotInterfacedParameter", "executor")
+            generateChangeEntryExecuted("withInterfaceParameter", "executor"),
+            generateChangeEntryExecuted("withInterfaceParameter2", "executor"),
+            generateChangeEntryExecuted("withClassNotInterfacedParameter", "executor")
     ));
 
     // when
@@ -204,14 +204,14 @@ public class SpringMongockApplicationRunnerBaseTest {
     MongockSpringboot
         .builder()
         .setDriver(driver)
-        .addChangeLogsScanPackage(packageName)
+        .addMigrationScanPackage(packageName)
         .setSpringContext(springContext)
         .buildApplicationRunner()
         .run(null);
 
   }
   
-  private ExecutedChangeEntry generateExecutedChangeEntry(String changeId, String author) {
-    return new ExecutedChangeEntry(changeId, author, new Date(), "dummy", "dummy");
+  private ChangeEntryExecuted generateChangeEntryExecuted(String changeId, String author) {
+    return new ChangeEntryExecuted(changeId, author, new Date(), "dummy", "dummy");
   }
 }

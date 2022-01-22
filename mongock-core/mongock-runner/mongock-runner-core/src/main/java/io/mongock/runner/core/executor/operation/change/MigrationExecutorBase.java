@@ -9,7 +9,7 @@ import io.mongock.driver.api.driver.ConnectionDriver;
 import io.mongock.driver.api.entry.ChangeEntry;
 import io.mongock.driver.api.entry.ChangeState;
 import io.mongock.driver.api.entry.ChangeType;
-import io.mongock.driver.api.entry.ExecutedChangeEntry;
+import io.mongock.driver.api.entry.ChangeEntryExecuted;
 import io.mongock.driver.api.lock.LockManager;
 import io.mongock.runner.core.executor.Executor;
 import io.mongock.runner.core.executor.NonTransactioner;
@@ -60,7 +60,7 @@ public abstract class MigrationExecutorBase<CONFIG extends ChangeExecutorConfigu
   protected boolean executionInProgress = false;
   protected final String executionId;
   private final TransactionStrategy transactionStrategy;
-  protected List<ExecutedChangeEntry> executedChangeEntries = null;
+  protected List<ChangeEntryExecuted> executedChangeEntries = null;
 
 
   public MigrationExecutorBase(String executionId,

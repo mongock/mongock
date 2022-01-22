@@ -16,7 +16,6 @@ import static io.mongock.driver.api.entry.ChangeState.EXECUTED;
 import static io.mongock.driver.api.entry.ChangeState.FAILED;
 import static io.mongock.driver.api.entry.ChangeState.ROLLBACK_FAILED;
 import static io.mongock.driver.api.entry.ChangeState.ROLLED_BACK;
-import static io.mongock.driver.api.entry.ChangeType.BEFORE_EXECUTION;
 import static io.mongock.utils.field.Field.KeyType.PRIMARY;
 
 /**
@@ -76,6 +75,8 @@ public class ChangeEntry implements ChangePrintable {
 
   @Field(KEY_ERROR_TRACE)
   protected String errorTrace;
+  
+  protected Date originalTimestamp;
 
   public ChangeEntry() {}
 
@@ -117,6 +118,7 @@ public class ChangeEntry implements ChangePrintable {
     this.executionHostname = executionHostname;
     this.metadata = metadata;
     this.errorTrace = errorTrace;
+    this.originalTimestamp = null;
   }
 
 
@@ -236,6 +238,14 @@ public class ChangeEntry implements ChangePrintable {
 
   public Optional<String> getErrorTrace() {
     return Optional.ofNullable(errorTrace);
+  }
+  
+  public Date getOriginalTimestamp() {
+    return this.originalTimestamp;
+  }
+  
+  public void setOriginalTimestamp(Date originalTimestamp) {
+    this.originalTimestamp = originalTimestamp;
   }
 
   @Override

@@ -13,6 +13,7 @@ import java.util.stream.Collectors;
 import static io.mongock.driver.api.entry.ChangeState.IGNORED;
 import static io.mongock.driver.api.entry.ChangeState.FAILED;
 import static io.mongock.driver.api.entry.ChangeState.ROLLBACK_FAILED;
+import java.util.Date;
 
 
 public interface ChangeEntryService extends RepositoryIndexable, Process {
@@ -31,7 +32,7 @@ public interface ChangeEntryService extends RepositoryIndexable, Process {
    * @return list of current executed entries ordered by execution timestamp
    * @throws MongockException
    */
-  default List<ExecutedChangeEntry> getExecuted() throws MongockException {
+  default List<ChangeEntryExecuted> getExecuted() throws MongockException {
 
     Predicate<ChangeEntry> cleanIrrelevantState = entry -> entry.getState() != IGNORED && entry.getState() != FAILED && entry.getState() != ROLLBACK_FAILED;
     return getEntriesMap()//Maps of List<ChangeEntry>, indexed by changeId
@@ -40,9 +41,9 @@ public interface ChangeEntryService extends RepositoryIndexable, Process {
         .map(duplicatedEntries -> duplicatedEntries.stream().filter(cleanIrrelevantState).collect(Collectors.toList()))//only takes into account executed or rolled back
         .filter(duplicatedEntries -> !duplicatedEntries.isEmpty())
         .map(duplicatedEntries -> duplicatedEntries.get(0))//transform each list in a single ChangeEntry(the first one)
-        .sorted(Comparator.comparing(ChangeEntry::getTimestamp))// Sorts the resulting list chronologically
+        .sorted(Comparator.comparing(ChangeEntry::getOriginalTimestamp))// Sorts the resulting list chronologically
         .filter(ChangeEntry::isExecuted)//only gets the ones that are executed
-        .map(ExecutedChangeEntry::new)//transform the entry to an executed entry
+        .map(ChangeEntryExecuted::new)//transform the entry to an executed entry
         .collect(Collectors.toList());
   }
 
@@ -59,7 +60,7 @@ public interface ChangeEntryService extends RepositoryIndexable, Process {
         .map(duplicatedEntries -> duplicatedEntries.stream().filter(ChangeEntry::hasRelevantState).collect(Collectors.toList()))//only takes into account relevant states
         .filter(duplicatedEntries -> !duplicatedEntries.isEmpty())
         .map(duplicatedEntries -> duplicatedEntries.get(0))//transform each list in a single ChangeEntry(the first one)
-        .sorted(Comparator.comparing(ChangeEntry::getTimestamp))// Sorts the resulting list chronologically
+        .sorted(Comparator.comparing(ChangeEntry::getOriginalTimestamp))// Sorts the resulting list chronologically
         .collect(Collectors.toList());
   }
 
@@ -67,7 +68,11 @@ public interface ChangeEntryService extends RepositoryIndexable, Process {
     Map<String, List<ChangeEntry>> log = getEntriesLog()
         .stream()
         .collect(Collectors.groupingBy(ChangeEntry::getChangeId));
-    log.values().forEach(entries -> entries.sort((c1, c2) -> c2.getTimestamp().compareTo(c1.getTimestamp())));//sorts each list in the map by date in reverse
+    log.values().forEach(entries -> {
+      entries.sort((c1, c2) -> c2.getTimestamp().compareTo(c1.getTimestamp()));//sorts each list in the map by date in reverse
+      Date originalTimestamp = entries.get(entries.size()-1).getTimestamp();//gets original timestamp (oldest entry of group)
+      entries.forEach(entry -> entry.setOriginalTimestamp(originalTimestamp));
+    });
     return log;
   }
 
