@@ -516,7 +516,7 @@ public class DefaultLockManagerTest {
     //when
     lockManager.acquireLockDefault();
     lockManager.releaseLockDefault();
-    lockManager.acquireLockDefault();
+    lockManager.acquireLockDefault();//TODO: Randomly produces a race condition by calling twice "lockRepository.removeByKeyAndOwner" (maybe LockDaemon)
 
     //then
     verify(lockRepository).removeByKeyAndOwner(lockManager.getDefaultKey(), lockManager.getOwner());
