@@ -9,7 +9,7 @@ import io.mongock.api.config.LegacyMigration;
 import io.mongock.api.config.LegacyMigrationMappingFields;
 import io.mongock.driver.api.entry.ChangeEntry;
 import io.mongock.driver.api.entry.ChangeEntryService;
-import io.mongock.driver.api.entry.ExecutedChangeEntry;
+import io.mongock.driver.api.entry.ChangeEntryExecuted;
 import org.bson.Document;
 import org.junit.Test;
 import org.mockito.ArgumentCaptor;
@@ -63,8 +63,8 @@ public class LegacyServiceTest {
     ChangeEntry c1 = getChangeEntry(1);//from legacy and NOT executed(NOT OK)
     ChangeEntry c2 = getChangeEntry(2);//from legacy and executed(OK)
     ChangeEntry c3 = getChangeEntry(3);//not from legacy
-    ExecutedChangeEntry c2Ex = new ExecutedChangeEntry(c2);
-    ExecutedChangeEntry c3Ex = new ExecutedChangeEntry(c3);
+    ChangeEntryExecuted c2Ex = new ChangeEntryExecuted(c2);
+    ChangeEntryExecuted c3Ex = new ChangeEntryExecuted(c3);
 
     when(service.getEntriesLog()).thenReturn(Arrays.asList(c1, c2, c3));
 

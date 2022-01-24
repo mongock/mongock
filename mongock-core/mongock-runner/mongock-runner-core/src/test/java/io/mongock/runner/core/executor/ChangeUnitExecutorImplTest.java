@@ -11,7 +11,7 @@ import io.mongock.driver.api.driver.ConnectionDriver;
 import io.mongock.driver.api.entry.ChangeEntry;
 import io.mongock.driver.api.entry.ChangeEntryService;
 import io.mongock.driver.api.entry.ChangeState;
-import io.mongock.driver.api.entry.ExecutedChangeEntry;
+import io.mongock.driver.api.entry.ChangeEntryExecuted;
 import io.mongock.driver.api.lock.LockManager;
 import io.mongock.runner.core.changelogs.executor.test1.ExecutorChangeLog;
 import io.mongock.runner.core.changelogs.executor.test3_with_nonFailFast.ExecutorWithNonFailFastChangeLog;
@@ -110,8 +110,8 @@ public class ChangeUnitExecutorImplTest {
         .thenReturn(Collections.emptyList())
         .thenReturn(Collections.emptyList())
         .thenReturn(Arrays.asList(
-            generateExecutedChangeEntry("system-change-unit", "mongock_test"),
-            generateExecutedChangeEntry("new-change-unit", "mongock_test")));
+            generateChangeEntryExecuted("system-change-unit", "mongock_test"),
+            generateChangeEntryExecuted("new-change-unit", "mongock_test")));
     new MigrationExecutor(
         "",
         createInitialChangeLogsByPackage(SystemChangeUnit.class),
@@ -129,7 +129,7 @@ public class ChangeUnitExecutorImplTest {
 
     // given
     injectDummyDependency(DummyDependencyClass.class, new DummyDependencyClass());
-    when(changeEntryService.getExecuted()).thenReturn(Collections.singletonList(generateExecutedChangeEntry("alreadyExecuted", "executor")));
+    when(changeEntryService.getExecuted()).thenReturn(Collections.singletonList(generateChangeEntryExecuted("alreadyExecuted", "executor")));
 
     // when
     MongockConfiguration config = new MongockConfiguration();
@@ -192,7 +192,7 @@ public class ChangeUnitExecutorImplTest {
   public void shouldAbortMigrationButSaveFailedChangeSet_IfChangeSetThrowsException() throws InterruptedException {
     // given
     injectDummyDependency(DummyDependencyClass.class, new DummyDependencyClass());
-    when(changeEntryService.getExecuted()).thenReturn(Arrays.asList(generateExecutedChangeEntry("runAlwaysAndAlreadyExecutedChangeSet", "executor")));
+    when(changeEntryService.getExecuted()).thenReturn(Arrays.asList(generateChangeEntryExecuted("runAlwaysAndAlreadyExecutedChangeSet", "executor")));
 
     // when
     try {
@@ -478,8 +478,8 @@ public class ChangeUnitExecutorImplTest {
   public void shouldReturnProxy_IfStandardDependency() {
     // given
     when(changeEntryService.getExecuted()).thenReturn(Arrays.asList(
-        generateExecutedChangeEntry("withInterfaceParameter2", "executor"),
-        generateExecutedChangeEntry("withNonLockGuardedParameter", "executor")
+        generateChangeEntryExecuted("withInterfaceParameter2", "executor"),
+        generateChangeEntryExecuted("withNonLockGuardedParameter", "executor")
     ));
 
     // when
@@ -502,8 +502,8 @@ public class ChangeUnitExecutorImplTest {
   public void proxyReturnedShouldReturnAProxy_whenCallingAMethod_IfInterface() {
     // given
     when(changeEntryService.getExecuted()).thenReturn(Arrays.asList(
-        generateExecutedChangeEntry("withInterfaceParameter", "executor"),
-        generateExecutedChangeEntry("withNonLockGuardedParameter", "executor")
+        generateChangeEntryExecuted("withInterfaceParameter", "executor"),
+        generateChangeEntryExecuted("withNonLockGuardedParameter", "executor")
     ));
 
     // when
@@ -526,8 +526,8 @@ public class ChangeUnitExecutorImplTest {
   public void shouldNotReturnProxy_IfClassAnnotatedWithNonLockGuarded() {
     // given
     when(changeEntryService.getExecuted()).thenReturn(Arrays.asList(
-        generateExecutedChangeEntry("withInterfaceParameter2", "executor"),
-        generateExecutedChangeEntry("withNonLockGuardedParameter", "executor")
+        generateChangeEntryExecuted("withInterfaceParameter2", "executor"),
+        generateChangeEntryExecuted("withNonLockGuardedParameter", "executor")
     ));
 
     // when
@@ -550,8 +550,8 @@ public class ChangeUnitExecutorImplTest {
   public void shouldNotReturnProxy_IfParameterAnnotatedWithNonLockGuarded() {
     // given
     when(changeEntryService.getExecuted()).thenReturn(Arrays.asList(
-        generateExecutedChangeEntry("withInterfaceParameter", "executor"),
-        generateExecutedChangeEntry("withInterfaceParameter2", "executor")
+        generateChangeEntryExecuted("withInterfaceParameter", "executor"),
+        generateChangeEntryExecuted("withInterfaceParameter2", "executor")
     ));
 
     // when
@@ -626,8 +626,8 @@ public class ChangeUnitExecutorImplTest {
   public void shouldSkipMigration_whenAllChangeSetItemsAlreadyExecuted() {
     // given
     when(changeEntryService.getExecuted()).thenReturn(Arrays.asList(
-        generateExecutedChangeEntry("alreadyExecuted", "executor"),
-        generateExecutedChangeEntry("alreadyExecuted2", "executor")
+        generateChangeEntryExecuted("alreadyExecuted", "executor"),
+        generateChangeEntryExecuted("alreadyExecuted2", "executor")
     ));
 
     when(driver.getLockManager()).thenReturn(lockManager);
@@ -651,8 +651,8 @@ public class ChangeUnitExecutorImplTest {
     // given
     injectDummyDependency(DummyDependencyClass.class, new DummyDependencyClass());
     when(changeEntryService.getExecuted()).thenReturn(Arrays.asList(
-        generateExecutedChangeEntry("alreadyExecuted", "executor"),
-        generateExecutedChangeEntry("alreadyExecuted2", "executor")
+        generateChangeEntryExecuted("alreadyExecuted", "executor"),
+        generateChangeEntryExecuted("alreadyExecuted2", "executor")
     ));
 
     when(driver.getLockManager()).thenReturn(lockManager);
@@ -679,9 +679,9 @@ public class ChangeUnitExecutorImplTest {
     // given
     injectDummyDependency(DummyDependencyClass.class, new DummyDependencyClass());
     when(changeEntryService.getExecuted()).thenReturn(Arrays.asList(
-        generateExecutedChangeEntry("alreadyExecuted", "executor"),
-        generateExecutedChangeEntry("alreadyExecuted2", "executor"),
-        generateExecutedChangeEntry("alreadyExecutedRunAlways", "executor")
+        generateChangeEntryExecuted("alreadyExecuted", "executor"),
+        generateChangeEntryExecuted("alreadyExecuted2", "executor"),
+        generateChangeEntryExecuted("alreadyExecutedRunAlways", "executor")
     ));
 
     when(driver.getLockManager()).thenReturn(lockManager);
@@ -990,7 +990,7 @@ public class ChangeUnitExecutorImplTest {
   private abstract static class TransactionableConnectionDriver implements ConnectionDriver {
   }
 
-  private ExecutedChangeEntry generateExecutedChangeEntry(String changeId, String author) {
-    return new ExecutedChangeEntry(changeId, author, new Date(), "dummy", "dummy");
+  private ChangeEntryExecuted generateChangeEntryExecuted(String changeId, String author) {
+    return new ChangeEntryExecuted(changeId, author, new Date(), "dummy", "dummy");
   }
 }

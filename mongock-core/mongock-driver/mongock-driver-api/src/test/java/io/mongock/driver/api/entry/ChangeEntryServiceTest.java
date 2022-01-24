@@ -71,8 +71,8 @@ public class ChangeEntryServiceTest {
   public void getExecuted() {
 
     ChangeEntryServiceImpl entryService = getChangeEntryService();
-    List<ExecutedChangeEntry> result = entryService.getExecuted();
-    result.sort(Comparator.comparing(ExecutedChangeEntry::getChangeId));
+    List<ChangeEntryExecuted> result = entryService.getExecuted();
+    result.sort(Comparator.comparing(ChangeEntryExecuted::getChangeId));
 
     assertEquals("change-1", result.get(0).getChangeId());
     assertEquals("change-2", result.get(1).getChangeId());

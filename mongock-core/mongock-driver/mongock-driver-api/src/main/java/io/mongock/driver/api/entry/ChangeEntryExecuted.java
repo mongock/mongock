@@ -2,7 +2,7 @@ package io.mongock.driver.api.entry;
 
 import java.util.Date;
 
-public class ExecutedChangeEntry {
+public class ChangeEntryExecuted {
 
   private final String changeId;
 
@@ -14,7 +14,7 @@ public class ExecutedChangeEntry {
 
   private final String changeSetMethod;
 
-  public ExecutedChangeEntry(
+  public ChangeEntryExecuted(
                      String changeId,
                      String author,
                      Date timestamp,
@@ -26,7 +26,7 @@ public class ExecutedChangeEntry {
     this.changeLogClass = changeLogClass;
     this.changeSetMethod = changeSetMethod;
   }
-  public ExecutedChangeEntry(ChangeEntry entry) {
+  public ChangeEntryExecuted(ChangeEntry entry) {
     this(entry.getChangeId(), entry.getAuthor(), entry.getTimestamp(), entry.getChangeLogClass(), entry.getChangeSetMethod());
   }
 
@@ -52,7 +52,7 @@ public class ExecutedChangeEntry {
 
   @Override
   public String toString() {
-    return "ExecutedChangeEntry{" +
+    return "ChangeEntryExecuted{" +
         "changeId='" + changeId + '\'' +
         ", author='" + author + '\'' +
         ", timestamp=" + timestamp +
