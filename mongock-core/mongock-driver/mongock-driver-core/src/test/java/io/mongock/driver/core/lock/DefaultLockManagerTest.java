@@ -500,7 +500,7 @@ public class DefaultLockManagerTest {
 
     //when
     lockManager.acquireLockDefault();
-    lockManager.releaseLockDefault();
+    lockManager.releaseLockDefaultEventually();
 
     //then
     verify(lockRepository).removeByKeyAndOwner(lockManager.getDefaultKey(), lockManager.getOwner());
@@ -515,7 +515,7 @@ public class DefaultLockManagerTest {
 
     //when
     lockManager.acquireLockDefault();
-    lockManager.releaseLockDefault();
+    lockManager.releaseLockDefaultEventually();
     lockManager.acquireLockDefault();
 
     //then
@@ -532,7 +532,7 @@ public class DefaultLockManagerTest {
 
     //when
     lockManager.acquireLockDefault();
-    lockManager.releaseLockDefault();
+    lockManager.releaseLockDefaultEventually();
     lockManager.ensureLockDefault();
 
     //then

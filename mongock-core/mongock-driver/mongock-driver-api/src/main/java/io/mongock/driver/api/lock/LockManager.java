@@ -33,12 +33,13 @@ public interface LockManager extends Closeable {
   void ensureLockDefault() throws LockCheckException;
 
   /**
-   * <p>Release the default lock when is acquired by the current LockChecker.</p>
+   * <p>Eventually release the default lock when is acquired by the current LockChecker.</p>
    * <p>When the lock is not acquired by the current LockChecker, it won't make any change.
    * Does not throw any exception neither.</p>
    * <p>Idempotent operation.</p>
+   * <p>"Eventually" means that this operation is delegated to the daemon</p>
    */
-  void releaseLockDefault();
+  void releaseLockDefaultEventually();
 
   /**
    * @return lock try frequency

@@ -204,7 +204,7 @@ public abstract class MongoLockManagerITestBase extends IntegrationTestBase {
     assertNotNull("Precondition: Lock should be in database", resultBefore.first());
 
     //when
-    lockManager.releaseLockDefault();
+    lockManager.releaseLockDefaultEventually();
 
     //then
     FindIterable<Document> resultAfter = getDataBase().getCollection(LOCK_COLLECTION_NAME)
@@ -224,7 +224,7 @@ public abstract class MongoLockManagerITestBase extends IntegrationTestBase {
     assertNotNull("Precondition: Lock should be in database", resultBefore.first());
 
     //when
-    lockManager.releaseLockDefault();
+    lockManager.releaseLockDefaultEventually();
 
     //then
     FindIterable<Document> resultAfter = getDataBase().getCollection(LOCK_COLLECTION_NAME)
@@ -241,8 +241,8 @@ public abstract class MongoLockManagerITestBase extends IntegrationTestBase {
     assertNotNull("Precondition: Lock should be in database", resultBefore.first());
 
     //when
-    lockManager.releaseLockDefault();
-    lockManager.releaseLockDefault();
+    lockManager.releaseLockDefaultEventually();
+    lockManager.releaseLockDefaultEventually();
 
     //then
     FindIterable<Document> resultAfter = getDataBase().getCollection(LOCK_COLLECTION_NAME)
@@ -262,8 +262,8 @@ public abstract class MongoLockManagerITestBase extends IntegrationTestBase {
     assertNotNull("Precondition: Lock should be in database", resultBefore.first());
 
     //when
-    lockManager.releaseLockDefault();
-    lockManager.releaseLockDefault();
+    lockManager.releaseLockDefaultEventually();
+    lockManager.releaseLockDefaultEventually();
 
     //then
     FindIterable<Document> resultAfter = getDataBase().getCollection(LOCK_COLLECTION_NAME)
@@ -278,8 +278,8 @@ public abstract class MongoLockManagerITestBase extends IntegrationTestBase {
     assertNull("Precondition: Lock should not be in database", resultBefore.first());
 
     //when
-    lockManager.releaseLockDefault();
-    lockManager.releaseLockDefault();
+    lockManager.releaseLockDefaultEventually();
+    lockManager.releaseLockDefaultEventually();
 
     //then
     FindIterable<Document> resultAfter = getDataBase().getCollection(LOCK_COLLECTION_NAME).find();
