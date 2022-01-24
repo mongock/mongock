@@ -1,6 +1,9 @@
 package io.mongock.runner.core.internal;
 
+import io.mongock.driver.api.entry.ChangeType;
 import java.lang.reflect.Method;
+
+import static io.mongock.driver.api.entry.ChangeType.BEFORE_EXECUTION;
 
 public class BeforeChangeSetItem extends ChangeSetItem{
   public BeforeChangeSetItem(String baseId,
@@ -12,5 +15,15 @@ public class BeforeChangeSetItem extends ChangeSetItem{
                              Method changeSetMethod,
                              Method rollbackMethod) {
     super(String.format("%s_%s", baseId, "before"), author, order, runAlways, systemVersion, failFast, changeSetMethod, rollbackMethod);
+  }
+  
+  @Override
+  public ChangeType getType() {
+    return BEFORE_EXECUTION;
+  }
+  
+  @Override
+  public boolean isBeforeChangeSets() {
+    return true;
   }
 }

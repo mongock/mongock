@@ -8,7 +8,6 @@ import java.lang.reflect.Method;
 import java.util.Objects;
 import java.util.Optional;
 
-import static io.mongock.driver.api.entry.ChangeType.BEFORE_EXECUTION;
 import static io.mongock.driver.api.entry.ChangeType.EXECUTION;
 
 public class ChangeSetItem implements ChangePrintable {
@@ -60,7 +59,7 @@ public class ChangeSetItem implements ChangePrintable {
 
   @Override
   public ChangeType getType() {
-    return this instanceof BeforeChangeSetItem ? BEFORE_EXECUTION : EXECUTION;
+    return EXECUTION;
   }
 
   @Override
@@ -103,7 +102,7 @@ public class ChangeSetItem implements ChangePrintable {
   }
   
   public boolean isBeforeChangeSets() {
-    return this instanceof BeforeChangeSetItem;
+    return false;
   }
 
 
