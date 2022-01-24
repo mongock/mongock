@@ -118,7 +118,7 @@ public class ChangeEntry implements ChangePrintable {
     this.executionHostname = executionHostname;
     this.metadata = metadata;
     this.errorTrace = errorTrace;
-    this.originalTimestamp = null;
+    this.originalTimestamp = null;//TODO: To be assigned when we could save value en DB
   }
 
 
