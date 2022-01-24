@@ -14,7 +14,6 @@ import io.mongock.driver.api.lock.LockManager;
 import io.mongock.runner.core.executor.Executor;
 import io.mongock.runner.core.executor.NonTransactioner;
 import io.mongock.runner.core.executor.changelog.ChangeLogRuntime;
-import io.mongock.runner.core.internal.BeforeChangeSetItem;
 import io.mongock.runner.core.internal.ChangeLogItem;
 import io.mongock.runner.core.internal.ChangeSetItem;
 import io.mongock.utils.Triple;
@@ -160,7 +159,7 @@ public abstract class MigrationExecutorBase<CONFIG extends ChangeExecutorConfigu
     for (ChangeSetItem changeSet : changeSets) {
       //if driver is no transactional or, being the strategy per ChangeUnit, the changeSet is non-transactional(before or changeLog flagged as non-transactional)
       //the changeSet needs to be queued to be rolled back, in case a change fails
-      if (!isDriverTransactional() || (isStrategyPerChangeUnit() && (changeSet instanceof BeforeChangeSetItem || !changeLog.isTransactional()))) {
+      if (!isDriverTransactional() || (isStrategyPerChangeUnit() && (changeSet.isBeforeChangeSets() || !changeLog.isTransactional()))) {
         changeSetsToRollBack.push(new Triple<>(changeLogInstance, changeSet, null));
       }
       processSingleChangeSet(executionId, executionHostName, changeLogInstance, changeSet);
