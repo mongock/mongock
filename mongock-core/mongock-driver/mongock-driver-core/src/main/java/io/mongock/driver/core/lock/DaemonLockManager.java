@@ -221,6 +221,7 @@ public class DaemonLockManager extends Thread implements LockManager {
       try {
         long daemonTimeForResting = getDaemonTimeForResting();
         long timeout = daemonTimeForResting > 0 ? daemonTimeForResting : lockAcquiredForMillis;
+        logger.debug("Lock waiting {}ms for the daemon to count down the latch", timeout);
         countReached = releaseSemaphore.await(timeout, TimeUnit.MILLISECONDS);
         releaseLockInternal();
       } catch (InterruptedException e) {
