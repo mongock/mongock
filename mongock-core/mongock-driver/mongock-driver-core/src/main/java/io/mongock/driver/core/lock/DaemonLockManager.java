@@ -298,12 +298,15 @@ public class DaemonLockManager extends Thread implements LockManager {
   private void reposeIfRequired() {
     try {
       long timeForResting = getDaemonTimeForResting();
-
-      if (timeForResting > 0) {
+      if(timeForResting <= 0) {
+        logger.debug("Mongock lock daemon reposing for 1ms as reposing time negative: {}ms", timeForResting);
+        sleep(1L);
+      } else if(timeForResting > lockAcquiredForMillis) {
+        logger.debug("Mongock lock daemon going to sleep lockAcquiredForMillis[{}ms] as to reposing time to high: {}ms", lockAcquiredForMillis, timeForResting);
+        sleep(lockAcquiredForMillis);
+      } else {
         logger.debug("Mongock lock daemon going to sleep: {}ms", timeForResting);
         sleep(timeForResting);
-      } else {
-        logger.debug("Mongock lock daemon not reposing due to reposing time negative: {}ms", timeForResting);
       }
     } catch (InterruptedException ex) {
       logger.warn("Interrupted exception ignored");
