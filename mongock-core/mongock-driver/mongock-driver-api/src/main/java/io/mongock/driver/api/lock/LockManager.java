@@ -39,6 +39,11 @@ public interface LockManager extends Closeable {
   void releaseLockDefault();
 
   /**
+   * @return if the lockManager has been told to release the lock. It may still hold it.
+   */
+  boolean isReleaseStarted();
+
+  /**
    * @return lock try frequency
    */
   long getLockTryFrequency();
@@ -52,7 +57,6 @@ public interface LockManager extends Closeable {
    * @return if lock is held
    */
   boolean isLockHeld();
-
 
 
   @Override
