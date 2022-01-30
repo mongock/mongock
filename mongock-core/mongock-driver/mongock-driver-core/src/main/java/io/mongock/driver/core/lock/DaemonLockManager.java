@@ -151,6 +151,7 @@ public class DaemonLockManager extends Thread implements LockManager {
         logger.info("Mongock acquired the lock until: {}", newLockExpiresAt);
         updateStatus(newLockExpiresAt);
         keepLooping = false;
+        startThreadIfApplies();
       } catch (LockPersistenceException ex) {
         handleLockException(true, ex);
       }
@@ -221,7 +222,8 @@ public class DaemonLockManager extends Thread implements LockManager {
       try {
         long daemonTimeForResting = getDaemonTimeForResting();
         long timeout = daemonTimeForResting > 0 ? daemonTimeForResting : lockAcquiredForMillis;
-        logger.debug("Lock waiting {}ms for the daemon to count down the latch", timeout);
+        //todo change back to debug
+        logger.info("Lock waiting {}ms for the daemon to count down the latch", timeout);
         countReached = releaseSemaphore.await(timeout, TimeUnit.MILLISECONDS);
         releaseLockInternal();
       } catch (InterruptedException e) {
@@ -297,17 +299,10 @@ public class DaemonLockManager extends Thread implements LockManager {
 
   private void reposeIfRequired() {
     try {
-      long timeForResting = getDaemonTimeForResting();
-      if(timeForResting <= 0) {
-        logger.debug("Mongock lock daemon reposing for 1ms as reposing time negative: {}ms", timeForResting);
-        sleep(1L);
-      } else if(timeForResting > lockAcquiredForMillis) {
-        logger.debug("Mongock lock daemon going to sleep lockAcquiredForMillis[{}ms] as to reposing time to high: {}ms", lockAcquiredForMillis, timeForResting);
-        sleep(lockAcquiredForMillis);
-      } else {
-        logger.debug("Mongock lock daemon going to sleep: {}ms", timeForResting);
-        sleep(timeForResting);
-      }
+      long reposingTime = getDaemonTimeForResting();
+      logger.info("Mongock lock daemon reposing time 1ms as reposing time negative: {}ms", reposingTime);
+      sleep(reposingTime);
+
     } catch (InterruptedException ex) {
       logger.warn("Interrupted exception ignored");
     }
@@ -319,12 +314,27 @@ public class DaemonLockManager extends Thread implements LockManager {
       long currentTime = timeService.currentTime().getTime();
       long expiresAtTime = lockExpiresAt.getTime();
       timeForResting = expiresAtTime - currentTime - lockRefreshMarginMillis;
-      logger.debug("Mongock lock daemon time for resting[expiresAt: {}, currentTime: {}]: {}ms", timeForResting, expiresAtTime, currentTime);
+      //todo change back to debug
+      logger.info("Mongock lock daemon initial time for resting[expiresAt: {}, currentTime: {}]: {}ms", timeForResting, expiresAtTime, currentTime);
     } else {
       timeForResting = lockAcquiredForMillis - lockRefreshMarginMillis;
-      logger.debug("Mongock lock daemon time for resting[lockAcquiredForMillis: {}, lockRefreshMarginMillis: {}]: {}ms", timeForResting, lockAcquiredForMillis, lockRefreshMarginMillis);
+      //todo change back to debug
+      logger.info("Mongock lock daemon initial time for resting[lockAcquiredForMillis: {}, lockRefreshMarginMillis: {}]: {}ms", timeForResting, lockAcquiredForMillis, lockRefreshMarginMillis);
     }
-    return timeForResting;
+
+    if(timeForResting <= 0) {
+      //todo change back to debug
+      logger.info("Mongock lock daemon reposing time 1ms as reposing time negative: {}ms", timeForResting);
+      return 1L;
+    } else if(timeForResting > lockAcquiredForMillis) {
+      //todo change back to debug
+      logger.info("Mongock lock daemon reposing time back to lockAcquiredForMillis[{}ms] as to reposing time to high: {}ms", lockAcquiredForMillis, timeForResting);
+      return lockAcquiredForMillis;
+    } else {
+      //todo change back to debug
+      logger.info("Mongock lock daemon reposing time: {}ms", timeForResting);
+      return timeForResting;
+    }
   }
 
 
@@ -410,9 +420,12 @@ public class DaemonLockManager extends Thread implements LockManager {
     }
     if (shouldStopTryingAt == null) {
       shouldStopTryingAt = timeService.nowPlusMillis(lockQuitTryingAfterMillis);
-      if (daemonActive) {
-        super.start();
-      }
+    }
+  }
+
+  private synchronized void startThreadIfApplies() {
+    if (daemonActive) {
+      super.start();
     }
   }
 
