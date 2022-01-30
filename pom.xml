@@ -34,7 +34,15 @@
     <maven.javadoc.failOnError>false</maven.javadoc.failOnError>
 
     <project.scm.id>ossrh</project.scm.id>
+
+    <!--Test-->
+    <junit.jupiter.version>5.6.2</junit.jupiter.version>
+    <junit.vintage.version>5.6.2</junit.vintage.version>
+    <spring-cloud-sleuth.version>3.1.0</spring-cloud-sleuth.version>
+    <test-containers.version>1.16.2</test-containers.version>
   </properties>
+
+
 
   <licenses>
     <license>

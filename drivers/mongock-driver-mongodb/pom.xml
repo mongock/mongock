@@ -22,7 +22,6 @@
     <module>mongodb-springdata-v2-driver</module>
     <module>mongodb-springdata-v3-driver</module>
     <module>mongodb-driver-test-template</module>
-    <module>integration-tests</module>
   </modules>
 
 
