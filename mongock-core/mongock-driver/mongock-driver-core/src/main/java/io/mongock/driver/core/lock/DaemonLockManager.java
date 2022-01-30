@@ -53,8 +53,6 @@ public class DaemonLockManager extends Thread implements LockManager {
   private static final String DEFAULT_KEY = "DEFAULT_KEY";
 
 
-  private final CountDownLatch releaseSemaphore = new CountDownLatch(1);
-
   private final boolean daemonActive;
 
   /**
@@ -71,6 +69,11 @@ public class DaemonLockManager extends Thread implements LockManager {
    * flag to release the lock asap and stop ensuring the lock
    */
   private volatile boolean releaseStarted = false;
+
+  /*
+  Used to synchronize the ensureLock in the daemon and the release process.
+   */
+  private final Object releaseSemaphore = new Object();
 
 
   //injections
@@ -181,56 +184,32 @@ public class DaemonLockManager extends Thread implements LockManager {
     while (!releaseStarted) {
       try {
         logger.debug("Mongock lock daemon ensuring lock");
-        ensureLockInternal();
-        reposeIfRequired();
+        synchronized (releaseSemaphore) {
+          // this ensures it only tries to ensure the lock if release lock process hasn't started.
+          if(!releaseStarted) {
+            ensureLockInternal();
+          }
+        }
+        if(!releaseStarted) {
+          // if release lock process has started, there is no point in repose the thread
+          reposeIfRequired();
+        }
       } catch (LockCheckException e) {
         logger.warn("Error ensuring the lock from daemon: {}", e.getMessage());
       } catch (Exception e) {
         logger.warn("Generic error from daemon: {}", e.getMessage());
       }
     }
-    if (releaseStarted) {
-      logger.info("Cancelling mongock lock daemon: Releasing lock(if taken)...");
-      releaseSemaphore.countDown();
-    }
     logger.info("Cancelled mongock lock daemon");
   }
 
-  /**
-   * This process aims to ensure the release is performed ensuring the acquire/ensure won't be executed again.
-   *
-   * As mentioned in the class's description this class is not thread safe so, except from the internal daemon, this
-   * method is assumed not to be called in parallel with acquire/ensure.
-   *
-   * To resolve the the parallelism with the internal daemon, we only block the release, as it's executed once at the end
-   * of the process. The rest of the methods are non-blocking.
-   *
-   * Process:
-   * - It makes the flag cancelled to true, making the run method aware it should be stop asap, counting down the latch
-   * - It waits a considerable time to allow the run method to count down the latch
-   * - When the latch is down, it releases the lock
-   * - If the time elapses before the count down is reached, meaning the daemon could potentially try to ensure the lock
-   * after it is released and produce a race condition, we opt for the pessimistic solution: Leave the lock as it is
-   * in the database and make the other processes to wait until is expired.
-   */
   @Override
   public void releaseLockDefault() {
     logger.info("Cancelling mongock lock daemon...");
     releaseStarted = true;
-    boolean countReached = false;
     if (daemonActive) {
-      try {
-        long daemonTimeForResting = getDaemonTimeForResting();
-        long timeout = daemonTimeForResting > 0 ? daemonTimeForResting : lockAcquiredForMillis;
-        //todo change back to debug
-        logger.info("Lock waiting {}ms for the daemon to count down the latch", timeout);
-        countReached = releaseSemaphore.await(timeout, TimeUnit.MILLISECONDS);
+      synchronized (releaseSemaphore) {
         releaseLockInternal();
-      } catch (InterruptedException e) {
-        logger.warn("Error in lock release semaphore", e);
-      }
-      if(!countReached) {
-        logger.warn("Lock wasn't released due to waiting time elapsed before the count reached zero");
       }
     } else {
       releaseLockInternal();
