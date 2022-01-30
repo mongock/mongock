@@ -1,15 +1,15 @@
 package io.mongock.driver.mongodb.test.template;
 
+import com.mongodb.client.FindIterable;
+import com.mongodb.client.model.UpdateOptions;
 import io.mongock.driver.api.lock.LockCheckException;
 import io.mongock.driver.api.lock.LockManager;
-import io.mongock.driver.core.lock.DefaultLockManager;
+import io.mongock.driver.core.lock.DaemonLockManager;
 import io.mongock.driver.core.lock.LockEntry;
 import io.mongock.driver.core.lock.LockRepositoryWithEntity;
 import io.mongock.driver.core.lock.LockStatus;
 import io.mongock.driver.mongodb.test.template.util.IntegrationTestBase;
 import io.mongock.utils.TimeService;
-import com.mongodb.client.FindIterable;
-import com.mongodb.client.model.UpdateOptions;
 import org.bson.Document;
 import org.junit.After;
 import org.junit.Before;
@@ -28,17 +28,16 @@ public abstract class MongoLockManagerITestBase extends IntegrationTestBase {
   protected static final long LOCK_TRY_FRQUENCY_MILLIS = 1000L;
 
 
-
   protected LockManager lockManager;
   protected LockRepositoryWithEntity<Document> repository;
 
   @Before
   public void setUp() {
     initializeRepository();
-    TimeService timeUtils = new TimeService();
-    lockManager = DefaultLockManager.builder()
+    TimeService timeService = new TimeService();
+    lockManager = DaemonLockManager.builder()
         .setLockRepository(repository)
-        .setTimeUtils( timeUtils)
+        .setTimeService(timeService)
         .setLockAcquiredForMillis(LOCK_ACQUIRED_FOR_MILLIS)
         .setLockQuitTryingAfterMillis(LOCK_TRY_FRQUENCY_MILLIS)
         .setLockTryFrequencyMillis(LOCK_QUIT_TRYING_AFTER_MILLIS)
@@ -303,7 +302,6 @@ public abstract class MongoLockManagerITestBase extends IntegrationTestBase {
 //  private int millisToMinutes(long millis) {
 //    return (int) (millis / (1000 * 60));
 //  }
-
 
 
   protected abstract void initializeRepository();

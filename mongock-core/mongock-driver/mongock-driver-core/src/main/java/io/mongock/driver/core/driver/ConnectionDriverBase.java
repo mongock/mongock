@@ -5,9 +5,8 @@ import io.mongock.driver.api.driver.ChangeSetDependency;
 import io.mongock.driver.api.driver.ConnectionDriver;
 import io.mongock.driver.api.entry.ChangeEntryService;
 import io.mongock.driver.api.lock.LockManager;
-import io.mongock.driver.core.lock.DefaultLockManager;
+import io.mongock.driver.core.lock.DaemonLockManager;
 import io.mongock.driver.core.lock.LockRepository;
-import io.mongock.utils.TimeService;
 import io.mongock.utils.annotation.NotThreadSafe;
 
 import java.util.HashSet;
@@ -43,7 +42,7 @@ public abstract class ConnectionDriverBase implements ConnectionDriver {
       initialized = true;
       LockRepository lockRepository = this.getLockRepository();
       lockRepository.initialize();
-      lockManager = DefaultLockManager.builder()
+      lockManager = DaemonLockManager.builder()
           .setLockRepository(lockRepository)
           .setLockAcquiredForMillis(lockAcquiredForMillis)
           .setLockQuitTryingAfterMillis(lockQuitTryingAfterMillis)

@@ -39,7 +39,7 @@ public class DefaultLockManagerTest {
   private static final Date FAR_FUTURE_DATE = new Date(100000L);
 
   private LockRepositoryWithEntity lockRepository;
-  private TimeService timeUtils;
+  private TimeService timeService;
   private LockManager lockManager;
 
   private static void assertExceptionMessage(LockCheckException ex) {
@@ -50,14 +50,14 @@ public class DefaultLockManagerTest {
   @Before
   public void setUp() {
     lockRepository = Mockito.mock(LockRepositoryWithEntity.class);
-    timeUtils = Mockito.mock(TimeService.class);
-    when(timeUtils.nowPlusMillis(anyLong())).thenReturn(DONT_CARE_INSTANT);
+    timeService = Mockito.mock(TimeService.class);
+    when(timeService.nowPlusMillis(anyLong())).thenReturn(DONT_CARE_INSTANT);
   }
 
   private void setLockManager(long lockActiveMillis, long quitTryingAfterMillis, long tryFrequency) {
-    lockManager = DefaultLockManager.builder()
+    lockManager = DaemonLockManager.builder()
         .setLockRepository(lockRepository)
-        .setTimeUtils(timeUtils)
+        .setTimeService(timeService)
         .setLockAcquiredForMillis(lockActiveMillis)
         .setLockQuitTryingAfterMillis(quitTryingAfterMillis)
         .setLockTryFrequencyMillis(tryFrequency)
@@ -73,18 +73,20 @@ public class DefaultLockManagerTest {
 
   @Test
   public void shouldRefresh_InBackground_IfNotExplicitCall() throws InterruptedException {
-    when(timeUtils.currentTime()).thenReturn(new Date(40000L));// Exactly the expiration time(minus margin)
+    when(timeService.currentTime()).thenReturn(new Date(40000L));// Exactly the expiration time(minus margin)
 
-    DefaultLockManager lockManager = new DefaultLockManager(
-        lockRepository,
-        timeUtils,
-        3000L,
-        quitTryingAfterMillis,
-        tryFrequency,
-        1000L);
+    DaemonLockManager lockManager = DaemonLockManager.builder()
+        .setLockRepository(lockRepository)
+        .setTimeService(timeService)
+        .setLockAcquiredForMillis(3000L)
+        .setLockQuitTryingAfterMillis(quitTryingAfterMillis)
+        .setLockTryFrequencyMillis(tryFrequency)
+        .setLockTryFrequencyMillis(1000L)
+        .build();
 
-    DefaultLockManager lockManagerSpy = Mockito.spy(lockManager);
-    lockManagerSpy.initialize();
+
+
+    DaemonLockManager lockManagerSpy = Mockito.spy(lockManager);
     lockManagerSpy.acquireLockDefault();
     Thread.sleep(7000L);
 
@@ -94,18 +96,18 @@ public class DefaultLockManagerTest {
 
   @Test
   public void shouldRefresh_InBackground_AfterManagerIsClosed() throws InterruptedException {
-    when(timeUtils.currentTime()).thenReturn(new Date(40000L));// Exactly the expiration time(minus margin)
+    when(timeService.currentTime()).thenReturn(new Date(40000L));// Exactly the expiration time(minus margin)
 
-    DefaultLockManager lockManager = new DefaultLockManager(
-        lockRepository,
-        timeUtils,
-        3000L,
-        quitTryingAfterMillis,
-        tryFrequency,
-        2000L);
 
-    DefaultLockManager lockManagerSpy = Mockito.spy(lockManager);
-    lockManagerSpy.initialize();
+    DaemonLockManager lockManager = DaemonLockManager.builder()
+        .setLockRepository(lockRepository)
+        .setTimeService(timeService)
+        .setLockAcquiredForMillis(3000L)
+        .setLockQuitTryingAfterMillis(quitTryingAfterMillis)
+        .setLockTryFrequencyMillis(tryFrequency)
+        .setLockTryFrequencyMillis(2000L)
+        .build();
+    DaemonLockManager lockManagerSpy = Mockito.spy(lockManager);
     lockManagerSpy.acquireLockDefault();
     lockManagerSpy.close();
     Thread.sleep(7000L);
@@ -118,7 +120,7 @@ public class DefaultLockManagerTest {
   public void shouldRetrieveLock_WhenAcquireLock() throws LockPersistenceException, LockCheckException {
     //given
     Date expirationAt = new Date(1000L);
-    when(timeUtils.currentDatePlusMillis(anyLong())).thenReturn(expirationAt);
+    when(timeService.currentDatePlusMillis(anyLong())).thenReturn(expirationAt);
     setLockManager(lockActiveMillis, quitTryingAfterMillis, tryFrequency);
 
     // when
@@ -133,9 +135,9 @@ public class DefaultLockManagerTest {
 
     //given
     Date expirationAt = new Date(1000L);
-    when(timeUtils.currentDatePlusMillis(anyLong())).thenReturn(expirationAt);
-    when(timeUtils.currentTime()).thenReturn(new Date(40000L));// Exactly the expiration time(minus margin)
-    when(timeUtils.nowPlusMillis(anyLong())).thenReturn(DONT_CARE_INSTANT);
+    when(timeService.currentDatePlusMillis(anyLong())).thenReturn(expirationAt);
+    when(timeService.currentTime()).thenReturn(new Date(40000L));// Exactly the expiration time(minus margin)
+    when(timeService.nowPlusMillis(anyLong())).thenReturn(DONT_CARE_INSTANT);
     setLockManager(lockActiveMillis, quitTryingAfterMillis, tryFrequency);
     lockManager.acquireLockDefault();
 
@@ -150,8 +152,8 @@ public class DefaultLockManagerTest {
   public void shouldAlwaysAskForLock_WhenAcquireLock_RegardlessIfItIsExpired() throws LockPersistenceException, LockCheckException {
     //given
     Date expirationAt = new Date(1000L);
-    when(timeUtils.currentDatePlusMillis(anyLong())).thenReturn(expirationAt);
-    when(timeUtils.currentTime()).thenReturn(new Date(39999L));// 1ms less than the expiration time(minus margin)
+    when(timeService.currentDatePlusMillis(anyLong())).thenReturn(expirationAt);
+    when(timeService.currentTime()).thenReturn(new Date(39999L));// 1ms less than the expiration time(minus margin)
     setLockManager(lockActiveMillis, quitTryingAfterMillis, tryFrequency);
     lockManager.acquireLockDefault();
 
@@ -172,8 +174,8 @@ public class DefaultLockManagerTest {
         .when(lockRepository).insertUpdate(any(LockEntry.class));
 
     Date newExpirationAt = new Date(1000L);
-    when(timeUtils.currentDatePlusMillis(anyLong())).thenReturn(newExpirationAt);
-    when(timeUtils.currentTime()).thenReturn(new Date(expiresAt - waitingTime));
+    when(timeService.currentDatePlusMillis(anyLong())).thenReturn(newExpirationAt);
+    when(timeService.currentTime()).thenReturn(new Date(expiresAt - waitingTime));
     setLockManager(lockActiveMillis, quitTryingAfterMillis, tryFrequency);
     when(lockRepository.findByKey(anyString())).thenReturn(createFakeLockWithOtherOwner(expiresAt));
 
@@ -194,8 +196,8 @@ public class DefaultLockManagerTest {
     long expiresAt = 3000L;
     long currentMoment = 2000L;
     long waitingTime = expiresAt - currentMoment;
-    when(timeUtils.currentDatePlusMillis(anyLong())).thenReturn(DONT_CARE_DATE);
-    when(timeUtils.currentTime()).thenReturn(new Date(currentMoment));
+    when(timeService.currentDatePlusMillis(anyLong())).thenReturn(DONT_CARE_DATE);
+    when(timeService.currentTime()).thenReturn(new Date(currentMoment));
 
     //when
     long instantBefore = System.currentTimeMillis();
@@ -223,8 +225,8 @@ public class DefaultLockManagerTest {
     long expiresAt = 3000L;
     long currentMoment = 2000L;
     long waitingTime = 750L;
-    when(timeUtils.currentDatePlusMillis(anyLong())).thenReturn(DONT_CARE_DATE);
-    when(timeUtils.currentTime()).thenReturn(new Date(currentMoment));
+    when(timeService.currentDatePlusMillis(anyLong())).thenReturn(DONT_CARE_DATE);
+    when(timeService.currentTime()).thenReturn(new Date(currentMoment));
 
     //when
     long instantBefore = System.currentTimeMillis();
@@ -246,10 +248,10 @@ public class DefaultLockManagerTest {
         .doNothing()
         .when(lockRepository).insertUpdate(any(LockEntry.class));
 
-    when(timeUtils.currentDatePlusMillis(anyLong())).thenReturn(FAR_FUTURE_DATE);
-    when(timeUtils.currentTime()).thenReturn(new Date(2000L));
-    when(timeUtils.nowPlusMillis(anyLong())).thenReturn(DONT_CARE_INSTANT);
-    when(timeUtils.isPast(any(Instant.class))).thenReturn(true);
+    when(timeService.currentDatePlusMillis(anyLong())).thenReturn(FAR_FUTURE_DATE);
+    when(timeService.currentTime()).thenReturn(new Date(2000L));
+    when(timeService.nowPlusMillis(anyLong())).thenReturn(DONT_CARE_INSTANT);
+    when(timeService.isPast(any(Instant.class))).thenReturn(true);
 
     setLockManager(lockActiveMillis, 1000L, tryFrequency);
     when(lockRepository.findByKey(anyString())).thenReturn(createFakeLockWithOtherOwner(DONT_CARE_LONG));
@@ -286,8 +288,8 @@ public class DefaultLockManagerTest {
         new Date(expiresAt)
     ));
     Date newExpirationAt = new Date(100000L);
-    when(timeUtils.currentDatePlusMillis(anyLong())).thenReturn(newExpirationAt);
-    when(timeUtils.currentTime())
+    when(timeService.currentDatePlusMillis(anyLong())).thenReturn(newExpirationAt);
+    when(timeService.currentTime())
         .thenReturn(new Date(40000L))
         .thenReturn(new Date(expiresAt - waitingTime));
 
@@ -313,9 +315,9 @@ public class DefaultLockManagerTest {
     doThrow(new LockPersistenceException("acquireLockQuery", "newLockEntity", "dbErrorDetail")).when(lockRepository).insertUpdate(any(LockEntry.class));
     when(lockRepository.findByKey(anyString())).thenReturn(createFakeLockWithOtherOwner(expiresAt));
     Date newExpirationAt = new Date(100000L);
-    when(timeUtils.currentDatePlusMillis(anyLong())).thenReturn(newExpirationAt);
-    when(timeUtils.currentTime()).thenReturn(new Date(expiresAt - waitingTime));
-    when(timeUtils.isPast(any(Instant.class))).thenReturn(true);
+    when(timeService.currentDatePlusMillis(anyLong())).thenReturn(newExpirationAt);
+    when(timeService.currentTime()).thenReturn(new Date(expiresAt - waitingTime));
+    when(timeService.isPast(any(Instant.class))).thenReturn(true);
 
     //when
     long timeBeforeCall = System.currentTimeMillis();
@@ -342,10 +344,10 @@ public class DefaultLockManagerTest {
     doThrow(new LockPersistenceException("acquireLockQuery", "newLockEntity", "dbErrorDetail")).when(lockRepository).insertUpdate(any(LockEntry.class));
 
     Date newExpirationAt = new Date(100000L);
-    when(timeUtils.currentDatePlusMillis(anyLong())).thenReturn(newExpirationAt);
-    when(timeUtils.currentTime()).thenReturn(new Date(expiresAt - waitingTime));
-    when(timeUtils.nowPlusMillis(anyLong())).thenReturn(DONT_CARE_INSTANT);
-    doReturn(false, false, true).when(timeUtils).isPast(any(Instant.class));
+    when(timeService.currentDatePlusMillis(anyLong())).thenReturn(newExpirationAt);
+    when(timeService.currentTime()).thenReturn(new Date(expiresAt - waitingTime));
+    when(timeService.nowPlusMillis(anyLong())).thenReturn(DONT_CARE_INSTANT);
+    doReturn(false, false, true).when(timeService).isPast(any(Instant.class));
     setLockManager(lockActiveMillis, quitTryingAfterMillis, tryFrequency);
     when(lockRepository.findByKey(anyString())).thenReturn(createFakeLockWithOtherOwner(expiresAt));
 
@@ -365,7 +367,7 @@ public class DefaultLockManagerTest {
   public void shouldCallRepository_WhenEnsureLock() throws LockPersistenceException, LockCheckException {
     //given
     Date expirationAt = new Date(1000L);
-    when(timeUtils.currentDatePlusMillis(anyLong())).thenReturn(expirationAt);
+    when(timeService.currentDatePlusMillis(anyLong())).thenReturn(expirationAt);
     setLockManager(lockActiveMillis, quitTryingAfterMillis, tryFrequency);
 
     // when
@@ -379,8 +381,8 @@ public class DefaultLockManagerTest {
   public void shouldRefreshLock_IfLockIsExpired_whenEnsureLock() throws LockPersistenceException, LockCheckException {
     //given
     Date expirationAt = new Date(20 * 1000L);
-    when(timeUtils.currentDatePlusMillis(anyLong())).thenReturn(expirationAt);
-    when(timeUtils.currentTime()).thenReturn(new Date(40000L));// Exactly the expiration time(minus margin)
+    when(timeService.currentDatePlusMillis(anyLong())).thenReturn(expirationAt);
+    when(timeService.currentTime()).thenReturn(new Date(40000L));// Exactly the expiration time(minus margin)
 
     setLockManager(3 * 1000L, quitTryingAfterMillis, tryFrequency);// 3 seconds. Margin should 1 second
     lockManager.acquireLockDefault();
@@ -397,8 +399,8 @@ public class DefaultLockManagerTest {
   public void shouldNotRefreshLock_IfAlreadyAcquired_WhenEnsureLock() throws LockPersistenceException, LockCheckException {
     //given
     Date expirationAt = new Date(42 * 1000L);
-    when(timeUtils.currentDatePlusMillis(anyLong())).thenReturn(expirationAt);
-    when(timeUtils.currentTime()).thenReturn(new Date(39999L));// 1ms less than the expiration time(minus margin)
+    when(timeService.currentDatePlusMillis(anyLong())).thenReturn(expirationAt);
+    when(timeService.currentTime()).thenReturn(new Date(39999L));// 1ms less than the expiration time(minus margin)
 
     setLockManager(3 * 1000L, quitTryingAfterMillis, tryFrequency);// 3 seconds. Margin should 1 second
     lockManager.acquireLockDefault();
@@ -417,9 +419,9 @@ public class DefaultLockManagerTest {
     long waitingTime = 1000L;
 
     Date newExpirationAt = new Date(100000L);
-    when(timeUtils.currentDatePlusMillis(anyLong()))
+    when(timeService.currentDatePlusMillis(anyLong()))
         .thenReturn(newExpirationAt);
-    when(timeUtils.currentTime())
+    when(timeService.currentTime())
         .thenReturn(new Date(40001L))
         .thenReturn(new Date(expiresAt - waitingTime));
     setLockManager(lockActiveMillis, quitTryingAfterMillis, tryFrequency);
@@ -439,8 +441,8 @@ public class DefaultLockManagerTest {
     long expiresAt = 3000L;
     long waitingTime = 1000L;
     Date newExpirationAt = new Date(40000L);
-    when(timeUtils.currentDatePlusMillis(anyLong())).thenReturn(newExpirationAt);
-    when(timeUtils.currentTime())
+    when(timeService.currentDatePlusMillis(anyLong())).thenReturn(newExpirationAt);
+    when(timeService.currentTime())
         .thenReturn(new Date(40000L))
         .thenReturn(new Date(expiresAt - waitingTime));
     setLockManager(3 * 1000L, quitTryingAfterMillis, tryFrequency);// 3 seconds. Margin should 1 second
@@ -470,12 +472,12 @@ public class DefaultLockManagerTest {
     long waitingTime = 1;
 
     Date newExpirationAt = new Date(100000L);
-    when(timeUtils.currentDatePlusMillis(anyLong())).thenReturn(newExpirationAt);
-    when(timeUtils.currentTime()).thenReturn(new Date(expiresAt - waitingTime));
+    when(timeService.currentDatePlusMillis(anyLong())).thenReturn(newExpirationAt);
+    when(timeService.currentTime()).thenReturn(new Date(expiresAt - waitingTime));
 
-    when(timeUtils.nowPlusMillis(anyLong())).thenReturn(DONT_CARE_INSTANT);
+    when(timeService.nowPlusMillis(anyLong())).thenReturn(DONT_CARE_INSTANT);
     doReturn(false, false, true)
-        .when(timeUtils).isPast(any(Instant.class));
+        .when(timeService).isPast(any(Instant.class));
     setLockManager(lockActiveMillis, quitTryingAfterMillis, tryFrequency);
     doThrow(new LockPersistenceException("acquireLockQuery", "newLockEntity", "dbErrorDetail")).when(lockRepository).updateIfSameOwner(any(LockEntry.class));
     when(lockRepository.findByKey(anyString())).thenReturn(createFakeLockWithSameOwner(expiresAt));
@@ -494,8 +496,8 @@ public class DefaultLockManagerTest {
   @Test
   public void shouldCallRepository_ifLockHeld_WhenReleaseLock() {
     //given
-    when(timeUtils.currentDatePlusMillis(anyLong())).thenReturn(new Date(1000000L));
-    when(timeUtils.currentTime()).thenReturn(new Date(0L));
+    when(timeService.currentDatePlusMillis(anyLong())).thenReturn(new Date(1000000L));
+    when(timeService.currentTime()).thenReturn(new Date(0L));
     setLockManager(lockActiveMillis, quitTryingAfterMillis, tryFrequency);
 
     //when
@@ -509,8 +511,8 @@ public class DefaultLockManagerTest {
   @Test
   public void shouldWriteTheLockInDB_IfLockIsReleased_WhenAcquireLock() throws LockPersistenceException, LockCheckException {
     //given
-    when(timeUtils.currentDatePlusMillis(anyLong())).thenReturn(new Date(1000000L));
-    when(timeUtils.currentTime()).thenReturn(new Date(0L));
+    when(timeService.currentDatePlusMillis(anyLong())).thenReturn(new Date(1000000L));
+    when(timeService.currentTime()).thenReturn(new Date(0L));
     setLockManager(lockActiveMillis, quitTryingAfterMillis, tryFrequency);
 
     //when
@@ -526,8 +528,8 @@ public class DefaultLockManagerTest {
   @Test
   public void shouldWriteTheLockInDB_IfLockIsReleased_WhenEnsureLock() throws LockPersistenceException, LockCheckException {
     //given
-    when(timeUtils.currentDatePlusMillis(anyLong())).thenReturn(new Date(1000000L));
-    when(timeUtils.currentTime()).thenReturn(new Date(0L));
+    when(timeService.currentDatePlusMillis(anyLong())).thenReturn(new Date(1000000L));
+    when(timeService.currentTime()).thenReturn(new Date(0L));
     setLockManager(lockActiveMillis, quitTryingAfterMillis, tryFrequency);
 
     //when
@@ -579,8 +581,8 @@ public class DefaultLockManagerTest {
   @Test
   public void shouldReturnTrue_IfStarted_WhenIsLockHeld() throws LockCheckException {
     //given
-    when(timeUtils.currentDatePlusMillis(anyLong())).thenReturn(new Date(1000000L));
-    when(timeUtils.currentTime()).thenReturn(new Date(0L));
+    when(timeService.currentDatePlusMillis(anyLong())).thenReturn(new Date(1000000L));
+    when(timeService.currentTime()).thenReturn(new Date(0L));
     setLockManager(lockActiveMillis, quitTryingAfterMillis, tryFrequency);
     lockManager.acquireLockDefault();
 

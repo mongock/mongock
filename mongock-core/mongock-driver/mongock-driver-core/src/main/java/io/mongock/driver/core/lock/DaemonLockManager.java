@@ -10,17 +10,29 @@ import org.slf4j.LoggerFactory;
 import java.time.Instant;
 import java.util.Date;
 import java.util.UUID;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.TimeUnit;
+
 
 /**
  * <p>This class is responsible of managing the lock at high level. It provides 3 main methods which are
  * for acquiring, ensuring(doesn't acquires the lock, just refresh the expiration time if required) and
  * releasing the lock.</p>
- */
+ *
+ * <p>Note that this class is not threadSafe and it's not intended to be used by multiple executors. Each of them
+ * should acquire a new lock(different key).</p>
+ *
+ * <p>life cycle:
+ * - acquire
+ * - ensure x N
+ * - release
+ * </p>
+ **/
 @NotThreadSafe
-public class DefaultLockManager implements LockManager {
+public class DaemonLockManager extends Thread implements LockManager {
 
   //static constants
-  private static final Logger logger = LoggerFactory.getLogger(DefaultLockManager.class);
+  private static final Logger logger = LoggerFactory.getLogger(DaemonLockManager.class);
 
   private static final String GOING_TO_SLEEP_MSG = "Mongock is going to sleep to wait for the lock:  {} ms({} minutes)";
   private static final String EXPIRATION_ARG_ERROR_MSG = "Lock expiration period must be greater than %d ms";
@@ -38,6 +50,27 @@ public class DefaultLockManager implements LockManager {
 
   private static final long MINIMUM_WAITING_TO_TRY_AGAIN = 500L;//Half a second
   private static final long DEFAULT_TRY_FREQUENCY_MILLIS = 1000L;// ! second
+  private static final String DEFAULT_KEY = "DEFAULT_KEY";
+
+
+  private final CountDownLatch releaseSemaphore = new CountDownLatch(1);
+
+  private final boolean daemonActive;
+
+  /**
+   * Moment when will mandatory to acquire the lock again.
+   */
+  private volatile Date lockExpiresAt = null;
+
+  /**
+   * The instant the acquisition has shouldStopTryingAt
+   */
+  private volatile Instant shouldStopTryingAt;
+
+  /**
+   * flag to release the lock asap and stop ensuring the lock
+   */
+  private volatile boolean cancelled = false;
 
 
   //injections
@@ -47,11 +80,6 @@ public class DefaultLockManager implements LockManager {
    * Owner of the lock
    */
   private final String owner;
-
-  /**
-   * Daemon that will ensure the lock in background.
-   */
-  private LockDaemon lockDaemon;
 
   /**
    * <p>The period of time for which the lock will be owned.</p>
@@ -73,64 +101,55 @@ public class DefaultLockManager implements LockManager {
   private final long lockQuitTryingAfterMillis;
 
 
-  /**
-   * Moment when will mandatory to acquire the lock again.
-   */
-  private volatile Date lockExpiresAt = null;
-
-  /**
-   * The instant the acquisition has shouldStopTryingAt
-   */
-  private volatile Instant shouldStopTryingAt;
-
   public static DefaultLockManagerBuilder builder() {
     return new DefaultLockManagerBuilder();
   }
 
   /**
-   * Constructor takes some bean injections
-   *
-   * @param repository lock repository
-   * @param timeUtils  time utils service
+   * @param repository                lockRepository to persist the lock
+   * @param timeService               time service
+   * @param lockAcquiredForMillis     number of millis that the lock will be initially acquired for
+   * @param lockQuitTryingAfterMillis number of seconds it will try to acquire the lock with no success
+   * @param lockTryFrequencyMillis    how often(in millis) it will try to acquire the lock
+   * @param lockRefreshMarginMillis   margin(in millis) after which the lock need to be refreshed
+   * @param owner                     owner of the lock
    */
-  //TODO add lock configuration to constructor, make fields finals and move DEFAULTS away
-  public DefaultLockManager(LockRepository repository,
-                            TimeService timeUtils,
+  private DaemonLockManager(LockRepository repository,
+                            TimeService timeService,
                             long lockAcquiredForMillis,
                             long lockQuitTryingAfterMillis,
                             long lockTryFrequencyMillis,
-                            long lockRefreshMarginMillis) {
+                            long lockRefreshMarginMillis,
+                            String owner,
+                            boolean daemonActive) {
     this.repository = repository;
-    this.timeUtils = timeUtils;
+    this.timeUtils = timeService;
     this.lockAcquiredForMillis = lockAcquiredForMillis;
     this.lockQuitTryingAfterMillis = lockQuitTryingAfterMillis;
     this.lockTryFrequencyMillis = lockTryFrequencyMillis;
     this.lockRefreshMarginMillis = lockRefreshMarginMillis;
-    this.owner = UUID.randomUUID().toString();//TODO reconsider this
+    this.owner = owner;
+    this.daemonActive = daemonActive;
+    setDaemon(true);
   }
 
-  /**
-   * <p>Tries to acquire the default lock regardless who is the current owner.</p>
-   * <p>If the lock is already acquired by the current LockChecker or is expired, will be updated</p>
-   * <p>In case the lock is acquired by another LockChecker, it will wait until the current lock is expired
-   * and will try to acquire it again. This will be repeated as many times as (maxTries - 1)</p>
-   *
-   * @throws LockCheckException if the lock cannot be acquired
-   */
+
+  @Override
+  public String getDefaultKey() {
+    return DEFAULT_KEY;
+  }
+
+  @Override
   public void acquireLockDefault() throws LockCheckException {
-    acquireLock(getDefaultKey());
-  }
-
-  private void acquireLock(String lockKey) throws LockCheckException {
+    initialize();
     boolean keepLooping = true;
     do {
       try {
         logger.info("Mongock trying to acquire the lock");
         Date newLockExpiresAt = timeUtils.currentDatePlusMillis(lockAcquiredForMillis);
-        repository.insertUpdate(new LockEntry(lockKey, LockStatus.LOCK_HELD.name(), owner, newLockExpiresAt));
+        repository.insertUpdate(new LockEntry(getDefaultKey(), LockStatus.LOCK_HELD.name(), owner, newLockExpiresAt));
         logger.info("Mongock acquired the lock until: {}", newLockExpiresAt);
         updateStatus(newLockExpiresAt);
-        lockDaemon.activate();
         keepLooping = false;
       } catch (LockPersistenceException ex) {
         handleLockException(true, ex);
@@ -138,29 +157,129 @@ public class DefaultLockManager implements LockManager {
     } while (keepLooping);
   }
 
-  /**
-   * <p>Tries to refresh the default lock when the current LockChecker has the lock or , when the lock
-   * is expired, is the last owner</p>
-   * <p>Notice that it does not try to acquire when is acquired by another LockChecker</p>
-   *
-   * @throws LockCheckException if, in case of needed, the lock cannot be refreshed
-   */
+  @Override
   public void ensureLockDefault() throws LockCheckException {
-    ensureLock(getDefaultKey());
+    if (cancelled) {
+      throw new LockCheckException("Lock cannot be ensured after being cancelled");
+    }
+    ensureLockInternal();
   }
 
-  private void ensureLock(String lockKey) throws LockCheckException {
+  /**
+   * It will loop to ensure the lock, until it's cancelled .
+   * It's the only place the lock is directly released. This ensure the race condition which tries to ensure the lock
+   * after being released, as the order it's ensured: Although it can request the lock ensure after the flag cancelled
+   * is active, it will eventually release the lock after it and won't ensure it afterward.
+   * <p>
+   * Be aware that the other external place where the lock is ensure/acquire will throw an exception after the flag
+   * cancelled is active.
+   */
+  @Override
+  public void run() {
+    logger.info("Starting mongock lock daemon...");
+    while (!cancelled) {
+      try {
+        logger.debug("Mongock lock daemon ensuring lock");
+        ensureLockInternal();
+        reposeIfRequired();
+      } catch (LockCheckException e) {
+        logger.warn("Error ensuring the lock from daemon: {}", e.getMessage());
+      } catch (Exception e) {
+        logger.warn("Generic error from daemon: {}", e.getMessage());
+      }
+    }
+    if (cancelled) {
+      logger.info("Cancelling mongock lock daemon: Releasing lock(if taken)...");
+      releaseSemaphore.countDown();
+    }
+    logger.info("Cancelled mongock lock daemon");
+  }
+
+  /**
+   * This process aims to ensure the release is performed ensuring the acquire/ensure won't be executed again.
+   *
+   * As mentioned in the class's description this class is not thread safe so, except from the internal daemon, this
+   * method is assumed not to be called in parallel with acquire/ensure.
+   *
+   * To resolve the the parallelism with the internal daemon, we only block the release, as it's executed once at the end
+   * of the process. The rest of the methods are non-blocking.
+   *
+   * Process:
+   * - It makes the flag cancelled to true, making the run method aware it should be stop asap, counting down the latch
+   * - It waits a considerable time to allow the run method to count down the latch
+   * - When the latch is down, it releases the lock
+   * - If the time elapses before the count down is reached, meaning the daemon could potentially try to ensure the lock
+   * after it is released and produce a race condition, we opt for the pessimistic solution: Leave the lock as it is
+   * in the database and make the other processes to wait until is expired.
+   */
+  @Override
+  public void releaseLockDefault() {
+    logger.info("Cancelling mongock lock daemon...");
+    cancelled = true;
+    boolean countReached = false;
+    if (daemonActive) {
+      try {
+        long daemonTimeForResting = getDaemonTimeForResting();
+        long timeout = daemonTimeForResting > 0 ? daemonTimeForResting : lockAcquiredForMillis;
+        countReached = releaseSemaphore.await(timeout, TimeUnit.MILLISECONDS);
+        releaseLockInternal();
+      } catch (InterruptedException e) {
+        logger.warn("Error in lock release semaphore", e);
+      }
+      if(!countReached) {
+        logger.warn("Lock wasn't released due to waiting time elapsed before the count reached zero");
+      }
+    } else {
+      releaseLockInternal();
+    }
+  }
+
+
+  @Override
+  public void close() {
+    releaseLockDefault();
+  }
+
+
+  private void releaseLockInternal() {
+    try {
+      logger.info("Mongock releasing the lock");
+      repository.removeByKeyAndOwner(getDefaultKey(), this.getOwner());
+      lockExpiresAt = null;
+      shouldStopTryingAt = Instant.now();//this makes the ensureLock to fail
+      logger.info("Mongock released the lock");
+    } catch (Exception ex) {
+      logger.warn("Error removing the lock from database", ex);
+    }
+
+  }
+
+  @Override
+  public long getLockTryFrequency() {
+    return lockTryFrequencyMillis;
+  }
+
+  @Override
+  public String getOwner() {
+    return owner;
+  }
+
+  @Override
+  public boolean isLockHeld() {
+    return lockExpiresAt != null && timeUtils.currentTime().compareTo(lockExpiresAt) < 1;
+  }
+
+  private void ensureLockInternal() {
     boolean keepLooping = true;
     do {
       if (needsRefreshLock()) {
         try {
           logger.info("Mongock trying to refresh the lock");
           Date lockExpiresAtTemp = timeUtils.currentDatePlusMillis(lockAcquiredForMillis);
-          LockEntry lockEntry = new LockEntry(lockKey, LockStatus.LOCK_HELD.name(), owner, lockExpiresAtTemp);
+          LockEntry lockEntry = new LockEntry(getDefaultKey(), LockStatus.LOCK_HELD.name(), owner, lockExpiresAtTemp);
           repository.updateIfSameOwner(lockEntry);
           updateStatus(lockExpiresAtTemp);
           logger.info("Mongock refreshed the lock until: {}", lockExpiresAtTemp);
-          lockDaemon.activate();
           keepLooping = false;
         } catch (LockPersistenceException ex) {
           handleLockException(false, ex);
@@ -171,46 +290,35 @@ public class DefaultLockManager implements LockManager {
     } while (keepLooping);
   }
 
-  /**
-   * <p>Release the default lock when is acquired by the current LockChecker.</p>
-   * <p>When the lock is not acquired by the current LockChecker, it won't make any change.
-   * Does not throw any exception neither.</p>
-   * <p>Idempotent operation.</p>
-   */
-  public void releaseLockDefault() {
-    releaseLock(getDefaultKey());
-  }
+  private void reposeIfRequired() {
+    try {
+      long timeForResting = getDaemonTimeForResting();
 
-  /**
-   * Required when lock managing is done.
-   * Responsible for:
-   * - Release the lock in database (not critical. It will be expired eventually )
-   * - Cancel the lock daemon (CRITICAL. Otherwise it  will keep refreshing the lock making other Mongock process starved)
-   */
-  @Override
-  public void close() {
-    releaseLockDefault();
-  }
-
-  private synchronized void releaseLock(String lockKey) {
-    if (lockDaemon != null) {
-      lockDaemon.cancel();
+      if (timeForResting > 0) {
+        logger.debug("Mongock lock daemon going to sleep: {}ms", timeForResting);
+        sleep(timeForResting);
+      } else {
+        logger.debug("Mongock lock daemon not reposing due to reposing time negative: {}ms", timeForResting);
+      }
+    } catch (InterruptedException ex) {
+      logger.warn("Interrupted exception ignored");
     }
-    if (this.lockExpiresAt == null) {
-      return;
+  }
+
+  private long getDaemonTimeForResting() {
+    long timeForResting;
+    if (lockExpiresAt != null) {
+      long currentTime = timeUtils.currentTime().getTime();
+      long expiresAtTime = lockExpiresAt.getTime();
+      timeForResting = expiresAtTime - currentTime - lockRefreshMarginMillis;
+      logger.debug("Mongock lock daemon time for resting[expiresAt: {}, currentTime: {}]: {}ms", timeForResting, expiresAtTime, currentTime);
+    } else {
+      timeForResting = lockAcquiredForMillis - lockRefreshMarginMillis;
+      logger.debug("Mongock lock daemon time for resting[lockAcquiredForMillis: {}, lockRefreshMarginMillis: {}]: {}ms", timeForResting, lockAcquiredForMillis, lockRefreshMarginMillis);
     }
-    logger.info("Mongock releasing the lock");
-    repository.removeByKeyAndOwner(lockKey, this.getOwner());
-    lockExpiresAt = null;
-    shouldStopTryingAt = Instant.now();//this makes the ensureLock to fail
-    logger.info("Mongock released the lock");
+    return timeForResting;
   }
 
-
-  @Override
-  public long getLockTryFrequency() {
-    return lockTryFrequencyMillis;
-  }
 
   private void handleLockException(boolean acquiringLock, LockPersistenceException ex) {
     LockEntry currentLock = repository.findByKey(getDefaultKey());
@@ -232,7 +340,7 @@ public class DefaultLockManager implements LockManager {
       if (!acquiringLock) {
         throw new LockCheckException(String.format(
             LOCK_HELD_BY_OTHER_PROCESS,
-            currentLock.toString(),
+            currentLock,
             ex.getNewLockEntity(),
             ex.getAcquireLockQuery(),
             ex.getDbErrorDetail()));
@@ -267,23 +375,6 @@ public class DefaultLockManager implements LockManager {
     }
   }
 
-  @Override
-  public String getOwner() {
-    return owner;
-  }
-
-  public boolean isLockHeld() {
-    return lockExpiresAt != null && timeUtils.currentTime().compareTo(lockExpiresAt) < 1;
-  }
-
-  @Override
-  public long getMillisUntilRefreshRequired() {
-    if (lockExpiresAt != null) {
-      return lockExpiresAt.getTime() - timeUtils.currentTime().getTime() - lockRefreshMarginMillis;
-    } else {
-      return lockAcquiredForMillis - lockRefreshMarginMillis;
-    }
-  }
 
   private boolean needsRefreshLock() {
 
@@ -301,18 +392,24 @@ public class DefaultLockManager implements LockManager {
   }
 
   /**
-   * idempotent operation that
+   * idempotent operation only called from builder that
    * - Starts the acquisition timer
    * - Initializes and run the lock daemon.
    */
-  protected void initialize() {
+  private synchronized void initialize() {
+    if (cancelled) {
+      throw new LockCheckException("Lock cannot be acquired after being cancelled");
+    }
     if (shouldStopTryingAt == null) {
       shouldStopTryingAt = timeUtils.nowPlusMillis(lockQuitTryingAfterMillis);
+      if (daemonActive) {
+        super.start();
+      }
     }
-    if (lockDaemon == null) {
-      lockDaemon = new LockDaemon(this);
-      lockDaemon.start();
-    }
+  }
+
+  public synchronized void start() {
+    throw new UnsupportedOperationException("Start method not supported");
   }
 
   /**
@@ -324,7 +421,7 @@ public class DefaultLockManager implements LockManager {
 
 
   private boolean isAcquisitionTimerOver() {
-    return timeUtils.isPast(shouldStopTryingAt);
+    return shouldStopTryingAt == null || timeUtils.isPast(shouldStopTryingAt);
   }
 
 
@@ -335,7 +432,9 @@ public class DefaultLockManager implements LockManager {
     private long lockTryFrequencyMillis = DEFAULT_TRY_FREQUENCY_MILLIS;
     private long lockRefreshMarginMillis = DEFAULT_LOCK_REFRESH_MARGIN_MILLIS;
     private long lockQuitTryingAfterMillis = DEFAULT_QUIT_TRY_AFTER_MILLIS;
-    private TimeService timeService = new TimeService();
+    private String owner = UUID.randomUUID().toString();
+    private TimeService timeService;
+    private boolean background = true;
 
     public DefaultLockManagerBuilder() {
     }
@@ -391,21 +490,36 @@ public class DefaultLockManager implements LockManager {
       return this;
     }
 
-    public DefaultLockManagerBuilder setTimeUtils(TimeService timeService) {
+    public DefaultLockManagerBuilder setTimeService(TimeService timeService) {
       this.timeService = timeService;
       return this;
     }
 
-    public DefaultLockManager build() {
-      DefaultLockManager lockManager = new DefaultLockManager(
+    public DefaultLockManagerBuilder setLockRefreshMarginMillis(long lockRefreshMarginMillis) {
+      this.lockRefreshMarginMillis = lockRefreshMarginMillis;
+      return this;
+    }
+
+    public DefaultLockManagerBuilder setOwner(String owner) {
+      this.owner = owner;
+      return this;
+    }
+
+    public DefaultLockManagerBuilder disableBackGround() {
+      background = false;
+      return this;
+    }
+
+    public DaemonLockManager build() {
+      return new DaemonLockManager(
           lockRepository,
-          timeService,
+          timeService != null ? timeService : new TimeService(),
           lockAcquiredForMillis,
           lockQuitTryingAfterMillis,
           lockTryFrequencyMillis,
-          lockRefreshMarginMillis);
-      lockManager.initialize();
-      return lockManager;
+          lockRefreshMarginMillis,
+          owner,
+          background);
     }
 
 

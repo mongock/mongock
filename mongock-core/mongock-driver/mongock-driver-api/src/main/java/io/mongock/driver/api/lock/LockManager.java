@@ -8,9 +8,7 @@ public interface LockManager extends Closeable {
   /**
    * @return lock's key
    */
-  default String getDefaultKey() {
-    return "DEFAULT_LOCK";
-  }
+  String getDefaultKey();
 
   /**
    * <p>Tries to acquire the default lock regardless who is the current owner.</p>
@@ -56,7 +54,6 @@ public interface LockManager extends Closeable {
   boolean isLockHeld();
 
 
-  long getMillisUntilRefreshRequired();
 
   @Override
   void close();
