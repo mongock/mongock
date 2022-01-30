@@ -10,8 +10,6 @@ import org.slf4j.LoggerFactory;
 import java.time.Instant;
 import java.util.Date;
 import java.util.UUID;
-import java.util.concurrent.CountDownLatch;
-import java.util.concurrent.TimeUnit;
 
 
 /**
@@ -73,7 +71,7 @@ public class DaemonLockManager extends Thread implements LockManager {
   /*
   Used to synchronize the ensureLock in the daemon and the release process.
    */
-  private final Object releaseSemaphore = new Object();
+  private final Object releaseMutex = new Object();
 
 
   //injections
@@ -169,29 +167,25 @@ public class DaemonLockManager extends Thread implements LockManager {
     ensureLockInternal();
   }
 
-  /**
-   * It will loop to ensure the lock, until it's cancelled .
-   * It's the only place the lock is directly released. This ensure the race condition which tries to ensure the lock
-   * after being released, as the order it's ensured: Although it can request the lock ensure after the flag cancelled
-   * is active, it will eventually release the lock after it and won't ensure it afterward.
-   * <p>
-   * Be aware that the other external place where the lock is ensure/acquire will throw an exception after the flag
-   * cancelled is active.
-   */
+   /*
+   It will to ensure the lock, until it's cancelled.
+
+   It's synchronized with the release process. Once the mutex is taken, it ensures the release process hasn't started,
+   and, if so, ensures the lock. Then it goes to sleep thhe time the lock is safely acquired, if the release process
+   hasn't started by then.
+    */
   @Override
   public void run() {
     logger.info("Starting mongock lock daemon...");
     while (!releaseStarted) {
       try {
         logger.debug("Mongock lock daemon ensuring lock");
-        synchronized (releaseSemaphore) {
-          // this ensures it only tries to ensure the lock if release lock process hasn't started.
+        synchronized (releaseMutex) {
           if(!releaseStarted) {
             ensureLockInternal();
           }
         }
         if(!releaseStarted) {
-          // if release lock process has started, there is no point in repose the thread
           reposeIfRequired();
         }
       } catch (LockCheckException e) {
@@ -208,7 +202,7 @@ public class DaemonLockManager extends Thread implements LockManager {
     logger.info("Cancelling mongock lock daemon...");
     releaseStarted = true;
     if (daemonActive) {
-      synchronized (releaseSemaphore) {
+      synchronized (releaseMutex) {
         releaseLockInternal();
       }
     } else {
