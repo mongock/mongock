@@ -15,7 +15,7 @@ import io.mongock.runner.standalone.migration.MongoDBAdvanceChangeLog;
 import io.mongock.runner.standalone.migration.MongoDBAdvanceChangeLogWithBeforeFailing;
 import io.mongock.runner.standalone.migration.MongoDBAdvanceChangeLogWithChangeSetFailing;
 import io.mongock.runner.standalone.migration.MongoDBRollbackWithNoClientSessionChangeLog;
-import io.mongock.runner.standalone.util.Constants;
+import io.mongock.util.test.Constants;
 import io.mongock.runner.standalone.util.RunnerTestUtil;
 import org.bson.Document;
 import org.junit.jupiter.api.AfterAll;
@@ -43,8 +43,10 @@ public class MongockStandaloneITest {
   private static MongoDbReplicaSet mongodbContainer;
   private static RunnerTestUtil runnerTestUtil;
 
-//  @ParameterizedTest
-//  @ValueSource(strings = {"mongo:4.2.6"})
+  private static MongoCollection<Document>  changeEntryCollection;
+  private static MongoCollection<Document>  dataCollection1;
+  private static MongoCollection<Document>  dataCollection2;
+  private static MongoCollection<Document>  dataCollection3;
 
   @BeforeAll
   public static void startMongoDBForAllTests() {
@@ -56,20 +58,26 @@ public class MongockStandaloneITest {
     mongoClient = MongoClients.create(mongodbContainer.getReplicaSetUrl());
     database = mongoClient.getDatabase(Constants.DEFAULT_DATABASE_NAME);
     runnerTestUtil = new RunnerTestUtil(mongoClient);
-    System.out.println("\n\nFINISHED TESTCONTAINER CONFIG\n\n");
   }
 
   @AfterAll
   public static void closeMongoDBForAllTests() {
     mongoClient.close();
     mongodbContainer.close();
-    System.out.println("\n\nAFTER ALL\n\n");
   }
 
   @AfterEach
   public void cleanCommonDatabaseCollections() {
-    deleteAll(Constants.CHANGELOG_COLLECTION_NAME);
-    System.out.println("\n\nAFTER EACH\n\n");
+    drop(changeEntryCollection);
+    drop(dataCollection1);
+    drop(dataCollection2);
+    drop(dataCollection3);
+  }
+
+  private static void drop(MongoCollection<Document> collection) {
+    if(collection != null) {
+      collection.drop();
+    }
   }
 
   @Test
@@ -81,22 +89,22 @@ public class MongockStandaloneITest {
     // given
     database.createCollection(MongoDBRollbackWithNoClientSessionChangeLog.COLLECTION_NAME);
     MongockException ex = Assertions.assertThrows(MongockException.class,
-        () -> runnerTestUtil.getStandaloneBuilderWithMongoDBSync4(MongoDBRollbackWithNoClientSessionChangeLog.class.getName())
+        () -> runnerTestUtil.getBuilder(MongoDBRollbackWithNoClientSessionChangeLog.class.getName())
             .setTransactionEnabled(true)
             .buildRunner()
             .execute());
 
     //then
     assertTrue(ex.getMessage().contains("Expected exception in changeLog[Before]"));
-    MongoCollection<Document> clientCollection = database.getCollection(MongoDBRollbackWithNoClientSessionChangeLog.COLLECTION_NAME);
-    FindIterable<Document> clients = clientCollection.find();
+    dataCollection1 = database.getCollection(MongoDBRollbackWithNoClientSessionChangeLog.COLLECTION_NAME);
+    FindIterable<Document> clients = dataCollection1.find();
     Set<Document> clientsSet = new HashSet<>();
     clients.forEach(clientsSet::add);
     assertEquals(10, clientsSet.size());
 
 
     //tear down
-    deleteAll(MongoDBRollbackWithNoClientSessionChangeLog.COLLECTION_NAME);
+    dataCollection1.drop();
   }
 
 
@@ -122,7 +130,7 @@ public class MongockStandaloneITest {
     MongoDBAdvanceChangeLog.clear();
     MongoDBAdvanceChangeLogWithChangeSetFailing.clear();
     MongockException ex = Assertions.assertThrows(MongockException.class,
-        () -> runnerTestUtil.getStandaloneBuilderWithMongoDBSync4()
+        () -> runnerTestUtil.getBuilder()
             .setConfig(config)
             .setTransactionEnabled(true)
             .buildRunner()
@@ -136,7 +144,7 @@ public class MongockStandaloneITest {
     assertTrue(MongoDBAdvanceChangeLogWithChangeSetFailing.rollbackBeforeCalled, "(3)AdvanceChangeLogWithBeforeAndChangeSetFailing's Rollback before method wasn't executed");
     Assertions.assertFalse(MongoDBAdvanceChangeLogWithChangeSetFailing.rollbackCalled, "(4)AdvanceChangeLogWithBeforeAndChangeSetFailing's Rollback method wasn't executed");
 
-    MongoCollection<Document> changeEntryCollection = database.getCollection(config.getMigrationRepositoryName());
+    changeEntryCollection = database.getCollection(config.getMigrationRepositoryName());
     FindIterable<Document> changeEntryIterator = changeEntryCollection.find();
     List<Document> changeEntryList = new ArrayList<>();
     changeEntryIterator.forEach(changeEntryList::add);
@@ -152,31 +160,31 @@ public class MongockStandaloneITest {
     assertEquals(ChangeState.ROLLED_BACK.name(), changeEntryList.get(2).getString("state"));
 
 
-    MongoCollection<Document> dataCollection = database.getCollection(MongoDBAdvanceChangeLogWithChangeSetFailing.COLLECTION_NAME);
-    FindIterable<Document> clients = dataCollection.find();
+    dataCollection1 = database.getCollection(MongoDBAdvanceChangeLogWithChangeSetFailing.COLLECTION_NAME);
+    FindIterable<Document> clients = dataCollection1.find();
     Set<Document> clientsSet = new HashSet<>();
     clients.forEach(clientsSet::add);
     assertEquals(0, clientsSet.size());
 
     //CHANGELOG 1
-    MongoCollection<Document> dataCollection1 = database.getCollection(MongoDBAdvanceChangeLog.COLLECTION_NAME);
-    FindIterable<Document> clients1 = dataCollection1.find();
+    dataCollection2 = database.getCollection(MongoDBAdvanceChangeLog.COLLECTION_NAME);
+    FindIterable<Document> clients1 = dataCollection2.find();
     Set<Document> clientsSet1 = new HashSet<>();
     clients1.forEach(clientsSet1::add);
     assertEquals(11, clientsSet1.size());
 
     //CHANGELOG2
-    MongoCollection<Document> dataCollection2 = database.getCollection(MongoDBAdvanceChangeLogWithChangeSetFailing.COLLECTION_NAME);
-    FindIterable<Document> clients2 = dataCollection2.find();
+    dataCollection3 = database.getCollection(MongoDBAdvanceChangeLogWithChangeSetFailing.COLLECTION_NAME);
+    FindIterable<Document> clients2 = dataCollection3.find();
     Set<Document> clientsSet2 = new HashSet<>();
     clients2.forEach(clientsSet2::add);
     assertEquals(0, clientsSet2.size());
 
 
     //tear down
-    deleteAll(MongoDBAdvanceChangeLogWithChangeSetFailing.COLLECTION_NAME);
-    deleteAll(MongoDBAdvanceChangeLog.COLLECTION_NAME);
-    deleteAll(MongoDBAdvanceChangeLogWithChangeSetFailing.COLLECTION_NAME);
+    dataCollection1.drop();
+    dataCollection2.drop();
+    dataCollection3.drop();
   }
 
   @Test
@@ -203,7 +211,7 @@ public class MongockStandaloneITest {
     MongoDBAdvanceChangeLog.clear();
     MongoDBAdvanceChangeLogWithChangeSetFailing.clear();
     MongockException ex = Assertions.assertThrows(MongockException.class,
-        () -> runnerTestUtil.getStandaloneBuilderWithMongoDBSync4()
+        () -> runnerTestUtil.getBuilder()
             .setConfig(config)
             .setTransactionEnabled(false)
             .buildRunner()
@@ -215,8 +223,8 @@ public class MongockStandaloneITest {
     assertTrue(MongoDBAdvanceChangeLog.rollbackCalledLatch.await(5, TimeUnit.NANOSECONDS), "AdvanceChangeLogWithBefore's Rollback method wasn't executed");
     assertTrue(MongoDBAdvanceChangeLogWithChangeSetFailing.rollbackCalledLatch.await(5, TimeUnit.NANOSECONDS), "AdvanceChangeLogWithBeforeAndChangeSetFailing's Rollback method wasn't executed");
 
-    MongoCollection<Document> clientCollection = database.getCollection(config.getMigrationRepositoryName());
-    FindIterable<Document> changeEntryIterator = clientCollection.find();
+    changeEntryCollection = database.getCollection(config.getMigrationRepositoryName());
+    FindIterable<Document> changeEntryIterator = changeEntryCollection.find();
     List<Document> changeEntryList = new ArrayList<>();
     changeEntryIterator.forEach(changeEntryList::add);
 
@@ -235,22 +243,22 @@ public class MongockStandaloneITest {
     assertEquals(ChangeState.ROLLED_BACK.name(), changeEntryList.get(3).getString("state"));
 
     //CHANGELOG 1
-    MongoCollection<Document> dataCollection1 = database.getCollection(MongoDBAdvanceChangeLog.COLLECTION_NAME);
+    dataCollection1 = database.getCollection(MongoDBAdvanceChangeLog.COLLECTION_NAME);
     FindIterable<Document> clients1 = dataCollection1.find();
     Set<Document> clientsSet1 = new HashSet<>();
     clients1.forEach(clientsSet1::add);
     assertEquals(11, clientsSet1.size());
 
     //CHANGELOG2
-    MongoCollection<Document> dataCollection2 = database.getCollection(MongoDBAdvanceChangeLogWithChangeSetFailing.COLLECTION_NAME);
+    dataCollection2 = database.getCollection(MongoDBAdvanceChangeLogWithChangeSetFailing.COLLECTION_NAME);
     FindIterable<Document> clients2 = dataCollection2.find();
     Set<Document> clientsSet2 = new HashSet<>();
     clients2.forEach(clientsSet2::add);
     assertEquals(10, clientsSet2.size());
 
     //tear down
-    deleteAll(MongoDBAdvanceChangeLog.COLLECTION_NAME);
-    deleteAll(MongoDBAdvanceChangeLogWithChangeSetFailing.COLLECTION_NAME);
+    dataCollection1.drop();
+    dataCollection2.drop();
   }
 
   @Test
@@ -274,7 +282,7 @@ public class MongockStandaloneITest {
     MongoDBAdvanceChangeLog.clear();
     MongoDBAdvanceChangeLogWithChangeSetFailing.clear();
     MongockException ex = Assertions.assertThrows(MongockException.class,
-        () -> runnerTestUtil.getStandaloneBuilderWithMongoDBSync4()
+        () -> runnerTestUtil.getBuilder()
             .setConfig(config)
             .setTransactionEnabled(false)
             .buildRunner()
@@ -285,8 +293,8 @@ public class MongockStandaloneITest {
     // checks the four rollbacks were called
     assertTrue(MongoDBAdvanceChangeLogWithChangeSetFailing.rollbackCalledLatch.await(5, TimeUnit.NANOSECONDS), "AdvanceChangeLogWithBeforeAndChangeSetFailing's Rollback method wasn't executed");
 
-    MongoCollection<Document> clientCollection = database.getCollection(config.getMigrationRepositoryName());
-    FindIterable<Document> changeEntryIterator = clientCollection.find();
+    changeEntryCollection = database.getCollection(config.getMigrationRepositoryName());
+    FindIterable<Document> changeEntryIterator = changeEntryCollection.find();
     List<Document> changeEntryList = new ArrayList<>();
     changeEntryIterator.forEach(changeEntryList::add);
 
@@ -305,22 +313,22 @@ public class MongockStandaloneITest {
     assertEquals(ChangeState.ROLLED_BACK.name(), changeEntryList.get(3).getString("state"));
 
     //CHANGELOG 1
-    MongoCollection<Document> dataCollection1 = database.getCollection(MongoDBAdvanceChangeLog.COLLECTION_NAME);
+    dataCollection1 = database.getCollection(MongoDBAdvanceChangeLog.COLLECTION_NAME);
     FindIterable<Document> clients1 = dataCollection1.find();
     Set<Document> clientsSet1 = new HashSet<>();
     clients1.forEach(clientsSet1::add);
     assertEquals(11, clientsSet1.size());
 
     //CHANGELOG2
-    MongoCollection<Document> dataCollection2 = database.getCollection(MongoDBAdvanceChangeLogWithChangeSetFailing.COLLECTION_NAME);
+    dataCollection2 = database.getCollection(MongoDBAdvanceChangeLogWithChangeSetFailing.COLLECTION_NAME);
     FindIterable<Document> clients2 = dataCollection2.find();
     Set<Document> clientsSet2 = new HashSet<>();
     clients2.forEach(clientsSet2::add);
     assertEquals(10, clientsSet2.size());
 
     //tear down
-    deleteAll(MongoDBAdvanceChangeLog.COLLECTION_NAME);
-    deleteAll(MongoDBAdvanceChangeLogWithChangeSetFailing.COLLECTION_NAME);
+    dataCollection1.drop();
+    dataCollection2.drop();
 
   }
 
@@ -347,7 +355,7 @@ public class MongockStandaloneITest {
     MongoDBAdvanceChangeLog.clear();
     MongoDBAdvanceChangeLogWithChangeSetFailing.clear();
     MongockException ex = Assertions.assertThrows(MongockException.class,
-        () -> runnerTestUtil.getStandaloneBuilderWithMongoDBSync4()
+        () -> runnerTestUtil.getBuilder()
             .setConfig(config)
             .setTransactionEnabled(true)
             .buildRunner()
@@ -361,29 +369,29 @@ public class MongockStandaloneITest {
     Assertions.assertFalse(MongoDBAdvanceChangeLogWithChangeSetFailing.rollbackCalled, "AdvanceChangeLogWithBeforeAndChangeSetFailing's Rollback method wasn't executed");
 
     //CHANGE ENTRIES
-    MongoCollection<Document> clientCollection = database.getCollection(config.getMigrationRepositoryName());
-    FindIterable<Document> changeEntryIterator = clientCollection.find();
+    changeEntryCollection = database.getCollection(config.getMigrationRepositoryName());
+    FindIterable<Document> changeEntryIterator = changeEntryCollection.find();
     List<Document> changeEntryList = new ArrayList<>();
     changeEntryIterator.forEach(changeEntryList::add);
     assertEquals(0, changeEntryList.size());
 
     //CHANGELOG 1
-    MongoCollection<Document> dataCollection1 = database.getCollection(MongoDBAdvanceChangeLog.COLLECTION_NAME);
+    dataCollection1 = database.getCollection(MongoDBAdvanceChangeLog.COLLECTION_NAME);
     FindIterable<Document> clients1 = dataCollection1.find();
     Set<Document> clientsSet1 = new HashSet<>();
     clients1.forEach(clientsSet1::add);
     assertEquals(1, clientsSet1.size());
 
     //CHANGELOG2
-    MongoCollection<Document> dataCollection2 = database.getCollection(MongoDBAdvanceChangeLogWithChangeSetFailing.COLLECTION_NAME);
+    dataCollection2 = database.getCollection(MongoDBAdvanceChangeLogWithChangeSetFailing.COLLECTION_NAME);
     FindIterable<Document> clients2 = dataCollection2.find();
     Set<Document> clientsSet2 = new HashSet<>();
     clients2.forEach(clientsSet2::add);
     assertEquals(0, clientsSet2.size());
 
     //tear down
-    deleteAll(MongoDBAdvanceChangeLog.COLLECTION_NAME);
-    deleteAll(MongoDBAdvanceChangeLogWithChangeSetFailing.COLLECTION_NAME);
+    dataCollection1.drop();
+    dataCollection2.drop();
 
   }
 
@@ -404,7 +412,7 @@ public class MongockStandaloneITest {
 
     // checks the four rollbacks were called
     MongoDBAdvanceChangeLog.clear();
-    runnerTestUtil.getStandaloneBuilderWithMongoDBSync4()
+    runnerTestUtil.getBuilder()
         .setConfig(config)
         .setTransactionEnabled(true)
         .buildRunner()
@@ -414,7 +422,7 @@ public class MongockStandaloneITest {
     Assertions.assertFalse(MongoDBAdvanceChangeLog.rollbackBeforeCalled, "(1)AdvanceChangeLogWithBefore's Rollback before method wasn't executed");
     Assertions.assertFalse(MongoDBAdvanceChangeLog.rollbackCalled, "(2)AdvanceChangeLogWithBefore's Rollback method wasn't executed");
 
-    MongoCollection<Document> changeEntryCollection = database.getCollection(config.getMigrationRepositoryName());
+    changeEntryCollection = database.getCollection(config.getMigrationRepositoryName());
     FindIterable<Document> changeEntryIterator = changeEntryCollection.find();
     List<Document> changeEntryList = new ArrayList<>();
     changeEntryIterator.forEach(changeEntryList::add);
@@ -427,14 +435,14 @@ public class MongockStandaloneITest {
     assertEquals(ChangeState.EXECUTED.name(), changeEntryList.get(1).getString("state"));
 
     //CHANGELOG 1
-    MongoCollection<Document> dataCollection1 = database.getCollection(MongoDBAdvanceChangeLog.COLLECTION_NAME);
+    dataCollection1 = database.getCollection(MongoDBAdvanceChangeLog.COLLECTION_NAME);
     FindIterable<Document> clients1 = dataCollection1.find();
     Set<Document> clientsSet1 = new HashSet<>();
     clients1.forEach(clientsSet1::add);
     assertEquals(11, clientsSet1.size());
 
     //tear down
-    deleteAll(MongoDBAdvanceChangeLog.COLLECTION_NAME);
+    dataCollection1.drop();
   }
 
   @Test
@@ -454,7 +462,7 @@ public class MongockStandaloneITest {
     // checks the four rollbacks were called
     MongoDBAdvanceChangeLogWithBeforeFailing.clear();
     MongockException ex = Assertions.assertThrows(MongockException.class,
-        () -> runnerTestUtil.getStandaloneBuilderWithMongoDBSync4()
+        () -> runnerTestUtil.getBuilder()
             .setConfig(config)
             .setTransactionEnabled(true)
             .buildRunner()
@@ -466,7 +474,7 @@ public class MongockStandaloneITest {
     Assertions.assertFalse(MongoDBAdvanceChangeLogWithBeforeFailing.rollbackCalled, "AdvanceChangeLogWithBeforeFailing's rollback is not expected to be called");
     Assertions.assertFalse(MongoDBAdvanceChangeLogWithBeforeFailing.changeSetCalled, "AdvanceChangeLogWithBeforeFailing's changeSet is not expected to be called");
 
-    MongoCollection<Document> changeEntryCollection = database.getCollection(config.getMigrationRepositoryName());
+    changeEntryCollection = database.getCollection(config.getMigrationRepositoryName());
     FindIterable<Document> changeEntryIterator = changeEntryCollection.find();
     List<Document> changeEntryList = new ArrayList<>();
     changeEntryIterator.forEach(changeEntryList::add);
@@ -475,19 +483,16 @@ public class MongockStandaloneITest {
     assertEquals(MongoDBAdvanceChangeLogWithBeforeFailing.class.getSimpleName() + "_before", changeEntryList.get(0).getString("changeId"));
     assertEquals(ChangeState.ROLLED_BACK.name(), changeEntryList.get(0).getString("state"));
 
-    MongoCollection<Document> dataCollection = database.getCollection(MongoDBAdvanceChangeLogWithBeforeFailing.COLLECTION_NAME);
-    FindIterable<Document> clients = dataCollection.find();
+    dataCollection1 = database.getCollection(MongoDBAdvanceChangeLogWithBeforeFailing.COLLECTION_NAME);
+    FindIterable<Document> clients = dataCollection1.find();
     Set<Document> clientsSet = new HashSet<>();
     clients.forEach(clientsSet::add);
     assertEquals(0, clientsSet.size());
 
 
     //tear down
-    deleteAll(MongoDBAdvanceChangeLogWithBeforeFailing.COLLECTION_NAME);
-  }
-
-  private static void deleteAll(String collectionName) {
-    database.getCollection(collectionName).deleteMany(new Document());
+    dataCollection1.drop();
+    changeEntryCollection.drop();
   }
 
 
