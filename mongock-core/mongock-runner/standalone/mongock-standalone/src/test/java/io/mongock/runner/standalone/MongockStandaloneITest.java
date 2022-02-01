@@ -47,7 +47,6 @@ public class MongockStandaloneITest {
   private static RunnerTestUtil runnerTestUtil;
 
   private static MongoCollection<Document> changeEntryCollection;
-  private static MongoCollection<Document> legacyCollection;
   private static MongoCollection<Document> dataCollection1;
   private static MongoCollection<Document> dataCollection2;
   private static MongoCollection<Document> dataCollection3;
@@ -73,7 +72,6 @@ public class MongockStandaloneITest {
   @AfterEach
   public void cleanCommonDatabaseCollections() {
     drop(changeEntryCollection);
-    drop(legacyCollection);
     drop(dataCollection1);
     drop(dataCollection2);
     drop(dataCollection3);
@@ -500,52 +498,4 @@ public class MongockStandaloneITest {
     changeEntryCollection.drop();
   }
 
-
-  @Test
-  void shouldPerformLegacyMigration() throws Exception {
-    // given, then
-    runRunnerWithLegacyMigration(1, false);
-
-    // then
-    changeEntryCollection = database.getCollection(Constants.CHANGELOG_COLLECTION_NAME);
-    LegacyMigrationUtils.checkLegacyMigration(changeEntryCollection, false, 1);
-  }
-
-
-  @Test
-  void shouldNotReapplyLegacyChangeLogs_IfNotRunAlways_WhenExecutedTwice() throws Exception {
-    // given, then
-    runRunnerWithLegacyMigration(2, false);
-
-    // then
-    changeEntryCollection = database.getCollection(Constants.CHANGELOG_COLLECTION_NAME);
-    LegacyMigrationUtils.checkLegacyMigration(changeEntryCollection, false, 1);
-
-  }
-
-  @Test
-  void shouldNotDuplicateLegacyChangeLogs_IfRunAlways_WhenLegacyMigrationReapplied() throws Exception {
-    // given, then
-    runRunnerWithLegacyMigration(2, true);
-
-    // then
-    changeEntryCollection = database.getCollection(Constants.CHANGELOG_COLLECTION_NAME);
-    LegacyMigrationUtils.checkLegacyMigration(changeEntryCollection, true, 1);
-  }
-
-
-  private void runRunnerWithLegacyMigration(int executions, boolean runAlways) throws Exception {
-    legacyCollection = database.getCollection(LegacyMigrationUtils.LEGACY_CHANGELOG_COLLECTION_NAME);
-    LegacyMigrationUtils.setUpLegacyMigration(legacyCollection);
-    LegacyMigration legacyMigration = new LegacyMigration(LegacyMigrationUtils.LEGACY_CHANGELOG_COLLECTION_NAME);
-    legacyMigration.setRunAlways(runAlways);
-
-    for (int i = 0; i < executions; i++) {
-      runnerTestUtil.getBuilder(EmptyChangeLog.class.getName())
-          .setTransactionEnabled(true)
-          .setLegacyMigration(legacyMigration)
-          .buildRunner()
-          .execute();
-    }
-  }
 }

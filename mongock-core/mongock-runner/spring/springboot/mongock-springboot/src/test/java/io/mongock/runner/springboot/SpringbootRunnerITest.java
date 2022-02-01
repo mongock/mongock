@@ -334,7 +334,6 @@ public class SpringbootRunnerITest {
     assertEquals(10, clientsSet.size());
   }
 
-
   @Test
   public void shouldNotExecuteTransaction_IfConfigurationTransactionDisabled() {
 
