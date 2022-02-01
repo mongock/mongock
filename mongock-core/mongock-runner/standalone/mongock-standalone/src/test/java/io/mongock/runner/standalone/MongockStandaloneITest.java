@@ -540,9 +540,6 @@ public class MongockStandaloneITest {
     LegacyMigration legacyMigration = new LegacyMigration(LegacyMigrationUtils.LEGACY_CHANGELOG_COLLECTION_NAME);
     legacyMigration.setRunAlways(runAlways);
 
-    ;
-
-
     for (int i = 0; i < executions; i++) {
       runnerTestUtil.getBuilder(EmptyChangeLog.class.getName())
           .setTransactionEnabled(true)
