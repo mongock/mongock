@@ -1,8 +1,6 @@
-package io.mongock.runner.springboot.config;
+package io.mongock.runner.springboot.base.config;
 
 import io.mongock.api.config.MongockConfiguration;
-import io.mongock.runner.springboot.base.config.MongockSpringConfigurationBase;
-import io.mongock.runner.springboot.base.config.SpringRunnerType;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
 @ConfigurationProperties("mongock")

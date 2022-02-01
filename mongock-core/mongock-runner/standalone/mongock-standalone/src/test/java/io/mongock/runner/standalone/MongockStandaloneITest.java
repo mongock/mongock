@@ -7,16 +7,19 @@ import com.mongodb.client.MongoClient;
 import com.mongodb.client.MongoClients;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
+import io.mongock.api.config.LegacyMigration;
 import io.mongock.api.config.MongockConfiguration;
 import io.mongock.api.config.TransactionStrategy;
 import io.mongock.api.exception.MongockException;
 import io.mongock.driver.api.entry.ChangeState;
+import io.mongock.runner.standalone.migration.EmptyChangeLog;
 import io.mongock.runner.standalone.migration.MongoDBAdvanceChangeLog;
 import io.mongock.runner.standalone.migration.MongoDBAdvanceChangeLogWithBeforeFailing;
 import io.mongock.runner.standalone.migration.MongoDBAdvanceChangeLogWithChangeSetFailing;
 import io.mongock.runner.standalone.migration.MongoDBRollbackWithNoClientSessionChangeLog;
-import io.mongock.util.test.Constants;
+import io.mongock.runner.standalone.util.LegacyMigrationUtils;
 import io.mongock.runner.standalone.util.RunnerTestUtil;
+import io.mongock.util.test.Constants;
 import org.bson.Document;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.AfterEach;
@@ -43,10 +46,11 @@ public class MongockStandaloneITest {
   private static MongoDbReplicaSet mongodbContainer;
   private static RunnerTestUtil runnerTestUtil;
 
-  private static MongoCollection<Document>  changeEntryCollection;
-  private static MongoCollection<Document>  dataCollection1;
-  private static MongoCollection<Document>  dataCollection2;
-  private static MongoCollection<Document>  dataCollection3;
+  private static MongoCollection<Document> changeEntryCollection;
+  private static MongoCollection<Document> legacyCollection;
+  private static MongoCollection<Document> dataCollection1;
+  private static MongoCollection<Document> dataCollection2;
+  private static MongoCollection<Document> dataCollection3;
 
   @BeforeAll
   public static void startMongoDBForAllTests() {
@@ -69,13 +73,14 @@ public class MongockStandaloneITest {
   @AfterEach
   public void cleanCommonDatabaseCollections() {
     drop(changeEntryCollection);
+    drop(legacyCollection);
     drop(dataCollection1);
     drop(dataCollection2);
     drop(dataCollection3);
   }
 
   private static void drop(MongoCollection<Document> collection) {
-    if(collection != null) {
+    if (collection != null) {
       collection.drop();
     }
   }
@@ -408,7 +413,7 @@ public class MongockStandaloneITest {
     config.setLockRepositoryName("mongockLock");
     config.setServiceIdentifier("myService");
     config.setTrackIgnored(false);
-    config.setChangeLogsScanPackage(Collections.singletonList(MongoDBAdvanceChangeLog.class.getName()));
+    config.setMigrationScanPackage(Collections.singletonList(MongoDBAdvanceChangeLog.class.getName()));
 
     // checks the four rollbacks were called
     MongoDBAdvanceChangeLog.clear();
@@ -457,7 +462,7 @@ public class MongockStandaloneITest {
     config.setLockRepositoryName("mongockLock");
     config.setServiceIdentifier("myService");
     config.setTrackIgnored(false);
-    config.setChangeLogsScanPackage(Collections.singletonList(MongoDBAdvanceChangeLogWithBeforeFailing.class.getName()));
+    config.setMigrationScanPackage(Collections.singletonList(MongoDBAdvanceChangeLogWithBeforeFailing.class.getName()));
 
     // checks the four rollbacks were called
     MongoDBAdvanceChangeLogWithBeforeFailing.clear();
@@ -496,4 +501,54 @@ public class MongockStandaloneITest {
   }
 
 
+  @Test
+  void shouldPerformLegacyMigration() throws Exception {
+    // given, then
+    runRunnerWithLegacyMigration(1, false);
+
+    // then
+    changeEntryCollection = database.getCollection(Constants.CHANGELOG_COLLECTION_NAME);
+    LegacyMigrationUtils.checkLegacyMigration(changeEntryCollection, false, 1);
+  }
+
+
+  @Test
+  void shouldNotReapplyLegacyChangeLogs_IfNotRunAlways_WhenExecutedTwice() throws Exception {
+    // given, then
+    runRunnerWithLegacyMigration(2, false);
+
+    // then
+    changeEntryCollection = database.getCollection(Constants.CHANGELOG_COLLECTION_NAME);
+    LegacyMigrationUtils.checkLegacyMigration(changeEntryCollection, false, 1);
+
+  }
+
+  @Test
+  void shouldNotDuplicateLegacyChangeLogs_IfRunAlways_WhenLegacyMigrationReapplied() throws Exception {
+    // given, then
+    runRunnerWithLegacyMigration(2, true);
+
+    // then
+    changeEntryCollection = database.getCollection(Constants.CHANGELOG_COLLECTION_NAME);
+    LegacyMigrationUtils.checkLegacyMigration(changeEntryCollection, true, 1);
+  }
+
+
+  private void runRunnerWithLegacyMigration(int executions, boolean runAlways) throws Exception {
+    legacyCollection = database.getCollection(LegacyMigrationUtils.LEGACY_CHANGELOG_COLLECTION_NAME);
+    LegacyMigrationUtils.setUpLegacyMigration(legacyCollection);
+    LegacyMigration legacyMigration = new LegacyMigration(LegacyMigrationUtils.LEGACY_CHANGELOG_COLLECTION_NAME);
+    legacyMigration.setRunAlways(runAlways);
+
+    ;
+
+
+    for (int i = 0; i < executions; i++) {
+      runnerTestUtil.getBuilder(EmptyChangeLog.class.getName())
+          .setTransactionEnabled(true)
+          .setLegacyMigration(legacyMigration)
+          .buildRunner()
+          .execute();
+    }
+  }
 }

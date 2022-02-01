@@ -1,7 +1,7 @@
 package io.mongock.runner.springboot;
 
 import io.mongock.runner.springboot.config.MongockContext;
-import io.mongock.runner.springboot.config.MongockSpringConfiguration;
+import io.mongock.runner.springboot.base.config.MongockSpringConfiguration;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Import;
 
