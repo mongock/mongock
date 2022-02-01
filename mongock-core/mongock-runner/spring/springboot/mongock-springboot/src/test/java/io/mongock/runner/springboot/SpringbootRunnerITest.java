@@ -11,11 +11,12 @@ import io.mongock.api.exception.MongockException;
 import io.mongock.driver.api.entry.ChangeState;
 import io.mongock.runner.core.executor.MongockRunner;
 import io.mongock.runner.springboot.domain.Client;
-import io.mongock.runner.springboot.migration.FailingChangeLogLegacy;
-import io.mongock.runner.springboot.migration.SpringDataAdvanceChangeLog;
-import io.mongock.runner.springboot.migration.SpringDataAdvanceChangeLogWithBeforeFailing;
-import io.mongock.runner.springboot.migration.SpringDataAdvanceChangeLogWithChangeSetFailing;
-import io.mongock.runner.springboot.migration.TransactionSuccessfulChangeLog;
+import io.mongock.runner.springboot.migration.FailingChangeLog;
+import io.mongock.runner.springboot.migration.RunAlwaysSuccessfulChangeUnit;
+import io.mongock.runner.springboot.migration.SpringDataAdvanceChangeUnit;
+import io.mongock.runner.springboot.migration.SpringDataAdvanceWithBeforeFailingChangeUnit;
+import io.mongock.runner.springboot.migration.SpringDataAdvanceWithChangeSetFailingChangeUnit;
+import io.mongock.runner.springboot.migration.TransactionSuccessfulChangeUnit;
 import io.mongock.runner.springboot.util.RunnerTestUtil;
 import io.mongock.util.test.Constants;
 import org.bson.Document;
@@ -28,12 +29,16 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 
@@ -68,10 +73,10 @@ public class SpringbootRunnerITest {
   @AfterEach
   public void cleanCommonDatabaseCollections() {
     database.getCollection("mongockChangeLog").drop();
-    database.getCollection(SpringDataAdvanceChangeLog.COLLECTION_NAME).drop();
+    database.getCollection(SpringDataAdvanceChangeUnit.COLLECTION_NAME).drop();
     database.getCollection(Client.COLLECTION_NAME).drop();
-    database.getCollection(SpringDataAdvanceChangeLogWithBeforeFailing.COLLECTION_NAME).drop();
-    database.getCollection(SpringDataAdvanceChangeLogWithChangeSetFailing.COLLECTION_NAME).drop();
+    database.getCollection(SpringDataAdvanceWithBeforeFailingChangeUnit.COLLECTION_NAME).drop();
+    database.getCollection(SpringDataAdvanceWithChangeSetFailingChangeUnit.COLLECTION_NAME).drop();
   }
 
 
@@ -81,7 +86,7 @@ public class SpringbootRunnerITest {
       "IF transaction enabled")
   public void shouldRollBack_WhenExceptionInChangeUnit_IfTransactionEnabled() {
 
-    MongockRunner runner = runnerTestUtil.getRunnerTransactional(FailingChangeLogLegacy.class.getPackage().getName())
+    MongockRunner runner = runnerTestUtil.getRunnerTransactional(FailingChangeLog.class.getPackage().getName())
         .buildRunner();
 
     Assertions.assertThrows(MongockException.class, runner::execute);
@@ -100,10 +105,10 @@ public class SpringbootRunnerITest {
 
 
     // checks the four rollbacks were called
-    SpringDataAdvanceChangeLog.clear();
-    SpringDataAdvanceChangeLogWithChangeSetFailing.clear();
+    SpringDataAdvanceChangeUnit.clear();
+    SpringDataAdvanceWithChangeSetFailingChangeUnit.clear();
 
-    MongockRunner runner = runnerTestUtil.getRunnerTransactional(SpringDataAdvanceChangeLog.class.getName(), SpringDataAdvanceChangeLogWithChangeSetFailing.class.getName())
+    MongockRunner runner = runnerTestUtil.getRunnerTransactional(SpringDataAdvanceChangeUnit.class.getName(), SpringDataAdvanceWithChangeSetFailingChangeUnit.class.getName())
         .buildRunner();
 
     MongockException ex = Assertions.assertThrows(MongockException.class, runner::execute);
@@ -111,11 +116,11 @@ public class SpringbootRunnerITest {
     assertTrue(ex.getCause().getMessage().contains("Expected exception"));
 
 
-    Assertions.assertFalse(SpringDataAdvanceChangeLog.rollbackBeforeCalled, "(1)AdvanceChangeLogWithBefore's Rollback before method wasn't executed");
-    Assertions.assertFalse(SpringDataAdvanceChangeLog.rollbackCalled, "(2)AdvanceChangeLogWithBefore's Rollback method wasn't executed");
+    Assertions.assertFalse(SpringDataAdvanceChangeUnit.rollbackBeforeCalled, "(1)AdvanceChangeLogWithBefore's Rollback before method wasn't executed");
+    Assertions.assertFalse(SpringDataAdvanceChangeUnit.rollbackCalled, "(2)AdvanceChangeLogWithBefore's Rollback method wasn't executed");
 
-    assertTrue(SpringDataAdvanceChangeLogWithChangeSetFailing.rollbackBeforeCalled, "(3)AdvanceChangeLogWithBeforeAndChangeSetFailing's Rollback before method wasn't executed");
-    Assertions.assertFalse(SpringDataAdvanceChangeLogWithChangeSetFailing.rollbackCalled, "(4)AdvanceChangeLogWithBeforeAndChangeSetFailing's Rollback method wasn't executed");
+    assertTrue(SpringDataAdvanceWithChangeSetFailingChangeUnit.rollbackBeforeCalled, "(3)AdvanceChangeLogWithBeforeAndChangeSetFailing's Rollback before method wasn't executed");
+    Assertions.assertFalse(SpringDataAdvanceWithChangeSetFailingChangeUnit.rollbackCalled, "(4)AdvanceChangeLogWithBeforeAndChangeSetFailing's Rollback method wasn't executed");
 
     MongoCollection<Document> changeEntryCollection = database.getCollection("mongockChangeLog");
     FindIterable<Document> changeEntryIterator = changeEntryCollection.find();
@@ -123,16 +128,16 @@ public class SpringbootRunnerITest {
     changeEntryIterator.forEach(changeEntryList::add);
     assertEquals(3, changeEntryList.size());//Only 3, because the changeEntry for the failing changeSet is rolled back
 
-    assertEquals(SpringDataAdvanceChangeLog.class.getSimpleName() + "_before", changeEntryList.get(0).getString("changeId"));
+    assertEquals(SpringDataAdvanceChangeUnit.class.getSimpleName() + "_before", changeEntryList.get(0).getString("changeId"));
     assertEquals(ChangeState.EXECUTED.name(), changeEntryList.get(0).getString("state"));
 
-    assertEquals(SpringDataAdvanceChangeLog.class.getSimpleName(), changeEntryList.get(1).getString("changeId"));
+    assertEquals(SpringDataAdvanceChangeUnit.class.getSimpleName(), changeEntryList.get(1).getString("changeId"));
     assertEquals(ChangeState.EXECUTED.name(), changeEntryList.get(1).getString("state"));
 
-    assertEquals(SpringDataAdvanceChangeLogWithChangeSetFailing.class.getSimpleName() + "_before", changeEntryList.get(2).getString("changeId"));
+    assertEquals(SpringDataAdvanceWithChangeSetFailingChangeUnit.class.getSimpleName() + "_before", changeEntryList.get(2).getString("changeId"));
     assertEquals(ChangeState.ROLLED_BACK.name(), changeEntryList.get(2).getString("state"));
 
-    MongoCollection<Document> dataCollection = database.getCollection(SpringDataAdvanceChangeLogWithChangeSetFailing.COLLECTION_NAME);
+    MongoCollection<Document> dataCollection = database.getCollection(SpringDataAdvanceWithChangeSetFailingChangeUnit.COLLECTION_NAME);
 
     FindIterable<Document> clients = dataCollection.find();
     Set<Document> clientsSet = new HashSet<>();
@@ -148,9 +153,9 @@ public class SpringbootRunnerITest {
   public void shouldRollbackManuallyOnlyChangeSetsOfLastChangelogAndStoreChangeEntry_whenSecondChangeLogFailAtChangeSet_ifStrategyIsMigrationAndNonTransactional() throws InterruptedException {
 
     // checks the four rollbacks were called
-    SpringDataAdvanceChangeLog.clear();
-    SpringDataAdvanceChangeLogWithChangeSetFailing.clear();
-    MongockRunner runner = runnerTestUtil.getRunner(SpringDataAdvanceChangeLog.class.getName(), SpringDataAdvanceChangeLogWithChangeSetFailing.class.getName())
+    SpringDataAdvanceChangeUnit.clear();
+    SpringDataAdvanceWithChangeSetFailingChangeUnit.clear();
+    MongockRunner runner = runnerTestUtil.getRunner(SpringDataAdvanceChangeUnit.class.getName(), SpringDataAdvanceWithChangeSetFailingChangeUnit.class.getName())
         .setTransactionStrategy(TransactionStrategy.EXECUTION)
         .buildRunner();
 
@@ -158,8 +163,8 @@ public class SpringbootRunnerITest {
 
 
     // checks the four rollbacks were called
-    assertTrue(SpringDataAdvanceChangeLog.rollbackCalledLatch.await(5, TimeUnit.NANOSECONDS), "AdvanceChangeLogWithBefore's Rollback method wasn't executed");
-    assertTrue(SpringDataAdvanceChangeLogWithChangeSetFailing.rollbackCalledLatch.await(5, TimeUnit.NANOSECONDS), "AdvanceChangeLogWithBeforeAndChangeSetFailing's Rollback method wasn't executed");
+    assertTrue(SpringDataAdvanceChangeUnit.rollbackCalledLatch.await(5, TimeUnit.NANOSECONDS), "AdvanceChangeLogWithBefore's Rollback method wasn't executed");
+    assertTrue(SpringDataAdvanceWithChangeSetFailingChangeUnit.rollbackCalledLatch.await(5, TimeUnit.NANOSECONDS), "AdvanceChangeLogWithBeforeAndChangeSetFailing's Rollback method wasn't executed");
 
     MongoCollection<Document> changeEntryCollection = database.getCollection("mongockChangeLog");
     FindIterable<Document> changeEntryIterator = changeEntryCollection.find();
@@ -168,16 +173,16 @@ public class SpringbootRunnerITest {
 
     assertEquals(4, changeEntryList.size());
 
-    assertEquals(SpringDataAdvanceChangeLog.class.getSimpleName() + "_before", changeEntryList.get(0).getString("changeId"));
+    assertEquals(SpringDataAdvanceChangeUnit.class.getSimpleName() + "_before", changeEntryList.get(0).getString("changeId"));
     assertEquals(ChangeState.ROLLED_BACK.name(), changeEntryList.get(0).getString("state"));
 
-    assertEquals(SpringDataAdvanceChangeLog.class.getSimpleName(), changeEntryList.get(1).getString("changeId"));
+    assertEquals(SpringDataAdvanceChangeUnit.class.getSimpleName(), changeEntryList.get(1).getString("changeId"));
     assertEquals(ChangeState.ROLLED_BACK.name(), changeEntryList.get(1).getString("state"));
 
-    assertEquals(SpringDataAdvanceChangeLogWithChangeSetFailing.class.getSimpleName() + "_before", changeEntryList.get(2).getString("changeId"));
+    assertEquals(SpringDataAdvanceWithChangeSetFailingChangeUnit.class.getSimpleName() + "_before", changeEntryList.get(2).getString("changeId"));
     assertEquals(ChangeState.ROLLED_BACK.name(), changeEntryList.get(2).getString("state"));
 
-    assertEquals(SpringDataAdvanceChangeLogWithChangeSetFailing.class.getSimpleName(), changeEntryList.get(3).getString("changeId"));
+    assertEquals(SpringDataAdvanceWithChangeSetFailingChangeUnit.class.getSimpleName(), changeEntryList.get(3).getString("changeId"));
     assertEquals(ChangeState.ROLLED_BACK.name(), changeEntryList.get(3).getString("state"));
 
   }
@@ -189,17 +194,17 @@ public class SpringbootRunnerITest {
   public void shouldRollbackManuallyOnlyChangeSetsOfLastChangelogAndStoreChangeEntry_whenSecondChangeLogFailAtChangeSet_ifStrategyIsChangeUnitAndNonTransactional() throws InterruptedException {
 
     // given
-    SpringDataAdvanceChangeLog.clear();
-    SpringDataAdvanceChangeLogWithChangeSetFailing.clear();
+    SpringDataAdvanceChangeUnit.clear();
+    SpringDataAdvanceWithChangeSetFailingChangeUnit.clear();
 
-    MongockRunner runner = runnerTestUtil.getRunner(SpringDataAdvanceChangeLog.class.getName(), SpringDataAdvanceChangeLogWithChangeSetFailing.class.getName())
+    MongockRunner runner = runnerTestUtil.getRunner(SpringDataAdvanceChangeUnit.class.getName(), SpringDataAdvanceWithChangeSetFailingChangeUnit.class.getName())
         .setTransactionStrategy(TransactionStrategy.CHANGE_UNIT)
         .buildRunner();
 
     MongockException ex = Assertions.assertThrows(MongockException.class, runner::execute);
 
     // checks the four rollbacks were called
-    assertTrue(SpringDataAdvanceChangeLogWithChangeSetFailing.rollbackCalledLatch.await(5, TimeUnit.NANOSECONDS), "AdvanceChangeLogWithBeforeAndChangeSetFailing's Rollback method wasn't executed");
+    assertTrue(SpringDataAdvanceWithChangeSetFailingChangeUnit.rollbackCalledLatch.await(5, TimeUnit.NANOSECONDS), "AdvanceChangeLogWithBeforeAndChangeSetFailing's Rollback method wasn't executed");
 
 
     MongoCollection<Document> changeEntryCollection = database.getCollection("mongockChangeLog");
@@ -209,16 +214,16 @@ public class SpringbootRunnerITest {
 
     assertEquals(4, changeEntryList.size());
 
-    assertEquals(SpringDataAdvanceChangeLog.class.getSimpleName() + "_before", changeEntryList.get(0).getString("changeId"));
+    assertEquals(SpringDataAdvanceChangeUnit.class.getSimpleName() + "_before", changeEntryList.get(0).getString("changeId"));
     assertEquals(ChangeState.EXECUTED.name(), changeEntryList.get(0).getString("state"));
 
-    assertEquals(SpringDataAdvanceChangeLog.class.getSimpleName(), changeEntryList.get(1).getString("changeId"));
+    assertEquals(SpringDataAdvanceChangeUnit.class.getSimpleName(), changeEntryList.get(1).getString("changeId"));
     assertEquals(ChangeState.EXECUTED.name(), changeEntryList.get(1).getString("state"));
 
-    assertEquals(SpringDataAdvanceChangeLogWithChangeSetFailing.class.getSimpleName() + "_before", changeEntryList.get(2).getString("changeId"));
+    assertEquals(SpringDataAdvanceWithChangeSetFailingChangeUnit.class.getSimpleName() + "_before", changeEntryList.get(2).getString("changeId"));
     assertEquals(ChangeState.ROLLED_BACK.name(), changeEntryList.get(2).getString("state"));
 
-    assertEquals(SpringDataAdvanceChangeLogWithChangeSetFailing.class.getSimpleName(), changeEntryList.get(3).getString("changeId"));
+    assertEquals(SpringDataAdvanceWithChangeSetFailingChangeUnit.class.getSimpleName(), changeEntryList.get(3).getString("changeId"));
     assertEquals(ChangeState.ROLLED_BACK.name(), changeEntryList.get(3).getString("state"));
 
   }
@@ -229,20 +234,20 @@ public class SpringbootRunnerITest {
       "IF strategy is migration and  transactional")
   public void shouldRollbackAutomaticallyEverythingAndNoChangeEntryShouldBePresent_whenSecondChangeLogFailAtChangeSet_ifStrategyIsMigrationAndTransactional() {
 
-    SpringDataAdvanceChangeLog.clear();
-    SpringDataAdvanceChangeLogWithChangeSetFailing.clear();
+    SpringDataAdvanceChangeUnit.clear();
+    SpringDataAdvanceWithChangeSetFailingChangeUnit.clear();
 
-    MongockRunner runner = runnerTestUtil.getRunnerTransactional(SpringDataAdvanceChangeLog.class.getName(), SpringDataAdvanceChangeLogWithChangeSetFailing.class.getName())
+    MongockRunner runner = runnerTestUtil.getRunnerTransactional(SpringDataAdvanceChangeUnit.class.getName(), SpringDataAdvanceWithChangeSetFailingChangeUnit.class.getName())
         .setTransactionStrategy(TransactionStrategy.EXECUTION)
         .buildRunner();
 
     MongockException ex = Assertions.assertThrows(MongockException.class, runner::execute);
 
-    Assertions.assertFalse(SpringDataAdvanceChangeLog.rollbackBeforeCalled, "AdvanceChangeLogWithBefore's Rollback before method wasn't executed");
-    Assertions.assertFalse(SpringDataAdvanceChangeLog.rollbackCalled, "AdvanceChangeLogWithBefore's Rollback method wasn't executed");
+    Assertions.assertFalse(SpringDataAdvanceChangeUnit.rollbackBeforeCalled, "AdvanceChangeLogWithBefore's Rollback before method wasn't executed");
+    Assertions.assertFalse(SpringDataAdvanceChangeUnit.rollbackCalled, "AdvanceChangeLogWithBefore's Rollback method wasn't executed");
 
-    Assertions.assertFalse(SpringDataAdvanceChangeLogWithChangeSetFailing.rollbackBeforeCalled, "AdvanceChangeLogWithBeforeAndChangeSetFailing's Rollback before method wasn't executed");
-    Assertions.assertFalse(SpringDataAdvanceChangeLogWithChangeSetFailing.rollbackCalled, "AdvanceChangeLogWithBeforeAndChangeSetFailing's Rollback method wasn't executed");
+    Assertions.assertFalse(SpringDataAdvanceWithChangeSetFailingChangeUnit.rollbackBeforeCalled, "AdvanceChangeLogWithBeforeAndChangeSetFailing's Rollback before method wasn't executed");
+    Assertions.assertFalse(SpringDataAdvanceWithChangeSetFailingChangeUnit.rollbackCalled, "AdvanceChangeLogWithBeforeAndChangeSetFailing's Rollback method wasn't executed");
 
     MongoCollection<Document> changeEntryCollection = database.getCollection("mongockChangeLog");
     FindIterable<Document> changeEntryIterator = changeEntryCollection.find();
@@ -257,12 +262,12 @@ public class SpringbootRunnerITest {
       "IF strategy is changeLog and  transactional")
   public void shouldNotRollback_WhenChangeSetRunsNormally_IfStrategyChangeLogAndTransactional() {
 
-    runnerTestUtil.getRunnerTransactional(SpringDataAdvanceChangeLog.class.getName())
+    runnerTestUtil.getRunnerTransactional(SpringDataAdvanceChangeUnit.class.getName())
         .buildRunner()
         .execute();
 
-    Assertions.assertFalse(SpringDataAdvanceChangeLog.rollbackBeforeCalled, "(1)AdvanceChangeLogWithBefore's Rollback before method wasn't executed");
-    Assertions.assertFalse(SpringDataAdvanceChangeLog.rollbackCalled, "(2)AdvanceChangeLogWithBefore's Rollback method wasn't executed");
+    Assertions.assertFalse(SpringDataAdvanceChangeUnit.rollbackBeforeCalled, "(1)AdvanceChangeLogWithBefore's Rollback before method wasn't executed");
+    Assertions.assertFalse(SpringDataAdvanceChangeUnit.rollbackCalled, "(2)AdvanceChangeLogWithBefore's Rollback method wasn't executed");
 
     MongoCollection<Document> changeEntryCollection = database.getCollection("mongockChangeLog");
     FindIterable<Document> changeEntryIterator = changeEntryCollection.find();
@@ -270,19 +275,18 @@ public class SpringbootRunnerITest {
     changeEntryIterator.forEach(changeEntryList::add);
     assertEquals(2, changeEntryList.size());
 
-    assertEquals(SpringDataAdvanceChangeLog.class.getSimpleName() + "_before", changeEntryList.get(0).getString("changeId"));
+    assertEquals(SpringDataAdvanceChangeUnit.class.getSimpleName() + "_before", changeEntryList.get(0).getString("changeId"));
     assertEquals(ChangeState.EXECUTED.name(), changeEntryList.get(0).getString("state"));
 
-    assertEquals(SpringDataAdvanceChangeLog.class.getSimpleName(), changeEntryList.get(1).getString("changeId"));
+    assertEquals(SpringDataAdvanceChangeUnit.class.getSimpleName(), changeEntryList.get(1).getString("changeId"));
     assertEquals(ChangeState.EXECUTED.name(), changeEntryList.get(1).getString("state"));
 
-    MongoCollection<Document> dataCollection = database.getCollection(SpringDataAdvanceChangeLog.COLLECTION_NAME);
+    MongoCollection<Document> dataCollection = database.getCollection(SpringDataAdvanceChangeUnit.COLLECTION_NAME);
     FindIterable<Document> clients = dataCollection.find();
     Set<Document> clientsSet = new HashSet<>();
     clients.forEach(clientsSet::add);
     assertEquals(11, clientsSet.size());
   }
-
 
   @Test
   @DisplayName("SHOULD not run changeSet " +
@@ -290,18 +294,18 @@ public class SpringbootRunnerITest {
       "IF before throws exception")
   public void shouldNotRunChangeSet_WhenStrategyIsChangeLogAndTransactional_IfBeforeThrowsException() {
 
-    SpringDataAdvanceChangeLogWithBeforeFailing.clear();
+    SpringDataAdvanceWithBeforeFailingChangeUnit.clear();
 
 
-    MongockRunner runner = runnerTestUtil.getRunnerTransactional(SpringDataAdvanceChangeLogWithBeforeFailing.class.getName())
+    MongockRunner runner = runnerTestUtil.getRunnerTransactional(SpringDataAdvanceWithBeforeFailingChangeUnit.class.getName())
         .setTransactionStrategy(TransactionStrategy.CHANGE_UNIT)
         .buildRunner();
 
     MongockException ex = Assertions.assertThrows(MongockException.class, runner::execute);
 
-    assertTrue(SpringDataAdvanceChangeLogWithBeforeFailing.rollbackBeforeCalled, "AdvanceChangeLogWithBeforeFailing's rollback before is expected to be called");
-    Assertions.assertFalse(SpringDataAdvanceChangeLogWithBeforeFailing.rollbackCalled, "AdvanceChangeLogWithBeforeFailing's rollback is not expected to be called");
-    Assertions.assertFalse(SpringDataAdvanceChangeLogWithBeforeFailing.changeSetCalled, "AdvanceChangeLogWithBeforeFailing's changeSet is not expected to be called");
+    assertTrue(SpringDataAdvanceWithBeforeFailingChangeUnit.rollbackBeforeCalled, "AdvanceChangeLogWithBeforeFailing's rollback before is expected to be called");
+    Assertions.assertFalse(SpringDataAdvanceWithBeforeFailingChangeUnit.rollbackCalled, "AdvanceChangeLogWithBeforeFailing's rollback is not expected to be called");
+    Assertions.assertFalse(SpringDataAdvanceWithBeforeFailingChangeUnit.changeSetCalled, "AdvanceChangeLogWithBeforeFailing's changeSet is not expected to be called");
 
     MongoCollection<Document> changeEntryCollection = database.getCollection("mongockChangeLog");
     FindIterable<Document> changeEntryIterator = changeEntryCollection.find();
@@ -309,10 +313,10 @@ public class SpringbootRunnerITest {
     changeEntryIterator.forEach(changeEntryList::add);
     assertEquals(1, changeEntryList.size());
 
-    assertEquals(SpringDataAdvanceChangeLogWithBeforeFailing.class.getSimpleName() + "_before", changeEntryList.get(0).getString("changeId"));
+    assertEquals(SpringDataAdvanceWithBeforeFailingChangeUnit.class.getSimpleName() + "_before", changeEntryList.get(0).getString("changeId"));
     assertEquals(ChangeState.ROLLED_BACK.name(), changeEntryList.get(0).getString("state"));
 
-    MongoCollection<Document> dataCollection = database.getCollection(SpringDataAdvanceChangeLog.COLLECTION_NAME);
+    MongoCollection<Document> dataCollection = database.getCollection(SpringDataAdvanceChangeUnit.COLLECTION_NAME);
     FindIterable<Document> clients = dataCollection.find();
     Set<Document> clientsSet = new HashSet<>();
     clients.forEach(clientsSet::add);
@@ -322,7 +326,16 @@ public class SpringbootRunnerITest {
   @Test
   public void shouldCommit_IfTransaction_WhenChangeLogOK() {
 
-    runnerTestUtil.getRunnerTransactional(TransactionSuccessfulChangeLog.class.getName())
+    Map<String, Object> metadata = new HashMap<>();
+    metadata.put("string_key", "string_value");
+    metadata.put("integer_key", 10);
+    metadata.put("float_key", 11.11F);
+    metadata.put("double_key", 12.12D);
+    metadata.put("long_key", 13L);
+    metadata.put("boolean_key", true);
+
+    runnerTestUtil.getRunnerTransactional(TransactionSuccessfulChangeUnit.class.getName())
+        .withMetadata(metadata)
         .buildRunner()
         .execute();
 
@@ -332,12 +345,54 @@ public class SpringbootRunnerITest {
     Set<Document> clientsSet = new HashSet<>();
     clients.forEach(clientsSet::add);
     assertEquals(10, clientsSet.size());
+
+    // checking changeEntries
+    MongoCollection<Document> changeEntryCollection = database.getCollection(Constants.CHANGELOG_COLLECTION_NAME);
+    assertEquals(2, changeEntryCollection.countDocuments());
+
+    FindIterable<Document> docs = changeEntryCollection.find();
+
+    Document changeEntryExecution = changeEntryCollection.find(new Document().append("changeId", TransactionSuccessfulChangeUnit.class.getSimpleName()).append("author", "mongock"))
+        .first();
+    assertNotNull(changeEntryExecution);
+    Document changeEntryBefore = changeEntryCollection.find(new Document().append("changeId", TransactionSuccessfulChangeUnit.class.getSimpleName() + "_before").append("author", "mongock"))
+        .first();
+    assertNotNull(changeEntryBefore);
+
+
+    checkMetadata(changeEntryExecution.get("metadata", Map.class));
+    checkMetadata(changeEntryBefore.get("metadata", Map.class));
+
+  }
+
+
+  @Test
+  void shouldJustOneExecutedChangeEntry_whenRunAlways_ifExecutedTwice() {
+
+    // when
+    runnerTestUtil.getRunnerTransactional(RunAlwaysSuccessfulChangeUnit.class.getName())
+        .buildRunner()
+        .execute();
+    runnerTestUtil.getRunnerTransactional(RunAlwaysSuccessfulChangeUnit.class.getName())
+        .buildRunner()
+        .execute();
+
+    // then
+    List<Document> documentList = new ArrayList<>();
+
+    database.getCollection(Constants.CHANGELOG_COLLECTION_NAME)
+        .find(new Document().append("changeId", RunAlwaysSuccessfulChangeUnit.class.getSimpleName()))
+        .forEach(documentList::add);
+
+    assertEquals(1, documentList.size());
+    assertEquals("EXECUTED", documentList.get(0).get("state"));
+
   }
 
   @Test
   public void shouldNotExecuteTransaction_IfConfigurationTransactionDisabled() {
 
-    MongockRunner runner = runnerTestUtil.getRunner(FailingChangeLogLegacy.class.getName())
+    MongockRunner runner = runnerTestUtil.getRunner(FailingChangeLog.class.getName())
         .setTransactionEnabled(false)
         .buildRunner();
     Assertions.assertThrows(MongockException.class, runner::execute);
@@ -350,6 +405,15 @@ public class SpringbootRunnerITest {
     assertEquals(10, clientsSet.size());
 
 
+  }
+
+  private void checkMetadata(Map metadataResult) {
+    assertEquals("string_value", metadataResult.get("string_key"));
+    assertEquals(10, metadataResult.get("integer_key"));
+    assertEquals(11.11F, (Double) metadataResult.get("float_key"), 0.01);
+    assertEquals(12.12D, (Double) metadataResult.get("double_key"), 0.01);
+    assertEquals(13L, metadataResult.get("long_key"));
+    assertEquals(true, metadataResult.get("boolean_key"));
   }
 
 }

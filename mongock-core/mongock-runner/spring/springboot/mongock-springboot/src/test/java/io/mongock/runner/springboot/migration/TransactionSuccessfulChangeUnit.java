@@ -10,8 +10,8 @@ import org.springframework.data.mongodb.core.MongoTemplate;
 
 import java.util.stream.IntStream;
 
-@ChangeUnit(id = "TransactionSuccessfulChangeLog", order = "2", author = "mongock")
-public class TransactionSuccessfulChangeLog {
+@ChangeUnit(id = "TransactionSuccessfulChangeUnit", order = "2", author = "mongock")
+public class TransactionSuccessfulChangeUnit {
 
   @BeforeExecution
   public void createCollection(MongoTemplate template) {

@@ -8,7 +8,7 @@ import org.springframework.data.mongodb.core.MongoTemplate;
 import java.util.stream.IntStream;
 
 @ChangeLog(order = "2")
-public class FailingChangeLogLegacy {
+public class FailingChangeLog {
 
   @ChangeSet(id = "method-successful", order = "001", author = "mongock")
   public void methodSuccessful(MongoTemplate mongoTemplate) {

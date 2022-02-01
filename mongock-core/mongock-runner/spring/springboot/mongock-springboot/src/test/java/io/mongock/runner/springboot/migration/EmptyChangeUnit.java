@@ -8,8 +8,8 @@ import io.mongock.api.annotations.RollbackExecution;
  *
  * @since 30.07.14
  */
-@ChangeUnit(id ="empty", order = "1")
-public class EmptyChangeLog {
+@ChangeUnit(id ="EmptyChangeUnit", order = "1")
+public class EmptyChangeUnit {
 
 
   @Execution

@@ -1,43 +1,20 @@
 package io.mongock.runner.springboot;
 
 import com.github.silaev.mongodb.replicaset.MongoDbReplicaSet;
-import com.mongodb.client.FindIterable;
 import com.mongodb.client.MongoClient;
 import com.mongodb.client.MongoClients;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
 import io.mongock.api.config.LegacyMigration;
-import io.mongock.api.config.TransactionStrategy;
-import io.mongock.api.exception.MongockException;
-import io.mongock.driver.api.entry.ChangeState;
-import io.mongock.runner.core.executor.MongockRunner;
-import io.mongock.runner.springboot.domain.Client;
-import io.mongock.runner.springboot.migration.EmptyChangeLog;
-import io.mongock.runner.springboot.migration.FailingChangeLogLegacy;
-import io.mongock.runner.springboot.migration.SpringDataAdvanceChangeLog;
-import io.mongock.runner.springboot.migration.SpringDataAdvanceChangeLogWithBeforeFailing;
-import io.mongock.runner.springboot.migration.SpringDataAdvanceChangeLogWithChangeSetFailing;
-import io.mongock.runner.springboot.migration.TransactionSuccessfulChangeLog;
+import io.mongock.runner.springboot.migration.EmptyChangeUnit;
 import io.mongock.runner.springboot.util.LegacyMigrationUtils;
 import io.mongock.runner.springboot.util.RunnerTestUtil;
 import io.mongock.util.test.Constants;
 import org.bson.Document;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.MethodSource;
-
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.concurrent.TimeUnit;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -122,7 +99,7 @@ public class LegacyMigrationSpringbootITest {
     legacyMigration.setRunAlways(runAlways);
 
     for (int i = 0; i < executions; i++) {
-      runnerTestUtil.getRunnerTransactional(EmptyChangeLog.class.getName())
+      runnerTestUtil.getRunnerTransactional(EmptyChangeUnit.class.getName())
           .setLegacyMigration(legacyMigration)
           .buildRunner()
           .execute();

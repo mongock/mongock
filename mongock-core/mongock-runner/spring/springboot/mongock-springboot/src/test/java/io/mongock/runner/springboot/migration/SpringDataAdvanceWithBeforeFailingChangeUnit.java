@@ -1,20 +1,18 @@
 package io.mongock.runner.springboot.migration;
 
-import com.mongodb.client.MongoCollection;
 import io.mongock.api.annotations.BeforeExecution;
 import io.mongock.api.annotations.ChangeUnit;
 import io.mongock.api.annotations.Execution;
 import io.mongock.api.annotations.RollbackBeforeExecution;
 import io.mongock.api.annotations.RollbackExecution;
-import org.bson.Document;
 import org.springframework.data.mongodb.core.MongoTemplate;
 
 import java.util.concurrent.CountDownLatch;
 
-@ChangeUnit(id="SpringDataAdvanceChangeLogWithBeforeFailing", order = "2", author = "mongock_test", systemVersion = "1")
-public class SpringDataAdvanceChangeLogWithBeforeFailing {
+@ChangeUnit(id="SpringDataAdvanceWithBeforeFailingChangeUnit", order = "2", author = "mongock_test", systemVersion = "1")
+public class SpringDataAdvanceWithBeforeFailingChangeUnit {
 
-  public static final String COLLECTION_NAME = SpringDataAdvanceChangeLogWithBeforeFailing.class.getSimpleName() + "Collection";
+  public static final String COLLECTION_NAME = SpringDataAdvanceWithBeforeFailingChangeUnit.class.getSimpleName() + "Collection";
 
   public static boolean changeSetCalled = false;
   public static boolean rollbackCalled = false;
@@ -28,7 +26,7 @@ public class SpringDataAdvanceChangeLogWithBeforeFailing {
     rollbackBeforeCalled = false;
   }
 
-  public SpringDataAdvanceChangeLogWithBeforeFailing(MongoTemplate template) {
+  public SpringDataAdvanceWithBeforeFailingChangeUnit(MongoTemplate template) {
   }
 
   @Execution
@@ -47,7 +45,7 @@ public class SpringDataAdvanceChangeLogWithBeforeFailing {
 
   @BeforeExecution
   public void before() {
-    throw new RuntimeException("Expected exception in " + SpringDataAdvanceChangeLogWithBeforeFailing.class + " changeLog[Before]");
+    throw new RuntimeException("Expected exception in " + SpringDataAdvanceWithBeforeFailingChangeUnit.class + " changeLog[Before]");
   }
 
   @RollbackBeforeExecution

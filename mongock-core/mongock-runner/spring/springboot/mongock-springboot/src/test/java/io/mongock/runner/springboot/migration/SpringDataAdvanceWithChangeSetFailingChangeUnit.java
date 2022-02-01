@@ -14,14 +14,15 @@ import java.util.concurrent.CountDownLatch;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
-@ChangeUnit(id="SpringDataAdvanceChangeLog", order = "1", author = "mongock_test", systemVersion = "1")
-public class SpringDataAdvanceChangeLog {
-  public static final String COLLECTION_NAME = SpringDataAdvanceChangeLog.class.getSimpleName() + "Collection";
+@ChangeUnit(id="SpringDataAdvanceWithChangeSetFailingChangeUnit", order = "2", author = "mongock_test", systemVersion = "1")
+public class SpringDataAdvanceWithChangeSetFailingChangeUnit {
 
+  public static final String COLLECTION_NAME = SpringDataAdvanceWithChangeSetFailingChangeUnit.class.getSimpleName() + "Collection";
 
   public static boolean rollbackCalled = false;
   public static boolean rollbackBeforeCalled = false;
   public final static CountDownLatch rollbackCalledLatch = new CountDownLatch(2);
+
 
   private final MongoTemplate template;
   private MongoCollection<Document> clientCollection;
@@ -31,20 +32,19 @@ public class SpringDataAdvanceChangeLog {
     rollbackBeforeCalled = false;
   }
 
-  public SpringDataAdvanceChangeLog(MongoTemplate template) {
+  public SpringDataAdvanceWithChangeSetFailingChangeUnit(MongoTemplate template) {
     this.template = template;
   }
-
 
   @Execution
   public void changeSet() {
     rollbackCalled = false;
     rollbackBeforeCalled = false;
-
     List<Document> clients = IntStream.range(0, 10)
         .mapToObj(i -> new Document().append("name","name-" + i).append("email", "email-" + i).append("phone", "phone" + i).append("country", "country" + i))
         .collect(Collectors.toList());
-    clientCollection.insertMany(clients);
+    template.getCollection(SpringDataAdvanceWithChangeSetFailingChangeUnit.COLLECTION_NAME).insertMany(clients);
+    if(true) throw new RuntimeException("Expected exception in " + SpringDataAdvanceWithChangeSetFailingChangeUnit.class + " changeLog[ChangeSet]");
   }
 
   @RollbackExecution
@@ -56,16 +56,13 @@ public class SpringDataAdvanceChangeLog {
   @BeforeExecution
   public void before() {
     //creates the collection
-    clientCollection = template.createCollection(SpringDataAdvanceChangeLog.COLLECTION_NAME);
-    //this is required, otherwise collection doesn't get created and throws an exception in the changeSet
-    clientCollection.insertOne(new Document().append("name","name-DUMMY").append("email", "email--DUMMY").append("phone", "phone-DUMMY").append("country", "country-DUMMY"));
+    clientCollection = template.createCollection(SpringDataAdvanceWithChangeSetFailingChangeUnit.COLLECTION_NAME);
   }
 
   @RollbackBeforeExecution
   public void rollbackBefore() {
     rollbackBeforeCalled = true;
     rollbackCalledLatch.countDown();
-
   }
 
 }
