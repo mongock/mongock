@@ -5,7 +5,7 @@ import io.mongock.driver.api.driver.ChangeSetDependency;
 import io.mongock.driver.api.driver.ConnectionDriver;
 import io.mongock.driver.api.entry.ChangeEntryService;
 import io.mongock.driver.api.lock.LockManager;
-import io.mongock.driver.core.lock.DaemonLockManager;
+import io.mongock.driver.core.lock.LockManagerDefault;
 import io.mongock.driver.core.lock.LockRepository;
 import io.mongock.utils.annotation.NotThreadSafe;
 
@@ -42,7 +42,7 @@ public abstract class ConnectionDriverBase implements ConnectionDriver {
       initialized = true;
       LockRepository lockRepository = this.getLockRepository();
       lockRepository.initialize();
-      lockManager = DaemonLockManager.builder()
+      lockManager = LockManagerDefault.builder()
           .setLockRepository(lockRepository)
           .setLockAcquiredForMillis(lockAcquiredForMillis)
           .setLockQuitTryingAfterMillis(lockQuitTryingAfterMillis)

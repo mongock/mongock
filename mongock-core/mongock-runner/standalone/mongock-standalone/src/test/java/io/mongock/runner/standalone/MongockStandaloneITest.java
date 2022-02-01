@@ -12,11 +12,14 @@ import io.mongock.api.config.MongockConfiguration;
 import io.mongock.api.config.TransactionStrategy;
 import io.mongock.api.exception.MongockException;
 import io.mongock.driver.api.entry.ChangeState;
+import io.mongock.driver.mongodb.sync.v4.driver.MongoSync4Driver;
 import io.mongock.runner.standalone.migration.EmptyChangeLog;
+import io.mongock.runner.standalone.migration.LongIOChangeUnit;
 import io.mongock.runner.standalone.migration.MongoDBAdvanceChangeLog;
 import io.mongock.runner.standalone.migration.MongoDBAdvanceChangeLogWithBeforeFailing;
 import io.mongock.runner.standalone.migration.MongoDBAdvanceChangeLogWithChangeSetFailing;
 import io.mongock.runner.standalone.migration.MongoDBRollbackWithNoClientSessionChangeLog;
+import io.mongock.runner.standalone.migration.ServiceStub;
 import io.mongock.runner.standalone.util.LegacyMigrationUtils;
 import io.mongock.runner.standalone.util.RunnerTestUtil;
 import io.mongock.util.test.Constants;
@@ -496,6 +499,27 @@ public class MongockStandaloneITest {
     //tear down
     dataCollection1.drop();
     changeEntryCollection.drop();
+  }
+
+  @Test
+  @DisplayName("SHOULD keep the lock" +
+      "WHEN i/o operation is longer than the ")
+  public void test() {
+    MongoSync4Driver driver = MongoSync4Driver.withLockStrategy(
+        mongoClient,
+        Constants.DEFAULT_DATABASE_NAME,
+        3000L,
+        1000L,
+        1000L
+    );
+
+
+    runnerTestUtil.getBuilder(driver, LongIOChangeUnit.class.getName())
+        .setTransactionEnabled(true)
+        .addDependency(new ServiceStub())
+        .buildRunner()
+        .execute();
+
   }
 
 }

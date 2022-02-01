@@ -27,10 +27,10 @@ import java.util.UUID;
  * </p>
  **/
 @NotThreadSafe
-public class DaemonLockManager extends Thread implements LockManager {
+public class LockManagerDefault extends Thread implements LockManager {
 
   //static constants
-  private static final Logger logger = LoggerFactory.getLogger(DaemonLockManager.class);
+  private static final Logger logger = LoggerFactory.getLogger(LockManagerDefault.class);
 
   private static final String GOING_TO_SLEEP_MSG = "Mongock is going to sleep to wait for the lock:  {} ms({} minutes)";
   private static final String EXPIRATION_ARG_ERROR_MSG = "Lock expiration period must be greater than %d ms";
@@ -115,14 +115,14 @@ public class DaemonLockManager extends Thread implements LockManager {
    * @param lockRefreshMarginMillis   margin(in millis) after which the lock need to be refreshed
    * @param owner                     owner of the lock
    */
-  private DaemonLockManager(LockRepository repository,
-                            TimeService timeService,
-                            long lockAcquiredForMillis,
-                            long lockQuitTryingAfterMillis,
-                            long lockTryFrequencyMillis,
-                            long lockRefreshMarginMillis,
-                            String owner,
-                            boolean daemonActive) {
+  private LockManagerDefault(LockRepository repository,
+                             TimeService timeService,
+                             long lockAcquiredForMillis,
+                             long lockQuitTryingAfterMillis,
+                             long lockTryFrequencyMillis,
+                             long lockRefreshMarginMillis,
+                             String owner,
+                             boolean daemonActive) {
     this.repository = repository;
     this.timeService = timeService;
     this.lockAcquiredForMillis = lockAcquiredForMillis;
@@ -161,37 +161,51 @@ public class DaemonLockManager extends Thread implements LockManager {
 
   @Override
   public void ensureLockDefault() throws LockCheckException {
+    logger.debug("Ensuring the lock");
     if (releaseStarted) {
       throw new LockCheckException("Lock cannot be ensured after being cancelled");
     }
-    ensureLockInternal();
+    do {
+      if (needsRefreshLock()) {
+        logger.debug("Lock refreshing required");
+        try {
+          refreshLock();
+          break;
+        } catch (LockPersistenceException ex) {
+          handleLockException(false, ex);
+        }
+      } else {
+        logger.debug("Dont need to refresh the lock at[{}], acquired until: {}", timeService.currentTime(), lockExpiresAt);
+        break;
+      }
+    } while (true);
   }
 
-   /*
-   It will to ensure the lock, until it's cancelled.
+  /*
+  It will to ensure the lock, until it's cancelled.
 
-   It's synchronized with the release process. Once the mutex is taken, it ensures the release process hasn't started,
-   and, if so, ensures the lock. Then it goes to sleep thhe time the lock is safely acquired, if the release process
-   hasn't started by then.
-    */
+  It's synchronized with the release process. Once the mutex is taken, it ensures the release process hasn't started,
+  and, if so, ensures the lock. Then it goes to sleep thhe time the lock is safely acquired, if the release process
+  hasn't started by then.
+   */
   @Override
   public void run() {
     logger.info("Starting mongock lock daemon...");
     while (!releaseStarted) {
       try {
-        logger.debug("Mongock lock daemon ensuring lock");
+        logger.debug("Mongock(daemon) ensuring lock");
         synchronized (releaseMutex) {
-          if(!releaseStarted) {
-            ensureLockInternal();
+          if (!releaseStarted) {
+            refreshLock();
           }
         }
-        if(!releaseStarted) {
-          reposeIfRequired();
-        }
       } catch (LockCheckException e) {
-        logger.warn("Error ensuring the lock from daemon: {}", e.getMessage());
+        logger.warn("Mongock(daemon)Error ensuring the lock from daemon: {}", e.getMessage());
       } catch (Exception e) {
-        logger.warn("Generic error from daemon: {}", e.getMessage());
+        logger.warn("Mongock(daemon)Generic error from daemon: {}", e.getMessage());
+      }
+      if (!releaseStarted) {
+        reposeIfRequired();
       }
     }
     logger.info("Cancelled mongock lock daemon");
@@ -199,14 +213,18 @@ public class DaemonLockManager extends Thread implements LockManager {
 
   @Override
   public void releaseLockDefault() {
-    logger.info("Cancelling mongock lock daemon...");
+    logger.info("Mongock releasing the lock");
     releaseStarted = true;
-    if (daemonActive) {
-      synchronized (releaseMutex) {
-        releaseLockInternal();
+    synchronized (releaseMutex) {
+      try {
+        logger.info("Mongock releasing the lock");
+        repository.removeByKeyAndOwner(getDefaultKey(), this.getOwner());
+        lockExpiresAt = null;
+        shouldStopTryingAt = Instant.now();//this makes the ensureLock to fail
+        logger.info("Mongock released the lock");
+      } catch (Exception ex) {
+        logger.warn("Error removing the lock from database", ex);
       }
-    } else {
-      releaseLockInternal();
     }
   }
 
@@ -219,19 +237,6 @@ public class DaemonLockManager extends Thread implements LockManager {
   @Override
   public boolean isReleaseStarted() {
     return releaseStarted;
-  }
-
-  private void releaseLockInternal() {
-    try {
-      logger.info("Mongock releasing the lock");
-      repository.removeByKeyAndOwner(getDefaultKey(), this.getOwner());
-      lockExpiresAt = null;
-      shouldStopTryingAt = Instant.now();//this makes the ensureLock to fail
-      logger.info("Mongock released the lock");
-    } catch (Exception ex) {
-      logger.warn("Error removing the lock from database", ex);
-    }
-
   }
 
   @Override
@@ -249,31 +254,20 @@ public class DaemonLockManager extends Thread implements LockManager {
     return lockExpiresAt != null && timeService.currentTime().compareTo(lockExpiresAt) < 1;
   }
 
-  private void ensureLockInternal() {
-    boolean keepLooping = true;
-    do {
-      if (needsRefreshLock()) {
-        try {
-          logger.info("Mongock trying to refresh the lock");
-          Date lockExpiresAtTemp = timeService.currentDatePlusMillis(lockAcquiredForMillis);
-          LockEntry lockEntry = new LockEntry(getDefaultKey(), LockStatus.LOCK_HELD.name(), owner, lockExpiresAtTemp);
-          repository.updateIfSameOwner(lockEntry);
-          updateStatus(lockExpiresAtTemp);
-          logger.info("Mongock refreshed the lock until: {}", lockExpiresAtTemp);
-          keepLooping = false;
-        } catch (LockPersistenceException ex) {
-          handleLockException(false, ex);
-        }
-      } else {
-        keepLooping = false;
-      }
-    } while (keepLooping);
+  private void refreshLock() {
+    logger.debug("Mongock trying to refresh the lock");
+    Date lockExpiresAtTemp = timeService.currentDatePlusMillis(lockAcquiredForMillis);
+    LockEntry lockEntry = new LockEntry(getDefaultKey(), LockStatus.LOCK_HELD.name(), owner, lockExpiresAtTemp);
+    repository.updateIfSameOwner(lockEntry);
+    updateStatus(lockExpiresAtTemp);
+    logger.debug("Mongock refreshed the lock until: {}", lockExpiresAtTemp);
   }
+
 
   private void reposeIfRequired() {
     try {
-      long reposingTime = getDaemonTimeForResting();
-      logger.info("Mongock lock daemon reposing time 1ms as reposing time negative: {}ms", reposingTime);
+      long reposingTime = getDaemonTimeSleep();
+      logger.debug("Mongock lock daemon sleeping for {}ms", reposingTime);
       sleep(reposingTime);
 
     } catch (InterruptedException ex) {
@@ -281,33 +275,20 @@ public class DaemonLockManager extends Thread implements LockManager {
     }
   }
 
-  private long getDaemonTimeForResting() {
-    long timeForResting;
-    if (lockExpiresAt != null) {
-      long currentTime = timeService.currentTime().getTime();
-      long expiresAtTime = lockExpiresAt.getTime();
-      timeForResting = expiresAtTime - currentTime - lockRefreshMarginMillis;
-      //todo change back to debug
-      logger.info("Mongock lock daemon initial time for resting[expiresAt: {}, currentTime: {}]: {}ms", timeForResting, expiresAtTime, currentTime);
-    } else {
-      timeForResting = lockAcquiredForMillis - lockRefreshMarginMillis;
-      //todo change back to debug
-      logger.info("Mongock lock daemon initial time for resting[lockAcquiredForMillis: {}, lockRefreshMarginMillis: {}]: {}ms", timeForResting, lockAcquiredForMillis, lockRefreshMarginMillis);
-    }
+  private long getDaemonTimeSleep() {
 
-    if(timeForResting <= 0) {
-      //todo change back to debug
-      logger.info("Mongock lock daemon reposing time 1ms as reposing time negative: {}ms", timeForResting);
-      return 1L;
-    } else if(timeForResting > lockAcquiredForMillis) {
-      //todo change back to debug
-      logger.info("Mongock lock daemon reposing time back to lockAcquiredForMillis[{}ms] as to reposing time to high: {}ms", lockAcquiredForMillis, timeForResting);
-      return lockAcquiredForMillis;
+    logger.debug("Calculating millis for lock daemon to sleep");
+    long baseSleepMillis;
+    if (lockExpiresAt != null) {
+      Date nowDate = timeService.currentTime();
+      long millisToRefresh = lockExpiresAt.getTime() - nowDate.getTime();
+      logger.debug("Difference now[{}] and Lock's expiry-date[{}]: {}ms ", nowDate, lockExpiresAt.toString(), millisToRefresh);
+      baseSleepMillis = millisToRefresh < lockRefreshMarginMillis && millisToRefresh > 0 ? millisToRefresh : lockAcquiredForMillis;
     } else {
-      //todo change back to debug
-      logger.info("Mongock lock daemon reposing time: {}ms", timeForResting);
-      return timeForResting;
+      logger.debug("Taking lockAcquireForMillis[{}ms] as base to calculate daemon's sleep time", lockAcquiredForMillis);
+      baseSleepMillis = lockAcquiredForMillis;
     }
+    return new Double(baseSleepMillis * LOCK_REFRESH_MARGIN_PERCENTAGE).longValue();
   }
 
 
@@ -336,7 +317,6 @@ public class DaemonLockManager extends Thread implements LockManager {
             ex.getAcquireLockQuery(),
             ex.getDbErrorDetail()));
       }
-
       waitForLock(currentLockExpiresAt);
     }
 
@@ -369,7 +349,7 @@ public class DaemonLockManager extends Thread implements LockManager {
 
   private boolean needsRefreshLock() {
 
-    if (this.lockExpiresAt == null) {
+    if (lockExpiresAt == null) {
       return true;
     }
     Date currentTime = timeService.currentTime();
@@ -489,10 +469,6 @@ public class DaemonLockManager extends Thread implements LockManager {
       return this;
     }
 
-    public DefaultLockManagerBuilder setLockRefreshMarginMillis(long lockRefreshMarginMillis) {
-      this.lockRefreshMarginMillis = lockRefreshMarginMillis;
-      return this;
-    }
 
     public DefaultLockManagerBuilder setOwner(String owner) {
       this.owner = owner;
@@ -504,8 +480,8 @@ public class DaemonLockManager extends Thread implements LockManager {
       return this;
     }
 
-    public DaemonLockManager build() {
-      return new DaemonLockManager(
+    public LockManagerDefault build() {
+      return new LockManagerDefault(
           lockRepository,
           timeService != null ? timeService : new TimeService(),
           lockAcquiredForMillis,

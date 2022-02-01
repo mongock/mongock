@@ -4,7 +4,7 @@ import com.mongodb.client.FindIterable;
 import com.mongodb.client.model.UpdateOptions;
 import io.mongock.driver.api.lock.LockCheckException;
 import io.mongock.driver.api.lock.LockManager;
-import io.mongock.driver.core.lock.DaemonLockManager;
+import io.mongock.driver.core.lock.LockManagerDefault;
 import io.mongock.driver.core.lock.LockEntry;
 import io.mongock.driver.core.lock.LockRepositoryWithEntity;
 import io.mongock.driver.core.lock.LockStatus;
@@ -40,7 +40,7 @@ public abstract class MongoLockManagerITestBase extends IntegrationTestBase {
                               long acquireForMillis,
                               long tryFreq,
                               long quickTrying) {
-    lockManager = DaemonLockManager.builder()
+    lockManager = LockManagerDefault.builder()
         .setLockRepository(repository)
         .setTimeService(timeService)
         .setLockAcquiredForMillis(acquireForMillis)
