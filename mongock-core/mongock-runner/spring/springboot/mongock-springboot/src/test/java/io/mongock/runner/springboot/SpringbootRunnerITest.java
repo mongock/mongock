@@ -76,7 +76,10 @@ public class SpringbootRunnerITest {
 
 
   @Test
-  public void shouldRollBack_IfTransaction_WhenExceptionInChangeLog() {
+  @DisplayName("SHOULD rollback" +
+      "WHEN exception in changeUnit" +
+      "IF transaction enabled")
+  public void shouldRollBack_WhenExceptionInChangeUnit_IfTransactionEnabled() {
 
     MongockRunner runner = runnerTestUtil.getRunnerTransactional(FailingChangeLogLegacy.class.getPackage().getName())
         .buildRunner();
