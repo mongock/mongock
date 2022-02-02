@@ -13,6 +13,7 @@ import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Profile;
 
+
 public abstract class MongockContextBase<CONFIG extends MongockConfiguration> {
 
   @Bean
