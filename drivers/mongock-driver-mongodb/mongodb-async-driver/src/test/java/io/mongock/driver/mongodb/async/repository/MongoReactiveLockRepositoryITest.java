@@ -18,10 +18,8 @@ import io.mongock.driver.mongodb.async.util.MongoCollectionSync;
 import io.mongock.driver.mongodb.async.util.MongoDBDriverTestAdapter;
 import io.mongock.driver.mongodb.async.util.RepositoryAccessorHelper;
 import org.bson.Document;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
-import org.mockito.verification.VerificationMode;
 
 import java.util.Date;
 import java.util.List;
@@ -46,9 +44,9 @@ public class MongoReactiveLockRepositoryITest extends IntegrationTestBase {
   public void shouldCreateUniqueIndex_whenEnsureIndex_IfNotCreatedYet() throws MongockException {
     initializeRepository();
     //then
-    verify((MongoReactiveLockRepository) repository, times(1)).createRequiredUniqueIndex();
+    verify(repository, times(1)).createRequiredUniqueIndex();
     // and not
-    verify((MongoReactiveLockRepository) repository, times(0)).dropIndex(any(Document.class));
+    verify(repository, times(0)).dropIndex(any(Document.class));
   }
 
 
@@ -93,6 +91,7 @@ public class MongoReactiveLockRepositoryITest extends IntegrationTestBase {
     //then
     testReadWriteConcern(expectedWriteConcern, expectedReadConcern, expectedReadPreference, readWriteConfiguration);
   }
+
   @Test
   public void ensureKeyUniqueness() {
     initializeRepository();

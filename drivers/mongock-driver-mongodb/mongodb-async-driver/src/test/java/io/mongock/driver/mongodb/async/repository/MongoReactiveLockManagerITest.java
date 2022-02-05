@@ -1,6 +1,5 @@
 package io.mongock.driver.mongodb.async.repository;
 
-import com.mongodb.assertions.Assertions;
 import com.mongodb.client.model.UpdateOptions;
 import io.mongock.driver.api.lock.LockCheckException;
 import io.mongock.driver.api.lock.LockManager;
@@ -13,7 +12,6 @@ import io.mongock.driver.mongodb.async.util.IntegrationTestBase;
 import io.mongock.driver.mongodb.async.util.MongoCollectionSync;
 import io.mongock.driver.mongodb.async.util.MongoDBDriverTestAdapter;
 import io.mongock.driver.mongodb.async.util.MongoIterable;
-import io.mongock.util.test.ExpectedException;
 import io.mongock.utils.TimeService;
 import org.bson.Document;
 import org.junit.jupiter.api.BeforeEach;
@@ -61,13 +59,6 @@ public class MongoReactiveLockManagerITest extends IntegrationTestBase {
         .setLockQuitTryingAfterMillis(quickTrying)
         .build();
   }
-
-//  @AfterEach
-//  public void tearDown() {
-//    MongoCollectionSync collection = new MongoCollectionSync(getDataBase().getCollection(LOCK_COLLECTION_NAME));
-//    collection.deleteMany(new Document());
-//  }
-
 
   @Test
   public void shouldAcquireLock_WhenHeld_IfSameOwner() throws LockCheckException {
