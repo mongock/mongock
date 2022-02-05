@@ -65,7 +65,6 @@ public abstract class IntegrationTestBase {
     subscriber1.get();
     subscriber2.get();
     SubscriberSync<Void> subscriber3 = new SubscriberSync<>();
-
     mongoDatabase.drop().subscribe(subscriber3);
     subscriber3.get();
   }

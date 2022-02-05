@@ -43,11 +43,6 @@ public class MongoReactiveLockRepositoryITest extends IntegrationTestBase {
   protected MongoReactiveLockRepository repository;
 
   @Test
-  public void test1() {
-
-  }
-
-  @Test
   public void shouldCreateUniqueIndex_whenEnsureIndex_IfNotCreatedYet() throws MongockException {
     initializeRepository();
     //then
