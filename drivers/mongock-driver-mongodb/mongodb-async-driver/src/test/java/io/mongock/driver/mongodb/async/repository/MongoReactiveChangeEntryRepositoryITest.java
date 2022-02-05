@@ -3,6 +3,7 @@ package io.mongock.driver.mongodb.async.repository;
 import com.mongodb.ReadConcern;
 import com.mongodb.ReadPreference;
 import com.mongodb.WriteConcern;
+import com.mongodb.client.model.IndexOptions;
 import com.mongodb.reactivestreams.client.MongoCollection;
 import io.mongock.api.exception.MongockException;
 import io.mongock.driver.mongodb.async.MongoDbReactiveDriverTestAdapterImpl;
@@ -11,6 +12,7 @@ import io.mongock.driver.mongodb.async.util.MongoDBDriverTestAdapter;
 import io.mongock.driver.mongodb.async.util.RepositoryAccessorHelper;
 import io.mongock.util.test.ExpectedException;
 import org.bson.Document;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
@@ -99,9 +101,29 @@ public class MongoReactiveChangeEntryRepositoryITest extends IntegrationTestBase
     assertEquals(expectedReadPreference, collection.getReadPreference());
   }
 
+
+  @Test
+  public void shouldThrowException_WhenNoIndexCreation_IfIndexNoPreviouslyCreated() throws MongockException {
+  MongockException ex = assertThrows(MongockException.class,()-> initializeRepository(false));
+  assertEquals("Index creation not allowed, but not created or wrongly created for collection mongockChangeLog", ex.getMessage());
+  }
+
+  @Test
+  public void shouldBeOk_WhenNoIndexCreation_IfIndexAlreadyCreated() throws MongockException {
+    getDefaultAdapter().createIndex(getIndexDocument(new String[]{"executionId", "author", "changeId"}), new IndexOptions().unique(true));
+    initializeRepository(false);
+  }
   @Override
   protected MongoDBDriverTestAdapter getAdapter(String collectionName) {
     return new MongoDbReactiveDriverTestAdapterImpl(getDataBase().getCollection(collectionName));
+  }
+
+  protected Document getIndexDocument(String[] uniqueFields) {
+    final Document indexDocument = new Document();
+    for (String field : uniqueFields) {
+      indexDocument.append(field, 1);
+    }
+    return indexDocument;
   }
 
 }
