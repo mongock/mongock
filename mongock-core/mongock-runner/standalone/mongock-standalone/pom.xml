@@ -56,7 +56,7 @@
       <groupId>io.mongock</groupId>
       <artifactId>mongock-test-util</artifactId>
       <version>${project.version}</version>
-      <scope>tets</scope>
+      <scope>test</scope>
     </dependency>
 
 

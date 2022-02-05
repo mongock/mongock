@@ -48,7 +48,7 @@ public class Mongo3LockRepositoryITest extends MongoLockRepositoryITestBase {
   }
 
   @Override
-  protected void initializeRepository() {
+  public void initializeRepository() {
     Mongo3LockRepository repo = new Mongo3LockRepository(getDataBase().getCollection(LOCK_COLLECTION_NAME));
     repo.setIndexCreation(true);
     repository = Mockito.spy(repo);

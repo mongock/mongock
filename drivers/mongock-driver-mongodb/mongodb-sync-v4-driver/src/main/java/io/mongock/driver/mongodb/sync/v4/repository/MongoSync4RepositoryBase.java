@@ -70,8 +70,6 @@ public class MongoSync4RepositoryBase<DOMAIN_CLASS> implements EntityRepository<
   }
 
   private List<Document> getResidualKeys() {
-    List<Document> indexArrary = new ArrayList<>();
-    collection.listIndexes().forEach(indexArrary::add);
     return StreamSupport.stream(collection.listIndexes().spliterator(), false)
         .filter(this::doesNeedToBeRemoved)
         .collect(Collectors.toList());
