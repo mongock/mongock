@@ -58,6 +58,11 @@
       <version>${project.version}</version>
       <scope>test</scope>
     </dependency>
+    <dependency>
+      <groupId>io.mongock</groupId>
+      <artifactId>mongock-test-runner</artifactId>
+      <version>${project.version}</version>
+    </dependency>
 <!--    <dependency>-->
 <!--      <groupId>io.mongock</groupId>-->
 <!--      <artifactId>mongodb-driver-test-template</artifactId>-->
