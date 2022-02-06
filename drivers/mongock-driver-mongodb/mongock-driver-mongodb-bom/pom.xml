@@ -26,6 +26,11 @@
       </dependency>
       <dependency>
         <groupId>io.mongock</groupId>
+        <artifactId>mongodb-reactive-driver</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>io.mongock</groupId>
         <artifactId>mongodb-springdata-v2-driver</artifactId>
         <version>${project.version}</version>
       </dependency>
