@@ -48,6 +48,12 @@
       <version>${mongodb-reactivestreams.version}</version>
       <scope>provided</scope>
     </dependency>
+    <dependency>
+      <groupId>org.springframework</groupId>
+      <artifactId>spring-tx</artifactId>
+      <version>${springframework.version}</version>
+      <optional>true</optional>
+    </dependency>
 
     <!-- TEST -->
 

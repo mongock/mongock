@@ -15,7 +15,7 @@ import java.util.Optional;
 import java.util.Set;
 
 @NotThreadSafe
-public abstract class MongoReactiveDriverBase extends MongoSync4DriverGeneric {
+public abstract class MongoReactiveDriverBase extends MongoReactiveDriverGeneric {
 
   private final MongoClient mongoClient;
   protected ClientSession clientSession;

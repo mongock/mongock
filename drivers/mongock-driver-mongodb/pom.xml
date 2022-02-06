@@ -23,24 +23,19 @@
     <module>mongodb-springdata-v2-driver</module>
     <module>mongodb-springdata-v3-driver</module>
     <module>mongodb-driver-test-template</module>
-    <module>mongodb-springdata-reactive-driver</module>
   </modules>
 
 
   <properties>
 
-    <spring-boot.version>[2.0.0, 3.0.0)</spring-boot.version>
-    <spring-cloud-sleuth.version>3.1.0</spring-cloud-sleuth.version>
-    <spring-data-3.version>3.2.5</spring-data-3.version>
-    <spring-data-2.version>2.2.13.RELEASE</spring-data-2.version>
 
-    <spring-data-3.mongodb.version>4.2.3</spring-data-3.mongodb.version>
-    <spring-data-2.mongodb.version>3.11.2</spring-data-2.mongodb.version>
-    <spring-data-reactive.version>2.6.3</spring-data-reactive.version>
 
-    <mongodb-sync-4.version>[4.0.0, 5.0.0)</mongodb-sync-4.version>
-    <mongodb-reactivestreams.version>[4.0.0, 5.0.0)</mongodb-reactivestreams.version>
-    <mongodb-driver-3.version>[3.0.0, 4.0.0)</mongodb-driver-3.version>
+
+
+
+
+
+    <reactor-core.version>3.4.14</reactor-core.version>
 
     <java.version>1.8</java.version>
     <maven.compiler.target>1.8</maven.compiler.target>

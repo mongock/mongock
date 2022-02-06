@@ -21,7 +21,7 @@ import io.mongock.utils.annotation.NotThreadSafe;
 import org.bson.Document;
 
 @NotThreadSafe
-public abstract class MongoSync4DriverGeneric extends TransactionalConnectionDriverBase implements DriverLegaciable {
+public abstract class MongoReactiveDriverGeneric extends TransactionalConnectionDriverBase implements DriverLegaciable {
 
 
   private static final WriteConcern DEFAULT_WRITE_CONCERN = WriteConcern.MAJORITY.withJournal(true);
@@ -36,10 +36,10 @@ public abstract class MongoSync4DriverGeneric extends TransactionalConnectionDri
   protected TransactionOptions txOptions;
   protected final MongoDatabase mongoDatabase;
 
-  protected MongoSync4DriverGeneric(MongoDatabase mongoDatabase,
-                                    long lockAcquiredForMillis,
-                                    long lockQuitTryingAfterMillis,
-                                    long lockTryFrequencyMillis) {
+  protected MongoReactiveDriverGeneric(MongoDatabase mongoDatabase,
+                                       long lockAcquiredForMillis,
+                                       long lockQuitTryingAfterMillis,
+                                       long lockTryFrequencyMillis) {
     super(lockAcquiredForMillis, lockQuitTryingAfterMillis, lockTryFrequencyMillis);
     this.mongoDatabase = mongoDatabase;
   }
