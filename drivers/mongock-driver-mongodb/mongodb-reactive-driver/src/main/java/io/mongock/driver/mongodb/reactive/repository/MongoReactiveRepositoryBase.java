@@ -5,9 +5,9 @@ import com.mongodb.reactivestreams.client.MongoCollection;
 import io.mongock.api.exception.MongockException;
 import io.mongock.driver.api.common.EntityRepository;
 import io.mongock.driver.api.common.RepositoryIndexable;
-import io.mongock.driver.mongodb.reactive.util.MongoSubscriber;
-import io.mongock.driver.mongodb.reactive.util.MongoCollectionSync;
 import io.mongock.driver.mongodb.reactive.util.SubscriberSync;
+import io.mongock.driver.mongodb.reactive.util.MongoCollectionSync;
+import io.mongock.driver.mongodb.reactive.util.MongoSubscriberSync;
 import io.mongock.utils.field.FieldInstance;
 import org.bson.Document;
 import org.slf4j.Logger;
@@ -72,7 +72,7 @@ public class MongoReactiveRepositoryBase<DOMAIN_CLASS> implements EntityReposito
   }
 
   private List<Document> getResidualKeys() {
-    MongoSubscriber<Document> subscriber = new SubscriberSync<>();
+    SubscriberSync<Document> subscriber = new MongoSubscriberSync<>();
     return collection.listIndexes()
         .stream()
         .filter(this::doesNeedToBeRemoved)
@@ -90,7 +90,7 @@ public class MongoReactiveRepositoryBase<DOMAIN_CLASS> implements EntityReposito
   protected boolean isRequiredIndexCreated() {
 
 
-    MongoSubscriber<Document> subscriber = new SubscriberSync<>();
+    SubscriberSync<Document> subscriber = new MongoSubscriberSync<>();
     return collection.listIndexes()
         .stream()
         .anyMatch(this::isRightIndex);

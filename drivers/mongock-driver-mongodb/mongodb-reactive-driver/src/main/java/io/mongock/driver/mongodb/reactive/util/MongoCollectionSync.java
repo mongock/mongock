@@ -32,19 +32,19 @@ public class MongoCollectionSync {
   }
 
   public MongoIterable<Document> find(Bson bson) {
-    MongoSubscriber<Document> subscriber = new SubscriberSync<>();
+    SubscriberSync<Document> subscriber = new MongoSubscriberSync<>();
     collection.find(bson).subscribe(subscriber);
     return subscriber.get();
   }
 
   public List<Document> listIndexes() {
-    MongoSubscriber<Document> subscriber = new SubscriberSync<>();
+    SubscriberSync<Document> subscriber = new MongoSubscriberSync<>();
     collection.listIndexes().subscribe(subscriber);
     return subscriber.get();
   }
 
   public String createIndex(Bson keys, IndexOptions indexOptions) {
-    MongoSubscriber<String> subscriber = new SubscriberSync<>();
+    SubscriberSync<String> subscriber = new MongoSubscriberSync<>();
     collection.createIndex(keys, indexOptions).subscribe(subscriber);
     return subscriber.get().first();
   }
@@ -54,45 +54,45 @@ public class MongoCollectionSync {
   }
 
   public void dropIndex(String indexName) {
-    MongoSubscriber<Void> subscriber = new SubscriberSync<>();
+    SubscriberSync<Void> subscriber = new MongoSubscriberSync<>();
     collection.dropIndex(indexName).subscribe(subscriber);
     subscriber.await();
   }
 
   //TODO probably returns a List of DeleteResults
   public DeleteResult deleteMany(Bson filter) {
-    MongoSubscriber<DeleteResult> subscriber = new SubscriberSync<>();
+    SubscriberSync<DeleteResult> subscriber = new MongoSubscriberSync<>();
     collection.deleteMany(filter).subscribe(subscriber);
     return subscriber.get().first();
   }
 
   //TODO probably returns a List of UpdateResults
   public UpdateResult updateMany(Bson filter, Bson update, UpdateOptions updateOptions) {
-    MongoSubscriber<UpdateResult> subscriber = new SubscriberSync<>();
+    SubscriberSync<UpdateResult> subscriber = new MongoSubscriberSync<>();
     collection.updateMany(filter, update, updateOptions).subscribe(subscriber);
     return subscriber.get().first();
   }
 
   public UpdateResult replaceOne(ClientSession clientSession, Bson filter, Document replacement, ReplaceOptions replaceOptions) {
-    MongoSubscriber<UpdateResult> subscriber = new SubscriberSync<>();
+    SubscriberSync<UpdateResult> subscriber = new MongoSubscriberSync<>();
     collection.replaceOne(clientSession, filter, replacement, replaceOptions).subscribe(subscriber);
     return subscriber.get().first();
   }
 
   public UpdateResult replaceOne(Bson filter, Document replacement, ReplaceOptions replaceOptions) {
-    MongoSubscriber<UpdateResult> subscriber = new SubscriberSync<>();
+    SubscriberSync<UpdateResult> subscriber = new MongoSubscriberSync<>();
     collection.replaceOne(filter, replacement, replaceOptions).subscribe(subscriber);
     return subscriber.get().first();
   }
 
   public long countDocuments(Bson filter) {
-    MongoSubscriber<Long> subscriber = new SubscriberSync<>();
+    SubscriberSync<Long> subscriber = new MongoSubscriberSync<>();
     collection.countDocuments(filter).subscribe(subscriber);
     return subscriber.getFirst();
   }
 
   public InsertOneResult insertOne(Document document) {
-    MongoSubscriber<InsertOneResult> subscriber = new SubscriberSync<>();
+    SubscriberSync<InsertOneResult> subscriber = new MongoSubscriberSync<>();
     collection.insertOne(document).subscribe(subscriber);
     return subscriber.getFirst();
   }

@@ -1,6 +1,6 @@
 package io.mongock.driver.mongodb.reactive;
 
-import io.mongock.driver.mongodb.reactive.util.SubscriberSync;
+import io.mongock.driver.mongodb.reactive.util.MongoSubscriberSync;
 import io.mongock.driver.mongodb.reactive.util.FindPublisherMock;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -26,7 +26,7 @@ public class DemoITest {
   public void test() {
 
     FindPublisherMock<String> spy = Mockito.spy(new FindPublisherMock<>(Arrays.asList("value1", "value2")));
-    SubscriberSync<String> subscriber = new SubscriberSync<>();
+    MongoSubscriberSync<String> subscriber = new MongoSubscriberSync<>();
     Mockito.doCallRealMethod().when(spy).subscribe(subscriber);
     spy.subscribe(subscriber);
     List<String> values = subscriber.get();

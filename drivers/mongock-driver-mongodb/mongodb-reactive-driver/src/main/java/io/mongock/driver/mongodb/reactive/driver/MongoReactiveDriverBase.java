@@ -6,8 +6,8 @@ import com.mongodb.reactivestreams.client.MongoClient;
 import io.mongock.api.exception.MongockException;
 import io.mongock.driver.api.driver.ChangeSetDependency;
 import io.mongock.driver.api.driver.Transactional;
-import io.mongock.driver.mongodb.reactive.util.MongoSubscriber;
 import io.mongock.driver.mongodb.reactive.util.SubscriberSync;
+import io.mongock.driver.mongodb.reactive.util.MongoSubscriberSync;
 import io.mongock.utils.annotation.NotThreadSafe;
 import org.reactivestreams.Publisher;
 
@@ -32,7 +32,7 @@ public abstract class MongoReactiveDriverBase extends MongoReactiveDriverGeneric
   @Override
   public void prepareForExecutionBlock() {
     try {
-      MongoSubscriber<ClientSession> subscriber = new SubscriberSync<>();
+      SubscriberSync<ClientSession> subscriber = new MongoSubscriberSync<>();
       mongoClient.startSession().subscribe(subscriber);
       clientSession = subscriber.getFirst();
     } catch (MongoClientException ex) {
@@ -70,8 +70,8 @@ public abstract class MongoReactiveDriverBase extends MongoReactiveDriverGeneric
     }
   }
 
-  private SubscriberSync<Void> voidSubscribe(Publisher<Void> voidPublisher) {
-    MongoSubscriber<Void> subscriber = new SubscriberSync<>();
+  private MongoSubscriberSync<Void> voidSubscribe(Publisher<Void> voidPublisher) {
+    SubscriberSync<Void> subscriber = new MongoSubscriberSync<>();
     voidPublisher.subscribe(subscriber);
     return subscriber.await();
   }

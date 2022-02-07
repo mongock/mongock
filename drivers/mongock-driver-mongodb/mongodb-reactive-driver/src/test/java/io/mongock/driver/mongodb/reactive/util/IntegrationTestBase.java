@@ -57,13 +57,13 @@ public abstract class IntegrationTestBase {
   //
   @AfterEach
   public void tearDown() {
-    SubscriberSync<DeleteResult> subscriber1 = new SubscriberSync<>();
-    SubscriberSync<DeleteResult> subscriber2 = new SubscriberSync<>();
+    MongoSubscriberSync<DeleteResult> subscriber1 = new MongoSubscriberSync<>();
+    MongoSubscriberSync<DeleteResult> subscriber2 = new MongoSubscriberSync<>();
     getDataBase().getCollection(CHANGELOG_COLLECTION_NAME).deleteMany(new Document()).subscribe(subscriber1);
     getDataBase().getCollection(LOCK_COLLECTION_NAME).deleteMany(new Document()).subscribe(subscriber2);
     subscriber1.get();
     subscriber2.get();
-    SubscriberSync<Void> subscriber3 = new SubscriberSync<>();
+    MongoSubscriberSync<Void> subscriber3 = new MongoSubscriberSync<>();
     mongoDatabase.drop().subscribe(subscriber3);
     subscriber3.get();
   }
