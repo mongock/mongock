@@ -5,6 +5,7 @@ import io.mongock.driver.core.lock.LockEntry;
 import io.mongock.driver.core.lock.LockPersistenceException;
 import io.mongock.driver.core.lock.LockRepositoryWithEntity;
 import io.mongock.driver.core.lock.LockStatus;
+import io.mongock.driver.mongodb.test.template.interfaces.MongoLockRepositoryITestInterface;
 import io.mongock.driver.mongodb.test.template.util.IntegrationTestBase;
 import io.mongock.api.exception.MongockException;
 import com.mongodb.ErrorCategory;
@@ -21,7 +22,7 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 
 
-public abstract class MongoLockRepositoryITestBase extends IntegrationTestBase {
+public abstract class MongoLockRepositoryITestBase extends IntegrationTestBase implements MongoLockRepositoryITestInterface {
 
   private static final String LOCK_COLLECTION_NAME = "mongockLock";
   private static final String LOCK_KEY = "LOCK_KEY";
@@ -65,7 +66,6 @@ public abstract class MongoLockRepositoryITestBase extends IntegrationTestBase {
     //then
     assertNotNull(result);
   }
-
 
   @Test
   public void insertUpdateShouldInsertWhenEmpty() throws LockPersistenceException, MongockException {
@@ -227,5 +227,4 @@ public abstract class MongoLockRepositoryITestBase extends IntegrationTestBase {
     repository.insertUpdate(new LockEntry(LOCK_KEY, LockStatus.LOCK_HELD.name(), "process2", new Date(currentMillis)));
   }
 
-  protected abstract void initializeRepository() ;
 }

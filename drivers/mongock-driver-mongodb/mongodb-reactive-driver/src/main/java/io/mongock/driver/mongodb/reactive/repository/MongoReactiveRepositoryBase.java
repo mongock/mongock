@@ -1,36 +1,38 @@
-package io.mongock.driver.mongodb.sync.v4.repository;
+package io.mongock.driver.mongodb.reactive.repository;
 
+import com.mongodb.client.model.IndexOptions;
+import com.mongodb.reactivestreams.client.MongoCollection;
+import io.mongock.api.exception.MongockException;
 import io.mongock.driver.api.common.EntityRepository;
 import io.mongock.driver.api.common.RepositoryIndexable;
-import io.mongock.api.exception.MongockException;
+import io.mongock.driver.mongodb.reactive.util.SubscriberSync;
+import io.mongock.driver.mongodb.reactive.util.MongoCollectionSync;
+import io.mongock.driver.mongodb.reactive.util.MongoSubscriberSync;
 import io.mongock.utils.field.FieldInstance;
-import com.mongodb.client.MongoCollection;
-import com.mongodb.client.model.IndexOptions;
 import org.bson.Document;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
-import java.util.stream.StreamSupport;
 
-public class MongoSync4RepositoryBase<DOMAIN_CLASS> implements EntityRepository<DOMAIN_CLASS, Document>, RepositoryIndexable {
+public class MongoReactiveRepositoryBase<DOMAIN_CLASS> implements EntityRepository<DOMAIN_CLASS, Document>, RepositoryIndexable {
 
-  private final static Logger logger = LoggerFactory.getLogger(MongoSync4RepositoryBase.class);
+  private final static Logger logger = LoggerFactory.getLogger(MongoReactiveRepositoryBase.class);
   private final static int INDEX_ENSURE_MAX_TRIES = 3;
 
   private final String[] uniqueFields;
   private boolean indexCreation = true;
   private boolean ensuredCollectionIndex = false;
-  protected MongoCollection<Document> collection;
+  protected MongoCollectionSync collection;
 
-  public MongoSync4RepositoryBase(MongoCollection<Document> collection, String[] uniqueFields, ReadWriteConfiguration readWriteConfiguration) {
-    this.collection = collection
+  public MongoReactiveRepositoryBase(MongoCollection<Document> collection, String[] uniqueFields, ReadWriteConfiguration readWriteConfiguration) {
+    MongoCollection<Document> enhancedCollection = collection
         .withReadConcern(readWriteConfiguration.getReadConcern())
         .withReadPreference(readWriteConfiguration.getReadPreference())
         .withWriteConcern(readWriteConfiguration.getWriteConcern());
+    this.collection = new MongoCollectionSync(enhancedCollection);
     this.uniqueFields = uniqueFields;
   }
 
@@ -70,7 +72,9 @@ public class MongoSync4RepositoryBase<DOMAIN_CLASS> implements EntityRepository<
   }
 
   private List<Document> getResidualKeys() {
-    return StreamSupport.stream(collection.listIndexes().spliterator(), false)
+    SubscriberSync<Document> subscriber = new MongoSubscriberSync<>();
+    return collection.listIndexes()
+        .stream()
         .filter(this::doesNeedToBeRemoved)
         .collect(Collectors.toList());
   }
@@ -84,9 +88,11 @@ public class MongoSync4RepositoryBase<DOMAIN_CLASS> implements EntityRepository<
   }
 
   protected boolean isRequiredIndexCreated() {
-    return StreamSupport.stream(
-        collection.listIndexes().spliterator(),
-        false)
+
+
+    SubscriberSync<Document> subscriber = new MongoSubscriberSync<>();
+    return collection.listIndexes()
+        .stream()
         .anyMatch(this::isRightIndex);
   }
 

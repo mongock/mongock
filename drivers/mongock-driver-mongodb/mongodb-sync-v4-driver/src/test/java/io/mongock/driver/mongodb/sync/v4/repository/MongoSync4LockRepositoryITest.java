@@ -4,6 +4,7 @@ package io.mongock.driver.mongodb.sync.v4.repository;
 import io.mongock.driver.mongodb.sync.v4.MongoDbSync4DriverTestAdapterImpl;
 import io.mongock.driver.mongodb.sync.v4.repository.util.RepositoryAccessorHelper;
 import io.mongock.driver.mongodb.test.template.MongoLockRepositoryITestBase;
+import io.mongock.driver.mongodb.test.template.interfaces.MongoLockRepositoryITestInterface;
 import io.mongock.driver.mongodb.test.template.util.MongoDBDriverTestAdapter;
 import io.mongock.api.exception.MongockException;
 import com.mongodb.ReadConcern;
@@ -21,7 +22,7 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
 
-public class MongoSync4LockRepositoryITest extends MongoLockRepositoryITestBase {
+public class MongoSync4LockRepositoryITest extends MongoLockRepositoryITestBase  implements MongoLockRepositoryITestInterface {
 
   private static final String LOCK_COLLECTION_NAME = "mongockLock";
 
@@ -92,7 +93,7 @@ public class MongoSync4LockRepositoryITest extends MongoLockRepositoryITestBase 
   }
 
   @Override
-  protected void initializeRepository() {
+  public void initializeRepository() {
     MongoSync4LockRepository repo = new MongoSync4LockRepository(getDataBase().getCollection(LOCK_COLLECTION_NAME));
     repo.setIndexCreation(true);
     repository = Mockito.spy(repo);
