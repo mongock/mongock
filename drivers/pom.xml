@@ -16,7 +16,7 @@
   <packaging>pom</packaging>
 
   <modules>
-    <module>mongock-driver-mongodb</module>
+    <module>mongodb</module>
   </modules>
 
 

@@ -1,14 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <parent>
-    <artifactId>mongock-driver-mongodb</artifactId>
+    <artifactId>mongodb</artifactId>
     <groupId>io.mongock</groupId>
     <version>5.0.36-SNAPSHOT</version>
   </parent>
   <modelVersion>4.0.0</modelVersion>
 
-  <name>Mongock driver for mongo-java-driver v3</name>
-  <artifactId>mongodb-v3-driver</artifactId>
+  <name>Mongock driver for mongodb-driver-sync v4</name>
+  <artifactId>mongodb-sync-v4-driver</artifactId>
   <properties>
     <java.version>1.8</java.version>
     <maven.compiler.target>1.8</maven.compiler.target>
@@ -16,7 +16,6 @@
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
     <maven.javadoc.failOnError>false</maven.javadoc.failOnError>
-
   </properties>
 
   <dependencyManagement>
@@ -46,24 +45,18 @@
     <!-- GENERAL DEPENDENCIES -->
     <dependency>
       <groupId>org.mongodb</groupId>
-      <artifactId>mongo-java-driver</artifactId>
-      <version>${mongodb-driver-3.version}</version>
+      <artifactId>mongodb-driver-sync</artifactId>
+      <version>${mongodb-sync-4.version}</version>
       <scope>provided</scope>
     </dependency>
 
     <!-- TEST -->
-<!--    <dependency>-->
-<!--      <groupId>org.slf4j</groupId>-->
-<!--      <artifactId>slf4j-simple</artifactId>-->
-<!--      <version>1.7.32</version>-->
-<!--    </dependency>-->
     <dependency>
       <groupId>io.mongock</groupId>
       <artifactId>mongodb-driver-test-template</artifactId>
       <scope>test</scope>
     </dependency>
   </dependencies>
-
 
   <build>
     <plugins>
@@ -81,4 +74,5 @@
       </plugin>
     </plugins>
   </build>
+
 </project>
