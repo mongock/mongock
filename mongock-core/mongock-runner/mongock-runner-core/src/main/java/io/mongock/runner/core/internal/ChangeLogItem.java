@@ -46,7 +46,7 @@ public class ChangeLogItem<CHANGESET extends ChangeSetItem> {
       Method rollbackBeforeMethod,
       boolean system) {
     if(!StringUtils.hasText(author)) {
-      throw new MongockException("ChangeUnit[" + changeLogClass.getName() + "] author cannot be null or empty.");
+      throw new MongockException("changeUnit[" + changeLogClass.getName() + "] author cannot be null or empty.");
     }
     ChangeSetItem changeSet = new ChangeSetItem(
         baseId,
@@ -101,7 +101,7 @@ public class ChangeLogItem<CHANGESET extends ChangeSetItem> {
                        List<CHANGESET> beforeChangeSetsItems,
                        boolean system) {
     if (id == null || id.trim().isEmpty()) {
-      throw new MongockException("ChangeUnit[" + type.getName() + "] id cannot be null or empty.");
+      throw new MongockException("changeUnit[" + type.getName() + "] id cannot be null or empty.");
     }
     this.id = id;
     this.type = type;
