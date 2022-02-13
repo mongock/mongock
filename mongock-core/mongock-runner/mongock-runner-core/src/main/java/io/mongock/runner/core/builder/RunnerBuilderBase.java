@@ -158,9 +158,9 @@ public abstract class RunnerBuilderBase<
 
   protected void beforeBuildRunner(ConnectionDriver driver) {
     if (config.getLegacyMigration() != null) {
-      DriverLegaciable legaciableDriver = this.getDriverLegaciable();
+      DriverLegaciable legaciableDriver = this.getDriverLegaciable(driver);
       if (legaciableDriver != null) {
-        config.getChangeLogsScanPackage().add(legaciableDriver.getLegacyMigrationChangeLogClass(config.getLegacyMigration().isRunAlways()).getPackage().getName());
+        config.getMigrationScanPackage().add(legaciableDriver.getLegacyMigrationChangeLogClass(config.getLegacyMigration().isRunAlways()).getPackage().getName());
         dependencyManager.addStandardDependency(
             new ChangeSetDependency(MongockConstants.LEGACY_MIGRATION_NAME, LegacyMigration.class, config.getLegacyMigration())
         );
@@ -236,7 +236,7 @@ public abstract class RunnerBuilderBase<
     return annotatedElement -> true;
   }
 
-  protected DriverLegaciable getDriverLegaciable() {
+  protected DriverLegaciable getDriverLegaciable(ConnectionDriver driver) {
     return driver != null && DriverLegaciable.class.isAssignableFrom(driver.getClass()) ? (DriverLegaciable) driver : null;
   }
 
