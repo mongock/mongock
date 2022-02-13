@@ -20,9 +20,6 @@ import io.mongock.driver.mongodb.v3.repository.ReadWriteConfiguration;
 import io.mongock.utils.annotation.NotThreadSafe;
 import org.bson.Document;
 
-import java.util.HashSet;
-import java.util.Set;
-
 @NotThreadSafe
 public abstract class MongoCore3DriverGeneric extends TransactionalConnectionDriverBase implements DriverLegaciable {
 
@@ -36,15 +33,14 @@ public abstract class MongoCore3DriverGeneric extends TransactionalConnectionDri
   private ReadConcern readConcern;
   private ReadPreference readPreference;
   protected TransactionOptions txOptions;
-  protected final MongoDatabase mongoDatabase;
 
-  protected MongoCore3DriverGeneric(MongoDatabase mongoDatabase,
-                                 long lockAcquiredForMillis,
-                                 long lockQuitTryingAfterMillis,
-                                 long lockTryFrequencyMillis) {
+  protected MongoCore3DriverGeneric(long lockAcquiredForMillis,
+                                    long lockQuitTryingAfterMillis,
+                                    long lockTryFrequencyMillis) {
     super(lockAcquiredForMillis, lockQuitTryingAfterMillis, lockTryFrequencyMillis);
-    this.mongoDatabase = mongoDatabase;
   }
+
+  protected abstract MongoDatabase getDataBase();
 
   public void setWriteConcern(WriteConcern writeConcern) {
     this.writeConcern = writeConcern;
@@ -60,7 +56,7 @@ public abstract class MongoCore3DriverGeneric extends TransactionalConnectionDri
 
   @Override
   public void runValidation() throws MongockException {
-    if (mongoDatabase == null) {
+    if (getDataBase() == null) {
       throw new MongockException("MongoDatabase cannot be null");
     }
     if (this.getLockManager() == null) {
@@ -71,7 +67,7 @@ public abstract class MongoCore3DriverGeneric extends TransactionalConnectionDri
   @Override
   protected LockRepository getLockRepository() {
     if (lockRepository == null) {
-      MongoCollection<Document> collection = mongoDatabase.getCollection(getLockRepositoryName());
+      MongoCollection<Document> collection = getDataBase().getCollection(getLockRepositoryName());
       lockRepository = new Mongo3LockRepository(collection, getReadWriteConfiguration());
       lockRepository.setIndexCreation(isIndexCreation());
     }
@@ -81,7 +77,7 @@ public abstract class MongoCore3DriverGeneric extends TransactionalConnectionDri
   @Override
   public ChangeEntryService getChangeEntryService() {
     if (changeEntryRepository == null) {
-      changeEntryRepository = new Mongo3ChangeEntryRepository(mongoDatabase.getCollection(getMigrationRepositoryName()), getReadWriteConfiguration());
+      changeEntryRepository = new Mongo3ChangeEntryRepository(getDataBase().getCollection(getMigrationRepositoryName()), getReadWriteConfiguration());
       changeEntryRepository.setIndexCreation(isIndexCreation());
     }
     return changeEntryRepository;
@@ -94,7 +90,7 @@ public abstract class MongoCore3DriverGeneric extends TransactionalConnectionDri
 
   @Override
   public void specificInitialization() {
-    dependencies.add(new ChangeSetDependency(MongoDatabase.class, mongoDatabase, true));
+    dependencies.add(new ChangeSetDependency(MongoDatabase.class, getDataBase(), true));
     dependencies.add(new ChangeSetDependency(ChangeEntryService.class, getChangeEntryService(), false));
     txOptions = TransactionOptions.builder()
         .writeConcern(getWriteConcern())
@@ -127,19 +123,19 @@ public abstract class MongoCore3DriverGeneric extends TransactionalConnectionDri
 
   /**
    * Will be removed in next major release.
-   *
+   * <p>
    * If not set already will set the writeConcern, readConcern and readPreference
    * Use instead setWriteConcern, setReadConcern and
    */
   @Deprecated
   public void setTransactionOptions(TransactionOptions txOptions) {
-    if(writeConcern == null) {
+    if (writeConcern == null) {
       setWriteConcern(txOptions.getWriteConcern());
     }
-    if(readConcern == null) {
+    if (readConcern == null) {
       setReadConcern(txOptions.getReadConcern());
     }
-    if(readPreference == null) {
+    if (readPreference == null) {
       setReadPreference(txOptions.getReadPreference());
     }
   }

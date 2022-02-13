@@ -1,13 +1,14 @@
 package io.mongock.driver.mongodb.sync.v4.driver;
 
-import io.mongock.driver.api.driver.ChangeSetDependency;
-import io.mongock.driver.api.driver.Transactional;
-import io.mongock.api.exception.MongockException;
-import io.mongock.utils.annotation.NotThreadSafe;
 import com.mongodb.MongoClientException;
 import com.mongodb.client.ClientSession;
 import com.mongodb.client.MongoClient;
+import com.mongodb.client.MongoDatabase;
 import com.mongodb.client.TransactionBody;
+import io.mongock.api.exception.MongockException;
+import io.mongock.driver.api.driver.ChangeSetDependency;
+import io.mongock.driver.api.driver.Transactional;
+import io.mongock.utils.annotation.NotThreadSafe;
 
 import java.util.Optional;
 import java.util.Set;
@@ -16,6 +17,7 @@ import java.util.Set;
 public abstract class MongoSync4DriverBase extends MongoSync4DriverGeneric {
 
   private final MongoClient mongoClient;
+  private final String databaseName;
   protected ClientSession clientSession;
 
   protected MongoSync4DriverBase(MongoClient mongoClient,
@@ -23,8 +25,14 @@ public abstract class MongoSync4DriverBase extends MongoSync4DriverGeneric {
                                  long lockAcquiredForMillis,
                                  long lockQuitTryingAfterMillis,
                                  long lockTryFrequencyMillis) {
-    super(mongoClient.getDatabase(databaseName), lockAcquiredForMillis, lockQuitTryingAfterMillis, lockTryFrequencyMillis);
+    super(lockAcquiredForMillis, lockQuitTryingAfterMillis, lockTryFrequencyMillis);
     this.mongoClient = mongoClient;
+    this.databaseName = databaseName;
+  }
+
+  @Override
+  protected MongoDatabase getDataBase() {
+    return mongoClient.getDatabase(databaseName);
   }
 
   @Override

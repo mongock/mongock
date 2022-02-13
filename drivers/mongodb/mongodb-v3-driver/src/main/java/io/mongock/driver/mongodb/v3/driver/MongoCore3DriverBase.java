@@ -1,29 +1,39 @@
 package io.mongock.driver.mongodb.v3.driver;
 
-import io.mongock.driver.api.driver.Transactional;
-import io.mongock.api.exception.MongockException;
-import io.mongock.utils.annotation.NotThreadSafe;
 import com.mongodb.MongoClientException;
 import com.mongodb.client.ClientSession;
 import com.mongodb.client.MongoClient;
+import com.mongodb.client.MongoDatabase;
 import com.mongodb.client.TransactionBody;
+import io.mongock.api.exception.MongockException;
+import io.mongock.driver.api.driver.Transactional;
+import io.mongock.utils.annotation.NotThreadSafe;
 
 import java.util.Optional;
 
 @NotThreadSafe
-public  abstract class MongoCore3DriverBase extends MongoCore3DriverGeneric {
+public abstract class MongoCore3DriverBase extends MongoCore3DriverGeneric {
 
   private final MongoClient mongoClient;
+  private final String databaseName;
   protected ClientSession clientSession;
 
   protected MongoCore3DriverBase(MongoClient mongoClient,
-                             String databaseName,
-                             long lockAcquiredForMillis,
-                             long lockQuitTryingAfterMillis,
-                             long lockTryFrequencyMillis) {
-    super(mongoClient.getDatabase(databaseName), lockAcquiredForMillis, lockQuitTryingAfterMillis, lockTryFrequencyMillis);
+                                 String databaseName,
+                                 long lockAcquiredForMillis,
+                                 long lockQuitTryingAfterMillis,
+                                 long lockTryFrequencyMillis) {
+    super(lockAcquiredForMillis, lockQuitTryingAfterMillis, lockTryFrequencyMillis);
     this.mongoClient = mongoClient;
+    this.databaseName = databaseName;
   }
+
+
+  protected MongoDatabase getDataBase() {
+    return mongoClient.getDatabase(databaseName);
+  }
+
+
 
   @Override
   public void prepareForExecutionBlock() {

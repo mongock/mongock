@@ -1,6 +1,7 @@
 package io.mongock.driver.mongodb.springdata.v3;
 
 import com.github.cloudyrock.mongock.driver.mongodb.springdata.v3.decorator.impl.MongockTemplate;
+import com.mongodb.client.MongoDatabase;
 import io.mongock.api.exception.MongockException;
 import io.mongock.driver.api.driver.ChangeSetDependency;
 import io.mongock.driver.api.driver.ChangeSetDependencyBuildable;
@@ -33,12 +34,15 @@ public abstract class SpringDataMongoV3DriverBase extends MongoSync4DriverGeneri
                                         long lockAcquiredForMillis,
                                         long lockQuitTryingAfterMillis,
                                         long lockTryFrequencyMillis) {
-    super(mongoTemplate.getDb(), lockAcquiredForMillis, lockQuitTryingAfterMillis, lockTryFrequencyMillis);
+    super(lockAcquiredForMillis, lockQuitTryingAfterMillis, lockTryFrequencyMillis);
     this.mongoTemplate = mongoTemplate;
     disableTransaction();
   }
 
-
+  @Override
+  protected MongoDatabase getDataBase() {
+    return mongoTemplate.getDb();
+  }
   @Override
   public void runValidation() throws MongockException {
     super.runValidation();

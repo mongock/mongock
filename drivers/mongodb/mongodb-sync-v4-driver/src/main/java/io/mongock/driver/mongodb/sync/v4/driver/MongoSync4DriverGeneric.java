@@ -12,7 +12,6 @@ import io.mongock.driver.api.driver.DriverLegaciable;
 import io.mongock.driver.api.entry.ChangeEntryService;
 import io.mongock.driver.core.driver.TransactionalConnectionDriverBase;
 import io.mongock.driver.core.lock.LockRepository;
-import io.mongock.driver.core.lock.LockRepositoryWithEntity;
 import io.mongock.driver.mongodb.sync.v4.changelogs.runalways.MongockSync4LegacyMigrationChangeRunAlwaysLog;
 import io.mongock.driver.mongodb.sync.v4.changelogs.runonce.MongockSync4LegacyMigrationChangeLog;
 import io.mongock.driver.mongodb.sync.v4.repository.MongoSync4ChangeEntryRepository;
@@ -20,8 +19,6 @@ import io.mongock.driver.mongodb.sync.v4.repository.MongoSync4LockRepository;
 import io.mongock.driver.mongodb.sync.v4.repository.ReadWriteConfiguration;
 import io.mongock.utils.annotation.NotThreadSafe;
 import org.bson.Document;
-
-import java.util.HashSet;
 
 @NotThreadSafe
 public abstract class MongoSync4DriverGeneric extends TransactionalConnectionDriverBase implements DriverLegaciable {
@@ -37,15 +34,14 @@ public abstract class MongoSync4DriverGeneric extends TransactionalConnectionDri
   private ReadConcern readConcern;
   private ReadPreference readPreference;
   protected TransactionOptions txOptions;
-  protected final MongoDatabase mongoDatabase;
 
-  protected MongoSync4DriverGeneric(MongoDatabase mongoDatabase,
-                                    long lockAcquiredForMillis,
+  protected MongoSync4DriverGeneric(long lockAcquiredForMillis,
                                     long lockQuitTryingAfterMillis,
                                     long lockTryFrequencyMillis) {
     super(lockAcquiredForMillis, lockQuitTryingAfterMillis, lockTryFrequencyMillis);
-    this.mongoDatabase = mongoDatabase;
   }
+
+  protected abstract MongoDatabase getDataBase();
 
 
   public void setWriteConcern(WriteConcern writeConcern) {
@@ -62,7 +58,7 @@ public abstract class MongoSync4DriverGeneric extends TransactionalConnectionDri
 
   @Override
   public void runValidation() throws MongockException {
-    if (mongoDatabase == null) {
+    if (getDataBase() == null) {
       throw new MongockException("MongoDatabase cannot be null");
     }
     if (this.getLockManager() == null) {
@@ -73,7 +69,7 @@ public abstract class MongoSync4DriverGeneric extends TransactionalConnectionDri
   @Override
   protected LockRepository getLockRepository() {
     if (lockRepository == null) {
-      MongoCollection<Document> collection = mongoDatabase.getCollection(getLockRepositoryName());
+      MongoCollection<Document> collection = getDataBase().getCollection(getLockRepositoryName());
       lockRepository = new MongoSync4LockRepository(collection, getReadWriteConfiguration());
       lockRepository.setIndexCreation(isIndexCreation());
     }
@@ -83,7 +79,7 @@ public abstract class MongoSync4DriverGeneric extends TransactionalConnectionDri
   @Override
   public ChangeEntryService getChangeEntryService() {
     if (changeEntryRepository == null) {
-      changeEntryRepository = new MongoSync4ChangeEntryRepository(mongoDatabase.getCollection(getMigrationRepositoryName()), getReadWriteConfiguration());
+      changeEntryRepository = new MongoSync4ChangeEntryRepository(getDataBase().getCollection(getMigrationRepositoryName()), getReadWriteConfiguration());
       changeEntryRepository.setIndexCreation(isIndexCreation());
     }
     return changeEntryRepository;
@@ -96,7 +92,7 @@ public abstract class MongoSync4DriverGeneric extends TransactionalConnectionDri
 
   @Override
   public void specificInitialization() {
-    dependencies.add(new ChangeSetDependency(MongoDatabase.class, mongoDatabase, true));
+    dependencies.add(new ChangeSetDependency(MongoDatabase.class, getDataBase(), true));
     dependencies.add(new ChangeSetDependency(ChangeEntryService.class, getChangeEntryService(), false));
     txOptions = TransactionOptions.builder()
         .writeConcern(getWriteConcern())
