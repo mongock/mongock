@@ -1,9 +1,11 @@
 package io.mongock.driver.mongodb.springdata.v2;
 
 import com.github.cloudyrock.mongock.driver.mongodb.springdata.v2.decorator.impl.MongockTemplate;
+import com.mongodb.client.MongoDatabase;
 import io.mongock.api.exception.MongockException;
 import io.mongock.driver.api.driver.ChangeSetDependency;
 import io.mongock.driver.api.driver.ChangeSetDependencyBuildable;
+import io.mongock.driver.api.driver.TenantSelectable;
 import io.mongock.driver.api.driver.Transactional;
 import io.mongock.driver.api.entry.ChangeEntryService;
 import io.mongock.driver.mongodb.v3.driver.MongoCore3DriverGeneric;
@@ -21,7 +23,7 @@ import org.springframework.transaction.support.DefaultTransactionDefinition;
 import java.util.Optional;
 
 @NotThreadSafe
-public  class SpringDataMongoV2DriverBase extends MongoCore3DriverGeneric {
+public abstract class SpringDataMongoV2DriverBase<SELF extends SpringDataMongoV2DriverBase<SELF>> extends MongoCore3DriverGeneric implements TenantSelectable<SELF> {
 
   protected static final Logger logger = LoggerFactory.getLogger(SpringDataMongoV2DriverBase.class);
 
@@ -29,12 +31,16 @@ public  class SpringDataMongoV2DriverBase extends MongoCore3DriverGeneric {
   protected PlatformTransactionManager txManager;
 
   protected SpringDataMongoV2DriverBase(MongoTemplate mongoTemplate,
-                                    long lockAcquiredForMillis,
-                                    long lockQuitTryingAfterMillis,
-                                    long lockTryFrequencyMillis) {
-    super(mongoTemplate.getDb(), lockAcquiredForMillis, lockQuitTryingAfterMillis, lockTryFrequencyMillis);
+                                        long lockAcquiredForMillis,
+                                        long lockQuitTryingAfterMillis,
+                                        long lockTryFrequencyMillis) {
+    super(lockAcquiredForMillis, lockQuitTryingAfterMillis, lockTryFrequencyMillis);
     this.mongoTemplate = mongoTemplate;
     disableTransaction();
+  }
+
+  protected MongoDatabase getDataBase() {
+    return mongoTemplate.getDb();
   }
 
 

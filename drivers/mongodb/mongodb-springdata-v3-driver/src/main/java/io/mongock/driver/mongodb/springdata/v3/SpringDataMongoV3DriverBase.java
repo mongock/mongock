@@ -1,9 +1,11 @@
 package io.mongock.driver.mongodb.springdata.v3;
 
 import com.github.cloudyrock.mongock.driver.mongodb.springdata.v3.decorator.impl.MongockTemplate;
+import com.mongodb.client.MongoDatabase;
 import io.mongock.api.exception.MongockException;
 import io.mongock.driver.api.driver.ChangeSetDependency;
 import io.mongock.driver.api.driver.ChangeSetDependencyBuildable;
+import io.mongock.driver.api.driver.TenantSelectable;
 import io.mongock.driver.api.driver.Transactional;
 import io.mongock.driver.api.entry.ChangeEntryService;
 import io.mongock.driver.mongodb.sync.v4.driver.MongoSync4DriverGeneric;
@@ -21,7 +23,7 @@ import org.springframework.transaction.support.DefaultTransactionDefinition;
 import java.util.Optional;
 
 @NotThreadSafe
-public abstract class SpringDataMongoV3DriverBase extends MongoSync4DriverGeneric {
+public abstract class SpringDataMongoV3DriverBase<SELF extends SpringDataMongoV3DriverBase<SELF>> extends MongoSync4DriverGeneric implements TenantSelectable<SELF> {
 
   protected static final Logger logger = LoggerFactory.getLogger(SpringDataMongoV3DriverBase.class);
 
@@ -32,12 +34,15 @@ public abstract class SpringDataMongoV3DriverBase extends MongoSync4DriverGeneri
                                         long lockAcquiredForMillis,
                                         long lockQuitTryingAfterMillis,
                                         long lockTryFrequencyMillis) {
-    super(mongoTemplate.getDb(), lockAcquiredForMillis, lockQuitTryingAfterMillis, lockTryFrequencyMillis);
+    super(lockAcquiredForMillis, lockQuitTryingAfterMillis, lockTryFrequencyMillis);
     this.mongoTemplate = mongoTemplate;
     disableTransaction();
   }
 
-
+  @Override
+  protected MongoDatabase getDataBase() {
+    return mongoTemplate.getDb();
+  }
   @Override
   public void runValidation() throws MongockException {
     super.runValidation();
