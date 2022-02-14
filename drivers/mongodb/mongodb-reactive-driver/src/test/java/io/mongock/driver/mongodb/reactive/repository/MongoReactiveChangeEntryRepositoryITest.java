@@ -35,6 +35,24 @@ public class MongoReactiveChangeEntryRepositoryITest extends IntegrationTestBase
     repository.initialize();
   }
 
+
+
+
+  @Test
+  public void shouldPassedReadWriteConcerns_whenCreating_ifConfigurationIsPassed() {
+
+    //given
+    WriteConcern expectedWriteConcern = WriteConcern.W1;
+    ReadConcern expectedReadConcern = ReadConcern.LINEARIZABLE;
+    ReadPreference expectedReadPreference = ReadPreference.nearest();
+    ReadWriteConfiguration readWriteConfiguration = new ReadWriteConfiguration(expectedWriteConcern, expectedReadConcern, expectedReadPreference);
+
+    //then
+    testReadWriteConcern(expectedWriteConcern, expectedReadConcern, expectedReadPreference, readWriteConfiguration);
+  }
+
+  //TODO THIS SHOULD BE MOVED TO MongoChangeEntryRepositoryITestBase FOR REUSE
+
   @Test
   public void shouldCreateUniqueIndex_whenEnsureIndex_IfNotCreatedYet() throws MongockException {
     initializeRepository(true);
@@ -62,39 +80,10 @@ public class MongoReactiveChangeEntryRepositoryITest extends IntegrationTestBase
     verify(repository, times(0)).dropIndex(new Document());
   }
 
-  //TODO THIS SHOULD BE MOVED TO MongoChangeEntryRepositoryITestBase FOR REUSE
   @Test
   public void shouldCreateDefaultReadWriteConcerns_whenCreating_ifNoParams() {
     //given then
     testReadWriteConcern(WriteConcern.MAJORITY.withJournal(true), ReadConcern.MAJORITY, ReadPreference.primary(), null);
-  }
-
-  @Test
-  public void shouldPassedReadWriteConcerns_whenCreating_ifConfigurationIsPassed() {
-
-    //given
-    WriteConcern expectedWriteConcern = WriteConcern.W1;
-    ReadConcern expectedReadConcern = ReadConcern.LINEARIZABLE;
-    ReadPreference expectedReadPreference = ReadPreference.nearest();
-    ReadWriteConfiguration readWriteConfiguration = new ReadWriteConfiguration(expectedWriteConcern, expectedReadConcern, expectedReadPreference);
-
-    //then
-    testReadWriteConcern(expectedWriteConcern, expectedReadConcern, expectedReadPreference, readWriteConfiguration);
-  }
-
-  private void testReadWriteConcern(WriteConcern expectedWriteConcern, ReadConcern expectedReadConcern, ReadPreference expectedReadPreference, ReadWriteConfiguration readWriteConfiguration) {
-    MongoReactiveLockRepository repo;
-    if(readWriteConfiguration != null) {
-      repo = new MongoReactiveLockRepository(getDataBase().getCollection(LOCK_COLLECTION_NAME), readWriteConfiguration);
-      repo.setIndexCreation(true);
-    } else {
-      repo = new MongoReactiveLockRepository(getDataBase().getCollection(LOCK_COLLECTION_NAME));
-      repo.setIndexCreation(true);
-    }
-    MongoCollection<Document> collection = RepositoryAccessorHelper.getCollection(repo).getCollection();
-    assertEquals(expectedWriteConcern, collection.getWriteConcern());
-    assertEquals(expectedReadConcern, collection.getReadConcern());
-    assertEquals(expectedReadPreference, collection.getReadPreference());
   }
 
 
@@ -109,9 +98,26 @@ public class MongoReactiveChangeEntryRepositoryITest extends IntegrationTestBase
     getDefaultAdapter().createIndex(getIndexDocument(new String[]{"executionId", "author", "changeId"}), new IndexOptions().unique(true));
     initializeRepository(false);
   }
+
   @Override
   protected MongoDBDriverTestAdapter getAdapter(String collectionName) {
     return new MongoDbReactiveDriverTestAdapterImpl(getDataBase().getCollection(collectionName));
+  }
+
+
+  private void testReadWriteConcern(WriteConcern expectedWriteConcern, ReadConcern expectedReadConcern, ReadPreference expectedReadPreference, ReadWriteConfiguration readWriteConfiguration) {
+    MongoReactiveLockRepository repo;
+    if(readWriteConfiguration != null) {
+      repo = new MongoReactiveLockRepository(getDataBase().getCollection(LOCK_COLLECTION_NAME), readWriteConfiguration);
+      repo.setIndexCreation(true);
+    } else {
+      repo = new MongoReactiveLockRepository(getDataBase().getCollection(LOCK_COLLECTION_NAME));
+      repo.setIndexCreation(true);
+    }
+    MongoCollection<Document> collection = RepositoryAccessorHelper.getCollection(repo).getCollection();
+    assertEquals(expectedWriteConcern, collection.getWriteConcern());
+    assertEquals(expectedReadConcern, collection.getReadConcern());
+    assertEquals(expectedReadPreference, collection.getReadPreference());
   }
 
   protected Document getIndexDocument(String[] uniqueFields) {

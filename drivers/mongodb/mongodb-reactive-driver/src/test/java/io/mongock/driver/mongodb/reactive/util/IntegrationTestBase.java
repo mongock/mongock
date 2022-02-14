@@ -38,19 +38,8 @@ public abstract class IntegrationTestBase {
     mongoDatabase = mongoClient.getDatabase(DEFAULT_DATABASE_NAME);
   }
 
-//  @AfterAll
-//  public void removeContainerForAll() {
-//    mongo.close();
-//  }
-
-  //
   @BeforeEach
   public final void setUpParent() {
-//    MongoClientSettings settings = MongoClientSettings.builder()
-//        .writeConcern(getDefaultConnectionWriteConcern())
-//        .applyConnectionString(new ConnectionString(String.format("mongodb://%s:%d", mongo.getContainerIpAddress(), mongo.getFirstMappedPort())))
-//        .build();
-//    mongoClient = MongoClients.create(settings);
     mongoDatabase = mongoClient.getDatabase(DEFAULT_DATABASE_NAME);
 
   }
