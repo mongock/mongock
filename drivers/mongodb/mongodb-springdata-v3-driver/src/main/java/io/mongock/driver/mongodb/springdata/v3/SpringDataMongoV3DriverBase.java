@@ -5,7 +5,7 @@ import com.mongodb.client.MongoDatabase;
 import io.mongock.api.exception.MongockException;
 import io.mongock.driver.api.driver.ChangeSetDependency;
 import io.mongock.driver.api.driver.ChangeSetDependencyBuildable;
-import io.mongock.driver.api.driver.Selecteable;
+import io.mongock.driver.api.driver.TenantSelectable;
 import io.mongock.driver.api.driver.Transactional;
 import io.mongock.driver.api.entry.ChangeEntryService;
 import io.mongock.driver.mongodb.sync.v4.driver.MongoSync4DriverGeneric;
@@ -23,7 +23,7 @@ import org.springframework.transaction.support.DefaultTransactionDefinition;
 import java.util.Optional;
 
 @NotThreadSafe
-public abstract class SpringDataMongoV3DriverBase extends MongoSync4DriverGeneric implements Selecteable {
+public abstract class SpringDataMongoV3DriverBase<SELF extends SpringDataMongoV3DriverBase<SELF>> extends MongoSync4DriverGeneric implements TenantSelectable<SELF> {
 
   protected static final Logger logger = LoggerFactory.getLogger(SpringDataMongoV3DriverBase.class);
 

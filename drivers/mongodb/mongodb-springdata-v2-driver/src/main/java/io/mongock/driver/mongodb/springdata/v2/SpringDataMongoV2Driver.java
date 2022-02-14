@@ -9,7 +9,7 @@ import static io.mongock.utils.Constants.DEFAULT_QUIT_TRYING_AFTER_MILLIS;
 import static io.mongock.utils.Constants.DEFAULT_TRY_FREQUENCY_MILLIS;
 
 @NotThreadSafe
-public class SpringDataMongoV2Driver extends SpringDataMongoV2DriverBase {
+public class SpringDataMongoV2Driver extends SpringDataMongoV2DriverBase<SpringDataMongoV2Driver> {
 
   protected SpringDataMongoV2Driver(MongoTemplate mongoTemplate,
                                     long lockAcquiredForMillis,
@@ -48,5 +48,17 @@ public class SpringDataMongoV2Driver extends SpringDataMongoV2DriverBase {
         timeService.minutesToMillis(lockAcquiredForMinutes),
         timeService.minutesToMillis(maxWaitingForLockMinutes * maxTries),
         1000L);
+  }
+
+  @Override
+  public SpringDataMongoV2Driver copy() {
+    SpringDataMongoV2Driver driver = new SpringDataMongoV2Driver(mongoTemplate, lockAcquiredForMillis, lockQuitTryingAfterMillis, lockTryFrequencyMillis);
+    driver.setIndexCreation(indexCreation);
+    if(isTransactionable()) {
+      driver.enableTransaction();
+    } else {
+      driver.disableTransaction();
+    }
+    return driver;
   }
 }
