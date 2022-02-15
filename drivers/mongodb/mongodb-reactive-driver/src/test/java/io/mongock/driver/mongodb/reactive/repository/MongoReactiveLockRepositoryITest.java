@@ -64,7 +64,6 @@ public class MongoReactiveLockRepositoryITest extends IntegrationTestBase implem
   // TODO TO REUSE
 
   @Test
-  @DisplayName("SHOULD create unique index WHEN ensureIndex=true IF index not created")
   public void shouldCreateUniqueIndex_whenEnsureIndex_IfNotCreatedYet() throws MongockException {
     initializeRepository();
     //then
@@ -74,7 +73,6 @@ public class MongoReactiveLockRepositoryITest extends IntegrationTestBase implem
   }
 
   @Test
-  @DisplayName("SHOULD NO create unique index WHEN ensureIndex=true IF index created")
   public void shouldNoCreateUniqueIndex_whenEnsureIndex_IfAlreadyCreated() throws MongockException {
     initializeRepository();
 
@@ -97,7 +95,6 @@ public class MongoReactiveLockRepositoryITest extends IntegrationTestBase implem
   }
 
   @Test
-  @DisplayName("Key should be unique")
   public void ensureKeyUniqueness() {
     initializeRepository();
     //inserting lock with key1: fine
@@ -118,7 +115,6 @@ public class MongoReactiveLockRepositoryITest extends IntegrationTestBase implem
   }
 
   @Test
-  @DisplayName("SHOULD return lock WHEN findByKey IF it's present in DB")
   public void shouldReturnLockWhenFindByKeyIfItIsInDB() throws LockPersistenceException, MongockException {
     initializeRepository();
     //given
@@ -137,7 +133,6 @@ public class MongoReactiveLockRepositoryITest extends IntegrationTestBase implem
   }
 
   @Test
-  @DisplayName("SHOULD insert LOCK WHEN insertUpdate IF collection/table is empty")
   public void insertUpdateShouldInsertWhenEmpty() throws LockPersistenceException, MongockException {
     initializeRepository();
 
@@ -153,7 +148,6 @@ public class MongoReactiveLockRepositoryITest extends IntegrationTestBase implem
   }
 
   @Test
-  @DisplayName("SHOULD update WHEN insertUpdate IF new lock and lock in DB have same key AND owner")
   public void insertUpdateShouldUpdateWhenSameOwner() throws LockPersistenceException, MongockException {
     initializeRepository();
     //given
@@ -173,7 +167,6 @@ public class MongoReactiveLockRepositoryITest extends IntegrationTestBase implem
   }
 
   @Test
-  @DisplayName("SHOULD replace WHEN insertUpdate IF new lock and lock ind DB have same key AND different owner AND lock in DB is expired")
   public void insertUpdateShouldUpdateWhenLockIndDbIsExpired() throws LockPersistenceException, MongockException {
     initializeRepository();
     //given
@@ -194,7 +187,6 @@ public class MongoReactiveLockRepositoryITest extends IntegrationTestBase implem
   }
 
   @Test
-  @DisplayName("SHOULD throw exception WHEN insertUpdate IF new lock and lock ind DB have same key AND different owner AND lock in DB is NOT expired ")
   public void insertUpdateShouldThrowExceptionWhenLockIsInDBWIthDifferentOwnerAndNotExpired() throws LockPersistenceException, MongockException {
     initializeRepository();
     //given
@@ -210,7 +202,6 @@ public class MongoReactiveLockRepositoryITest extends IntegrationTestBase implem
   }
 
   @Test
-  @DisplayName("SHOULD delete lock WHEN remove IF lock in DB belongs to the given owner")
   public void removeShouldRemoveWhenSameOwner() throws LockPersistenceException, MongockException {
     initializeRepository();
     //given
@@ -232,7 +223,6 @@ public class MongoReactiveLockRepositoryITest extends IntegrationTestBase implem
   }
 
   @Test
-  @DisplayName("SHOULD NOT delete lock WHEN remove IF lock does NOT belong to the given owner")
   public void removeShouldNotRemoveWhenDifferentOwner() throws LockPersistenceException, MongockException {
     initializeRepository();
     //given
@@ -255,7 +245,6 @@ public class MongoReactiveLockRepositoryITest extends IntegrationTestBase implem
   }
 
   @Test
-  @DisplayName("SHOULD NOT insert WHEN updateIfSameOwner IF there is no lock in DB for the given key and owner")
   public void updateIfSameOwnerShouldNotInsertWhenEmpty() throws LockPersistenceException, MongockException {
     initializeRepository();
     //when
@@ -265,7 +254,6 @@ public class MongoReactiveLockRepositoryITest extends IntegrationTestBase implem
   }
 
   @Test
-  @DisplayName("SHOULD NOT update WHEN updateIfSameOwner IF current lock in DB is expired BUT new lock and lock in DB don't share owner")
   public void updateIfSameOwnerShouldNotUpdateWhenExpiresAtIsGraterThanSavedButOtherOwner() throws LockPersistenceException, MongockException {
     initializeRepository();
     //given
@@ -280,7 +268,6 @@ public class MongoReactiveLockRepositoryITest extends IntegrationTestBase implem
   }
 
   @Test
-  @DisplayName("SHOULD update WHEN updateIfSameOwner IF new lock and lock in DB  share owner")
   public void updateIfSameOwnerShouldUpdateWhenSameOwner() throws LockPersistenceException, MongockException {
     initializeRepository();
     //given
@@ -300,7 +287,6 @@ public class MongoReactiveLockRepositoryITest extends IntegrationTestBase implem
   }
 
   @Test
-  @DisplayName("SHOULD NOT update WHEN updateIfSameOwner IF new lock and lock in DB don't have same owner and lock in DB is not expired")
   public void updateIfSameOwnerShouldNotUpdateWhenDifferentOwnerAndExpiresAtIsNotGrater() throws LockPersistenceException, MongockException {
     repository = new MongoReactiveLockRepository(getDataBase().getCollection(LOCK_COLLECTION_NAME));
     repository.setIndexCreation(true);
