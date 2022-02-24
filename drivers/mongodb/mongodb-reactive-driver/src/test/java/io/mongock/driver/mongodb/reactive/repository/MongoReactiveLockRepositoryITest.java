@@ -13,11 +13,13 @@ import io.mongock.driver.core.lock.LockEntry;
 import io.mongock.driver.core.lock.LockPersistenceException;
 import io.mongock.driver.core.lock.LockStatus;
 import io.mongock.driver.mongodb.reactive.MongoDbReactiveDriverTestAdapterImpl;
+import io.mongock.driver.mongodb.reactive.repository.template.LockRepositoryITestBase;
 import io.mongock.driver.mongodb.reactive.util.IntegrationTestBase;
 import io.mongock.driver.mongodb.reactive.util.MongoCollectionSync;
 import io.mongock.driver.mongodb.reactive.util.MongoDBDriverTestAdapter;
 import io.mongock.driver.mongodb.reactive.util.RepositoryAccessorHelper;
 import org.bson.Document;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
@@ -34,11 +36,32 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
 
-public class MongoReactiveLockRepositoryITest extends IntegrationTestBase {
+public class MongoReactiveLockRepositoryITest extends IntegrationTestBase implements LockRepositoryITestBase {
 
   private static final String LOCK_KEY = "LOCK_KEY";
 
   protected MongoReactiveLockRepository repository;
+
+  @Test
+  public void shouldCreateDefaultReadWriteConcerns_whenCreating_ifNoParams() {
+    //given then
+    testReadWriteConcern(WriteConcern.MAJORITY.withJournal(true), ReadConcern.MAJORITY, ReadPreference.primary(), null);
+  }
+
+  @Test
+  public void shouldPassedReadWriteConcerns_whenCreating_ifConfigurationIsPassed() {
+
+    //given
+    WriteConcern expectedWriteConcern = WriteConcern.W1;
+    ReadConcern expectedReadConcern = ReadConcern.LINEARIZABLE;
+    ReadPreference expectedReadPreference = ReadPreference.nearest();
+    ReadWriteConfiguration readWriteConfiguration = new ReadWriteConfiguration(expectedWriteConcern, expectedReadConcern, expectedReadPreference);
+
+    //then
+    testReadWriteConcern(expectedWriteConcern, expectedReadConcern, expectedReadPreference, readWriteConfiguration);
+  }
+
+  // TODO TO REUSE
 
   @Test
   public void shouldCreateUniqueIndex_whenEnsureIndex_IfNotCreatedYet() throws MongockException {
@@ -48,7 +71,6 @@ public class MongoReactiveLockRepositoryITest extends IntegrationTestBase {
     // and not
     verify(repository, times(0)).dropIndex(any(Document.class));
   }
-
 
   @Test
   public void shouldNoCreateUniqueIndex_whenEnsureIndex_IfAlreadyCreated() throws MongockException {
@@ -72,26 +94,6 @@ public class MongoReactiveLockRepositoryITest extends IntegrationTestBase {
     verify((MongoReactiveLockRepository) repository, times(0)).dropIndex(new Document());
   }
 
-  //TODO THIS SHOULD BE MOVED TO MongoChangeEntryRepositoryITestBase FOR REUSE
-  @Test
-  public void shouldCreateDefaultReadWriteConcerns_whenCreating_ifNoParams() {
-    //given then
-    testReadWriteConcern(WriteConcern.MAJORITY.withJournal(true), ReadConcern.MAJORITY, ReadPreference.primary(), null);
-  }
-
-  @Test
-  public void shouldPassedReadWriteConcerns_whenCreating_ifConfigurationIsPassed() {
-
-    //given
-    WriteConcern expectedWriteConcern = WriteConcern.W1;
-    ReadConcern expectedReadConcern = ReadConcern.LINEARIZABLE;
-    ReadPreference expectedReadPreference = ReadPreference.nearest();
-    ReadWriteConfiguration readWriteConfiguration = new ReadWriteConfiguration(expectedWriteConcern, expectedReadConcern, expectedReadPreference);
-
-    //then
-    testReadWriteConcern(expectedWriteConcern, expectedReadConcern, expectedReadPreference, readWriteConfiguration);
-  }
-
   @Test
   public void ensureKeyUniqueness() {
     initializeRepository();
@@ -113,7 +115,7 @@ public class MongoReactiveLockRepositoryITest extends IntegrationTestBase {
   }
 
   @Test
-  public void findByKeyShouldReturnLockWhenThereIsOne() throws LockPersistenceException, MongockException {
+  public void shouldReturnLockWhenFindByKeyIfItIsInDB() throws LockPersistenceException, MongockException {
     initializeRepository();
     //given
     MongoCollectionSync collection = new MongoCollectionSync(getDataBase().getCollection(LOCK_COLLECTION_NAME));
@@ -146,26 +148,6 @@ public class MongoReactiveLockRepositoryITest extends IntegrationTestBase {
   }
 
   @Test
-  public void insertUpdateShouldUpdateWhenExpiresAtIsGraterThanSaved() throws LockPersistenceException, MongockException {
-    initializeRepository();
-    //given
-    final long currentMillis = System.currentTimeMillis();
-    repository
-        .insertUpdate(new LockEntry(LOCK_KEY, LockStatus.LOCK_HELD.name(), "process1", new Date(currentMillis - 1000)));
-
-    //when
-    Date expiresAtExpected = new Date();
-    repository.insertUpdate(new LockEntry(LOCK_KEY, LockStatus.LOCK_HELD.name(), "process2", expiresAtExpected));
-
-    //then
-    MongoCollectionSync mongoCollection = new MongoCollectionSync(getDataBase().getCollection(LOCK_COLLECTION_NAME));
-    List<Document> result = mongoCollection.find(new Document().append("key", LOCK_KEY));
-    assertNotNull(result.get(0));
-    assertEquals(expiresAtExpected, result.get(0).get("expiresAt"));
-
-  }
-
-  @Test
   public void insertUpdateShouldUpdateWhenSameOwner() throws LockPersistenceException, MongockException {
     initializeRepository();
     //given
@@ -182,6 +164,26 @@ public class MongoReactiveLockRepositoryITest extends IntegrationTestBase {
     List<Document> result = mongoCollection.find(new Document().append("key", LOCK_KEY));
     assertNotNull(result.get(0));
     assertEquals(expiresAtExpected, result.get(0).get("expiresAt"));
+  }
+
+  @Test
+  public void insertUpdateShouldUpdateWhenLockIndDbIsExpired() throws LockPersistenceException, MongockException {
+    initializeRepository();
+    //given
+    final long currentMillis = System.currentTimeMillis();
+    repository
+        .insertUpdate(new LockEntry(LOCK_KEY, LockStatus.LOCK_HELD.name(), "process1", new Date(currentMillis - 1000)));
+
+    //when
+    Date expiresAtExpected = new Date();
+    repository.insertUpdate(new LockEntry(LOCK_KEY, LockStatus.LOCK_HELD.name(), "process2", expiresAtExpected));
+
+    //then
+    MongoCollectionSync mongoCollection = new MongoCollectionSync(getDataBase().getCollection(LOCK_COLLECTION_NAME));
+    List<Document> result = mongoCollection.find(new Document().append("key", LOCK_KEY));
+    assertNotNull(result.get(0));
+    assertEquals(expiresAtExpected, result.get(0).get("expiresAt"));
+
   }
 
   @Test
@@ -298,6 +300,13 @@ public class MongoReactiveLockRepositoryITest extends IntegrationTestBase {
     // when
     assertThrows(LockPersistenceException.class, () -> repository.insertUpdate(new LockEntry(LOCK_KEY, LockStatus.LOCK_HELD.name(), "process2", new Date(currentMillis))));
   }
+
+
+
+
+
+
+
 
   private void testReadWriteConcern(WriteConcern expectedWriteConcern, ReadConcern expectedReadConcern, ReadPreference expectedReadPreference, ReadWriteConfiguration readWriteConfiguration) {
     MongoReactiveLockRepository repo;

@@ -20,7 +20,6 @@ import io.mongock.driver.mongodb.reactive.MongoDbReactiveDriverTestAdapterImpl;
 import io.mongock.runner.core.executor.MongockRunner;
 import io.mongock.runner.test.TestMongock;
 import org.bson.Document;
-import org.junit.Assert;
 import org.junit.jupiter.api.Test;
 
 import java.lang.reflect.Method;
@@ -79,7 +78,7 @@ public class MongoReactiveDriverITest extends IntegrationTestBase {
     runChanges(getDriverWithTransactionDisabled(), WithRunAlways.class, executionId);
     checkChanges(WithRunAlways.class, CHANGELOG_COLLECTION_NAME, Collections.singletonList(changeEntry.getString(KEY_CHANGE_ID)), false, executionId);
     MongoCollectionSync collection = new MongoCollectionSync(getDataBase().getCollection(CHANGELOG_COLLECTION_NAME));
-    Assert.assertNotNull(collection.find(new Document()
+    assertNotNull(collection.find(new Document()
         .append(KEY_EXECUTION_ID, ANY_EXECUTION_ID)
         .append(KEY_AUTHOR, TEST_USER)
         .append(KEY_CHANGE_ID, METHOD_PREFIX + "0")).first());
@@ -155,7 +154,7 @@ public class MongoReactiveDriverITest extends IntegrationTestBase {
         .addDependency(CallVerifier.class, callVerifier)
         .buildRunner()
         .execute();
-    Assert.assertEquals(1, callVerifier.getCounter());
+    assertEquals(1, callVerifier.getCounter());
   }
 
   @Test
@@ -168,7 +167,7 @@ public class MongoReactiveDriverITest extends IntegrationTestBase {
         .addDependency(MongoDatabase.class, mock(MongoDatabase.class))// shouldn't use this, the one from the connector instead
         .buildRunner()
         .execute();
-    Assert.assertEquals(1, callVerifier.getCounter());
+    assertEquals(1, callVerifier.getCounter());
   }
 
   @Test
@@ -282,14 +281,14 @@ public class MongoReactiveDriverITest extends IntegrationTestBase {
         String changeSetMethod = change.get(KEY_CHANGE_SET_METHOD, String.class);
         Long executionMillis = change.get(KEY_EXECUTION_MILLIS, Long.class);
         Map metadataResult = change.get(KEY_METADATA, Map.class);
-        Assert.assertNotNull(executionIdChange);
-        Assert.assertEquals("method_" + i, changeId);
-        Assert.assertEquals(TEST_USER, author);
-        Assert.assertEquals((ignoredOrRunAlwaysChangeIds.contains(changeId) ? ChangeState.IGNORED : ChangeState.EXECUTED).name(), state);
-        Assert.assertNotNull(timestamp);
-        Assert.assertEquals(changeLogClass.getName(), changeLogClassInstance);
-        Assert.assertEquals("method_" + i, changeSetMethod);
-        Assert.assertNotNull(executionMillis);
+        assertNotNull(executionIdChange);
+        assertEquals("method_" + i, changeId);
+        assertEquals(TEST_USER, author);
+        assertEquals((ignoredOrRunAlwaysChangeIds.contains(changeId) ? ChangeState.IGNORED : ChangeState.EXECUTED).name(), state);
+        assertNotNull(timestamp);
+        assertEquals(changeLogClass.getName(), changeLogClassInstance);
+        assertEquals("method_" + i, changeSetMethod);
+        assertNotNull(executionMillis);
         checkMetadata(metadataResult);
       }
 
@@ -320,12 +319,12 @@ public class MongoReactiveDriverITest extends IntegrationTestBase {
 
 
   private void checkMetadata(Map metadataResult) {
-    Assert.assertEquals("string_value", metadataResult.get("string_key"));
-    Assert.assertEquals(10, metadataResult.get("integer_key"));
-    Assert.assertEquals(11.11F, (Double) metadataResult.get("float_key"), 0.01);
-    Assert.assertEquals(12.12D, (Double) metadataResult.get("double_key"), 0.01);
-    Assert.assertEquals(13L, metadataResult.get("long_key"));
-    Assert.assertEquals(true, metadataResult.get("boolean_key"));
+    assertEquals("string_value", metadataResult.get("string_key"));
+    assertEquals(10, metadataResult.get("integer_key"));
+    assertEquals(11.11F, (Double) metadataResult.get("float_key"), 0.01);
+    assertEquals(12.12D, (Double) metadataResult.get("double_key"), 0.01);
+    assertEquals(13L, metadataResult.get("long_key"));
+    assertEquals(true, metadataResult.get("boolean_key"));
   }
   
   
