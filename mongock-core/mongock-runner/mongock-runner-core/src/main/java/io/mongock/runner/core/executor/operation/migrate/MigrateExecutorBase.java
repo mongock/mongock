@@ -1,4 +1,4 @@
-package io.mongock.runner.core.executor.operation.change;
+package io.mongock.runner.core.executor.operation.migrate;
 
 import com.google.gson.Gson;
 import io.mongock.api.config.TransactionStrategy;
@@ -44,16 +44,16 @@ import static io.mongock.driver.api.entry.ChangeType.BEFORE_EXECUTION;
 import static io.mongock.driver.api.entry.ChangeType.EXECUTION;
 
 @NotThreadSafe
-public abstract class MigrationExecutorBase<CONFIG extends ChangeExecutorConfiguration> implements Executor {
+public abstract class MigrateExecutorBase<CONFIG extends ChangeExecutorConfiguration> implements Executor {
 
-  private static final Logger logger = LoggerFactory.getLogger(MigrationExecutorBase.class);
+  private static final Logger logger = LoggerFactory.getLogger(MigrateExecutorBase.class);
 
   protected final Boolean globalTransactionEnabled;
   protected final Deque<Triple<Object, ChangeSetItem, Exception>> changeSetsToRollBack = new ArrayDeque<>();
   protected final ConnectionDriver driver;
   protected final String serviceIdentifier;
   protected final boolean trackIgnored;
-  protected final Set<ChangeLogItem> changeLogs;
+  protected final Set<ChangeLogItem> fetchedChangeLogs;
   protected final Map<String, Object> metadata;
   private final ChangeLogRuntime changeLogRuntime;
   protected boolean executionInProgress = false;
@@ -62,7 +62,7 @@ public abstract class MigrationExecutorBase<CONFIG extends ChangeExecutorConfigu
   protected List<ChangeEntryExecuted> executedChangeEntries = null;
 
 
-  public MigrationExecutorBase(String executionId,
+  public MigrateExecutorBase(String executionId,
                                Set<ChangeLogItem> changeLogs,
                                ConnectionDriver driver,
                                ChangeLogRuntime changeLogRuntime,
@@ -73,7 +73,7 @@ public abstract class MigrationExecutorBase<CONFIG extends ChangeExecutorConfigu
     this.metadata = config.getMetadata();
     this.serviceIdentifier = config.getServiceIdentifier();
     this.trackIgnored = config.isTrackIgnored();
-    this.changeLogs = changeLogs;
+    this.fetchedChangeLogs = changeLogs;
     this.globalTransactionEnabled = config.getTransactionEnabled().orElse(null);
     this.transactionStrategy = config.getTransactionStrategy();
   }
@@ -86,6 +86,8 @@ public abstract class MigrationExecutorBase<CONFIG extends ChangeExecutorConfigu
   @Override
   public Boolean executeMigration() {
     initializationAndValidation();
+    // prepare changeLogs to filter which ones require to be rolled back
+    Collection<ChangeLogItem> changeLogs = this.prepareChangeLogs(fetchedChangeLogs);
     try (LockManager lockManager = driver.getLockManager()) {
       // load executed changeEntries to check if any of the changeSets need to be executed
       loadExecutedChangeEntries();
@@ -105,7 +107,12 @@ public abstract class MigrationExecutorBase<CONFIG extends ChangeExecutorConfigu
       logger.info("Mongock has finished");
     }
   }
-
+  
+  protected Collection<ChangeLogItem> prepareChangeLogs(Collection<ChangeLogItem> changeLogs) {
+    // By default returns all, the executor will process all of them.
+    return changeLogs;
+  }
+  
   protected void processMigration(Collection<ChangeLogItem> changeLogs, String executionId, String executionHostname) {
     prepareForStageExecutionIfApply(isStrategyPerMigration());
     driver.getTransactioner()

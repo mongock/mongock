@@ -7,7 +7,7 @@ import io.mongock.driver.api.lock.LockCheckException;
 import io.mongock.runner.core.event.EventPublisher;
 import io.mongock.runner.core.event.result.MigrationSuccessResult;
 import io.mongock.runner.core.executor.changelog.ChangeLogService;
-import io.mongock.runner.core.executor.operation.change.MigrationExecutor;
+import io.mongock.runner.core.executor.operation.migrate.MigrateAllExecutor;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
@@ -30,7 +30,7 @@ public class MongockRunnerTest {
   @Test
   public void shouldNotBeExecutedNorEventPublished_IfDisabled() {
 
-    Executor executor = mock(MigrationExecutor.class);
+    Executor executor = mock(MigrateAllExecutor.class);
     ChangeLogService changeLogService = mock(ChangeLogService.class);
 
 
@@ -48,7 +48,7 @@ public class MongockRunnerTest {
   @Test(expected = MongockException.class)
   public void shouldPropagateException_IfFExecuteMigrationFails() {
 
-    Executor executor = mock(MigrationExecutor.class);
+    Executor executor = mock(MigrateAllExecutor.class);
     ChangeLogService changeLogService = mock(ChangeLogService.class);
 
     doThrow(MongockException.class).when(executor)
@@ -66,7 +66,7 @@ public class MongockRunnerTest {
   @Test(expected = MongockException.class)
   public void shouldPropagateMongockException_EvenWhenThrowExIfCannotLock_IfMigrationExecutionFails() {
 
-    Executor executor = mock(MigrationExecutor.class);
+    Executor executor = mock(MigrateAllExecutor.class);
     ChangeLogService changeLogService = mock(ChangeLogService.class);
 
     doThrow(MongockException.class).when(executor)
@@ -80,7 +80,7 @@ public class MongockRunnerTest {
   @Test(expected = MongockException.class)
   public void shouldPropagateLockExceptionWrappedInMongockException_whenExecuteMigrationFails_IfThrowExceptionIfCannotObtainLockTrue() {
 
-    Executor executor = mock(MigrationExecutor.class);
+    Executor executor = mock(MigrateAllExecutor.class);
     ChangeLogService changeLogService = mock(ChangeLogService.class);
 
     doThrow(LockCheckException.class).when(executor)
@@ -94,7 +94,7 @@ public class MongockRunnerTest {
   @Test
   public void shouldNotPropagateLockException_whenExecuteMigrationFails_IfThrowExceptionIfCannotObtainLockFalse() {
 
-    Executor executor = mock(MigrationExecutor.class);
+    Executor executor = mock(MigrateAllExecutor.class);
     ChangeLogService changeLogService = mock(ChangeLogService.class);
 
     doThrow(LockCheckException.class).when(executor)
@@ -109,7 +109,7 @@ public class MongockRunnerTest {
   @Test(expected = MongockException.class)
   public void shouldWrapGenericExceptionInMongockException() {
 
-    Executor executor = mock(MigrationExecutor.class);
+    Executor executor = mock(MigrateAllExecutor.class);
     ChangeLogService changeLogService = mock(ChangeLogService.class);
 
     doThrow(RuntimeException.class).when(executor)
@@ -124,7 +124,7 @@ public class MongockRunnerTest {
   @Test
   public void shouldPublishSuccessEvent_whenMigrationSucceed() {
 
-    Executor executor = mock(MigrationExecutor.class);
+    Executor executor = mock(MigrateAllExecutor.class);
     ChangeLogService changeLogService = mock(ChangeLogService.class);
 
     SortedSet<ChangeLogItem> changeLogItemList = new TreeSet<>();
