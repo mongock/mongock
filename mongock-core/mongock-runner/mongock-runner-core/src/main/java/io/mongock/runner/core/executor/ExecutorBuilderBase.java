@@ -29,37 +29,37 @@ public abstract class ExecutorBuilderBase<CHANGELOG extends ChangeLogItem<CHANGE
   ///////////////////////////////////////////////////////////////////////////////////
   
   @Override
-  public ExecutorBuilderBase<CHANGELOG, CHANGESET, CONFIG> setOperation(Operation operation) {
+  public ExecutorBuilder<CHANGELOG, CHANGESET, CONFIG> setOperation(Operation operation) {
     this.operation = operation;
     return this;
   }
   
   @Override
-  public ExecutorBuilderBase<CHANGELOG, CHANGESET, CONFIG> setExecutionId(String executionId) {
+  public ExecutorBuilder<CHANGELOG, CHANGESET, CONFIG> setExecutionId(String executionId) {
     this.executionId = executionId;
     return this;
   }
   
   @Override
-  public ExecutorBuilderBase<CHANGELOG, CHANGESET, CONFIG> setDriver(ConnectionDriver driver) {
+  public ExecutorBuilder<CHANGELOG, CHANGESET, CONFIG> setDriver(ConnectionDriver driver) {
     this.driver = driver;
     return this;
   }
   
   @Override
-  public ExecutorBuilderBase<CHANGELOG, CHANGESET, CONFIG> setConfig(CONFIG config) {
+  public ExecutorBuilder<CHANGELOG, CHANGESET, CONFIG> setConfig(CONFIG config) {
     this.config = config;
     return this;
   }
   
   @Override
-  public ExecutorBuilderBase<CHANGELOG, CHANGESET, CONFIG> setChangeLogService(ChangeLogServiceBase<CHANGELOG, CHANGESET> changeLogService) {
+  public ExecutorBuilder<CHANGELOG, CHANGESET, CONFIG> setChangeLogService(ChangeLogServiceBase<CHANGELOG, CHANGESET> changeLogService) {
     this.changeLogService = changeLogService;
     return this;
   }
   
   @Override
-  public ExecutorBuilderBase<CHANGELOG, CHANGESET, CONFIG> setChangeLogRuntime(ChangeLogRuntime changeLogRuntime) {
+  public ExecutorBuilder<CHANGELOG, CHANGESET, CONFIG> setChangeLogRuntime(ChangeLogRuntime changeLogRuntime) {
     this.changeLogRuntime = changeLogRuntime;
     return this;
   }
