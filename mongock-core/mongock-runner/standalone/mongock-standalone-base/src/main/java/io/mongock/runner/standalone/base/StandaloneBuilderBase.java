@@ -1,7 +1,5 @@
 package io.mongock.runner.standalone.base;
 
-import io.mongock.runner.core.internal.ChangeLogItem;
-import io.mongock.runner.core.internal.ChangeSetItem;
 import io.mongock.api.config.MongockConfiguration;
 import io.mongock.runner.core.builder.BuilderType;
 import io.mongock.runner.core.builder.RunnerBuilderBase;
@@ -16,16 +14,13 @@ import io.mongock.runner.core.executor.dependency.DependencyManager;
 import java.util.function.Consumer;
 
 public abstract class StandaloneBuilderBase<
-    SELF extends StandaloneBuilderBase<SELF, CHANGELOG, CHANGESET, CONFIG>,
-    CHANGELOG extends ChangeLogItem<CHANGESET>,
-    CHANGESET extends ChangeSetItem,
-    
+    SELF extends StandaloneBuilderBase<SELF, CONFIG>,
     CONFIG extends MongockConfiguration>
-    extends RunnerBuilderBase<SELF, CHANGELOG, CHANGESET, CONFIG> {
+    extends RunnerBuilderBase<SELF, CONFIG> {
 
   protected StandaloneBuilderBase(BuilderType builderType,
-                                  ExecutorBuilder<CHANGELOG, CHANGESET, CONFIG> executorFactory,
-                                  ChangeLogServiceBase<CHANGELOG, CHANGESET> changeLogService,
+                                  ExecutorBuilder<CONFIG> executorFactory,
+                                  ChangeLogServiceBase changeLogService,
                                   CONFIG config) {
     super(builderType, executorFactory, changeLogService, new DependencyManager(), config);
   }

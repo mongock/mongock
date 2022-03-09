@@ -14,12 +14,9 @@ import org.apache.maven.artifact.versioning.ArtifactVersion;
 import org.apache.maven.artifact.versioning.DefaultArtifactVersion;
 import org.reflections.Reflections;
 
-import java.io.Serializable;
 import java.lang.reflect.AnnotatedElement;
 import java.lang.reflect.Method;
-import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
@@ -39,10 +36,10 @@ import static java.util.Arrays.asList;
  *
  * @since 27/07/2014
  */
-public abstract class ChangeLogServiceBase<CHANGELOG extends ChangeLogItem<CHANGESET>, CHANGESET extends ChangeSetItem> implements Validable {
+public abstract class ChangeLogServiceBase implements Validable {
 
 
-  private final LegacyAnnotationProcessor<CHANGESET> legacyAnnotationProcessor;
+  private final LegacyAnnotationProcessor legacyAnnotationProcessor;
   private final AnnotationProcessor annotationProcessor;
   protected Function<AnnotatedElement, Boolean> profileFilter;
   private Function<Class<?>, Object> changeLogInstantiator;
@@ -52,12 +49,12 @@ public abstract class ChangeLogServiceBase<CHANGELOG extends ChangeLogItem<CHANG
   private ArtifactVersion endSystemVersion = new DefaultArtifactVersion(String.valueOf(Integer.MAX_VALUE));
   private String defaultMigrationAuthor = null;
 
-  public ChangeLogServiceBase(AnnotationProcessor annotationProcessor, LegacyAnnotationProcessor<CHANGESET> legacyAnnotationProcessor) {
+  public ChangeLogServiceBase(AnnotationProcessor annotationProcessor, LegacyAnnotationProcessor legacyAnnotationProcessor) {
     this.legacyAnnotationProcessor = legacyAnnotationProcessor;
     this.annotationProcessor = annotationProcessor;
   }
 
-  protected LegacyAnnotationProcessor<CHANGESET> getLegacyAnnotationProcessor() {
+  protected LegacyAnnotationProcessor getLegacyAnnotationProcessor() {
     return legacyAnnotationProcessor;
   }
 
@@ -126,22 +123,22 @@ public abstract class ChangeLogServiceBase<CHANGELOG extends ChangeLogItem<CHANG
     }
   }
 
-  public SortedSet<CHANGELOG> fetchChangeLogs() {
-    TreeSet<CHANGELOG> changeLogs = mergeChangeLogClassesAndPackages()
+  public SortedSet<ChangeLogItem> fetchChangeLogs() {
+    TreeSet<ChangeLogItem> changeLogs = mergeChangeLogClassesAndPackages()
         .stream()
         .filter(changeLogClass -> this.profileFilter != null ? this.profileFilter.apply(changeLogClass) : true)
         //the following checks that if the class is annotated with changeUnit, it satisfies the systemVersion
         .filter(changeLogClass -> !changeLogClass.isAnnotationPresent(ChangeUnit.class) || isWithinVersion(changeLogClass.getAnnotation(ChangeUnit.class).systemVersion()))
         .map(this::buildChangeLogObject)
-        .collect(Collectors.toCollection(() -> new TreeSet<>(new ChangeLogComparator<>())));
+        .collect(Collectors.toCollection(() -> new TreeSet<>(new ChangeLogComparator())));
     validateDuplications(changeLogs);
     return changeLogs;
   }
 
-  private void validateDuplications(Set<CHANGELOG> changeLogs) {
+  private void validateDuplications(Set<ChangeLogItem> changeLogs) {
     ThrowableHashSet allChangeSets = new ThrowableHashSet();
     changeLogs.stream()
-        .map(CHANGELOG::getAllChangeItems)
+        .map(ChangeLogItem::getAllChangeItems)
         .flatMap(List::stream)
         .forEach(allChangeSets::addAndThrow);
   }
@@ -157,14 +154,14 @@ public abstract class ChangeLogServiceBase<CHANGELOG extends ChangeLogItem<CHANG
     return Stream.concat(changeLogsBaseClassList.stream(), scannedPackageStream).collect(Collectors.toSet());
   }
 
-  protected List<CHANGESET> fetchChangeSetMethodsSorted(Class<?> type) throws MongockException {
-    List<CHANGESET> changeSets = getChangeSetWithCompanionMethods(asList(type.getDeclaredMethods()));
+  protected List<ChangeSetItem> fetchChangeSetMethodsSorted(Class<?> type) throws MongockException {
+    List<ChangeSetItem> changeSets = getChangeSetWithCompanionMethods(asList(type.getDeclaredMethods()));
     changeSets.sort(new ChangeSetComparator());
     return changeSets;
   }
 
 
-  private List<CHANGESET> getChangeSetWithCompanionMethods(List<Method> allMethods) throws MongockException {
+  private List<ChangeSetItem> getChangeSetWithCompanionMethods(List<Method> allMethods) throws MongockException {
     Set<String> changeSetIdsAlreadyProcessed = new HashSet<>();
     Consumer<String> addIfNotDuplicatedOrException = changeSetId -> {
       if (changeSetIdsAlreadyProcessed.contains(changeSetId)) {
@@ -186,7 +183,7 @@ public abstract class ChangeLogServiceBase<CHANGELOG extends ChangeLogItem<CHANG
     return version.compareTo(startSystemVersion) >= 0 && version.compareTo(endSystemVersion) <= 0;
   }
 
-  private CHANGELOG buildChangeLogObject(Class<?> changeLogClass) {
+  private ChangeLogItem buildChangeLogObject(Class<?> changeLogClass) {
     try {
       return !changeLogClass.isAnnotationPresent(ChangeUnit.class)
           ? buildChangeLogInstanceFromLegacy(changeLogClass)
@@ -198,23 +195,23 @@ public abstract class ChangeLogServiceBase<CHANGELOG extends ChangeLogItem<CHANG
     }
   }
 
-  protected abstract CHANGELOG buildChangeLogInstance(Class<?> changeLogClass) throws MongockException;
+  protected abstract ChangeLogItem buildChangeLogInstance(Class<?> changeLogClass) throws MongockException;
 
-  protected abstract CHANGELOG buildChangeLogInstanceFromLegacy(Class<?> changeLogClass) throws MongockException;
-
-
+  protected abstract ChangeLogItem buildChangeLogInstanceFromLegacy(Class<?> changeLogClass) throws MongockException;
 
 
 
 
-  protected List<CHANGESET> fetchListOfChangeSetsFromClass(Class<?> type) {
+
+
+  protected List<ChangeSetItem> fetchListOfChangeSetsFromClass(Class<?> type) {
     return getAllChanges(type)
         .filter(changeSetItem -> getLegacyAnnotationProcessor().isChangeSet(changeSetItem.getMethod()))
         .collect(Collectors.toList());
   }
 
 
-  private Stream<CHANGESET> getAllChanges(Class<?> type) {
+  private Stream<ChangeSetItem> getAllChanges(Class<?> type) {
     return fetchChangeSetMethodsSorted(type)
         .stream()
         .filter(changeSet -> this.profileFilter != null ? this.profileFilter.apply(changeSet.getMethod()) : true);

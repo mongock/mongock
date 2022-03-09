@@ -2,7 +2,6 @@ package io.mongock.runner.core.executor.changelog;
 
 import io.mongock.driver.api.common.SystemChange;
 import io.mongock.runner.core.internal.ChangeLogItem;
-import io.mongock.runner.core.internal.ChangeSetItem;
 import io.mongock.api.annotations.ChangeUnit;
 import io.mongock.api.exception.MongockException;
 import io.mongock.runner.core.annotation.AnnotationProcessor;
@@ -21,7 +20,7 @@ import java.util.function.Function;
  *
  * @since 27/07/2014
  */
-public class ChangeLogService extends ChangeLogServiceBase<ChangeLogItem<ChangeSetItem>, ChangeSetItem> {
+public class ChangeLogService extends ChangeLogServiceBase {
 
 
   private static final LegacyLegacyAnnotationProcessor LEGACY_ANNOTATION_PROCESSOR = new LegacyLegacyAnnotationProcessor();
@@ -30,6 +29,7 @@ public class ChangeLogService extends ChangeLogServiceBase<ChangeLogItem<ChangeS
 
   /**
    * @param changeLogsBasePackageList   list of changeLog packages
+   * @param changeLogsBaseClassList     list of changeLog classes
    * @param startSystemVersionInclusive inclusive starting systemVersion
    * @param endSystemVersionInclusive   inclusive ending systemVersion
    */
@@ -61,7 +61,7 @@ public class ChangeLogService extends ChangeLogServiceBase<ChangeLogItem<ChangeS
 
 
   @Override
-  protected ChangeLogItem<ChangeSetItem> buildChangeLogInstance(Class<?> changeUnitClass) throws MongockException {
+  protected ChangeLogItem buildChangeLogInstance(Class<?> changeUnitClass) throws MongockException {
     ChangeUnit changeUnit = changeUnitClass.getAnnotation(ChangeUnit.class);
     AnnotationProcessor annotationProcessor = getAnnotationProcessor();
     annotationProcessor.validateChangeUnit(changeUnitClass);
@@ -85,8 +85,8 @@ public class ChangeLogService extends ChangeLogServiceBase<ChangeLogItem<ChangeS
   }
 
   @Override
-  protected ChangeLogItem<ChangeSetItem> buildChangeLogInstanceFromLegacy(Class<?> changeLogClass) {
-    LegacyAnnotationProcessor<ChangeSetItem> annProcessor = getLegacyAnnotationProcessor();
+  protected ChangeLogItem buildChangeLogInstanceFromLegacy(Class<?> changeLogClass) {
+    LegacyAnnotationProcessor annProcessor = getLegacyAnnotationProcessor();
     return  ChangeLogItem.getFromLegacy(
         changeLogClass,
         annProcessor.getChangeLogOrder(changeLogClass),

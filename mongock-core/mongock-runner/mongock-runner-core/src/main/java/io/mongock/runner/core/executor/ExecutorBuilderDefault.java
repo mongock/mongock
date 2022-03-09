@@ -5,10 +5,8 @@ import io.mongock.api.exception.MongockException;
 import io.mongock.runner.core.executor.operation.Operation;
 import io.mongock.runner.core.executor.operation.change.MigrationExecutor;
 import io.mongock.runner.core.executor.operation.change.MigrationOp;
-import io.mongock.runner.core.internal.ChangeLogItem;
-import io.mongock.runner.core.internal.ChangeSetItem;
 
-public class ExecutorBuilderDefault extends ExecutorBuilderBase<ChangeLogItem<ChangeSetItem>, ChangeSetItem, MongockConfiguration> {
+public class ExecutorBuilderDefault extends ExecutorBuilderBase<MongockConfiguration> {
   
   @Override
   protected Executor getExecutorByOperation(Operation operation) {

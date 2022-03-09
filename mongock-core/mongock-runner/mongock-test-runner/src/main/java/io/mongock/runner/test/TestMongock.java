@@ -1,7 +1,5 @@
 package io.mongock.runner.test;
 
-import io.mongock.runner.core.internal.ChangeLogItem;
-import io.mongock.runner.core.internal.ChangeSetItem;
 import io.mongock.api.config.MongockConfiguration;
 import io.mongock.runner.core.builder.RunnerBuilder;
 import io.mongock.runner.core.builder.RunnerBuilderBase;
@@ -18,16 +16,11 @@ public class TestMongock {
     return new Builder(new ExecutorBuilderDefault());
   }
 
-  public static class Builder extends RunnerBuilderBase<Builder, ChangeLogItem<ChangeSetItem>, ChangeSetItem, MongockConfiguration> implements RunnerBuilder<Builder, MongockConfiguration> {
+  public static class Builder extends RunnerBuilderBase<Builder, MongockConfiguration> implements RunnerBuilder<Builder, MongockConfiguration> {
 
-    private Builder(ExecutorBuilder<ChangeLogItem<ChangeSetItem>, ChangeSetItem, MongockConfiguration> executorBuilder) {
+    private Builder(ExecutorBuilder<MongockConfiguration> executorBuilder) {
       super(COMMUNITY, executorBuilder, new ChangeLogService(), new DependencyManager(), new MongockConfiguration());
     }
-
-//    @Override
-//    protected void beforeBuildRunner() {
-//
-//    }
 
     @Override
     public Builder getInstance() {

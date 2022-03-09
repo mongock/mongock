@@ -6,13 +6,9 @@ import io.mongock.driver.api.driver.ConnectionDriver;
 import io.mongock.runner.core.executor.changelog.ChangeLogRuntime;
 import io.mongock.runner.core.executor.changelog.ChangeLogServiceBase;
 import io.mongock.runner.core.executor.operation.Operation;
-import io.mongock.runner.core.internal.ChangeLogItem;
-import io.mongock.runner.core.internal.ChangeSetItem;
 
-public abstract class ExecutorBuilderBase<CHANGELOG extends ChangeLogItem<CHANGESET>,
-                                          CHANGESET extends ChangeSetItem,
-                                          CONFIG extends ExecutorConfiguration>
-                                        implements ExecutorBuilder<CHANGELOG, CHANGESET, CONFIG> {
+public abstract class ExecutorBuilderBase<CONFIG extends ExecutorConfiguration>
+                                        implements ExecutorBuilder<CONFIG> {
   
   // Mandatory
   protected Operation operation;
@@ -21,7 +17,7 @@ public abstract class ExecutorBuilderBase<CHANGELOG extends ChangeLogItem<CHANGE
   protected CONFIG config;
   
   // Optional
-  protected ChangeLogServiceBase<CHANGELOG, CHANGESET> changeLogService;
+  protected ChangeLogServiceBase changeLogService;
   protected ChangeLogRuntime changeLogRuntime;
 
   ///////////////////////////////////////////////////////////////////////////////////
@@ -29,37 +25,37 @@ public abstract class ExecutorBuilderBase<CHANGELOG extends ChangeLogItem<CHANGE
   ///////////////////////////////////////////////////////////////////////////////////
   
   @Override
-  public ExecutorBuilder<CHANGELOG, CHANGESET, CONFIG> setOperation(Operation operation) {
+  public ExecutorBuilder<CONFIG> setOperation(Operation operation) {
     this.operation = operation;
     return this;
   }
   
   @Override
-  public ExecutorBuilder<CHANGELOG, CHANGESET, CONFIG> setExecutionId(String executionId) {
+  public ExecutorBuilder<CONFIG> setExecutionId(String executionId) {
     this.executionId = executionId;
     return this;
   }
   
   @Override
-  public ExecutorBuilder<CHANGELOG, CHANGESET, CONFIG> setDriver(ConnectionDriver driver) {
+  public ExecutorBuilder<CONFIG> setDriver(ConnectionDriver driver) {
     this.driver = driver;
     return this;
   }
   
   @Override
-  public ExecutorBuilder<CHANGELOG, CHANGESET, CONFIG> setConfig(CONFIG config) {
+  public ExecutorBuilder<CONFIG> setConfig(CONFIG config) {
     this.config = config;
     return this;
   }
   
   @Override
-  public ExecutorBuilder<CHANGELOG, CHANGESET, CONFIG> setChangeLogService(ChangeLogServiceBase<CHANGELOG, CHANGESET> changeLogService) {
+  public ExecutorBuilder<CONFIG> setChangeLogService(ChangeLogServiceBase changeLogService) {
     this.changeLogService = changeLogService;
     return this;
   }
   
   @Override
-  public ExecutorBuilder<CHANGELOG, CHANGESET, CONFIG> setChangeLogRuntime(ChangeLogRuntime changeLogRuntime) {
+  public ExecutorBuilder<CONFIG> setChangeLogRuntime(ChangeLogRuntime changeLogRuntime) {
     this.changeLogRuntime = changeLogRuntime;
     return this;
   }

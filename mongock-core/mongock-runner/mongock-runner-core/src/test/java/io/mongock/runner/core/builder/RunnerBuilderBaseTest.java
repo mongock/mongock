@@ -1,8 +1,6 @@
 package io.mongock.runner.core.builder;
 
 import com.github.cloudyrock.mongock.ChangeLog;
-import io.mongock.runner.core.internal.ChangeLogItem;
-import io.mongock.runner.core.internal.ChangeSetItem;
 import io.mongock.api.config.MongockConfiguration;
 import io.mongock.api.exception.MongockException;
 import io.mongock.driver.api.driver.ConnectionDriver;
@@ -241,7 +239,7 @@ class DummyMongockConfiguration extends MongockConfiguration {
 
 }
 
-class DummyRunnerBuilder extends RunnerBuilderBase<DummyRunnerBuilder, ChangeLogItem<ChangeSetItem>, ChangeSetItem, MongockConfiguration>
+class DummyRunnerBuilder extends RunnerBuilderBase<DummyRunnerBuilder, MongockConfiguration>
     implements
     ChangeLogScanner<DummyRunnerBuilder, MongockConfiguration>,
     MigrationWriter<DummyRunnerBuilder, MongockConfiguration>,
@@ -254,7 +252,7 @@ class DummyRunnerBuilder extends RunnerBuilderBase<DummyRunnerBuilder, ChangeLog
     MongockRunnable<DummyRunnerBuilder, MongockConfiguration>,
     SelfInstanstiator<DummyRunnerBuilder> {
 
-  protected DummyRunnerBuilder(ExecutorBuilder<ChangeLogItem<ChangeSetItem>, ChangeSetItem, MongockConfiguration> executorBuilder) {
+  protected DummyRunnerBuilder(ExecutorBuilder<MongockConfiguration> executorBuilder) {
     super(COMMUNITY, executorBuilder, new ChangeLogService(), new DependencyManager(), new MongockConfiguration());
   }
 

@@ -90,7 +90,7 @@ public class ChangeLogServiceTest {
 
   @Test
   public void shouldOnlyRunAnnotatedClassesAndMethods() {
-    List<ChangeLogItem<ChangeSetItem>> changeLogItemList = new ArrayList<>(new ChangeLogService(
+    List<ChangeLogItem> changeLogItemList = new ArrayList<>(new ChangeLogService(
         Collections.singletonList(ChangeLogNormal.class.getPackage().getName()),
         Collections.emptyList(),
         "0",
@@ -100,7 +100,7 @@ public class ChangeLogServiceTest {
     assertEquals(3, changeLogItemList.size());
 
     // Normal
-    ChangeLogItem<ChangeSetItem> changeLogItem = changeLogItemList.get(0);
+    ChangeLogItem changeLogItem = changeLogItemList.get(0);
     assertEquals(1, changeLogItem.getChangeSetItems().size());
     assertEquals("changeSet_0", changeLogItem.getChangeSetItems().get(0).getId());
 
@@ -117,7 +117,7 @@ public class ChangeLogServiceTest {
 
   @Test
   public void shouldNotThrowException_whenAuthorIsEmpty_IfOldChangeLog() {
-    List<ChangeLogItem<ChangeSetItem>> changeLogItemList = new ArrayList<>(new ChangeLogService(
+    List<ChangeLogItem> changeLogItemList = new ArrayList<>(new ChangeLogService(
         Collections.emptyList(),
         Collections.singletonList(ChangeLogWithAuthorEmpty.class),
         "0",
@@ -151,7 +151,7 @@ public class ChangeLogServiceTest {
         "9999"
     );
     changeLogService.setDefaultMigrationAuthor("default_author");
-    List<ChangeLogItem<ChangeSetItem>> changeLogItemList = new ArrayList<>(changeLogService.fetchChangeLogs());
+    List<ChangeLogItem> changeLogItemList = new ArrayList<>(changeLogService.fetchChangeLogs());
     assertEquals(1, changeLogItemList.size());
     ChangeSetItem changeSetItem = changeLogItemList.get(0).getChangeSetItems().get(0);
     assertEquals("default_author", changeSetItem.getAuthor());
@@ -160,7 +160,7 @@ public class ChangeLogServiceTest {
 
   @Test
   public void shouldReturnRightChangeLogItems_whenFetchingLogs_ifPackageIsRight() {
-    List<ChangeLogItem<ChangeSetItem>> changeLogItemList = new ArrayList<>(new ChangeLogService(
+    List<ChangeLogItem> changeLogItemList = new ArrayList<>(new ChangeLogService(
         Collections.singletonList(ChangeLogSuccess11.class.getPackage().getName()),
         Collections.emptyList(),
         "0",
@@ -168,12 +168,12 @@ public class ChangeLogServiceTest {
     ).fetchChangeLogs());
 
     assertEquals(2, changeLogItemList.size());
-    ChangeLogItem<ChangeSetItem> changeLogItem11 = changeLogItemList.get(0);
+    ChangeLogItem changeLogItem11 = changeLogItemList.get(0);
     validateChangeLog(changeLogItem11, 1);
     assertEquals(1, changeLogItem11.getChangeSetItems().size());
     changeLogItem11.getChangeSetItems().forEach(changeSetItem -> validateChangeSet(changeSetItem, 1));
 
-    ChangeLogItem<ChangeSetItem> changeLogItem12 = changeLogItemList.get(1);
+    ChangeLogItem changeLogItem12 = changeLogItemList.get(1);
     validateChangeLog(changeLogItem12, 2);
     assertEquals(1, changeLogItem12.getChangeSetItems().size());
     changeLogItem12.getChangeSetItems().forEach(changeSetItem -> validateChangeSet(changeSetItem, 2));
@@ -232,7 +232,7 @@ public class ChangeLogServiceTest {
 
   @Test
   public void shouldReturnChangeSetsFromMultiplePackagesAndKeepsOrder() {
-    List<ChangeLogItem<ChangeSetItem>> changeLogItemList = new ArrayList<>(new ChangeLogService(
+    List<ChangeLogItem> changeLogItemList = new ArrayList<>(new ChangeLogService(
         Arrays.asList(ChangeLogMultiPackage1.class.getPackage().getName(), ChangeLogMultiPackage2.class.getPackage().getName()),
         Collections.emptyList(),
         "0",
@@ -240,7 +240,7 @@ public class ChangeLogServiceTest {
     ).fetchChangeLogs());
 
     assertEquals(2, changeLogItemList.size());
-    ChangeLogItem<ChangeSetItem> changeLogPackage = changeLogItemList.get(0);
+    ChangeLogItem changeLogPackage = changeLogItemList.get(0);
     assertEquals(1, changeLogPackage.getChangeSetItems().size());
     ChangeSetItem changeSet = changeLogPackage.getChangeSetItems().get(0);
     assertEquals("changeset_package1", changeSet.getId());
@@ -257,7 +257,7 @@ public class ChangeLogServiceTest {
 
   @Test
   public void shouldReturnSystemChangelogsFirst() {
-    List<ChangeLogItem<ChangeSetItem>> changeLogItemList = new ArrayList<>(new ChangeLogService(
+    List<ChangeLogItem> changeLogItemList = new ArrayList<>(new ChangeLogService(
         Collections.singletonList(SystemChangeUnit.class.getPackage().getName()),
         Collections.emptyList(),
         "0",
@@ -275,7 +275,7 @@ public class ChangeLogServiceTest {
         ChangeLogMultiPackage1.class.getPackage().getName(),
         ChangeLogMultiPackage2.class.getPackage().getName(),
         ChangeLogNoPackage.class.getName());
-    List<ChangeLogItem<ChangeSetItem>> changeLogItemList = new ArrayList<>(new ChangeLogService(
+    List<ChangeLogItem> changeLogItemList = new ArrayList<>(new ChangeLogService(
         changeLogsBasePackageList,
         Collections.emptyList(),
         "0",
@@ -284,7 +284,7 @@ public class ChangeLogServiceTest {
 
     //package 1
     assertEquals(3, changeLogItemList.size());
-    ChangeLogItem<ChangeSetItem> changeLogPackage = changeLogItemList.get(0);
+    ChangeLogItem changeLogPackage = changeLogItemList.get(0);
     assertEquals(1, changeLogPackage.getChangeSetItems().size());
     ChangeSetItem changeSet1 = changeLogPackage.getChangeSetItems().get(0);
     assertEquals("changeset_package1", changeSet1.getId());
@@ -311,7 +311,7 @@ public class ChangeLogServiceTest {
     assertEquals("changeSetPackage2", changeSet4.getMethod().getName());
   }
 
-  private void validateChangeLog(ChangeLogItem<ChangeSetItem> changeLogItem, int number) {
+  private void validateChangeLog(ChangeLogItem changeLogItem, int number) {
     assertEquals(String.valueOf(number), changeLogItem.getOrder());
   }
 
@@ -326,7 +326,7 @@ public class ChangeLogServiceTest {
 
   @Test
   public void shouldReturnChangelogs() {
-    List<ChangeLogItem<ChangeSetItem>> changeLogItemList = new ArrayList<>(new ChangeLogService(
+    List<ChangeLogItem> changeLogItemList = new ArrayList<>(new ChangeLogService(
         Arrays.asList(Comparator1ChangeLog.class.getPackage().getName()),
         Collections.emptyList(),
         "0",
@@ -346,7 +346,7 @@ public class ChangeLogServiceTest {
     ChangeLogService changeLogService = new ChangeLogService();
     changeLogService.setChangeLogsBaseClassList(Arrays.asList(ChangeLogSuccess11.class, ChangeLogSuccess11.class));
 
-    List<ChangeLogItem<ChangeSetItem>> changeLogs = new ArrayList<>(changeLogService.fetchChangeLogs());
+    List<ChangeLogItem> changeLogs = new ArrayList<>(changeLogService.fetchChangeLogs());
 
     assertEquals(1, changeLogs.size());
 
@@ -361,15 +361,15 @@ public class ChangeLogServiceTest {
     changeLogService.setChangeLogsBaseClassList(Collections.singletonList(ChangeLogSuccess11.class));
     changeLogService.setChangeLogsBasePackageList(Collections.singletonList(ChangeLogSuccess11.class.getPackage().getName()));
 
-    List<ChangeLogItem<ChangeSetItem>> changeLogItemsList = new ArrayList<>(changeLogService.fetchChangeLogs());
+    List<ChangeLogItem> changeLogItemsList = new ArrayList<>(changeLogService.fetchChangeLogs());
 
     assertEquals(2, changeLogItemsList.size());
 
-    ChangeLogItem<ChangeSetItem> changeLogItem = changeLogItemsList.get(0);
+    ChangeLogItem changeLogItem = changeLogItemsList.get(0);
     assertEquals(ChangeLogSuccess11.class, changeLogItem.getType());
     assertEquals("1", changeLogItem.getOrder());
 
-    ChangeLogItem<ChangeSetItem> changeLogItem2 = changeLogItemsList.get(1);
+    ChangeLogItem changeLogItem2 = changeLogItemsList.get(1);
     assertEquals(ChangeLogSuccess12.class, changeLogItem2.getType());
     assertEquals("2", changeLogItem2.getOrder());
   }
@@ -381,10 +381,10 @@ public class ChangeLogServiceTest {
     ChangeLogService changeLogService = new ChangeLogService();
     changeLogService.setChangeLogsBaseClassList(Collections.singletonList(ChangeLogSuccess11.class));
 
-    List<ChangeLogItem<ChangeSetItem>> changeLogs = new ArrayList<>(changeLogService.fetchChangeLogs());
+    List<ChangeLogItem> changeLogs = new ArrayList<>(changeLogService.fetchChangeLogs());
 
 
-    ChangeLogItem<ChangeSetItem> changeLogItem = changeLogs.get(0);
+    ChangeLogItem changeLogItem = changeLogs.get(0);
     assertEquals(ChangeLogSuccess11.class, changeLogItem.getType());
     assertEquals("1", changeLogItem.getOrder());
 
@@ -404,7 +404,7 @@ public class ChangeLogServiceTest {
     ChangeLogService changeLogService = new ChangeLogService();
     changeLogService.setChangeLogsBaseClassList(Collections.singletonList(BasicChangeLogWithRollback.class));
 
-    List<ChangeLogItem<ChangeSetItem>> changeLogs = new ArrayList<>(changeLogService.fetchChangeLogs());
+    List<ChangeLogItem> changeLogs = new ArrayList<>(changeLogService.fetchChangeLogs());
 
     assertEquals(1, changeLogs.size());
     ChangeSetItem changeSetItem = changeLogs.get(0).getChangeSetItems().get(0);
@@ -423,10 +423,10 @@ public class ChangeLogServiceTest {
     ChangeLogService changeLogService = new ChangeLogService();
     changeLogService.setChangeLogsBaseClassList(Collections.singletonList(AdvanceChangeLogUniqueInPackage.class));
 
-    List<ChangeLogItem<ChangeSetItem>> changeLogs = new ArrayList<>(changeLogService.fetchChangeLogs());
+    List<ChangeLogItem> changeLogs = new ArrayList<>(changeLogService.fetchChangeLogs());
 
     assertEquals(1, changeLogs.size());
-    ChangeLogItem<ChangeSetItem> changeLogItem = changeLogs.get(0);
+    ChangeLogItem changeLogItem = changeLogs.get(0);
 
     assertEquals(1, changeLogItem.getChangeSetItems().size());
     ChangeSetItem changeSetItem = changeLogItem.getChangeSetItems().get(0);
@@ -460,10 +460,10 @@ public class ChangeLogServiceTest {
     ChangeLogService changeLogService = new ChangeLogService();
     changeLogService.setChangeLogsBasePackageList(Collections.singletonList(AdvanceChangeLogUniqueInPackage.class.getPackage().getName()));
 
-    List<ChangeLogItem<ChangeSetItem>> changeLogs = new ArrayList<>(changeLogService.fetchChangeLogs());
+    List<ChangeLogItem> changeLogs = new ArrayList<>(changeLogService.fetchChangeLogs());
 
     assertEquals(1, changeLogs.size());
-    ChangeLogItem<ChangeSetItem> changeLogItem = changeLogs.get(0);
+    ChangeLogItem changeLogItem = changeLogs.get(0);
 
     assertEquals(1, changeLogItem.getChangeSetItems().size());
     ChangeSetItem changeSetItem = changeLogItem.getChangeSetItems().get(0);
@@ -497,10 +497,10 @@ public class ChangeLogServiceTest {
     ChangeLogService changeLogService = new ChangeLogService();
     changeLogService.setChangeLogsBaseClassList(Collections.singletonList(BasicChangeLogUniqueInPackage.class));
 
-    List<ChangeLogItem<ChangeSetItem>> changeLogs = new ArrayList<>(changeLogService.fetchChangeLogs());
+    List<ChangeLogItem> changeLogs = new ArrayList<>(changeLogService.fetchChangeLogs());
 
     assertEquals(1, changeLogs.size());
-    ChangeLogItem<ChangeSetItem> changeLogItem = changeLogs.get(0);
+    ChangeLogItem changeLogItem = changeLogs.get(0);
 
     assertEquals(1, changeLogItem.getChangeSetItems().size());
     ChangeSetItem changeSetItem = changeLogItem.getChangeSetItems().get(0);
@@ -527,10 +527,10 @@ public class ChangeLogServiceTest {
     ChangeLogService changeLogService = new ChangeLogService();
     changeLogService.setChangeLogsBasePackageList(Collections.singletonList(BasicChangeLogUniqueInPackage.class.getPackage().getName()));
 
-    List<ChangeLogItem<ChangeSetItem>> changeLogs = new ArrayList<>(changeLogService.fetchChangeLogs());
+    List<ChangeLogItem> changeLogs = new ArrayList<>(changeLogService.fetchChangeLogs());
 
     assertEquals(1, changeLogs.size());
-    ChangeLogItem<ChangeSetItem> changeLogItem = changeLogs.get(0);
+    ChangeLogItem changeLogItem = changeLogs.get(0);
 
     assertEquals(1, changeLogItem.getChangeSetItems().size());
     ChangeSetItem changeSetItem = changeLogItem.getChangeSetItems().get(0);
@@ -558,10 +558,10 @@ public class ChangeLogServiceTest {
     ChangeLogService changeLogService = new ChangeLogService();
     changeLogService.setChangeLogsBaseClassList(Collections.singletonList(AnnotatedChangeLog.class));
 
-    List<ChangeLogItem<ChangeSetItem>> changeLogs = new ArrayList<>(changeLogService.fetchChangeLogs());
+    List<ChangeLogItem> changeLogs = new ArrayList<>(changeLogService.fetchChangeLogs());
 
     assertEquals(1, changeLogs.size());
-    ChangeLogItem<ChangeSetItem> changeLogItem = changeLogs.get(0);
+    ChangeLogItem changeLogItem = changeLogs.get(0);
 
     assertEquals(1, changeLogItem.getChangeSetItems().size());
     ChangeSetItem changeSetItem = changeLogItem.getChangeSetItems().get(0);
@@ -589,10 +589,10 @@ public class ChangeLogServiceTest {
     ChangeLogService changeLogService = new ChangeLogService();
     changeLogService.setChangeLogsBasePackageList(Collections.singletonList(AnnotatedChangeLog.class.getPackage().getName()));
 
-    List<ChangeLogItem<ChangeSetItem>> changeLogs = new ArrayList<>(changeLogService.fetchChangeLogs());
+    List<ChangeLogItem> changeLogs = new ArrayList<>(changeLogService.fetchChangeLogs());
 
     assertEquals(1, changeLogs.size());
-    ChangeLogItem<ChangeSetItem> changeLogItem = changeLogs.get(0);
+    ChangeLogItem changeLogItem = changeLogs.get(0);
 
     assertEquals(1, changeLogItem.getChangeSetItems().size());
     ChangeSetItem changeSetItem = changeLogItem.getChangeSetItems().get(0);
@@ -620,13 +620,13 @@ public class ChangeLogServiceTest {
     ChangeLogService changeLogService = new ChangeLogService();
     changeLogService.setChangeLogsBasePackageList(Collections.singletonList("io.mongock.runner.core.changelogs.forchangeservice"));
 
-    List<ChangeLogItem<ChangeSetItem>> changeLogs = new ArrayList<>(changeLogService.fetchChangeLogs());
+    List<ChangeLogItem> changeLogs = new ArrayList<>(changeLogService.fetchChangeLogs());
 
     assertEquals(3, changeLogs.size());
 
 
     //ADVANCE CHANGELOG
-    ChangeLogItem<ChangeSetItem> advanceChangeLogItem = changeLogs.get(0);
+    ChangeLogItem advanceChangeLogItem = changeLogs.get(0);
     assertEquals(1, advanceChangeLogItem.getChangeSetItems().size());
     ChangeSetItem advanceChangeSetItem = advanceChangeLogItem.getChangeSetItems().get(0);
     assertEquals(1, advanceChangeLogItem.getBeforeItems().size());
@@ -649,7 +649,7 @@ public class ChangeLogServiceTest {
     assertTrue(advanceBeforeItem.isBeforeChangeSets());
 
     //BASIC CHANGELOG
-    ChangeLogItem<ChangeSetItem> basicChangeLogItem = changeLogs.get(1);
+    ChangeLogItem basicChangeLogItem = changeLogs.get(1);
     assertEquals(1, basicChangeLogItem.getChangeSetItems().size());
     ChangeSetItem basicChangeSetItem = basicChangeLogItem.getChangeSetItems().get(0);
     assertEquals(0, basicChangeLogItem.getBeforeItems().size());
@@ -664,7 +664,7 @@ public class ChangeLogServiceTest {
     assertEquals(0, basicChangeLogItem.getBeforeItems().size());
 
     //ANNOTATED CHANGELOG
-    ChangeLogItem<ChangeSetItem> annotatedChangeLogItem = changeLogs.get(2);
+    ChangeLogItem annotatedChangeLogItem = changeLogs.get(2);
     assertEquals(1, annotatedChangeLogItem.getChangeSetItems().size());
     ChangeSetItem annotatedChangeSetItem = annotatedChangeLogItem.getChangeSetItems().get(0);
     assertEquals(0, annotatedChangeLogItem.getBeforeItems().size());

@@ -6,17 +6,17 @@ import io.mongock.utils.StringUtils;
 import java.io.Serializable;
 import java.util.Comparator;
 
-class ChangeLogComparator<CHANGELOG extends ChangeLogItem<?>> implements Comparator<CHANGELOG>, Serializable {
+class ChangeLogComparator implements Comparator<ChangeLogItem>, Serializable {
   private static final long serialVersionUID = -358162121872177974L;
 
 
 
   /**
    * if order1 and order2 are not null and different, it return their compare. If one of then is null, the other is first.
-   * If both are null or equals, they are compare bby their names
+   * If both are null or equals, they are compare by their names
    */
   @Override
-  public int compare(CHANGELOG changeLog1, CHANGELOG changeLog2) {
+  public int compare(ChangeLogItem changeLog1, ChangeLogItem changeLog2) {
     String val1 = changeLog1.getOrder();
     String val2 = changeLog2.getOrder();
     if(changeLog1.isSystem() && !changeLog2.isSystem()) {

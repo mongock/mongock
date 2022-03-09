@@ -1,7 +1,5 @@
 package io.mongock.runner.standalone;
 
-import io.mongock.runner.core.internal.ChangeLogItem;
-import io.mongock.runner.core.internal.ChangeSetItem;
 import io.mongock.api.config.MongockConfiguration;
 import io.mongock.runner.core.executor.ExecutorBuilder;
 import io.mongock.runner.core.executor.ExecutorBuilderDefault;
@@ -17,10 +15,10 @@ public final class MongockStandalone {
     return new RunnerStandaloneBuilderImpl(new ExecutorBuilderDefault(), new MongockConfiguration());
   }
 
-  public static class RunnerStandaloneBuilderImpl extends StandaloneBuilderBase<RunnerStandaloneBuilderImpl, ChangeLogItem<ChangeSetItem>, ChangeSetItem, MongockConfiguration>
+  public static class RunnerStandaloneBuilderImpl extends StandaloneBuilderBase<RunnerStandaloneBuilderImpl, MongockConfiguration>
       implements RunnerStandaloneBuilder {
 
-    private RunnerStandaloneBuilderImpl(ExecutorBuilder<ChangeLogItem<ChangeSetItem>, ChangeSetItem, MongockConfiguration> executorFactory, MongockConfiguration config) {
+    private RunnerStandaloneBuilderImpl(ExecutorBuilder<MongockConfiguration> executorFactory, MongockConfiguration config) {
       super(COMMUNITY, executorFactory, new ChangeLogService(), config);
     }
 

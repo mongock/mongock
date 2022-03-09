@@ -53,7 +53,7 @@ public abstract class MigrationExecutorBase<CONFIG extends ChangeExecutorConfigu
   protected final ConnectionDriver driver;
   protected final String serviceIdentifier;
   protected final boolean trackIgnored;
-  protected final Set<ChangeLogItem<ChangeSetItem>> changeLogs;
+  protected final Set<ChangeLogItem> changeLogs;
   protected final Map<String, Object> metadata;
   private final ChangeLogRuntime changeLogRuntime;
   protected boolean executionInProgress = false;
@@ -63,7 +63,7 @@ public abstract class MigrationExecutorBase<CONFIG extends ChangeExecutorConfigu
 
 
   public MigrationExecutorBase(String executionId,
-                               Set<ChangeLogItem<ChangeSetItem>> changeLogs,
+                               Set<ChangeLogItem> changeLogs,
                                ConnectionDriver driver,
                                ChangeLogRuntime changeLogRuntime,
                                CONFIG config) {
@@ -106,7 +106,7 @@ public abstract class MigrationExecutorBase<CONFIG extends ChangeExecutorConfigu
     }
   }
 
-  protected void processMigration(Collection<ChangeLogItem<ChangeSetItem>> changeLogs, String executionId, String executionHostname) {
+  protected void processMigration(Collection<ChangeLogItem> changeLogs, String executionId, String executionHostname) {
     prepareForStageExecutionIfApply(isStrategyPerMigration());
     driver.getTransactioner()
         .filter(t -> isStrategyPerMigration() && isDriverTransactional())
@@ -114,13 +114,13 @@ public abstract class MigrationExecutorBase<CONFIG extends ChangeExecutorConfigu
         .executeInTransaction(() -> processChangeLogs(executionId, executionHostname, changeLogs));
   }
 
-  protected void processChangeLogs(String executionId, String executionHostname, Collection<ChangeLogItem<ChangeSetItem>> changeLogs) {
-    for (ChangeLogItem<ChangeSetItem> changeLog : changeLogs) {
+  protected void processChangeLogs(String executionId, String executionHostname, Collection<ChangeLogItem> changeLogs) {
+    for (ChangeLogItem changeLog : changeLogs) {
       processSingleChangeLog(executionId, executionHostname, changeLog);
     }
   }
 
-  protected void processSingleChangeLog(String executionId, String executionHostname, ChangeLogItem<ChangeSetItem> changeLog) {
+  protected void processSingleChangeLog(String executionId, String executionHostname, ChangeLogItem changeLog) {
     try {
       // if strategy == changeLog only needs to store the processed changeSets per changeLog
       prepareForStageExecutionIfApply(isStrategyPerChangeUnit() && changeLog.isTransactional());
@@ -148,14 +148,14 @@ public abstract class MigrationExecutorBase<CONFIG extends ChangeExecutorConfigu
     return changeLogRuntime.getInstance(changeLogClass);
   }
 
-  protected void processChangeLogInTransactionIfApplies(String executionId, String executionHostname, Object changeLogInstance, ChangeLogItem<ChangeSetItem> changeLog) {
+  protected void processChangeLogInTransactionIfApplies(String executionId, String executionHostname, Object changeLogInstance, ChangeLogItem changeLog) {
     driver.getTransactioner()
         .filter(c -> isDriverTransactional() && isStrategyPerChangeUnit() && changeLog.isTransactional())
         .orElse(new NonTransactioner())
         .executeInTransaction(() -> loopRawChangeSets(executionId, executionHostname, changeLogInstance, changeLog, changeLog.getChangeSetItems()));
   }
 
-  protected void loopRawChangeSets(String executionId, String executionHostName, Object changeLogInstance, ChangeLogItem<ChangeSetItem> changeLog, List<? extends ChangeSetItem> changeSets) {
+  protected void loopRawChangeSets(String executionId, String executionHostName, Object changeLogInstance, ChangeLogItem changeLog, List<? extends ChangeSetItem> changeSets) {
     for (ChangeSetItem changeSet : changeSets) {
       //if driver is no transactional or, being the strategy per ChangeUnit, the changeSet is non-transactional(before or changeLog flagged as non-transactional)
       //the changeSet needs to be queued to be rolled back, in case a change fails
@@ -216,7 +216,7 @@ public abstract class MigrationExecutorBase<CONFIG extends ChangeExecutorConfigu
     return hostname;
   }
 
-  protected boolean isThereAnyChangeSetItemToBeExecuted(Collection<ChangeLogItem<ChangeSetItem>> changeLogs) {
+  protected boolean isThereAnyChangeSetItemToBeExecuted(Collection<ChangeLogItem> changeLogs) {
     return changeLogs.stream()
         .map(ChangeLogItem::getAllChangeItems)
         .flatMap(List::stream)

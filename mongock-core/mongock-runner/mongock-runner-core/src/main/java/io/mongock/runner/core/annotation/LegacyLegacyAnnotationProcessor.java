@@ -5,7 +5,7 @@ import io.mongock.runner.core.internal.ChangeSetItem;
 
 import java.lang.reflect.Method;
 
-public class LegacyLegacyAnnotationProcessor implements LegacyAnnotationProcessor<ChangeSetItem> {
+public class LegacyLegacyAnnotationProcessor implements LegacyAnnotationProcessor {
 
   @Override
   public ChangeSetItem getChangePerformerItem(Method changeSetMethod, Method rollbackMethod) {

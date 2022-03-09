@@ -12,7 +12,7 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 
-public class ChangeLogItem<CHANGESET extends ChangeSetItem> {
+public class ChangeLogItem {
 
 
   private final String id;
@@ -25,13 +25,13 @@ public class ChangeLogItem<CHANGESET extends ChangeSetItem> {
 
   private final boolean transactional;
 
-  private final List<CHANGESET> changeSetItems;
+  private final List<ChangeSetItem> changeSetItems;
 
-  private final List<CHANGESET> beforeChangeSetsItems;
+  private final List<ChangeSetItem> beforeChangeSetsItems;
 
   private final boolean system;
 
-  public static ChangeLogItem<ChangeSetItem> getFromAnnotation(
+  public static ChangeLogItem getFromAnnotation(
       Class<?> changeLogClass,
       String baseId,
       String author,
@@ -71,7 +71,7 @@ public class ChangeLogItem<CHANGESET extends ChangeSetItem> {
           ));
 
     }
-    return new ChangeLogItem<>(
+    return new ChangeLogItem(
         baseId,
         changeLogClass,
         order,
@@ -83,13 +83,13 @@ public class ChangeLogItem<CHANGESET extends ChangeSetItem> {
 
   }
 
-  public static <C extends ChangeSetItem> ChangeLogItem<C> getFromLegacy(
+  public static ChangeLogItem getFromLegacy(
       Class<?> type,
       String order,
       boolean failFast,
-      List<C> changeSetElements,
+      List<ChangeSetItem> changeSetElements,
       boolean system) {
-    return new ChangeLogItem<>(type.getName(), type, order, failFast, true,  changeSetElements, Collections.emptyList(), system);
+    return new ChangeLogItem(type.getName(), type, order, failFast, true,  changeSetElements, Collections.emptyList(), system);
   }
 
   public ChangeLogItem(String id,
@@ -97,8 +97,8 @@ public class ChangeLogItem<CHANGESET extends ChangeSetItem> {
                        String order,
                        boolean failFast,
                        boolean transactional,
-                       List<CHANGESET> changeSetElements,
-                       List<CHANGESET> beforeChangeSetsItems,
+                       List<ChangeSetItem> changeSetElements,
+                       List<ChangeSetItem> beforeChangeSetsItems,
                        boolean system) {
     if (id == null || id.trim().isEmpty()) {
       throw new MongockException("changeUnit[" + type.getName() + "] id cannot be null or empty.");
@@ -133,16 +133,16 @@ public class ChangeLogItem<CHANGESET extends ChangeSetItem> {
     return transactional;
   }
 
-  public List<CHANGESET> getChangeSetItems() {
+  public List<ChangeSetItem> getChangeSetItems() {
     return changeSetItems;
   }
 
-  public List<CHANGESET> getBeforeItems() {
+  public List<ChangeSetItem> getBeforeItems() {
     return beforeChangeSetsItems;
   }
 
   
-  public List<CHANGESET> getAllChangeItems() {
+  public List<ChangeSetItem> getAllChangeItems() {
     return Stream.concat(beforeChangeSetsItems.stream(),changeSetItems.stream()).collect(Collectors.toList());
   }
 
@@ -154,7 +154,7 @@ public class ChangeLogItem<CHANGESET extends ChangeSetItem> {
   public boolean equals(Object o) {
     if (this == o) return true;
     if (o == null || getClass() != o.getClass()) return false;
-    ChangeLogItem<?> that = (ChangeLogItem<?>) o;
+    ChangeLogItem that = (ChangeLogItem) o;
     return id.equals(that.id);
   }
 
