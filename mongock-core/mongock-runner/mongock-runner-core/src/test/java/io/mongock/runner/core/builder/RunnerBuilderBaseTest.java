@@ -16,8 +16,6 @@ import io.mongock.runner.core.builder.roles.MongockRunnable;
 import io.mongock.runner.core.builder.roles.SelfInstanstiator;
 import io.mongock.runner.core.builder.roles.ServiceIdentificable;
 import io.mongock.runner.core.builder.roles.SystemVersionable;
-import io.mongock.runner.core.executor.ExecutorFactory;
-import io.mongock.runner.core.executor.ExecutorFactoryDefault;
 import io.mongock.runner.core.executor.changelog.ChangeLogService;
 import io.mongock.runner.core.executor.dependency.DependencyManager;
 import io.mongock.runner.core.util.LegacyMigrationDummyImpl;
@@ -35,6 +33,8 @@ import java.util.HashMap;
 import java.util.Map;
 
 import static io.mongock.runner.core.builder.BuilderType.COMMUNITY;
+import io.mongock.runner.core.executor.ExecutorBuilder;
+import io.mongock.runner.core.executor.ExecutorBuilderDefault;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
@@ -68,7 +68,7 @@ public class RunnerBuilderBaseTest {
 
   @Test
   public void shouldAssignAllTheParameters() {
-    new DummyRunnerBuilder(new ExecutorFactoryDefault())
+    new DummyRunnerBuilder(new ExecutorBuilderDefault())
         .setDriver(driver)
         .setEnabled(false)
         .setStartSystemVersion("start")
@@ -82,7 +82,7 @@ public class RunnerBuilderBaseTest {
   @Test
   public void shouldCallAllTheMethods_whenSetConfig() {
 
-    DummyRunnerBuilder builder = Mockito.spy(new DummyRunnerBuilder(new ExecutorFactoryDefault()).setDriver(driver));
+    DummyRunnerBuilder builder = Mockito.spy(new DummyRunnerBuilder(new ExecutorBuilderDefault()).setDriver(driver));
     MongockConfiguration expectedConfig = getConfig(false, PACKAGE_PATH);
     builder.setConfig(expectedConfig);
     //todo check all the properties are set rightly
@@ -93,7 +93,7 @@ public class RunnerBuilderBaseTest {
   @Test
   public void shouldThrowExceptionTrueByDefault() {
 
-    DummyRunnerBuilder builder = Mockito.spy(new DummyRunnerBuilder(new ExecutorFactoryDefault()).setDriver(driver));
+    DummyRunnerBuilder builder = Mockito.spy(new DummyRunnerBuilder(new ExecutorBuilderDefault()).setDriver(driver));
     builder.setConfig(getConfig(null, PACKAGE_PATH));
     checkStandardBuilderCalls(builder);
     verify(builder, new Times(0)).dontFailIfCannotAcquireLock();
@@ -105,7 +105,7 @@ public class RunnerBuilderBaseTest {
    */
   @Test
   public void shouldAddMultiplePackages_whenAddingList() {
-    DummyRunnerBuilder builder = Mockito.spy(new DummyRunnerBuilder(new ExecutorFactoryDefault()).setDriver(driver));
+    DummyRunnerBuilder builder = Mockito.spy(new DummyRunnerBuilder(new ExecutorBuilderDefault()).setDriver(driver));
     builder.addMigrationScanPackage("package1");
     builder.addMigrationScanPackage("package2");
     builder.addMigrationScanPackage("package3");
@@ -117,7 +117,7 @@ public class RunnerBuilderBaseTest {
 
   @Test
   public void shouldAddMultiplePackages_whenMultiplePackagesFromConfig() {
-    DummyRunnerBuilder builder = Mockito.spy(new DummyRunnerBuilder(new ExecutorFactoryDefault()).setDriver(driver));
+    DummyRunnerBuilder builder = Mockito.spy(new DummyRunnerBuilder(new ExecutorBuilderDefault()).setDriver(driver));
     builder.setConfig(getConfig(null, "package1", "package2"));
     MongockConfiguration actualConfig = (MongockConfiguration) ReflectionUtils.getPrivateField(builder, RunnerBuilderBase.class, "config");
     assertTrue(actualConfig.getChangeLogsScanPackage().contains("package1"));
@@ -214,7 +214,7 @@ public class RunnerBuilderBaseTest {
   private RunnerBuilderBase runnerBuilderBaseInstance(ChangeLogService changeLogService) {
     return new RunnerBuilderBase(
         COMMUNITY,
-        new ExecutorFactoryDefault(),
+        new ExecutorBuilderDefault(),
         changeLogService != null ? changeLogService : new ChangeLogService(),
         new DependencyManager(),
         new MongockConfiguration()) {
@@ -254,8 +254,8 @@ class DummyRunnerBuilder extends RunnerBuilderBase<DummyRunnerBuilder, ChangeLog
     MongockRunnable<DummyRunnerBuilder, MongockConfiguration>,
     SelfInstanstiator<DummyRunnerBuilder> {
 
-  protected DummyRunnerBuilder(ExecutorFactory<ChangeLogItem<ChangeSetItem>, ChangeSetItem, MongockConfiguration> executorFactory) {
-    super(COMMUNITY, executorFactory, new ChangeLogService(), new DependencyManager(), new MongockConfiguration());
+  protected DummyRunnerBuilder(ExecutorBuilder<ChangeLogItem<ChangeSetItem>, ChangeSetItem, MongockConfiguration> executorBuilder) {
+    super(COMMUNITY, executorBuilder, new ChangeLogService(), new DependencyManager(), new MongockConfiguration());
   }
 
   void validate() {
@@ -264,8 +264,8 @@ class DummyRunnerBuilder extends RunnerBuilderBase<DummyRunnerBuilder, ChangeLog
     assertEquals("start", config.getStartSystemVersion());
     assertEquals("end", config.getEndSystemVersion());
     assertFalse(config.isThrowExceptionIfCannotObtainLock());
-    assertEquals(1, this.config.getChangeLogsScanPackage().size());
-    assertTrue(config.getChangeLogsScanPackage().contains("package"));
+    assertEquals(1, this.config.getMigrationScanPackage().size());
+    assertTrue(config.getMigrationScanPackage().contains("package"));
   }
 
   @Override

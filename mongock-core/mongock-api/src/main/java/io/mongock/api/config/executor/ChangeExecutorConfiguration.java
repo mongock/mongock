@@ -1,6 +1,7 @@
 package io.mongock.api.config.executor;
 
 import io.mongock.api.config.TransactionStrategy;
+import java.util.List;
 
 import java.util.Map;
 import java.util.Optional;
@@ -17,4 +18,6 @@ public interface ChangeExecutorConfiguration {
   TransactionStrategy getTransactionStrategy();
 
   String getDefaultMigrationAuthor();
+  
+  List<String> getMigrationScanPackage();
 }
