@@ -5,11 +5,10 @@ import io.mongock.runner.core.internal.ChangeSetItem;
 import io.mongock.api.config.MongockConfiguration;
 import io.mongock.api.exception.MongockException;
 import io.mongock.driver.api.driver.ConnectionDriver;
-import io.mongock.driver.api.entry.ChangeEntry;
 import io.mongock.runner.core.builder.BuilderType;
 import io.mongock.runner.core.builder.RunnerBuilderBase;
 import io.mongock.runner.core.event.EventPublisher;
-import io.mongock.runner.core.executor.ExecutorFactory;
+import io.mongock.runner.core.executor.ExecutorBuilder;
 import io.mongock.runner.core.executor.changelog.ChangeLogServiceBase;
 import io.mongock.runner.core.executor.dependency.DependencyContext;
 import io.mongock.runner.core.executor.dependency.DependencyManagerWithContext;
@@ -48,10 +47,10 @@ public abstract class SpringbootBuilderBase<
   private static final String DEFAULT_PROFILE = "default";
 
   protected SpringbootBuilderBase(BuilderType builderType,
-                                  ExecutorFactory<CHANGELOG, CHANGESET, CONFIG> executorFactory,
+                                  ExecutorBuilder<CHANGELOG, CHANGESET, CONFIG> executorBuilder,
                                   ChangeLogServiceBase<CHANGELOG, CHANGESET> changeLogService,
                                   CONFIG config) {
-    super(builderType, executorFactory, changeLogService, new DependencyManagerWithContext(), config);
+    super(builderType, executorBuilder, changeLogService, new DependencyManagerWithContext(), config);
     parameterNameFunction = buildParameterNameFunctionForSpring();
   }
 

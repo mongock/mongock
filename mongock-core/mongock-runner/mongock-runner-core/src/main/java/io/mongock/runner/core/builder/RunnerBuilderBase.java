@@ -11,7 +11,7 @@ import io.mongock.driver.api.driver.DriverLegaciable;
 import io.mongock.runner.core.event.EventPublisher;
 import io.mongock.runner.core.executor.ChangeLogRuntimeImpl;
 import io.mongock.runner.core.executor.Executor;
-import io.mongock.runner.core.executor.ExecutorFactory;
+import io.mongock.runner.core.executor.ExecutorBuilder;
 import io.mongock.runner.core.executor.MongockRunner;
 import io.mongock.runner.core.executor.MongockRunnerImpl;
 import io.mongock.runner.core.executor.changelog.ChangeLogServiceBase;
@@ -31,7 +31,6 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
-import java.util.SortedSet;
 import java.util.function.Function;
 
 
@@ -43,7 +42,7 @@ public abstract class RunnerBuilderBase<
 
   private static final Logger logger = LoggerFactory.getLogger(RunnerBuilderBase.class);
   protected final CONFIG config;//todo make it independent from external configuration
-  protected final ExecutorFactory<CHANGELOG, ? extends ChangeSetItem, CONFIG> executorFactory;
+  protected final ExecutorBuilder<CHANGELOG, CHANGESET, CONFIG> executorBuilder;
   protected final ChangeLogServiceBase<CHANGELOG, CHANGESET> changeLogService;
   protected final DependencyManager dependencyManager;
   private final BuilderType type;
@@ -56,11 +55,11 @@ public abstract class RunnerBuilderBase<
   private String executionId = String.format("%s-%d", LocalDateTime.now(), new Random().nextInt(999));
 
   protected RunnerBuilderBase(BuilderType type,
-                              ExecutorFactory<CHANGELOG, ? extends ChangeSetItem, CONFIG> executorFactory,
+                              ExecutorBuilder<CHANGELOG, CHANGESET, CONFIG> executorBuilder,
                               ChangeLogServiceBase<CHANGELOG, CHANGESET> changeLogService,
                               DependencyManager dependencyManager,
                               CONFIG config) {
-    this.executorFactory = executorFactory;
+    this.executorBuilder = executorBuilder;
     this.changeLogService = changeLogService;
     this.dependencyManager = dependencyManager;
     this.config = config;
@@ -171,7 +170,7 @@ public abstract class RunnerBuilderBase<
   }
 
 
-  private SortedSet<CHANGELOG> getChangeLogs() {
+  private void prepareChangeLogService() {
     List<Class<?>> changeLogsScanClasses = new ArrayList<>();
     List<String> changeLogsScanPackage = new ArrayList<>();
     for (String itemPath : config.getMigrationScanPackage()) {
@@ -187,16 +186,12 @@ public abstract class RunnerBuilderBase<
     changeLogService.setStartSystemVersion(config.getStartSystemVersion());
     changeLogService.setEndSystemVersion(config.getEndSystemVersion());
     changeLogService.setProfileFilter(getAnnotationFilter());
-    return changeLogService.fetchChangeLogs();
   }
 
 
   protected void validateConfigurationAndInjections(ConnectionDriver driver) throws MongockException {
     if (driver == null) {
       throw new MongockException("Driver must be injected to Mongock builder");
-    }
-    if (config.getChangeLogsScanPackage() == null || config.getChangeLogsScanPackage().isEmpty()) {
-      throw new MongockException("Scan package for changeLogs is not set: use appropriate setter");
     }
     if (!config.isThrowExceptionIfCannotObtainLock()) {
       logger.warn("throwExceptionIfCannotObtainLock is disabled, which means Mongock will continue even if it's not able to acquire the lock");
@@ -241,19 +236,20 @@ public abstract class RunnerBuilderBase<
   }
 
   protected Executor buildExecutor(Operation operation, ConnectionDriver driver) {
+    prepareChangeLogService();
     ChangeLogRuntimeImpl changeLogRuntime = new ChangeLogRuntimeImpl(
         changeLogInstantiatorFunctionForAnnotations,
         dependencyManager,
         parameterNameFunction,
         driver.getNonProxyableTypes());
-    return executorFactory.getExecutor(
-        operation,
-        executionId,
-        getChangeLogs(),
-        driver,
-        changeLogRuntime,
-        config
-    );
+    return executorBuilder
+            .setOperation(operation)
+            .setExecutionId(executionId)
+            .setChangeLogService(changeLogService)
+            .setDriver(driver)
+            .setChangeLogRuntime(changeLogRuntime)
+            .setConfig(config)
+            .buildExecutor();
   }
 
   public abstract SELF getInstance();
