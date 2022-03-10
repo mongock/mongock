@@ -1,7 +1,5 @@
 package io.mongock.runner.springboot.base.builder;
 
-import io.mongock.runner.core.internal.ChangeLogItem;
-import io.mongock.runner.core.internal.ChangeSetItem;
 import io.mongock.api.config.MongockConfiguration;
 import io.mongock.api.exception.MongockException;
 import io.mongock.driver.api.driver.ConnectionDriver;
@@ -38,17 +36,15 @@ import java.util.stream.Stream;
 import static io.mongock.utils.Constants.CLI_PROFILE;
 
 public abstract class SpringbootBuilderBase<
-    SELF extends SpringbootBuilderBase<SELF,  CHANGELOG, CHANGESET, CONFIG>,
-    CHANGELOG extends ChangeLogItem<CHANGESET>,
-    CHANGESET extends ChangeSetItem,
+    SELF extends SpringbootBuilderBase<SELF, CONFIG>,
     CONFIG extends MongockConfiguration>
-    extends RunnerBuilderBase<SELF,CHANGELOG, CHANGESET, CONFIG> {
+    extends RunnerBuilderBase<SELF, CONFIG> {
 
   private static final String DEFAULT_PROFILE = "default";
 
   protected SpringbootBuilderBase(BuilderType builderType,
-                                  ExecutorBuilder<CHANGELOG, CHANGESET, CONFIG> executorBuilder,
-                                  ChangeLogServiceBase<CHANGELOG, CHANGESET> changeLogService,
+                                  ExecutorBuilder<CONFIG> executorBuilder,
+                                  ChangeLogServiceBase changeLogService,
                                   CONFIG config) {
     super(builderType, executorBuilder, changeLogService, new DependencyManagerWithContext(), config);
     parameterNameFunction = buildParameterNameFunctionForSpring();

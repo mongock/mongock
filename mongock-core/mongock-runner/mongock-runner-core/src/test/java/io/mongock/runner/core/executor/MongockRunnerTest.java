@@ -127,7 +127,7 @@ public class MongockRunnerTest {
     Executor executor = mock(MigrationExecutor.class);
     ChangeLogService changeLogService = mock(ChangeLogService.class);
 
-    SortedSet<ChangeLogItem<ChangeSetItem>> changeLogItemList = new TreeSet<>();
+    SortedSet<ChangeLogItem> changeLogItemList = new TreeSet<>();
     when(changeLogService.fetchChangeLogs()).thenReturn(changeLogItemList);
 
     EventPublisher eventPublisher = mock(EventPublisher.class);

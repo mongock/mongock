@@ -43,7 +43,7 @@ public class ProfiledChangeLogServiceTest {
         profileFilter.apply(Collections.singletonList("dev"))
     );
 
-    ChangeLogItem<ChangeSetItem> changeLog = new ArrayList<>(changeLogService.fetchChangeLogs()).get(0);
+    ChangeLogItem changeLog = new ArrayList<>(changeLogService.fetchChangeLogs()).get(0);
     assertEquals(DevProfiledChangerLog.class, changeLog.getType());
     assertEquals(DevProfiledChangerLog.class, changeLog.getType());
     assertEquals("01", changeLog.getOrder());
@@ -77,7 +77,7 @@ public class ProfiledChangeLogServiceTest {
         profileFilter.apply(Collections.singletonList("default"))
     );
 
-    ChangeLogItem<ChangeSetItem> changeLog = new ArrayList<>(changeLogService.fetchChangeLogs()).get(0);
+    ChangeLogItem changeLog = new ArrayList<>(changeLogService.fetchChangeLogs()).get(0);
     assertEquals(ProProfiledChangeLog.class, changeLog.getType());
     assertEquals(ProProfiledChangeLog.class, changeLog.getType());
     assertEquals(2, changeLog.getChangeSetItems().size());
@@ -124,7 +124,7 @@ public class ProfiledChangeLogServiceTest {
         profileFilter.apply(Collections.singletonList("anotherProfile"))
     );
 
-    ChangeLogItem<ChangeSetItem> changeLog = new ArrayList<>(changeLogService.fetchChangeLogs()).get(0);
+    ChangeLogItem changeLog = new ArrayList<>(changeLogService.fetchChangeLogs()).get(0);
     assertEquals(UnprofiledChangerLog.class, changeLog.getType());
     assertEquals(UnprofiledChangerLog.class, changeLog.getType());
     assertEquals(1, changeLog.getChangeSetItems().size());
@@ -148,7 +148,7 @@ public class ProfiledChangeLogServiceTest {
         profileFilter.apply(Collections.singletonList("default"))
     );
 
-    ChangeLogItem<ChangeSetItem> changeLog = new ArrayList<>(changeLogService.fetchChangeLogs()).get(0);
+    ChangeLogItem changeLog = new ArrayList<>(changeLogService.fetchChangeLogs()).get(0);
     assertEquals(DefaultProfiledChangerLog.class, changeLog.getType());
     assertEquals(DefaultProfiledChangerLog.class, changeLog.getType());
     assertEquals("01", changeLog.getOrder());

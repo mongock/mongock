@@ -1,7 +1,6 @@
 package io.mongock.runner.core.executor.operation.change;
 
 import io.mongock.runner.core.internal.ChangeLogItem;
-import io.mongock.runner.core.internal.ChangeSetItem;
 import io.mongock.api.config.executor.ChangeExecutorConfiguration;
 import io.mongock.driver.api.driver.ConnectionDriver;
 import io.mongock.runner.core.executor.changelog.ChangeLogRuntime;
@@ -14,7 +13,7 @@ public class MigrationExecutor extends MigrationExecutorBase<ChangeExecutorConfi
 
 
   public MigrationExecutor(String executionId,
-                           Set<ChangeLogItem<ChangeSetItem>> changeLogs,
+                           Set<ChangeLogItem> changeLogs,
                            ConnectionDriver driver,
                            ChangeLogRuntime changeLogRuntime,
                            ChangeExecutorConfiguration config) {

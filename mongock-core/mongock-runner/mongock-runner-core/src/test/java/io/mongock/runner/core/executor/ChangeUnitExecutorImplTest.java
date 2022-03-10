@@ -970,7 +970,7 @@ public class ChangeUnitExecutorImplTest {
 
   }
 
-  private SortedSet<ChangeLogItem<ChangeSetItem>> createInitialChangeLogsByPackage(Class<?>... executorChangeLogClass) {
+  private SortedSet<ChangeLogItem> createInitialChangeLogsByPackage(Class<?>... executorChangeLogClass) {
     List<String> packages = Stream.of(executorChangeLogClass)
         .map(clazz -> clazz.getPackage().getName())
         .collect(Collectors.toList());

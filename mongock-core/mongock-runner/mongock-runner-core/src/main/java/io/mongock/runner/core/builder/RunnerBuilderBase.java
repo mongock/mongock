@@ -18,8 +18,6 @@ import io.mongock.runner.core.executor.changelog.ChangeLogServiceBase;
 import io.mongock.runner.core.executor.dependency.DependencyManager;
 import io.mongock.runner.core.executor.operation.Operation;
 import io.mongock.runner.core.executor.operation.change.MigrationOp;
-import io.mongock.runner.core.internal.ChangeLogItem;
-import io.mongock.runner.core.internal.ChangeSetItem;
 import io.mongock.utils.MongockCommunityProperties;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -35,15 +33,13 @@ import java.util.function.Function;
 
 
 public abstract class RunnerBuilderBase<
-    SELF extends RunnerBuilderBase<SELF, CHANGELOG, CHANGESET, CONFIG>,
-    CHANGELOG extends ChangeLogItem<CHANGESET>,
-    CHANGESET extends ChangeSetItem,
+    SELF extends RunnerBuilderBase<SELF, CONFIG>,
     CONFIG extends MongockConfiguration> {
 
   private static final Logger logger = LoggerFactory.getLogger(RunnerBuilderBase.class);
   protected final CONFIG config;//todo make it independent from external configuration
-  protected final ExecutorBuilder<CHANGELOG, CHANGESET, CONFIG> executorBuilder;
-  protected final ChangeLogServiceBase<CHANGELOG, CHANGESET> changeLogService;
+  protected final ExecutorBuilder<CONFIG> executorBuilder;
+  protected final ChangeLogServiceBase changeLogService;
   protected final DependencyManager dependencyManager;
   private final BuilderType type;
   protected EventPublisher eventPublisher = new EventPublisher();
@@ -55,8 +51,8 @@ public abstract class RunnerBuilderBase<
   private String executionId = String.format("%s-%d", LocalDateTime.now(), new Random().nextInt(999));
 
   protected RunnerBuilderBase(BuilderType type,
-                              ExecutorBuilder<CHANGELOG, CHANGESET, CONFIG> executorBuilder,
-                              ChangeLogServiceBase<CHANGELOG, CHANGESET> changeLogService,
+                              ExecutorBuilder<CONFIG> executorBuilder,
+                              ChangeLogServiceBase changeLogService,
                               DependencyManager dependencyManager,
                               CONFIG config) {
     this.executorBuilder = executorBuilder;

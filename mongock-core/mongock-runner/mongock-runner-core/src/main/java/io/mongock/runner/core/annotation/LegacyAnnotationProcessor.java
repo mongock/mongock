@@ -6,7 +6,7 @@ import io.mongock.runner.core.internal.ChangeSetItem;
 
 import java.lang.reflect.Method;
 
-public interface LegacyAnnotationProcessor<CHANGESET extends ChangeSetItem> {
+public interface LegacyAnnotationProcessor {
 
   default boolean isMethodAnnotatedAsChange(Method method) {
     return isChangeSet(method);
@@ -31,12 +31,12 @@ public interface LegacyAnnotationProcessor<CHANGESET extends ChangeSetItem> {
    * @param changeSetMethod
    * @return The metadata associated to a change method
    */
-  default CHANGESET getChangePerformerItem(Method changeSetMethod) {
+  default ChangeSetItem getChangePerformerItem(Method changeSetMethod) {
     return getChangePerformerItem(changeSetMethod, null);
   }
 
 
-  CHANGESET getChangePerformerItem(Method changeSetMethod, Method rollbackMethod);
+  ChangeSetItem getChangePerformerItem(Method changeSetMethod, Method rollbackMethod);
 
   default String getId(Method method) {
     return getChangePerformerItem(method).getId();
