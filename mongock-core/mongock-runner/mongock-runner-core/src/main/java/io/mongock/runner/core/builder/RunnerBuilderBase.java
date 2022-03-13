@@ -17,7 +17,7 @@ import io.mongock.runner.core.executor.MongockRunnerImpl;
 import io.mongock.runner.core.executor.changelog.ChangeLogServiceBase;
 import io.mongock.runner.core.executor.dependency.DependencyManager;
 import io.mongock.runner.core.executor.operation.Operation;
-import io.mongock.runner.core.executor.operation.change.MigrationOp;
+import io.mongock.runner.core.executor.operation.migrate.MigrateAllOperation;
 import io.mongock.utils.MongockCommunityProperties;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -121,7 +121,7 @@ public abstract class RunnerBuilderBase<
   ///////////////////////////////////////////////////////////////////////////////////
 
   public MongockRunner buildRunner() {
-    return buildRunner(new MigrationOp());
+    return buildRunner(new MigrateAllOperation());
   }
 
 
@@ -130,7 +130,7 @@ public abstract class RunnerBuilderBase<
   }
 
   protected MongockRunner buildRunner(ConnectionDriver driver) {
-    return buildRunner(new MigrationOp(), driver);
+    return buildRunner(new MigrateAllOperation(), driver);
   }
 
 

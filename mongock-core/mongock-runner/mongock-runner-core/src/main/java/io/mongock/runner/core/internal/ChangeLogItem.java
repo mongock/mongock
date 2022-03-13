@@ -91,6 +91,10 @@ public class ChangeLogItem {
       boolean system) {
     return new ChangeLogItem(type.getName(), type, order, failFast, true,  changeSetElements, Collections.emptyList(), system);
   }
+  
+  public static ChangeLogItem withId(String id) {
+    return new ChangeLogItem(id, null, null, false, false, null, null, false);
+  }
 
   public ChangeLogItem(String id,
                        Class<?> type,

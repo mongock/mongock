@@ -1,4 +1,4 @@
-package io.mongock.runner.core.executor.operation.change;
+package io.mongock.runner.core.executor.operation.migrate;
 
 import io.mongock.runner.core.internal.ChangeLogItem;
 import io.mongock.api.config.executor.ChangeExecutorConfiguration;
@@ -9,10 +9,10 @@ import javax.annotation.concurrent.NotThreadSafe;
 import java.util.Set;
 
 @NotThreadSafe
-public class MigrationExecutor extends MigrationExecutorBase<ChangeExecutorConfiguration> {
+public class MigrateAllExecutor extends MigrateExecutorBase<ChangeExecutorConfiguration> {
 
 
-  public MigrationExecutor(String executionId,
+  public MigrateAllExecutor(String executionId,
                            Set<ChangeLogItem> changeLogs,
                            ConnectionDriver driver,
                            ChangeLogRuntime changeLogRuntime,

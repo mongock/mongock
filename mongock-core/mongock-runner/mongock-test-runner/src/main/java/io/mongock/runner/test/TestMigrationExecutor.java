@@ -4,13 +4,13 @@ import io.mongock.runner.core.internal.ChangeLogItem;
 import io.mongock.api.config.MongockConfiguration;
 import io.mongock.driver.api.driver.ConnectionDriver;
 import io.mongock.runner.core.executor.changelog.ChangeLogRuntime;
-import io.mongock.runner.core.executor.operation.change.MigrationExecutor;
+import io.mongock.runner.core.executor.operation.migrate.MigrateAllExecutor;
 
 import javax.annotation.concurrent.NotThreadSafe;
 import java.util.SortedSet;
 
 @NotThreadSafe
-public class TestMigrationExecutor extends MigrationExecutor {
+public class TestMigrationExecutor extends MigrateAllExecutor {
 
 
   public TestMigrationExecutor(String executionId,
