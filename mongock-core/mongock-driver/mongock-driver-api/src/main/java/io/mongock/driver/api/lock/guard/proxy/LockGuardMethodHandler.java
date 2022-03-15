@@ -1,12 +1,14 @@
 package io.mongock.driver.api.lock.guard.proxy;
 
 import io.mongock.driver.api.lock.LockManager;
+import java.lang.reflect.InvocationTargetException;
 import javassist.util.proxy.MethodHandler;
 
 import java.lang.reflect.Method;
 import java.util.Set;
 
-public class LockGuardMethodHandler<T>  implements MethodHandler {
+public class LockGuardMethodHandler<T> implements MethodHandler {
+
   private final LockGuardProxy<T> lockGuardProxy;
 
   public LockGuardMethodHandler(T implementation, LockManager lockManager, LockGuardProxyFactory proxyFactory, Set<String> nonGuardedMethods) {
@@ -19,6 +21,13 @@ public class LockGuardMethodHandler<T>  implements MethodHandler {
 
   @Override
   public Object invoke(Object proxy, Method method, Method method1, Object[] methodArgs) throws Throwable {
-    return lockGuardProxy.invoke(proxy, method, methodArgs);
+    try {
+      return lockGuardProxy.invoke(proxy, method, methodArgs);
+    } catch (InvocationTargetException ex) {
+      if (ex.getTargetException() != null) {
+        throw ex.getTargetException();
+      }
+      throw ex;
+    }
   }
 }
