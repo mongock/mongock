@@ -2,32 +2,32 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <parent>
     <groupId>io.mongock</groupId>
-    <artifactId>mongock</artifactId>
+    <artifactId>drivers</artifactId>
     <version>5.0.39-SNAPSHOT</version>
   </parent>
-
+  
   <modelVersion>4.0.0</modelVersion>
 
-  <name>Mongock community drivers</name>
-  <description>Mongock parent project for community drivers</description>
-  <url>https://github.com/mongock/mongock</url>
-
-  <artifactId>drivers</artifactId>
+  <name>DynamoDB driver parent</name>
+  <description>DynamoDB tool for tracking, managing and applying database schema changes</description>
+  <url>https://github.com/mongock/mongock-driver-dynamodb.git</url>
+  
+  <artifactId>dynamodb</artifactId>
   <packaging>pom</packaging>
-
+  
   <modules>
-    <module>mongodb</module>
-    <module>dynamodb</module>
+    <module>dynamodb-driver</module>
+    <module>dynamodb-springboot-driver</module>
+    <module>mongock-driver-dynamodb-bom</module>
   </modules>
-
 
   <properties>
     <java.version>1.8</java.version>
-    <maven.compiler.target>1.8</maven.compiler.target>
-    <maven.compiler.source>1.8</maven.compiler.source>
-    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+    <kotlin.version>1.6.0</kotlin.version>
+    <dokka.version>1.4.32</dokka.version>
     <maven.javadoc.failOnError>false</maven.javadoc.failOnError>
+
+    <project.scm.id>ossrh</project.scm.id>
   </properties>
 
 </project>
