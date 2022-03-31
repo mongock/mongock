@@ -45,6 +45,15 @@
         <type>pom</type>
         <scope>import</scope>
       </dependency>
+      
+      <!-- DynamoDB community -->
+      <dependency>
+        <groupId>io.mongock</groupId>
+        <artifactId>mongock-driver-dynamodb-bom</artifactId>
+        <version>${project.version}</version>
+        <type>pom</type>
+        <scope>import</scope>
+      </dependency>
 
     </dependencies>
   </dependencyManagement>
