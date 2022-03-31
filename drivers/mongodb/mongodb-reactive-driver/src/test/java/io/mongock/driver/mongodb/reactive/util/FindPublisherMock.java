@@ -13,6 +13,7 @@ import org.reactivestreams.Subscription;
 
 import java.util.List;
 import java.util.concurrent.TimeUnit;
+import org.bson.BsonValue;
 
 public class FindPublisherMock<T> implements FindPublisher<T> {
 
@@ -158,6 +159,11 @@ public class FindPublisherMock<T> implements FindPublisher<T> {
 
   @Override
   public <E> Publisher<E> explain(Class<E> aClass, ExplainVerbosity explainVerbosity) {
+    return null;
+  }
+
+  @Override
+  public FindPublisher<T> comment(BsonValue bv) {
     return null;
   }
 }
