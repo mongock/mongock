@@ -1,0 +1,2 @@
+org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
+  io.mongock.driver.dynamodb.springboot.config.DynamoDBSpringbootContext
