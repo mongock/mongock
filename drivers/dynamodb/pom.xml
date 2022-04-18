@@ -29,5 +29,36 @@
 
     <project.scm.id>ossrh</project.scm.id>
   </properties>
+  
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.jetbrains.dokka</groupId>
+        <artifactId>dokka-maven-plugin</artifactId>
+        <version>1.6.10</version>
+        <executions>
+          <execution>
+            <phase>package</phase>
+            <id>attach-javadocs-dokka</id>
+            <goals>
+              <goal>javadocJar</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+      <plugin>
+        <artifactId>maven-javadoc-plugin</artifactId>
+        <executions>
+          <execution>
+            <phase>package</phase>
+            <id>attach-javadocs-javadoc</id>
+            <goals>
+              <goal>jar</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+    </plugins>
+  </build>
 
 </project>
