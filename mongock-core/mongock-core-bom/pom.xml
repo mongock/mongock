@@ -3,7 +3,7 @@
   <parent>
     <artifactId>mongock-core</artifactId>
     <groupId>io.mongock</groupId>
-    <version>5.0.39-SNAPSHOT</version>
+    <version>5.0.40-SNAPSHOT</version>
   </parent>
   <packaging>pom</packaging>
   <modelVersion>4.0.0</modelVersion>
