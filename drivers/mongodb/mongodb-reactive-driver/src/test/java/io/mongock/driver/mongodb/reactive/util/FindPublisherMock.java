@@ -166,4 +166,9 @@ public class FindPublisherMock<T> implements FindPublisher<T> {
   public FindPublisher<T> comment(BsonValue bv) {
     return null;
   }
+
+  @Override
+  public FindPublisher<T> let(Bson bson) {
+    return null;
+  }
 }
