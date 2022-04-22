@@ -2,7 +2,6 @@ package io.mongock.runner.springboot.base.config;
 
 import io.mongock.api.config.MongockConfiguration;
 import io.mongock.driver.api.driver.ConnectionDriver;
-import io.mongock.driver.api.entry.ChangeEntry;
 import io.mongock.runner.springboot.base.MongockApplicationRunner;
 import io.mongock.runner.springboot.base.MongockInitializingBeanRunner;
 import io.mongock.runner.springboot.base.builder.SpringApplicationBean;
