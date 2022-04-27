@@ -3,7 +3,7 @@
   <parent>
     <artifactId>mongodb</artifactId>
     <groupId>io.mongock</groupId>
-    <version>5.0.40-SNAPSHOT</version>
+    <version>5.1.0-SNAPSHOT</version>
   </parent>
 
   <modelVersion>4.0.0</modelVersion>
