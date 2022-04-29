@@ -15,6 +15,14 @@ public interface DriverConnectable<SELF extends DriverConnectable<SELF, CONFIG>,
   SELF setDriver(ConnectionDriver driver);
 
   /**
+   * Retrieve the connection driver
+   * <b>Mandatory</b>
+   *
+   * @return the connection driver
+   */
+  ConnectionDriver getDriver();
+
+  /**
    * Indicates that in case the lock cannot be obtained, therefore the migration is not executed, Mongock won't throw
    * any exception and the application will carry on.
    * <p>

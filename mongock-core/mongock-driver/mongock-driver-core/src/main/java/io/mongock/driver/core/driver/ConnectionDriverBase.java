@@ -1,5 +1,6 @@
 package io.mongock.driver.core.driver;
 
+import com.google.common.annotations.VisibleForTesting;
 import io.mongock.api.exception.MongockException;
 import io.mongock.driver.api.driver.ChangeSetDependency;
 import io.mongock.driver.api.driver.ConnectionDriver;
@@ -34,6 +35,11 @@ public abstract class ConnectionDriverBase implements ConnectionDriver {
     this.lockAcquiredForMillis = lockAcquiredForMillis;
     this.lockQuitTryingAfterMillis = lockQuitTryingAfterMillis;
     this.lockTryFrequencyMillis = lockTryFrequencyMillis;
+  }
+
+  @VisibleForTesting
+  final void resetInitialization() {
+    initialized = false;
   }
 
   @Override

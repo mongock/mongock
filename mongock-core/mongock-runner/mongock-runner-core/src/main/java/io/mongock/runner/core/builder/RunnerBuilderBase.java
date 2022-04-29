@@ -102,6 +102,11 @@ public abstract class RunnerBuilderBase<
   }
 
 
+  public ConnectionDriver getDriver() {
+    return driver;
+  }
+
+
   public DependencyManager getDependencyManager() {
     return dependencyManager;
   }
