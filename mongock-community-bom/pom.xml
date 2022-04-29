@@ -55,6 +55,32 @@
         <scope>import</scope>
       </dependency>
 
+
+      <!-- testing -->
+      <dependency>
+        <groupId>io.mongock</groupId>
+        <artifactId>mongock-test-base</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>io.mongock</groupId>
+        <artifactId>mongock-standalone-test</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>io.mongock</groupId>
+        <artifactId>mongock-springboot-test</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+
+      <dependency>
+        <groupId>io.mongock</groupId>
+        <artifactId>mongock-springboot-junit5</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+
+
+
     </dependencies>
   </dependencyManagement>
 

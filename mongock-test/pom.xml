@@ -24,6 +24,7 @@
     <module>mongock-standalone-test</module>
     <module>mongock-test-base</module>
     <module>mongock-springboot-test</module>
+      <module>mongock-springboot-junit5</module>
   </modules>
 
 </project>

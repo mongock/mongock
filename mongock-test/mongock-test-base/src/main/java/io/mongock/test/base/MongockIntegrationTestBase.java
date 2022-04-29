@@ -24,7 +24,7 @@ public abstract class MongockIntegrationTestBase {
     mongockRunner = builder.buildRunner();
   }
 
-  public void mongockBAfterEach() {
+  public void mongockAfterEach() {
     connectionDriverTestingWrapper.cleanMigrationRepository();
     connectionDriverTestingWrapper.cleanMigrationRepository();
   }
