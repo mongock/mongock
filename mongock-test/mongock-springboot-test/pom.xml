@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <parent>
+    <artifactId>mongock-test</artifactId>
+    <groupId>io.mongock</groupId>
+    <version>5.1.0-SNAPSHOT</version>
+  </parent>
+  <modelVersion>4.0.0</modelVersion>
+
+  <artifactId>mongock-springboot-test</artifactId>
+
+  <name>mongock-springboot-test</name>
+  <description>Test utils for Mongock springboot</description>
+  <url>https://github.com/mongock/mongock</url>
+
+  <dependencies>
+    <dependency>
+      <groupId>io.mongock</groupId>
+      <artifactId>mongock-test-base</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+
+
+    <dependency>
+      <groupId>io.mongock</groupId>
+      <artifactId>mongock-springboot</artifactId>
+      <version>${project.version}</version>
+      <scope>provided</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-starter-test</artifactId>
+      <scope>provided</scope>
+      <version>${spring-boot.version}</version>
+    </dependency>
+
+  </dependencies>
+
+</project>
