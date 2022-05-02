@@ -79,6 +79,9 @@ abstract class DynamoDbRepositoryBase(
         this.indexCreation = indexCreation
     }
 
+    /**
+     * Only for testing
+     */
     open fun deleteAll() {
         logger.info { "Deleting all the items from table[$tableName] - It may involve removing the table and re-create it(ont recommended in production environment)" }
         try {

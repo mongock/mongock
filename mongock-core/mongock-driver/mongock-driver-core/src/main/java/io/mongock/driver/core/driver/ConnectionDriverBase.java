@@ -131,10 +131,16 @@ public abstract class ConnectionDriverBase implements ConnectionDriver {
     return lockRepositoryName != null ? lockRepositoryName : DEFAULT_LOCK_REPOSITORY_NAME;
   }
 
+  /**
+   * Only for testing
+   */
   public final void cleanMigrationRepository() {
     getChangeEntryService().deleteAll();
   }
 
+  /**
+   * Only for testing
+   */
   public final void cleanLockRepository() {
     getLockRepository().deleteAll();
   }

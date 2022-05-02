@@ -135,7 +135,9 @@ public class MongoReactiveRepositoryBase<DOMAIN_CLASS> implements EntityReposito
     this.indexCreation = indexCreation;
   }
 
-
+  /**
+   * Only for testing
+   */
   public void deleteAll() {
     collection.deleteMany(new Document());
   }
