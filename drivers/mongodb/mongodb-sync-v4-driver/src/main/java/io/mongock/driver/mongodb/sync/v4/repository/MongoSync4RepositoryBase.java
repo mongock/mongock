@@ -131,4 +131,11 @@ public class MongoSync4RepositoryBase<DOMAIN_CLASS> implements EntityRepository<
   public void setIndexCreation(boolean indexCreation) {
     this.indexCreation = indexCreation;
   }
+
+  /**
+   * Only for testing
+   */
+  public void deleteAll() {
+    collection.deleteMany(new Document());
+  }
 }

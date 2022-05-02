@@ -130,4 +130,12 @@ public  abstract class Mongo3RepositoryBase<DOMAIN_CLASS> implements EntityRepos
   public void setIndexCreation(boolean indexCreation) {
     this.indexCreation = indexCreation;
   }
+
+
+  /**
+   * Only for testing
+   */
+  public void deleteAll() {
+    collection.deleteMany(new Document());
+  }
 }

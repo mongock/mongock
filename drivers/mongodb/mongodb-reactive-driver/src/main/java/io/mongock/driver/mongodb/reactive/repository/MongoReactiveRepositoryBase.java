@@ -88,9 +88,6 @@ public class MongoReactiveRepositoryBase<DOMAIN_CLASS> implements EntityReposito
   }
 
   protected boolean isRequiredIndexCreated() {
-
-
-    SubscriberSync<Document> subscriber = new MongoSubscriberSync<>();
     return collection.listIndexes()
         .stream()
         .anyMatch(this::isRightIndex);
@@ -136,5 +133,12 @@ public class MongoReactiveRepositoryBase<DOMAIN_CLASS> implements EntityReposito
   @Override
   public void setIndexCreation(boolean indexCreation) {
     this.indexCreation = indexCreation;
+  }
+
+  /**
+   * Only for testing
+   */
+  public void deleteAll() {
+    collection.deleteMany(new Document());
   }
 }

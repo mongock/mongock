@@ -79,4 +79,20 @@ abstract class DynamoDbRepositoryBase(
         this.indexCreation = indexCreation
     }
 
+    /**
+     * Only for testing
+     */
+    open fun deleteAll() {
+        logger.info { "Deleting all the items from table[$tableName] - It may involve removing the table and re-create it(not recommended in production environment)" }
+        try {
+            val table = dynamoDB.getTable(tableName)
+            table.describe()//just to make it fail if not created
+            logger.info { "Table[$tableName] exists. Proceeding to remove it and re-create it" }
+            table.delete()
+            createTable()
+        } catch (ex: ResourceNotFoundException) {
+            logger.info { "Table[$tableName] doesn't exist. It's not created" }
+        }
+    }
+
 }

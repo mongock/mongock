@@ -13,9 +13,11 @@ public class ConnectionDriverTestingWrapper {
   }
 
   public void cleanMigrationRepository() {
+    connectionDriver.cleanMigrationRepository();
   }
 
   public void cleanLockRepository() {
+    connectionDriver.cleanLockRepository();
   }
 
 }
