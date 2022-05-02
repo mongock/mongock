@@ -83,7 +83,7 @@ abstract class DynamoDbRepositoryBase(
      * Only for testing
      */
     open fun deleteAll() {
-        logger.info { "Deleting all the items from table[$tableName] - It may involve removing the table and re-create it(ont recommended in production environment)" }
+        logger.info { "Deleting all the items from table[$tableName] - It may involve removing the table and re-create it(not recommended in production environment)" }
         try {
             val table = dynamoDB.getTable(tableName)
             table.describe()//just to make it fail if not created
