@@ -240,6 +240,11 @@ public class ChangeEntryServiceTest {
 
     }
 
+    @Override
+    public void deleteAll() {
+
+    }
+
 
     @Override
     public void initialize() {

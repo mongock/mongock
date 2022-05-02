@@ -93,4 +93,6 @@ public interface ChangeEntryService extends RepositoryIndexable, Process {
    */
   void saveOrUpdate(ChangeEntry changeEntry) throws MongockException;
 
+  void deleteAll();
+
 }

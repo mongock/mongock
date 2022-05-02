@@ -60,5 +60,6 @@ public interface LockRepository extends RepositoryIndexable, Process {
    */
   void removeByKeyAndOwner(String lockKey, String owner);
 
+  void deleteAll();
 
 }
