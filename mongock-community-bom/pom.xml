@@ -59,7 +59,7 @@
       <!-- testing -->
       <dependency>
         <groupId>io.mongock</groupId>
-        <artifactId>mongock-test-base</artifactId>
+        <artifactId>mongock-test-core</artifactId>
         <version>${project.version}</version>
       </dependency>
       <dependency>

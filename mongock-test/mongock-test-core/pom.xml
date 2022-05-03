@@ -10,7 +10,7 @@
   <modelVersion>4.0.0</modelVersion>
 
   <artifactId>mongock-test-core</artifactId>
-  <name>mongock-test-base</name>
+  <name>mongock-test-core</name>
   <description>Test utils base for Mongock</description>
   <url>https://github.com/mongock/mongock</url>
 
