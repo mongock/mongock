@@ -27,6 +27,13 @@ To be updated with the latest releases, notifications and news, follow us on [tw
 ## Documentation
 The official documentation is [here][documentation_link], where you can find everything rom version 3.
 
+## Professional support
+Mongock professional is the extension of the Mongock open source project, providing advanced features and different levels of support.
+
+Professional support not only guarantees that your business will get all the problems and questions solved, but also that the project is properly maintained and not only by the community, but there is also a company behind it, taking care of it.
+
+Visit this [link](https://docs.mongock.io/v5/professional/setup.html) to get started.
+
 ## Examples
 [Mongock examples](https://github.com/mongock/mongock-examples)
     
