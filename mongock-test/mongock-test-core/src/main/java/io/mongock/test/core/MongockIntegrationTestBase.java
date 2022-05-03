@@ -1,4 +1,4 @@
-package io.mongock.test.base;
+package io.mongock.test.core;
 
 import io.mongock.driver.core.driver.ConnectionDriverBase;
 import io.mongock.driver.core.driver.ConnectionDriverTestingWrapper;
@@ -9,7 +9,7 @@ public abstract class MongockIntegrationTestBase {
 
   private RunnerBuilder builder;
   private ConnectionDriverTestingWrapper connectionDriverTestingWrapper;
-  protected MongockRunner mongockRunner;
+  private MongockRunner mongockRunner;
 
   protected void setBuilder(RunnerBuilder builder) {
     this.builder = builder;
