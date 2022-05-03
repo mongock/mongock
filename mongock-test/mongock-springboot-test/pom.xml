@@ -12,7 +12,7 @@
   <artifactId>mongock-springboot-test</artifactId>
 
   <name>mongock-springboot-test</name>
-  <description>Test utils for Mongock springboot</description>MongockRunnerImpl
+  <description>Test utils for Mongock springboot</description>
   <url>https://github.com/mongock/mongock</url>
 
   <dependencies>
