@@ -9,34 +9,30 @@
   </parent>
   <modelVersion>4.0.0</modelVersion>
 
-  <artifactId>mongock-springboot-test</artifactId>
+  <artifactId>mongock-standalone-junit5</artifactId>
 
-  <name>mongock-springboot-test</name>
-  <description>Test utils for Mongock springboot</description>MongockRunnerImpl
-  <url>https://github.com/mongock/mongock</url>
 
   <dependencies>
     <dependency>
       <groupId>io.mongock</groupId>
-      <artifactId>mongock-test-base</artifactId>
+      <artifactId>mongock-standalone-test</artifactId>
       <version>${project.version}</version>
     </dependency>
 
 
     <dependency>
       <groupId>io.mongock</groupId>
-      <artifactId>mongock-springboot</artifactId>
+      <artifactId>mongock-standalone</artifactId>
       <version>${project.version}</version>
       <scope>provided</scope>
     </dependency>
 
     <dependency>
-      <groupId>org.springframework.boot</groupId>
-      <artifactId>spring-boot-starter-test</artifactId>
+      <groupId>org.junit.jupiter</groupId>
+      <artifactId>junit-jupiter-engine</artifactId>
+      <version>5.8.1</version>
       <scope>provided</scope>
-      <version>${spring-boot.version}</version>
     </dependency>
-
   </dependencies>
 
 </project>

@@ -4,8 +4,11 @@ import io.mongock.runner.core.builder.RunnerBuilder;
 import io.mongock.test.base.MongockIntegrationTestBase;
 
 public class MongockStandaloneIntegrationTestBase extends MongockIntegrationTestBase {
+  protected MongockStandaloneIntegrationTestBase() {
+    super();
+  }
 
-  public MongockStandaloneIntegrationTestBase(RunnerBuilder builder) {
+  protected MongockStandaloneIntegrationTestBase(RunnerBuilder builder) {
     super(builder);
   }
 
