@@ -27,7 +27,7 @@ public class MongockSpringbootIntegrationTestBase extends MongockIntegrationTest
    */
   @Autowired
   public void connectionDriver(ConnectionDriver driver) {
-    connectionDriverTestingWrapper = new ConnectionDriverTestingWrapper((ConnectionDriverBase) driver);
+    setConnectionDriver((ConnectionDriverBase) driver);
   }
 
 }
