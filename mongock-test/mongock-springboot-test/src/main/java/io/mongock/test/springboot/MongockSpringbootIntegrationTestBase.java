@@ -18,7 +18,7 @@ public class MongockSpringbootIntegrationTestBase extends MongockIntegrationTest
    */
   @Autowired
   public void runnerBuilder(RunnerBuilder builder) {
-    this.builder = builder;
+    setBuilder(builder);
   }
 
   /**

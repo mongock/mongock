@@ -7,14 +7,13 @@ import io.mongock.runner.core.executor.MongockRunner;
 
 public abstract class MongockIntegrationTestBase {
 
-  protected RunnerBuilder builder;
+  private RunnerBuilder builder;
   protected ConnectionDriverTestingWrapper connectionDriverTestingWrapper;
   protected MongockRunner mongockRunner;
 
-  public MongockIntegrationTestBase() {
-  }
 
-  public MongockIntegrationTestBase(RunnerBuilder builder) {
+
+  protected void setBuilder(RunnerBuilder builder) {
     this.builder = builder;
     connectionDriverTestingWrapper = new ConnectionDriverTestingWrapper((ConnectionDriverBase) builder.getDriver());
   }
