@@ -1,4 +1,4 @@
-package io.mongock.test.base;
+package io.mongock.test.core;
 
 import io.mongock.driver.core.driver.ConnectionDriverBase;
 import io.mongock.driver.core.driver.ConnectionDriverTestingWrapper;
@@ -7,16 +7,16 @@ import io.mongock.runner.core.executor.MongockRunner;
 
 public abstract class MongockIntegrationTestBase {
 
-  protected RunnerBuilder builder;
-  protected ConnectionDriverTestingWrapper connectionDriverTestingWrapper;
-  protected MongockRunner mongockRunner;
+  private RunnerBuilder builder;
+  private ConnectionDriverTestingWrapper connectionDriverTestingWrapper;
+  private MongockRunner mongockRunner;
 
-  public MongockIntegrationTestBase() {
+  protected void setBuilder(RunnerBuilder builder) {
+    this.builder = builder;
   }
 
-  public MongockIntegrationTestBase(RunnerBuilder builder) {
-    this.builder = builder;
-    connectionDriverTestingWrapper = new ConnectionDriverTestingWrapper((ConnectionDriverBase) builder.getDriver());
+  protected void setConnectionDriver(ConnectionDriverBase connectionDriver) {
+    connectionDriverTestingWrapper = new ConnectionDriverTestingWrapper(connectionDriver);
   }
 
   /**
@@ -43,5 +43,6 @@ public abstract class MongockIntegrationTestBase {
   public void executeMongock() {
     mongockRunner.execute();
   }
+
 
 }

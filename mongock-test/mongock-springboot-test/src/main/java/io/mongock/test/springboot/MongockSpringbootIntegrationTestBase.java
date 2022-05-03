@@ -2,9 +2,8 @@ package io.mongock.test.springboot;
 
 import io.mongock.driver.api.driver.ConnectionDriver;
 import io.mongock.driver.core.driver.ConnectionDriverBase;
-import io.mongock.driver.core.driver.ConnectionDriverTestingWrapper;
 import io.mongock.runner.core.builder.RunnerBuilder;
-import io.mongock.test.base.MongockIntegrationTestBase;
+import io.mongock.test.core.MongockIntegrationTestBase;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.TestPropertySource;
 
@@ -18,7 +17,7 @@ public class MongockSpringbootIntegrationTestBase extends MongockIntegrationTest
    */
   @Autowired
   public void runnerBuilder(RunnerBuilder builder) {
-    this.builder = builder;
+    setBuilder(builder);
   }
 
   /**
@@ -27,7 +26,7 @@ public class MongockSpringbootIntegrationTestBase extends MongockIntegrationTest
    */
   @Autowired
   public void connectionDriver(ConnectionDriver driver) {
-    connectionDriverTestingWrapper = new ConnectionDriverTestingWrapper((ConnectionDriverBase) driver);
+    setConnectionDriver((ConnectionDriverBase) driver);
   }
 
 }
