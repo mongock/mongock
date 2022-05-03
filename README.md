@@ -13,11 +13,7 @@ Lightweight Java based migration tool
 [![Hex.pm](https://img.shields.io/hexpm/l/plug.svg)](https://github.com/dieppa/mongock/blob/master/LICENSE)
 [![Bugs](https://sonarcloud.io/api/project_badges/measure?project=com.github.cloudyrock.mongock&metric=bugs)](https://sonarcloud.io/component_measures?id=com.github.cloudyrock.mongock&metric=bugs)
 [![Vulnerabilities](https://sonarcloud.io/api/project_badges/measure?project=com.github.cloudyrock.mongock&metric=vulnerabilities)](https://sonarcloud.io/component_measures?id=com.github.cloudyrock.mongock&metric=vulnerabilities)
-    
 
-> 🎉 Mongock has a new [Gitter channel](https://gitter.im/mongock/community)!    
-    
-> 🚀 Mongock 5 is released!! It comes with tons of highlights!
     
 **Mongock** is a Java based migration tool as part of your application code. It allows developers to have ownership and control over data migrations during the deployment process, allowing safer migrations in distributed systems as code and data changes are shipped together.  
     
@@ -27,7 +23,7 @@ To be updated with the latest releases, notifications and news, follow us on [tw
 ## Documentation
 The official documentation is [here][documentation_link], where you can find everything rom version 3.
 
-## Professional support
+## Professional support 🚀
 Mongock professional is the extension of the Mongock open source project, providing advanced features and different levels of support.
 
 Professional support not only guarantees that your business will get all the problems and questions solved, but also that the project is properly maintained and not only by the community, but there is also a company behind it, taking care of it.
