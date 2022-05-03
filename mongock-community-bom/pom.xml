@@ -78,16 +78,6 @@
         <version>${project.version}</version>
       </dependency>
 
-      <dependency>
-        <groupId>io.mongock</groupId>
-        <artifactId>mongock-standalone-junit5</artifactId>
-        <version>${project.version}</version>
-      </dependency>
-
-
-
-
-
     </dependencies>
   </dependencyManagement>
 
