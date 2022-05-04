@@ -21,9 +21,11 @@ Lightweight Java based migration tool
 The official documentation is [here][documentation_link], where you can find everything rom version 3.
 
 ## Professional support 🚀
-Mongock professional is the extension of the Mongock open source project, providing advanced features and different levels of support.
+Mongock professional is the extension of the Mongock open source project. This provides some additional advantages such as:
 
-Professional support not only guarantees that your business will get all the problems and questions solved, but also that the project is properly maintained and not only by the community, but there is also a company behind it, taking care of it.
+- Advanced features exclusive to the Professional version.
+- New community features are available and released to the professional version as well.
+- Professional support for the tool usage is backed by Mongock Ltd.
 
 Visit this [link](https://docs.mongock.io/v5/professional/setup.html) to get started.
 
