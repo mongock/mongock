@@ -25,7 +25,7 @@ Mongock professional is the extension of the Mongock open source project. This p
 
 - Advanced features exclusive to the Professional version.
 - New community features are available and released to the professional version as well.
-- Professional support for the tool usage is backed by Mongock Ltd.
+- Professional support for the tool usage is backed by Mongock Ltd, providing your business with additional help and responses.
 
 Visit this [link](https://docs.mongock.io/v5/professional/setup.html) to get started.
 
