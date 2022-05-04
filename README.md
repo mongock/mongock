@@ -13,22 +13,27 @@ Lightweight Java based migration tool
 [![Hex.pm](https://img.shields.io/hexpm/l/plug.svg)](https://github.com/dieppa/mongock/blob/master/LICENSE)
 [![Bugs](https://sonarcloud.io/api/project_badges/measure?project=com.github.cloudyrock.mongock&metric=bugs)](https://sonarcloud.io/component_measures?id=com.github.cloudyrock.mongock&metric=bugs)
 [![Vulnerabilities](https://sonarcloud.io/api/project_badges/measure?project=com.github.cloudyrock.mongock&metric=vulnerabilities)](https://sonarcloud.io/component_measures?id=com.github.cloudyrock.mongock&metric=vulnerabilities)
-    
 
-> 🎉 Mongock has a new [Gitter channel](https://gitter.im/mongock/community)!    
     
-> 🚀 Mongock 5 is released!! It comes with tons of highlights!
-    
-**Mongock** is a Java based migration tool as part of your application code. It allows developers to have ownership and control over data migrations during the deployment process, allowing safer migrations in distributed systems as code and data changes are shipped together.  
-    
-## Stay tuned 
-To be updated with the latest releases, notifications and news, follow us on [twitter](https://twitter.com/MongockTeam) 😉
+**Mongock** is a Java based migration tool as part of your application code. It allows developers to have ownership and control over data migrations during the deployment process, allowing safer migrations in distributed systems as code and data changes are shipped together.
 
 ## Documentation
 The official documentation is [here][documentation_link], where you can find everything rom version 3.
 
+## Professional support 🚀
+Mongock professional is the extension of the Mongock open source project. This provides some additional advantages such as:
+
+- Advanced features exclusive to the Professional version.
+- New community features are available and released to the professional version as well.
+- Professional support for the tool usage is backed by Mongock Ltd, providing your business with additional help and responses.
+
+Visit this [link](https://docs.mongock.io/v5/professional/setup.html) to get started.
+
 ## Examples
 [Mongock examples](https://github.com/mongock/mongock-examples)
+
+## Stay tuned
+To be updated with the latest releases, notifications and news, follow us on [twitter](https://twitter.com/MongockTeam) 😉
     
 ## Questions
 Before rasing a question, please check it hasn't been alerady answered in
