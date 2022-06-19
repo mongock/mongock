@@ -2,6 +2,7 @@ package io.mongock.runner.core.executor;
 
 import io.changock.migration.api.annotations.NonLockGuarded;
 import io.mongock.api.annotations.ChangeUnit;
+import io.mongock.api.annotations.ChangeUnitConstructor;
 import io.mongock.api.exception.MongockException;
 import io.mongock.driver.api.common.DependencyInjectionException;
 import io.mongock.driver.api.driver.ChangeSetDependency;
@@ -25,6 +26,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 import java.util.function.Function;
+import java.util.function.Supplier;
 import java.util.stream.Stream;
 
 public class ChangeLogRuntimeImpl implements ChangeLogRuntime {
@@ -122,9 +124,24 @@ public class ChangeLogRuntimeImpl implements ChangeLogRuntime {
 
 
   private Constructor<?> getConstructor(Class<?> type) {
+    return findChangeUnitConstructor(type, type.getName())
+        .orElseGet(() -> findDefaultConstructor(type));
+  }
+
+  private Constructor<?> findDefaultConstructor(Class<?> type) {
     return Optional.of(type.getConstructors())
         .map(Arrays::stream)
         .flatMap(Stream::findFirst)
         .orElseThrow(() -> new MongockException("Mongock cannot find a valid constructor for changeUnit[%s]", type.getName()));
+  }
+
+  private Optional<Constructor<?>> findChangeUnitConstructor(Class<?> type, String className) {
+    Supplier<Stream<Constructor<?>>> changeUnitConstructorsSupplier = () -> Arrays.stream(type.getConstructors())
+        .filter(constructor -> constructor.isAnnotationPresent(ChangeUnitConstructor.class));
+    if (changeUnitConstructorsSupplier.get().count() > 1) {
+      throw new MongockException("Found multiple constructors for changeUnit[%s] without annotation @ChangeUnitConstructor." +
+          " Annotate the one you want Mongock to use to instantiate your changeUnit", className);
+    }
+    return changeUnitConstructorsSupplier.get().findFirst();
   }
 }
