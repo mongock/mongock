@@ -124,7 +124,7 @@ public class ChangeLogRuntimeImpl implements ChangeLogRuntime {
 
 
   private Constructor<?> getConstructor(Class<?> type) {
-    return findChangeUnitConstructor(type, type.getName())
+    return findChangeUnitConstructor(type)
         .orElseGet(() -> findDefaultConstructor(type));
   }
 
@@ -140,12 +140,12 @@ public class ChangeLogRuntimeImpl implements ChangeLogRuntime {
         .orElseThrow(() -> new MongockException("Mongock cannot find a valid constructor for changeUnit[%s]", type.getName()));
   }
 
-  private Optional<Constructor<?>> findChangeUnitConstructor(Class<?> type, String className) {
+  private Optional<Constructor<?>> findChangeUnitConstructor(Class<?> type) {
     Supplier<Stream<Constructor<?>>> changeUnitConstructorsSupplier = () -> Arrays.stream(type.getConstructors())
         .filter(constructor -> constructor.isAnnotationPresent(ChangeUnitConstructor.class));
     if (changeUnitConstructorsSupplier.get().count() > 1) {
       throw new MongockException("Found multiple constructors for changeUnit[%s] without annotation @ChangeUnitConstructor." +
-          " Annotate the one you want Mongock to use to instantiate your changeUnit", className);
+          " Annotate the one you want Mongock to use to instantiate your changeUnit", type.getName());
     }
     return changeUnitConstructorsSupplier.get().findFirst();
   }
