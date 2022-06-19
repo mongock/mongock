@@ -129,9 +129,14 @@ public class ChangeLogRuntimeImpl implements ChangeLogRuntime {
   }
 
   private Constructor<?> findDefaultConstructor(Class<?> type) {
-    return Optional.of(type.getConstructors())
-        .map(Arrays::stream)
-        .flatMap(Stream::findFirst)
+    Supplier<Stream<Constructor<?>>> constructorSupplier = () -> Arrays.stream(type.getConstructors());
+    if (constructorSupplier.get().count() > 1) {
+      logger.warn("Mongock found multiple constructors for changeUnit[{}]. " +
+          "It's recommended to annotate the one you want Mongock to use with @ChangeUnitConstructor. " +
+          "FROM VERSION 6 THIS WILL CAUSE AN ERROR ", type.getName());
+    }
+    return constructorSupplier.get()
+        .findFirst()
         .orElseThrow(() -> new MongockException("Mongock cannot find a valid constructor for changeUnit[%s]", type.getName()));
   }
 
