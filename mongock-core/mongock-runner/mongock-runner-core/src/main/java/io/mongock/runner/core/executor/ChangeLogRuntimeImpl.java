@@ -1,7 +1,6 @@
 package io.mongock.runner.core.executor;
 
 import io.changock.migration.api.annotations.NonLockGuarded;
-
 import io.mongock.api.annotations.ChangeUnit;
 import io.mongock.api.exception.MongockException;
 import io.mongock.driver.api.common.DependencyInjectionException;
@@ -20,10 +19,13 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Parameter;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 import java.util.function.Function;
+import java.util.stream.Stream;
 
 public class ChangeLogRuntimeImpl implements ChangeLogRuntime {
   private static final Logger logger = LoggerFactory.getLogger(ChangeLogRuntimeImpl.class);
@@ -120,6 +122,9 @@ public class ChangeLogRuntimeImpl implements ChangeLogRuntime {
 
 
   private Constructor<?> getConstructor(Class<?> type) {
-    return type.getConstructors()[0];
+    return Optional.of(type.getConstructors())
+        .map(Arrays::stream)
+        .flatMap(Stream::findFirst)
+        .orElseThrow(() -> new MongockException("Mongock cannot find a valid constructor for changeUnit[%s]", type.getName()));
   }
 }

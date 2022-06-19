@@ -26,6 +26,7 @@ import io.mongock.runner.core.changelogs.skipmigration.runalways.ChangeLogAlread
 import io.mongock.runner.core.changelogs.skipmigration.withnochangeset.ChangeLogWithNoChangeSet;
 import io.mongock.runner.core.changelogs.system.NewChangeUnit;
 import io.mongock.runner.core.changelogs.system.SystemChangeUnit;
+import io.mongock.runner.core.changelogs.withConstructor.ChangeUnitWithoutValidConstructor;
 import io.mongock.runner.core.changelogs.withRollback.AdvanceChangeLogWithBefore;
 import io.mongock.runner.core.changelogs.withRollback.AdvanceChangeLogWithBeforeAndChangeSetFailing;
 import io.mongock.runner.core.changelogs.withRollback.BasicChangeLogWithExceptionInChangeSetAndRollback;
@@ -63,6 +64,7 @@ import java.util.stream.Stream;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertThrows;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.mock;
@@ -962,6 +964,16 @@ public class ChangeUnitExecutorImplTest {
     assertEquals("AdvanceChangeLogWithBeforeAndChangeSetFailing_before", changeEntryList.get(4).getChangeId());
     assertEquals(ChangeState.ROLLED_BACK, changeEntryList.get(4).getState());
 
+  }
+
+  @Test
+  public void shouldNotCreateInstanceWhenNoValidConstructorExist() {
+    ChangeLogRuntimeImpl changeLogRuntime = getChangeLogRuntime(new DependencyManager());
+    MongockException mongockException = assertThrows(MongockException.class,
+        () -> changeLogRuntime.getInstance(ChangeUnitWithoutValidConstructor.class));
+    assertEquals("Mongock cannot find a valid constructor for " +
+        "changeUnit[io.mongock.runner.core.changelogs.withConstructor.ChangeUnitWithoutValidConstructor]",
+        mongockException.getMessage());
   }
 
   private SortedSet<ChangeLogItem> createInitialChangeLogsByPackage(Class<?>... executorChangeLogClass) {
