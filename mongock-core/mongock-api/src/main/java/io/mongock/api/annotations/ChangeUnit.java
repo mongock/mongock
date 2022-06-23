@@ -18,6 +18,7 @@ import java.lang.annotation.Target;
  * The concept is basically the same, a class that wraps the logic of the migration
  * <p>
  * Classes annotated with @ChangeUnit must have the following:
+ * - One(and only one) one valid constructor annotated with @ChangeUnitConstructor(mandatory if more than one constructor exist after version 6)
  * - One(and only one) method annotated with @Execution(mandatory)
  * - One(and only one) method annotated with @RollbackExecution(mandatory)
  * - At most, one method annotated with @BeforeExecution(optional)
@@ -28,6 +29,7 @@ import java.lang.annotation.Target;
  * <p>
  * - For new changeLogs/changeSets created  from version 5: Annotated you class migration class with the annotation @ChangeUnit
  *
+ * @see ChangeUnitConstructor
  * @see Execution
  * @see BeforeExecution
  * @see RollbackExecution

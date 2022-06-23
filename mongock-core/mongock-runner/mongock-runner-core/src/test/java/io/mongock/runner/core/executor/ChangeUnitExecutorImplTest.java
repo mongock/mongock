@@ -26,6 +26,11 @@ import io.mongock.runner.core.changelogs.skipmigration.runalways.ChangeLogAlread
 import io.mongock.runner.core.changelogs.skipmigration.withnochangeset.ChangeLogWithNoChangeSet;
 import io.mongock.runner.core.changelogs.system.NewChangeUnit;
 import io.mongock.runner.core.changelogs.system.SystemChangeUnit;
+import io.mongock.runner.core.changelogs.withConstructor.ChangeUnitWithDefaultConstructor;
+import io.mongock.runner.core.changelogs.withConstructor.ChangeUnitWithMoreThanOneChangeUnitConstructor;
+import io.mongock.runner.core.changelogs.withConstructor.ChangeUnitWithValidConstructor;
+import io.mongock.runner.core.changelogs.withConstructor.ChangeUnitWithValidConstructorsHavingChangeUnitConstructor;
+import io.mongock.runner.core.changelogs.withConstructor.ChangeUnitWithoutValidConstructor;
 import io.mongock.runner.core.changelogs.withRollback.AdvanceChangeLogWithBefore;
 import io.mongock.runner.core.changelogs.withRollback.AdvanceChangeLogWithBeforeAndChangeSetFailing;
 import io.mongock.runner.core.changelogs.withRollback.BasicChangeLogWithExceptionInChangeSetAndRollback;
@@ -63,6 +68,8 @@ import java.util.stream.Stream;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertThrows;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.mock;
@@ -962,6 +969,50 @@ public class ChangeUnitExecutorImplTest {
     assertEquals("AdvanceChangeLogWithBeforeAndChangeSetFailing_before", changeEntryList.get(4).getChangeId());
     assertEquals(ChangeState.ROLLED_BACK, changeEntryList.get(4).getState());
 
+  }
+
+  @Test
+  public void shouldNotCreateInstanceWhenNoValidConstructorExist() {
+    ChangeLogRuntimeImpl changeLogRuntime = getChangeLogRuntime(new DependencyManager());
+    MongockException mongockException = assertThrows(MongockException.class,
+        () -> changeLogRuntime.getInstance(ChangeUnitWithoutValidConstructor.class));
+    assertEquals("Mongock cannot find a valid constructor for " +
+        "changeUnit[io.mongock.runner.core.changelogs.withConstructor.ChangeUnitWithoutValidConstructor]",
+        mongockException.getMessage());
+  }
+
+  @Test
+  public void shouldNotCreateInstanceWhenMoreThanOneConstructorIsAnnotatedWithChangeUnitConstructor() {
+    ChangeLogRuntimeImpl changeLogRuntime = getChangeLogRuntime(new DependencyManager());
+    MongockException mongockException = assertThrows(MongockException.class,
+        () -> changeLogRuntime.getInstance(ChangeUnitWithMoreThanOneChangeUnitConstructor.class));
+    assertEquals("Found multiple constructors for" +
+            " changeUnit[io.mongock.runner.core.changelogs.withConstructor.ChangeUnitWithMoreThanOneChangeUnitConstructor] " +
+            "without annotation @ChangeUnitConstructor. " +
+            "Annotate the one you want Mongock to use to instantiate your changeUnit",
+        mongockException.getMessage());
+  }
+
+  @Test
+  public void shouldCreateInstanceWhenOnlyOneValidConstructorExistWithoutChangeUnitConstructor() {
+    ChangeLogRuntimeImpl changeLogRuntime = getChangeLogRuntime(new DependencyManager());
+    assertNotNull(changeLogRuntime.getInstance(ChangeUnitWithValidConstructor.class));
+  }
+
+  @Test
+  public void shouldCreateInstanceWithDefaultConstructor() {
+    ChangeLogRuntimeImpl changeLogRuntime = getChangeLogRuntime(new DependencyManager());
+    assertNotNull(changeLogRuntime.getInstance(ChangeUnitWithDefaultConstructor.class));
+  }
+
+  @Test
+  public void shouldCreateInstanceWhenOneValidConstructorExistWithChangeUnitConstructor() {
+    ChangeLogRuntimeImpl changeLogRuntime = getChangeLogRuntime(new DependencyManager());
+    ChangeUnitWithValidConstructorsHavingChangeUnitConstructor instance =
+        (ChangeUnitWithValidConstructorsHavingChangeUnitConstructor) changeLogRuntime
+            .getInstance(ChangeUnitWithValidConstructorsHavingChangeUnitConstructor.class);
+    assertNotNull(instance);
+    assertEquals(ChangeUnitWithValidConstructorsHavingChangeUnitConstructor.DUMMY_VALUE, instance.getDummy());
   }
 
   private SortedSet<ChangeLogItem> createInitialChangeLogsByPackage(Class<?>... executorChangeLogClass) {
