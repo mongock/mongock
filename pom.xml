@@ -21,41 +21,43 @@
 
 
   <properties>
+    <java.version>1.8</java.version>
+    <maven.compiler.target>1.8</maven.compiler.target>
+    <maven.compiler.source>1.8</maven.compiler.source>
+    <maven.javadoc.failOnError>false</maven.javadoc.failOnError>
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+    <project.scm.id>ossrh</project.scm.id>
 
-
+    <!-- versions of springframework/springboot -->
     <springframework.version>[5.0.0, 6.0.0)</springframework.version>
     <spring-boot.version>[2.0.0, 3.0.0)</spring-boot.version>
 
+    <!-- versions of mongodb -->
     <mongodb-sync-4.version>4.2.3</mongodb-sync-4.version>
     <mongodb-driver-3.version>3.12.8</mongodb-driver-3.version>
     <mongodb-reactivestreams.version>[4.0.0, 5.0.0)</mongodb-reactivestreams.version>
 
+    <!-- versions of spring-data -->
     <spring-data-3.version>3.2.0</spring-data-3.version>
     <spring-data-2.version>2.2.13.RELEASE</spring-data-2.version>
-
+    
     <!-- versions of Mongodb used in spring data -->
     <spring-data-3.mongodb.version>4.2.3</spring-data-3.mongodb.version>
-    <spring-data-2.mongodb.version>3.11.2</spring-data-2.mongodb.version>
-
-    <spring-cloud-sleuth.version>3.1.0</spring-cloud-sleuth.version>
-
-    <java.version>1.8</java.version>
-    <maven.compiler.target>1.8</maven.compiler.target>
-    <maven.compiler.source>1.8</maven.compiler.source>
-    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-    <maven.javadoc.failOnError>false</maven.javadoc.failOnError>
-
-    <project.scm.id>ossrh</project.scm.id>
+    <spring-data-2.mongodb.version>3.11.3</spring-data-2.mongodb.version>
+    
+    <!-- logger -->
+    <slf4j-api.version>1.7.25</slf4j-api.version>
 
     <!--Test-->
     <junit.jupiter.version>5.6.2</junit.jupiter.version>
     <junit.vintage.version>5.6.2</junit.vintage.version>
     <spring-cloud-sleuth.version>3.1.0</spring-cloud-sleuth.version>
     <test-containers.version>1.16.2</test-containers.version>
+    <mockito-core.version>3.2.4</mockito-core.version>
+    <mongodb-replica-set.version>0.3.1</mongodb-replica-set.version>
+    <awaitility.version>3.0.0</awaitility.version>
   </properties>
-
-
 
   <licenses>
     <license>
@@ -69,7 +71,7 @@
     <connection>scm:git:git@github.com:mongock/mongock.git</connection>
     <developerConnection>scm:git:https://github.com/mongock/mongock.git</developerConnection>
     <url>https://github.com/mongock/mongock</url>
-    <tag>mongock-5.0.0-SNAPSHOT</tag>
+    <tag>mongock-5.1.1-SNAPSHOT</tag>
   </scm>
 
   <developers>
@@ -106,6 +108,66 @@
       <url>https://s01.oss.sonatype.org/service/local/staging/deploy/maven2/</url>
     </repository>
   </distributionManagement>
+  
+  <dependencyManagement>
+    <dependencies>
+      
+      <dependency>
+        <groupId>org.slf4j</groupId>
+        <artifactId>slf4j-api</artifactId>
+        <version>${slf4j-api.version}</version>
+      </dependency>
+      
+      <dependency>
+        <groupId>org.slf4j</groupId>
+        <artifactId>slf4j-simple</artifactId>
+        <version>${slf4j-api.version}</version>
+      </dependency>
+      
+      <dependency>
+        <groupId>org.junit.jupiter</groupId>
+        <artifactId>junit-jupiter-api</artifactId>
+        <version>${junit.jupiter.version}</version>
+      </dependency>
+      
+      <dependency>
+        <groupId>org.junit.jupiter</groupId>
+        <artifactId>junit-jupiter-engine</artifactId>
+        <version>${junit.jupiter.version}</version>
+      </dependency>
+          
+      <dependency>
+        <groupId>org.mockito</groupId>
+        <artifactId>mockito-core</artifactId>
+        <version>${mockito-core.version}</version>
+      </dependency>
+      
+      <dependency>
+        <groupId>com.github.silaev</groupId>
+        <artifactId>mongodb-replica-set</artifactId>
+        <version>${mongodb-replica-set.version}</version>
+      </dependency>
+
+      <dependency>
+        <groupId>org.awaitility</groupId>
+        <artifactId>awaitility</artifactId>
+        <version>${awaitility.version}</version>
+      </dependency>
+
+      <dependency>
+        <groupId>org.testcontainers</groupId>
+        <artifactId>testcontainers</artifactId>
+        <version>${test-containers.version}</version>
+      </dependency>
+      
+      <dependency>
+        <groupId>org.testcontainers</groupId>
+        <artifactId>dynalite</artifactId>
+        <version>${test-containers.version}</version>
+      </dependency>
+      
+    </dependencies>
+  </dependencyManagement>
 
   <build>
     <plugins>

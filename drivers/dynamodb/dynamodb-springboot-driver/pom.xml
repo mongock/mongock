@@ -11,14 +11,6 @@
 
   <artifactId>dynamodb-springboot-driver</artifactId>
 
-  <properties>
-    <java.version>1.8</java.version>
-    <maven.compiler.source>8</maven.compiler.source>
-    <maven.compiler.target>8</maven.compiler.target>
-
-    <kotest.version>5.0.0.M3</kotest.version>
-  </properties>
-
   <dependencyManagement>
     <dependencies>
       <!-- MONGOCK CORE-->
@@ -54,7 +46,7 @@
     <dependency>
       <groupId>io.github.microutils</groupId>
       <artifactId>kotlin-logging-jvm</artifactId>
-      <version>2.0.11</version>
+      <version>${kotlin-logging-jvm.version}</version>
     </dependency>
 
     <!-- CORE DEPENDENCIES -->
@@ -66,57 +58,23 @@
     <dependency>
       <groupId>com.amazonaws</groupId>
       <artifactId>aws-java-sdk-dynamodb</artifactId>
-      <version>1.12.104</version>
+      <version>${aws-java-sdk-dynamodb.version}</version>
       <scope>provided</scope>
     </dependency>
 
     <dependency>
       <groupId>com.google.code.gson</groupId>
       <artifactId>gson</artifactId>
-      <version>2.8.9</version>
+      <version>${gson.version}</version>
     </dependency>
 
     <dependency>
       <groupId>com.fasterxml.jackson.core</groupId>
       <artifactId>jackson-annotations</artifactId>
-      <version>2.13.0</version>
-    </dependency>
-
-    <!-- TEST DEPENDENCIES -->
-    <dependency>
-      <groupId>io.kotest</groupId>
-      <artifactId>kotest-runner-junit5-jvm</artifactId>
-      <version>4.6.3</version>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
-      <groupId>io.kotest</groupId>
-      <artifactId>kotest-assertions-core-jvm</artifactId>
-      <version>4.6.3</version>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
-      <groupId>io.kotest</groupId>
-      <artifactId>kotest-property-jvm</artifactId>
-      <version>4.6.3</version>
-      <scope>test</scope>
-    </dependency>
-
-
-    <dependency>
-      <groupId>org.testcontainers</groupId>
-      <artifactId>testcontainers</artifactId>
-      <version>1.16.2</version>
-    </dependency>
-    <dependency>
-      <groupId>org.testcontainers</groupId>
-      <artifactId>dynalite</artifactId>
-      <version>1.16.2</version>
-      <scope>test</scope>
+      <version>${jackson-annotations.version}</version>
     </dependency>
 
   </dependencies>
-
 
 
   <build>
@@ -125,7 +83,7 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-surefire-plugin</artifactId>
-        <version>2.22.2</version>
+        <version>${maven-surefire-plugin.version}</version>
       </plugin>
 
       <plugin>

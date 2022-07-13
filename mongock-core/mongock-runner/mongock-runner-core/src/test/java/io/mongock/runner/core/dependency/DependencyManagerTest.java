@@ -8,21 +8,15 @@ import io.mongock.runner.core.executor.dependency.DependencyManager;
 import io.mongock.runner.core.util.InterfaceDependency;
 import io.mongock.runner.core.util.InterfaceDependencyImpl;
 import io.mongock.util.test.ReflectionUtils;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.ExpectedException;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
 import java.util.ArrayList;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class DependencyManagerTest {
-
-
-  @Rule
-  public ExpectedException exceptionExpected = ExpectedException.none();
 
   @Test
   public void shouldRetrieveConnectorDependency_WhenAddSimpleDependency() {

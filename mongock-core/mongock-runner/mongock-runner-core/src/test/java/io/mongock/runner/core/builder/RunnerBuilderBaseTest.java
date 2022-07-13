@@ -16,12 +16,12 @@ import io.mongock.runner.core.builder.roles.ServiceIdentificable;
 import io.mongock.runner.core.builder.roles.SystemVersionable;
 import io.mongock.runner.core.executor.changelog.ChangeLogService;
 import io.mongock.runner.core.executor.dependency.DependencyManager;
+import io.mongock.runner.core.executor.ExecutorBuilder;
+import io.mongock.runner.core.executor.ExecutorBuilderDefault;
 import io.mongock.runner.core.util.LegacyMigrationDummyImpl;
 import io.mongock.util.test.ReflectionUtils;
-import org.junit.Before;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.ExpectedException;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.mockito.internal.verification.Times;
 
@@ -31,11 +31,12 @@ import java.util.HashMap;
 import java.util.Map;
 
 import static io.mongock.runner.core.builder.BuilderType.COMMUNITY;
-import io.mongock.runner.core.executor.ExecutorBuilder;
-import io.mongock.runner.core.executor.ExecutorBuilderDefault;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.verify;
@@ -52,12 +53,10 @@ public class RunnerBuilderBaseTest {
 
   private static final Map<String, Object> METADATA = new HashMap<>();
 
-  @Rule
-  public ExpectedException exceptionExpected = ExpectedException.none();
   LegaciableConnectionDriver driver = mock(LegaciableConnectionDriver.class);
   Map<String, Object> metadata = new HashMap<>();
 
-  @Before
+  @BeforeEach
   @SuppressWarnings("all")
   public void before() {
     Class legacyMigrationChangeLogDummyClass = DummyRunnerBuilder.LegacyMigrationChangeLogDummy.class;
@@ -129,11 +128,8 @@ public class RunnerBuilderBaseTest {
     RunnerBuilderBase builder = runnerBuilderBaseInstance();
     builder.setDriver(driver);
 
-    exceptionExpected.expect(MongockException.class);
-    exceptionExpected.expectMessage("Scan package for changeLogs is not set: use appropriate setter");
-    builder.buildRunner();
-
-
+    MongockException ex = assertThrows(MongockException.class, () -> builder.buildRunner());
+    assertEquals("Scan package for changeLogs is not set: use appropriate setter", ex.getMessage());
   }
 
 
@@ -148,9 +144,10 @@ public class RunnerBuilderBaseTest {
     config.setChangeLogsScanPackage(Collections.singletonList("package"));
     builder.setConfig(config);
 
-    exceptionExpected.expect(MongockException.class);
-    exceptionExpected.expectMessage("ChangeLogService error");
-    builder.buildRunner();
+    MongockException ex = assertThrows(MongockException.class, () -> builder.buildRunner());
+    assertNotNull(ex.getCause());
+    assertEquals(RuntimeException.class, ex.getCause().getClass());
+    assertEquals("ChangeLogService error", ex.getCause().getMessage());
 
 
   }

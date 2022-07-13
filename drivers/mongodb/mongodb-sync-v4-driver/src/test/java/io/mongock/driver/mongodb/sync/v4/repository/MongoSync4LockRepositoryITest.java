@@ -12,8 +12,8 @@ import com.mongodb.ReadPreference;
 import com.mongodb.WriteConcern;
 import com.mongodb.client.MongoCollection;
 import org.bson.Document;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
 import static org.mockito.ArgumentMatchers.any;
@@ -87,9 +87,9 @@ public class MongoSync4LockRepositoryITest extends MongoLockRepositoryITestBase 
       repo = new MongoSync4LockRepository(getDataBase().getCollection(LOCK_COLLECTION_NAME));
     }
     MongoCollection collection = RepositoryAccessorHelper.getCollection(repo);
-    Assert.assertEquals(expectedWriteConcern, collection.getWriteConcern());
-    Assert.assertEquals(expectedReadConcern, collection.getReadConcern());
-    Assert.assertEquals(expectedReadPreference, collection.getReadPreference());
+    Assertions.assertEquals(expectedWriteConcern, collection.getWriteConcern());
+    Assertions.assertEquals(expectedReadConcern, collection.getReadConcern());
+    Assertions.assertEquals(expectedReadPreference, collection.getReadPreference());
   }
 
   @Override

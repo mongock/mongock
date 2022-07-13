@@ -9,7 +9,7 @@ import io.mongock.runner.springboot.profiles.defaultprofiled.DefaultProfiledChan
 import io.mongock.runner.springboot.profiles.dev.DevProfiledChangerLog;
 import io.mongock.runner.springboot.profiles.pro.ProProfiledChangeLog;
 import io.mongock.runner.springboot.profiles.unprofiled.UnprofiledChangerLog;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.springframework.context.annotation.Profile;
 
 import java.lang.reflect.AnnotatedElement;
@@ -19,10 +19,10 @@ import java.util.Collections;
 import java.util.List;
 import java.util.function.Function;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class ProfiledChangeLogServiceTest {
   private static final Function<List<String>, Function<AnnotatedElement, Boolean>> profileFilter =

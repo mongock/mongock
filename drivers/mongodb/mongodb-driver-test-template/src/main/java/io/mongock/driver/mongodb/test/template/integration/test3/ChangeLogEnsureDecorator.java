@@ -5,7 +5,7 @@ import com.github.cloudyrock.mongock.ChangeSet;
 import io.mongock.driver.mongodb.test.template.util.CallVerifier;
 import com.mongodb.client.MongoDatabase;
 import io.mongock.util.test.ReflectionUtils;
-import org.junit.Assert;
+import org.junit.jupiter.api.Assertions;
 
 @ChangeLog
 public class ChangeLogEnsureDecorator {
@@ -13,7 +13,7 @@ public class ChangeLogEnsureDecorator {
 
   @ChangeSet(author = "testuser", id = "id_duplicated", order = "00")
   public void method(MongoDatabase mongodatabase, CallVerifier callVerifier) {
-    Assert.assertTrue(ReflectionUtils.isProxy(mongodatabase));
+    Assertions.assertTrue(ReflectionUtils.isProxy(mongodatabase));
     callVerifier.increaseCounter();
   }
 

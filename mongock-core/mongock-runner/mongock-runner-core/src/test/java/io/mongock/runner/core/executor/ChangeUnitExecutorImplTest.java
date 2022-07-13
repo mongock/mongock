@@ -39,15 +39,11 @@ import io.mongock.runner.core.executor.changelog.ChangeLogService;
 import io.mongock.runner.core.executor.dependency.DependencyManager;
 import io.mongock.runner.core.executor.operation.migrate.MigrateAllExecutor;
 import io.mongock.runner.core.internal.ChangeLogItem;
-import io.mongock.runner.core.internal.ChangeSetItem;
 import io.mongock.runner.core.util.DummyDependencyClass;
 import io.mongock.runner.core.util.InterfaceDependencyImpl;
 import io.mongock.runner.core.util.InterfaceDependencyImplNoLockGarded;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.ExpectedException;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 import org.mockito.internal.verification.Times;
 
@@ -66,11 +62,11 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertThrows;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
@@ -78,14 +74,13 @@ import static org.mockito.Mockito.when;
 
 public class ChangeUnitExecutorImplTest {
   private static final Function<Parameter, String> DEFAULT_PARAM_NAME_PROVIDER = parameter -> parameter.isAnnotationPresent(Named.class) ? parameter.getAnnotation(Named.class).value() : null;
-  @Rule
-  public ExpectedException exceptionExpected = ExpectedException.none();
+
   private ChangeEntryService changeEntryService;
   private LockManager lockManager;
   private ConnectionDriver driver;
   private TransactionableConnectionDriver transactionableDriver;
 
-  @Before
+  @BeforeEach
   public void setUp() {
     lockManager = mock(LockManager.class);
     changeEntryService = mock(ChangeEntryService.class);
@@ -146,7 +141,8 @@ public class ChangeUnitExecutorImplTest {
     new MigrateAllExecutor("", createInitialChangeLogsByPackage(ExecutorChangeLog.class), driver, getChangeLogRuntime(dm), config)
         .executeMigration();
 
-    assertTrue("Changelog's methods have not been fully executed", ExecutorChangeLog.latch.await(1, TimeUnit.NANOSECONDS));
+    assertTrue(ExecutorChangeLog.latch.await(1, TimeUnit.NANOSECONDS), "Changelog's methods have not been fully executed");
+    
     // then
     ArgumentCaptor<ChangeEntry> captor = ArgumentCaptor.forClass(ChangeEntry.class);
     verify(changeEntryService, new Times(trackingIgnored ? 4 : 3)).saveOrUpdate(captor.capture());
@@ -214,7 +210,7 @@ public class ChangeUnitExecutorImplTest {
       //ignored
     }
 
-    assertTrue("Changelog's methods have not been fully executed", ExecutorWithFailFastChangeLog.latch.await(1, TimeUnit.NANOSECONDS));
+    assertTrue(ExecutorWithFailFastChangeLog.latch.await(1, TimeUnit.NANOSECONDS), "Changelog's methods have not been fully executed");
     // then
     ArgumentCaptor<ChangeEntry> captor = ArgumentCaptor.forClass(ChangeEntry.class);
     verify(changeEntryService, new Times(3)).saveOrUpdate(captor.capture());
@@ -252,17 +248,16 @@ public class ChangeUnitExecutorImplTest {
     // given
     when(changeEntryService.getExecuted()).thenReturn(Collections.emptyList());
 
-    // then
-    exceptionExpected.expect(MongockException.class);
-    exceptionExpected.expectMessage("Error in method[ExecutorChangeLog.newChangeSet] : Wrong parameter[DummyDependencyClass]");
-
     // when
     MongockConfiguration config = new MongockConfiguration();
     config.setServiceIdentifier("myService");
     config.setTrackIgnored(false);
     DependencyManager dm = new DependencyManager();
+    MongockException ex = assertThrows(MongockException.class, () -> 
     new MigrateAllExecutor("", createInitialChangeLogsByPackage(ExecutorChangeLog.class), driver, getChangeLogRuntime(dm), config)
-        .executeMigration();
+        .executeMigration()
+    );
+    assertEquals("Error in method[ExecutorChangeLog.newChangeSet] : Wrong parameter[DummyDependencyClass]. Dependency not found.", ex.getMessage());
   }
 
   @Test
@@ -272,17 +267,16 @@ public class ChangeUnitExecutorImplTest {
     injectDummyDependency(DummyDependencyClass.class, "Wrong parameter");
     when(changeEntryService.getExecuted()).thenReturn(Collections.emptyList());
 
-    //then
-    exceptionExpected.expect(MongockException.class);
-    exceptionExpected.expectMessage("argument type mismatch");
-
     // when
     MongockConfiguration config = new MongockConfiguration();
     config.setServiceIdentifier("myService");
     config.setTrackIgnored(false);
     DependencyManager dm = new DependencyManager();
-    new MigrateAllExecutor("", createInitialChangeLogsByPackage(ExecutorChangeLog.class), driver, getChangeLogRuntime(dm), config)
-        .executeMigration();
+    MongockException ex = assertThrows(MongockException.class, () -> 
+            new MigrateAllExecutor("", createInitialChangeLogsByPackage(ExecutorChangeLog.class), driver, getChangeLogRuntime(dm), config)
+              .executeMigration()
+    );
+    assertEquals("Error in method[ExecutorChangeLog.newChangeSet] : argument type mismatch", ex.getMessage());
   }
 
   @Test
@@ -308,7 +302,7 @@ public class ChangeUnitExecutorImplTest {
   }
 
 
-  @Test(expected = MongockException.class)
+  @Test
   @SuppressWarnings("unchecked")
   public void shouldPropagateMongockException_EvenWhenThrowExIfCannotLock_IfDriverNotValidated() {
     // given
@@ -321,8 +315,10 @@ public class ChangeUnitExecutorImplTest {
     config.setServiceIdentifier("myService");
     config.setTrackIgnored(false);
     DependencyManager dm = new DependencyManager();
-    new MigrateAllExecutor("", createInitialChangeLogsByPackage(ExecutorChangeLog.class), driver, getChangeLogRuntime(dm), config)
-        .executeMigration();
+    assertThrows(MongockException.class, () -> 
+            new MigrateAllExecutor("", createInitialChangeLogsByPackage(ExecutorChangeLog.class), driver, getChangeLogRuntime(dm), config)
+        .executeMigration()
+    );
   }
 
   @Test
@@ -340,7 +336,8 @@ public class ChangeUnitExecutorImplTest {
     new MigrateAllExecutor("", createInitialChangeLogsByPackage(ExecutorWithNonFailFastChangeLog.class), driver, getChangeLogRuntime(dm), config)
         .executeMigration();
 
-    assertTrue("Changelog's methods have not been fully executed", ExecutorWithNonFailFastChangeLog.latch.await(1, TimeUnit.NANOSECONDS));
+    assertTrue(ExecutorWithNonFailFastChangeLog.latch.await(1, TimeUnit.NANOSECONDS), "Changelog's methods have not been fully executed");
+    
     // then
     ArgumentCaptor<ChangeEntry> captor = ArgumentCaptor.forClass(ChangeEntry.class);
     verify(changeEntryService, new Times(3)).saveOrUpdate(captor.capture());
@@ -392,8 +389,8 @@ public class ChangeUnitExecutorImplTest {
     } catch (Exception ex) {
     }
 
-    assertTrue("Changelog's (1) methods have not been fully executed", ExecutorWithChangeLogNonFailFastChangeLog1.latch.await(1, TimeUnit.NANOSECONDS));
-    assertTrue("Changelog's (2) methods have not been fully executed", ExecutorWithChangeLogNonFailFastChangeLog2.latch.await(1, TimeUnit.NANOSECONDS));
+    assertTrue(ExecutorWithChangeLogNonFailFastChangeLog1.latch.await(1, TimeUnit.NANOSECONDS), "Changelog's (1) methods have not been fully executed");
+    assertTrue(ExecutorWithChangeLogNonFailFastChangeLog2.latch.await(1, TimeUnit.NANOSECONDS), "Changelog's (2) methods have not been fully executed");
 
     // then
     ArgumentCaptor<ChangeEntry> captor = ArgumentCaptor.forClass(ChangeEntry.class);
@@ -453,7 +450,7 @@ public class ChangeUnitExecutorImplTest {
     } catch (Exception ex) {
     }
 
-    assertTrue("Changelog's methods have not been fully executed", ExecutorWithChangeLogFailFastChangeLog1.latch.await(1, TimeUnit.NANOSECONDS));
+    assertTrue(ExecutorWithChangeLogFailFastChangeLog1.latch.await(1, TimeUnit.NANOSECONDS), "Changelog's methods have not been fully executed");
 
     // then
     ArgumentCaptor<ChangeEntry> captor = ArgumentCaptor.forClass(ChangeEntry.class);
@@ -722,14 +719,14 @@ public class ChangeUnitExecutorImplTest {
     ChangeLogService changeLogService = new ChangeLogService();
     changeLogService.setChangeLogsBaseClassList(Collections.singletonList(BasicChangeLogWithExceptionInChangeSetAndRollback.class));
 
-    Assert.assertThrows(MongockException.class,
+    assertThrows(MongockException.class,
         () -> {
           DependencyManager dm = new DependencyManager();
           new MigrateAllExecutor("", changeLogService.fetchChangeLogs(), driver, getChangeLogRuntime(dm), config)
               .executeMigration();
         });
 
-    assertTrue("Rollback method wasn't executed", BasicChangeLogWithExceptionInChangeSetAndRollback.rollbackCalledLatch.await(5, TimeUnit.NANOSECONDS));
+    assertTrue(BasicChangeLogWithExceptionInChangeSetAndRollback.rollbackCalledLatch.await(5, TimeUnit.NANOSECONDS), "Rollback method wasn't executed");
 
     ArgumentCaptor<ChangeEntry> changeEntryCaptor = ArgumentCaptor.forClass(ChangeEntry.class);
     verify(changeEntryService, new Times(2))
@@ -757,7 +754,7 @@ public class ChangeUnitExecutorImplTest {
     ChangeLogService changeLogService = new ChangeLogService();
     changeLogService.setChangeLogsBaseClassList(Collections.singletonList(BasicChangeLogWithExceptionInRollback.class));
 
-    Assert.assertThrows(MongockException.class,
+    assertThrows(MongockException.class,
         () -> {
           DependencyManager dm = new DependencyManager();
           new MigrateAllExecutor("", changeLogService.fetchChangeLogs(), driver, getChangeLogRuntime(dm), config)
@@ -791,7 +788,7 @@ public class ChangeUnitExecutorImplTest {
     changeLogService.setChangeLogsBaseClassList(Arrays.asList(AdvanceChangeLogWithBefore.class, AdvanceChangeLogWithBeforeAndChangeSetFailing.class));
 
     when(driver.isTransactionable()).thenReturn(false);
-    Assert.assertThrows(MongockException.class,
+    assertThrows(MongockException.class,
         () -> {
           DependencyManager dm = new DependencyManager();
           new MigrateAllExecutor("", changeLogService.fetchChangeLogs(), driver, getChangeLogRuntime(dm), config)
@@ -800,8 +797,8 @@ public class ChangeUnitExecutorImplTest {
 
 
     // checks the four rollbacks were called
-    assertTrue("AdvanceChangeLogWithBefore's Rollback method wasn't executed", AdvanceChangeLogWithBefore.rollbackCalledLatch.await(5, TimeUnit.NANOSECONDS));
-    assertTrue("AdvanceChangeLogWithBeforeAndChangeSetFailing's Rollback method wasn't executed", AdvanceChangeLogWithBeforeAndChangeSetFailing.rollbackCalledLatch.await(5, TimeUnit.NANOSECONDS));
+    assertTrue(AdvanceChangeLogWithBefore.rollbackCalledLatch.await(5, TimeUnit.NANOSECONDS), "AdvanceChangeLogWithBefore's Rollback method wasn't executed");
+    assertTrue(AdvanceChangeLogWithBeforeAndChangeSetFailing.rollbackCalledLatch.await(5, TimeUnit.NANOSECONDS), "AdvanceChangeLogWithBeforeAndChangeSetFailing's Rollback method wasn't executed");
 
     ArgumentCaptor<ChangeEntry> changeEntryCaptor = ArgumentCaptor.forClass(ChangeEntry.class);
     verify(changeEntryService, new Times(8)).saveOrUpdate(changeEntryCaptor.capture());
@@ -841,7 +838,7 @@ public class ChangeUnitExecutorImplTest {
     changeLogService.setChangeLogsBaseClassList(Arrays.asList(AdvanceChangeLogWithBefore.class, AdvanceChangeLogWithBeforeAndChangeSetFailing.class));
 
     when(driver.isTransactionable()).thenReturn(false);
-    Assert.assertThrows(MongockException.class,
+    assertThrows(MongockException.class,
         () -> {
           DependencyManager dm = new DependencyManager();
           new MigrateAllExecutor("", changeLogService.fetchChangeLogs(), driver, getChangeLogRuntime(dm), config)
@@ -850,7 +847,7 @@ public class ChangeUnitExecutorImplTest {
 
 
     // checks the four rollbacks were called
-    assertTrue("AdvanceChangeLogWithBeforeAndChangeSetFailing's Rollback method wasn't executed", AdvanceChangeLogWithBeforeAndChangeSetFailing.rollbackCalledLatch.await(5, TimeUnit.NANOSECONDS));
+    assertTrue(AdvanceChangeLogWithBeforeAndChangeSetFailing.rollbackCalledLatch.await(5, TimeUnit.NANOSECONDS), "AdvanceChangeLogWithBeforeAndChangeSetFailing's Rollback method wasn't executed");
 
     ArgumentCaptor<ChangeEntry> changeEntryCaptor = ArgumentCaptor.forClass(ChangeEntry.class);
     verify(changeEntryService, new Times(6)).saveOrUpdate(changeEntryCaptor.capture());
@@ -886,7 +883,7 @@ public class ChangeUnitExecutorImplTest {
 
     when(driver.isTransactionable()).thenReturn(true);
 
-    Assert.assertThrows(MongockException.class,
+    assertThrows(MongockException.class,
         () -> {
           DependencyManager dm = new DependencyManager();
           new MigrateAllExecutor("", changeLogService.fetchChangeLogs(), driver, getChangeLogRuntime(dm), config)
@@ -895,11 +892,11 @@ public class ChangeUnitExecutorImplTest {
 
 
     // checks the four rollbacks were called
-    assertFalse("AdvanceChangeLogWithBefore's Rollback before method wasn't executed", AdvanceChangeLogWithBefore.rollbackBeforeCalled);
-    assertFalse("AdvanceChangeLogWithBefore's Rollback method wasn't executed", AdvanceChangeLogWithBefore.rollbackCalled);
+    assertFalse(AdvanceChangeLogWithBefore.rollbackBeforeCalled, "AdvanceChangeLogWithBefore's Rollback before method wasn't executed");
+    assertFalse(AdvanceChangeLogWithBefore.rollbackCalled, "AdvanceChangeLogWithBefore's Rollback method wasn't executed");
 
-    assertFalse("AdvanceChangeLogWithBeforeAndChangeSetFailing's Rollback before method wasn't executed", AdvanceChangeLogWithBeforeAndChangeSetFailing.rollbackBeforeCalled);
-    assertFalse("AdvanceChangeLogWithBeforeAndChangeSetFailing's Rollback method wasn't executed", AdvanceChangeLogWithBeforeAndChangeSetFailing.rollbackCalled);
+    assertFalse(AdvanceChangeLogWithBeforeAndChangeSetFailing.rollbackBeforeCalled, "AdvanceChangeLogWithBeforeAndChangeSetFailing's Rollback before method wasn't executed");
+    assertFalse(AdvanceChangeLogWithBeforeAndChangeSetFailing.rollbackCalled, "AdvanceChangeLogWithBeforeAndChangeSetFailing's Rollback method wasn't executed");
 
     ArgumentCaptor<ChangeEntry> changeEntryCaptor = ArgumentCaptor.forClass(ChangeEntry.class);
     verify(changeEntryService, new Times(4)).saveOrUpdate(changeEntryCaptor.capture());
@@ -932,7 +929,7 @@ public class ChangeUnitExecutorImplTest {
     changeLogService.setChangeLogsBaseClassList(Arrays.asList(AdvanceChangeLogWithBefore.class, AdvanceChangeLogWithBeforeAndChangeSetFailing.class));
 
     when(driver.isTransactionable()).thenReturn(true);
-    Assert.assertThrows(MongockException.class,
+    assertThrows(MongockException.class,
         () -> {
           DependencyManager dm = new DependencyManager();
           new MigrateAllExecutor("", changeLogService.fetchChangeLogs(), driver, getChangeLogRuntime(dm), config)
@@ -941,11 +938,11 @@ public class ChangeUnitExecutorImplTest {
 
 
     // checks the four rollbacks were called
-    assertFalse("AdvanceChangeLogWithBefore's Rollback before method was executed", AdvanceChangeLogWithBefore.rollbackBeforeCalled);
-    assertFalse("AdvanceChangeLogWithBefore's Rollback method was executed", AdvanceChangeLogWithBefore.rollbackCalled);
+    assertFalse(AdvanceChangeLogWithBefore.rollbackBeforeCalled, "AdvanceChangeLogWithBefore's Rollback before method was executed");
+    assertFalse(AdvanceChangeLogWithBefore.rollbackCalled, "AdvanceChangeLogWithBefore's Rollback method was executed");
 
-    assertTrue("AdvanceChangeLogWithBeforeAndChangeSetFailing's Rollback before method wasn't executed", AdvanceChangeLogWithBeforeAndChangeSetFailing.rollbackBeforeCalled);
-    assertFalse("AdvanceChangeLogWithBeforeAndChangeSetFailing's Rollback method was executed", AdvanceChangeLogWithBeforeAndChangeSetFailing.rollbackCalled);
+    assertTrue(AdvanceChangeLogWithBeforeAndChangeSetFailing.rollbackBeforeCalled, "AdvanceChangeLogWithBeforeAndChangeSetFailing's Rollback before method wasn't executed");
+    assertFalse(AdvanceChangeLogWithBeforeAndChangeSetFailing.rollbackCalled, "AdvanceChangeLogWithBeforeAndChangeSetFailing's Rollback method was executed");
 
     ArgumentCaptor<ChangeEntry> changeEntryCaptor = ArgumentCaptor.forClass(ChangeEntry.class);
     verify(changeEntryService, new Times(5)).saveOrUpdate(changeEntryCaptor.capture());

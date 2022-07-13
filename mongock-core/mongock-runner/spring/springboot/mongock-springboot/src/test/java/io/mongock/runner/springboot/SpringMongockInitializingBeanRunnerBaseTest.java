@@ -4,7 +4,6 @@ package io.mongock.runner.springboot;
 import io.mongock.api.exception.MongockException;
 import io.mongock.driver.api.driver.ChangeSetDependency;
 import io.mongock.driver.api.driver.ConnectionDriver;
-import io.mongock.driver.api.entry.ChangeEntry;
 import io.mongock.driver.api.entry.ChangeEntryService;
 import io.mongock.driver.api.lock.LockManager;
 import io.mongock.runner.springboot.profiles.enseuredecorators.EnsureDecoratorChangerLog;
@@ -13,10 +12,8 @@ import io.mongock.runner.springboot.util.CallVerifier;
 import io.mongock.runner.springboot.util.TemplateForTest;
 import io.mongock.runner.springboot.util.TemplateForTestImpl;
 import io.mongock.runner.springboot.util.TemplateForTestImplChild;
-import org.junit.Before;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.ExpectedException;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.springframework.context.ApplicationContext;
 import org.springframework.core.env.Environment;
 
@@ -24,20 +21,19 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 public class SpringMongockInitializingBeanRunnerBaseTest {
 
-  @Rule
-  public ExpectedException exceptionExpected = ExpectedException.none();
   private ChangeEntryService changeEntryService;
   private ConnectionDriver driver;
   private CallVerifier callVerifier;
   private ApplicationContext springContext;
 
-  @Before
+  @BeforeEach
   public void setUp() {
     LockManager lockManager = mock(LockManager.class);
     changeEntryService = mock(ChangeEntryService.class);
@@ -133,14 +129,14 @@ public class SpringMongockInitializingBeanRunnerBaseTest {
   @Test
   public void shouldFail_IfSpringContextNotInjected() throws Exception {
 
-    exceptionExpected.expect(MongockException.class);
-    exceptionExpected.expectMessage("ApplicationContext from Spring must be injected to Builder");
-
-    MongockSpringboot.builder()
+    MongockException ex = assertThrows(MongockException.class, () -> 
+            MongockSpringboot.builder()
         .setDriver(driver)
         .addChangeLogsScanPackage(IntegrationProfiledChangerLog.class.getPackage().getName())
         .buildInitializingBeanRunner()
-        .afterPropertiesSet();
+        .afterPropertiesSet()
+    );
+    assertEquals("ApplicationContext from Spring must be injected to Builder", ex.getMessage());
   }
 
 }

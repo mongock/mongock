@@ -8,7 +8,7 @@ import io.mongock.driver.api.driver.Transactional;
 import io.mongock.driver.api.entry.ChangeEntryService;
 import io.mongock.driver.api.lock.LockManager;
 import io.mongock.driver.core.lock.LockRepositoryWithEntity;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.mockito.internal.verification.Times;
 

@@ -7,9 +7,9 @@ import com.mongodb.client.MongoClient;
 import com.mongodb.client.MongoClients;
 import com.mongodb.client.MongoDatabase;
 import org.bson.Document;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.ClassRule;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
 import org.testcontainers.containers.GenericContainer;
 
 public abstract class IntegrationTestBase {
@@ -23,10 +23,15 @@ public abstract class IntegrationTestBase {
   private MongoDatabase mongoDatabase;
   private MongoClient mongoClient;
 
-  @ClassRule
-  public static GenericContainer mongo = new GenericContainer(MONGO_CONTAINER).withExposedPorts(MONGO_PORT);
+  public static GenericContainer mongo;
 
-  @Before
+  @BeforeAll
+  public final void beforeAll() {
+    mongo = new GenericContainer(MONGO_CONTAINER).withExposedPorts(MONGO_PORT);
+  }
+
+  
+  @BeforeEach
   public final void setUpParent() {
     MongoClientSettings settings = MongoClientSettings.builder()
         .writeConcern(getDefaultConnectionWriteConcern())
@@ -37,7 +42,7 @@ public abstract class IntegrationTestBase {
 
   }
 
-  @After
+  @AfterEach
   public void tearDown() {
     getDataBase().getCollection(CHANGELOG_COLLECTION_NAME).deleteMany(new Document());
     getDataBase().getCollection(LOCK_COLLECTION_NAME).deleteMany(new Document());

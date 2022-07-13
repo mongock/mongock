@@ -3,9 +3,9 @@ package io.mongock.driver.core.lock;
 import io.mongock.driver.api.lock.LockCheckException;
 import io.mongock.driver.api.lock.LockManager;
 import io.mongock.utils.TimeService;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mockito;
 import org.mockito.internal.verification.AtLeast;
@@ -15,10 +15,10 @@ import org.mockito.internal.verification.Times;
 import java.time.Instant;
 import java.util.Date;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyLong;
 import static org.mockito.Matchers.anyString;
@@ -49,7 +49,7 @@ public class DefaultLockManagerTest {
 //  }
 //
 //
-//  @Before
+//  @BeforeEach
 //  public void setUp() {
 //    lockRepository = Mockito.mock(LockRepositoryWithEntity.class);
 //    timeService = Mockito.mock(TimeService.class);
@@ -66,7 +66,7 @@ public class DefaultLockManagerTest {
 //        .build();
 //  }
 //
-//  @After
+//  @AfterEach
 //  public void tearDown() {
 //    if (lockManager != null) {
 //      lockManager.close();
