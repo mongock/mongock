@@ -65,6 +65,8 @@ Mongock project is licensed under the [Apache License Version 2.0][apacheLicense
 :tada: First off, thanks for taking the time to contribute! :tada:
     
 If you would like to contribute to the Mongock project, visit our [official documentation](https://docs.mongock.io/v5/contributing/index.html)
+    
+    
 <a href="https://github.com/mongock/mongock/graphs/contributors">
   <img src="https://contrib.rocks/image?repo=mongock/mongock" />
 </a>
