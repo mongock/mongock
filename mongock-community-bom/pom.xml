@@ -15,16 +15,6 @@
   <description>Mongock for community dependency management</description>
   <url>https://github.com/mongock/mongock</url>
 
-  <properties>
-    <java.version>1.8</java.version>
-    <maven.compiler.target>1.8</maven.compiler.target>
-    <maven.compiler.source>1.8</maven.compiler.source>
-    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-    <maven.javadoc.failOnError>false</maven.javadoc.failOnError>
-
-  </properties>
-
   <dependencyManagement>
     <dependencies>
 

@@ -27,8 +27,7 @@ import io.mongock.runner.core.changelogs.withnoannotations.ChangeLogNormal;
 import io.mongock.runner.core.executor.changelog.ChangeLogService;
 import io.mongock.runner.core.internal.ChangeLogItem;
 import io.mongock.runner.core.internal.ChangeSetItem;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
@@ -38,9 +37,10 @@ import java.util.List;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class ChangeLogServiceTest {
 
@@ -50,10 +50,12 @@ public class ChangeLogServiceTest {
         .runValidation();
   }
 
-  @Test(expected = MongockException.class)
+  @Test
   public void shouldFail_WhenValidate_ifParametersEmpty() {
-    new ChangeLogService(Collections.emptyList(), Collections.emptyList(), "0", "999")
-        .runValidation();
+    assertThrows(MongockException.class, () -> 
+            new ChangeLogService(Collections.emptyList(), Collections.emptyList(), "0", "999")
+                .runValidation()
+    );
   }
 
   private static Function<Class<?>, Object> mockInjector() {
@@ -75,7 +77,7 @@ public class ChangeLogServiceTest {
   @Test
   public void shouldThrowException_WhenValidatingChangeLogs_IfDuplicatedChangeSets() {
 
-    MongockException ex = Assert.assertThrows(MongockException.class, () ->
+    MongockException ex = assertThrows(MongockException.class, () ->
         new ArrayList<>(new ChangeLogService(
             Collections.singletonList(ChangeLogDuplicated1.class.getPackage().getName()),
             Collections.emptyList(),
@@ -132,14 +134,14 @@ public class ChangeLogServiceTest {
 
   @Test
   public void shouldThrowException_whenAuthorIsEmpty_IfChangeUnit() {
-    MongockException ex = Assert.assertThrows(MongockException.class, () ->
+    MongockException ex = assertThrows(MongockException.class, () ->
         new ChangeLogService(
             Collections.emptyList(),
             Collections.singletonList(ChangeUnitWithAuthorEmpty.class),
             "0",
             "9999"
         ).fetchChangeLogs());
-    assertEquals("author cannot be null or empty.", ex.getMessage());
+    assertEquals("changeUnit[" + ChangeUnitWithAuthorEmpty.class.getName() + "] author cannot be null or empty.", ex.getMessage());
   }
 
   @Test

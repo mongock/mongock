@@ -11,14 +11,15 @@ import io.mongock.driver.core.lock.LockStatus;
 import io.mongock.driver.mongodb.test.template.util.IntegrationTestBase;
 import io.mongock.utils.TimeService;
 import org.bson.Document;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import java.util.Date;
 
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 
 public abstract class MongoLockManagerITestBase extends IntegrationTestBase {
@@ -31,7 +32,7 @@ public abstract class MongoLockManagerITestBase extends IntegrationTestBase {
   protected LockManager lockManager;
   protected LockRepositoryWithEntity<Document> repository;
 
-  @Before
+  @BeforeEach
   public void setUp() {
     initializeRepository();
   }
@@ -49,7 +50,7 @@ public abstract class MongoLockManagerITestBase extends IntegrationTestBase {
         .build();
   }
 
-  @After
+  @AfterEach
   public void tearDown() {
     getDataBase().getCollection(LOCK_COLLECTION_NAME).deleteMany(new Document());
   }
@@ -65,7 +66,7 @@ public abstract class MongoLockManagerITestBase extends IntegrationTestBase {
         new UpdateOptions().upsert(true));
     FindIterable<Document> resultBefore = getDataBase().getCollection(LOCK_COLLECTION_NAME)
         .find(new Document().append("key", lockManager.getDefaultKey()));
-    assertNotNull("Precondition: Lock should be in database", resultBefore.first());
+    assertNotNull(resultBefore.first(), "Precondition: Lock should be in database");
 
     //when
     lockManager.acquireLockDefault();
@@ -81,7 +82,7 @@ public abstract class MongoLockManagerITestBase extends IntegrationTestBase {
         new UpdateOptions().upsert(true));
     FindIterable<Document> resultBefore = getDataBase().getCollection(LOCK_COLLECTION_NAME)
         .find(new Document().append("key", lockManager.getDefaultKey()));
-    assertNotNull("Precondition: Lock should be in database", resultBefore.first());
+    assertNotNull(resultBefore.first(), "Precondition: Lock should be in database");
 
     //when
     lockManager.acquireLockDefault();
@@ -102,7 +103,7 @@ public abstract class MongoLockManagerITestBase extends IntegrationTestBase {
         new UpdateOptions().upsert(true));
     FindIterable<Document> resultBefore = getDataBase().getCollection(LOCK_COLLECTION_NAME)
         .find(new Document().append("key", lockManager.getDefaultKey()));
-    assertNotNull("Precondition: Lock should be in database", resultBefore.first());
+    assertNotNull(resultBefore.first(), "Precondition: Lock should be in database");
 
     //when
     lockManager.acquireLockDefault();
@@ -112,7 +113,7 @@ public abstract class MongoLockManagerITestBase extends IntegrationTestBase {
   The lock is held by other. When the current tries to take it's still held, but it will keep trying for a while. However
    the time it will keep trying is not long enough and it will finally fail. So the lock will kept by the current owner
  */
-  @Test(expected = LockCheckException.class)
+  @Test
   public void shouldNotAcquireLock_WhenHeldByOther_IfExpiresAtIsGreaterThanMaxWaitTime() throws LockCheckException {
     //given
     long acquireFor = 3000L;
@@ -124,19 +125,19 @@ public abstract class MongoLockManagerITestBase extends IntegrationTestBase {
         new UpdateOptions().upsert(true));
     FindIterable<Document> resultBefore = getDataBase().getCollection(LOCK_COLLECTION_NAME)
         .find(new Document().append("key", lockManager.getDefaultKey()));
-    assertNotNull("Precondition: Lock should be in database", resultBefore.first());
+    assertNotNull(resultBefore.first(), "Precondition: Lock should be in database");
 
     //when
-    lockManager.acquireLockDefault();
+    assertThrows(LockCheckException.class, () -> lockManager.acquireLockDefault());
   }
 
-  @Test(expected = LockCheckException.class)
+  @Test
   public void shouldThrowException_WhenEnsuring_IfNotAcquiredFirst() throws LockCheckException {
     //when
 
     getLockManager(new TimeService(), LOCK_ACQUIRED_FOR_MILLIS, LOCK_TRY_FRQUENCY_MILLIS, 1000L);
 
-    lockManager.ensureLockDefault();
+    assertThrows(LockCheckException.class, () -> lockManager.ensureLockDefault());
   }
 
   /**
@@ -153,7 +154,7 @@ public abstract class MongoLockManagerITestBase extends IntegrationTestBase {
         new UpdateOptions().upsert(true));
     FindIterable<Document> resultBefore = getDataBase().getCollection(LOCK_COLLECTION_NAME)
         .find(new Document().append("key", lockManager.getDefaultKey()));
-    assertNotNull("Precondition: Lock should be in database", resultBefore.first());
+    assertNotNull(resultBefore.first(), "Precondition: Lock should be in database");
 
     //when
     lockManager.ensureLockDefault();
@@ -173,7 +174,7 @@ public abstract class MongoLockManagerITestBase extends IntegrationTestBase {
         new UpdateOptions().upsert(true));
     FindIterable<Document> resultBefore = getDataBase().getCollection(LOCK_COLLECTION_NAME)
         .find(new Document().append("key", lockManager.getDefaultKey()));
-    assertNotNull("Precondition: Lock should be in database", resultBefore.first());
+    assertNotNull(resultBefore.first(), "Precondition: Lock should be in database");
 
     //when
     lockManager.ensureLockDefault();
@@ -191,7 +192,7 @@ public abstract class MongoLockManagerITestBase extends IntegrationTestBase {
   }
 
 
-  @Test(expected = LockCheckException.class)
+  @Test
   public void shouldNotEnsureLock_WhenHeldByOtherAndExpiredInDB_ifHasNotBeenRequestedPreviously() throws LockCheckException {
     //given
     getLockManager(new TimeService(), LOCK_ACQUIRED_FOR_MILLIS, LOCK_TRY_FRQUENCY_MILLIS, 1000L);
@@ -201,13 +202,13 @@ public abstract class MongoLockManagerITestBase extends IntegrationTestBase {
         new UpdateOptions().upsert(true));
     FindIterable<Document> resultBefore = getDataBase().getCollection(LOCK_COLLECTION_NAME)
         .find(new Document().append("key", lockManager.getDefaultKey()));
-    assertNotNull("Precondition: Lock should be in database", resultBefore.first());
+    assertNotNull(resultBefore.first(), "Precondition: Lock should be in database");
 
     //when
-    lockManager.ensureLockDefault();
+    assertThrows(LockCheckException.class, () -> lockManager.ensureLockDefault());
   }
 
-  @Test(expected = LockCheckException.class)
+  @Test
   public void shouldNotEnsureLock_WhenHeldByOther_IfNotExpiredInDB() throws LockCheckException {
     //given
     getLockManager(new TimeService(), LOCK_ACQUIRED_FOR_MILLIS, LOCK_TRY_FRQUENCY_MILLIS, 1000L);
@@ -217,10 +218,10 @@ public abstract class MongoLockManagerITestBase extends IntegrationTestBase {
         new UpdateOptions().upsert(true));
     FindIterable<Document> resultBefore = getDataBase().getCollection(LOCK_COLLECTION_NAME)
         .find(new Document().append("key", lockManager.getDefaultKey()));
-    assertNotNull("Precondition: Lock should be in database", resultBefore.first());
+    assertNotNull(resultBefore.first(), "Precondition: Lock should be in database");
 
     //when
-    lockManager.ensureLockDefault();
+    assertThrows(LockCheckException.class, () -> lockManager.ensureLockDefault());
   }
 
   @Test
@@ -230,7 +231,7 @@ public abstract class MongoLockManagerITestBase extends IntegrationTestBase {
     lockManager.acquireLockDefault();
     FindIterable<Document> resultBefore = getDataBase().getCollection(LOCK_COLLECTION_NAME)
         .find(new Document().append("key", lockManager.getDefaultKey()));
-    assertNotNull("Precondition: Lock should be in database", resultBefore.first());
+    assertNotNull(resultBefore.first(), "Precondition: Lock should be in database");
 
     //when
     lockManager.releaseLockDefault();
@@ -238,7 +239,7 @@ public abstract class MongoLockManagerITestBase extends IntegrationTestBase {
     //then
     FindIterable<Document> resultAfter = getDataBase().getCollection(LOCK_COLLECTION_NAME)
         .find(new Document().append("key", lockManager.getDefaultKey()));
-    assertNull("Lock should be removed from DB", resultAfter.first());
+    assertNull(resultAfter.first(), "Lock should be removed from DB");
   }
 
   @Test
@@ -251,7 +252,7 @@ public abstract class MongoLockManagerITestBase extends IntegrationTestBase {
         new UpdateOptions().upsert(true));
     FindIterable<Document> resultBefore = getDataBase().getCollection(LOCK_COLLECTION_NAME)
         .find(new Document().append("key", lockManager.getDefaultKey()));
-    assertNotNull("Precondition: Lock should be in database", resultBefore.first());
+    assertNotNull(resultBefore.first(), "Precondition: Lock should be in database");
 
     //when
     lockManager.releaseLockDefault();
@@ -259,7 +260,7 @@ public abstract class MongoLockManagerITestBase extends IntegrationTestBase {
     //then
     FindIterable<Document> resultAfter = getDataBase().getCollection(LOCK_COLLECTION_NAME)
         .find(new Document().append("key", lockManager.getDefaultKey()));
-    assertNotNull("Lock should be removed from DB", resultAfter.first());
+    assertNotNull(resultAfter.first(), "Lock should be removed from DB");
   }
 
   @Test
@@ -271,7 +272,7 @@ public abstract class MongoLockManagerITestBase extends IntegrationTestBase {
 
     FindIterable<Document> resultBefore = getDataBase().getCollection(LOCK_COLLECTION_NAME)
         .find(new Document().append("key", lockManager.getDefaultKey()));
-    assertNotNull("Precondition: Lock should be in database", resultBefore.first());
+    assertNotNull(resultBefore.first(), "Precondition: Lock should be in database");
 
     //when
     lockManager.releaseLockDefault();
@@ -280,7 +281,7 @@ public abstract class MongoLockManagerITestBase extends IntegrationTestBase {
     //then
     FindIterable<Document> resultAfter = getDataBase().getCollection(LOCK_COLLECTION_NAME)
         .find(new Document().append("key", lockManager.getDefaultKey()));
-    assertNull("Lock should be removed from DB", resultAfter.first());
+    assertNull(resultAfter.first(), "Lock should be removed from DB");
   }
 
   @Test
@@ -293,7 +294,7 @@ public abstract class MongoLockManagerITestBase extends IntegrationTestBase {
         new UpdateOptions().upsert(true));
     FindIterable<Document> resultBefore = getDataBase().getCollection(LOCK_COLLECTION_NAME)
         .find(new Document().append("key", lockManager.getDefaultKey()));
-    assertNotNull("Precondition: Lock should be in database", resultBefore.first());
+    assertNotNull(resultBefore.first(), "Precondition: Lock should be in database");
 
     //when
     lockManager.releaseLockDefault();
@@ -302,7 +303,7 @@ public abstract class MongoLockManagerITestBase extends IntegrationTestBase {
     //then
     FindIterable<Document> resultAfter = getDataBase().getCollection(LOCK_COLLECTION_NAME)
         .find(new Document().append("key", lockManager.getDefaultKey()));
-    assertNotNull("Lock should be removed from DB", resultAfter.first());
+    assertNotNull(resultAfter.first(), "Lock should be removed from DB");
   }
 
   @Test
@@ -311,14 +312,14 @@ public abstract class MongoLockManagerITestBase extends IntegrationTestBase {
     getLockManager(new TimeService(), 3000L, LOCK_TRY_FRQUENCY_MILLIS, 1000L);
 
     FindIterable<Document> resultBefore = getDataBase().getCollection(LOCK_COLLECTION_NAME).find();
-    assertNull("Precondition: Lock should not be in database", resultBefore.first());
+    assertNull(resultBefore.first(), "Precondition: Lock should not be in database");
 
     //when
     lockManager.releaseLockDefault();
 
     //then
     FindIterable<Document> resultAfter = getDataBase().getCollection(LOCK_COLLECTION_NAME).find();
-    assertNull("Lock should be removed from DB", resultAfter.first());
+    assertNull(resultAfter.first(), "Lock should be removed from DB");
   }
 
   private Document getLockDbBody(String owner, long expiresAt) {

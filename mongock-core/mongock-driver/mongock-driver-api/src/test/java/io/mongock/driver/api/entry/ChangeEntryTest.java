@@ -3,15 +3,15 @@ package io.mongock.driver.api.entry;
 
 import io.mongock.utils.field.FieldInstance;
 import io.mongock.utils.field.FieldUtil;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class ChangeEntryTest {
 
@@ -28,7 +28,7 @@ public class ChangeEntryTest {
 				.collect(Collectors.toList());
 		// then
 		assertEquals(fieldExpectation.size(), instances.size());
-		Assert.assertTrue(instances.stream()
+		assertTrue(instances.stream()
 				.allMatch(field ->
 						"timestamp".equals(field.getName()) || fieldExpectation.get(field.getName()).equals(field.getValue())));
 	}

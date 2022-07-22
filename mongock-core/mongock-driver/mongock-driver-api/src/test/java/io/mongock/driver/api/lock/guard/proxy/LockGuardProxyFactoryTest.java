@@ -9,9 +9,8 @@ import io.mongock.driver.api.lock.guard.proxy.util.InterfaceTypeImpl;
 import io.mongock.driver.api.lock.guard.proxy.util.InterfaceTypeImplNonLockGuarded;
 import io.mongock.driver.api.lock.guard.proxy.util.SomeClass;
 import io.mongock.util.test.ReflectionUtils;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
 import java.io.Serializable;
@@ -19,19 +18,18 @@ import java.net.ContentHandlerFactory;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.Map;
-import java.util.stream.Stream;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class LockGuardProxyFactoryTest {
 
   private LockManager lockManager;
   private LockGuardProxyFactory lockGuardProxyFactory;
 
-  @Before
+  @BeforeEach
   public void before() {
     lockManager = Mockito.mock(LockManager.class);
     lockGuardProxyFactory = new LockGuardProxyFactory(lockManager);
@@ -75,7 +73,7 @@ public class LockGuardProxyFactoryTest {
   public void shouldReturnProxyWithRightImplementation() {
     String javaVersion = System.getProperty("java.version");
     if(javaVersion == null || javaVersion.startsWith("1.8")) {
-      Assert.assertEquals(SomeClass.class, ReflectionUtils.getImplementationFromLockGuardProxy(getRawProxy(new SomeClass(), SomeClass.class)).getClass());
+      assertEquals(SomeClass.class, ReflectionUtils.getImplementationFromLockGuardProxy(getRawProxy(new SomeClass(), SomeClass.class)).getClass());
     }
   }
 

@@ -19,9 +19,7 @@ import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
 import io.mongock.runner.test.TestMongock;
 import org.bson.Document;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.ExpectedException;
+import org.junit.jupiter.api.Test;
 
 import java.lang.reflect.Method;
 import java.util.Collection;
@@ -31,8 +29,9 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.mock;
 
 public abstract class MongoDriverITestBase extends IntegrationTestBase {
@@ -49,10 +48,6 @@ public abstract class MongoDriverITestBase extends IntegrationTestBase {
   public static final String ANY_EXECUTION_ID = "any";
   public static final String TEST_USER = "testuser";
   public static final String METHOD_PREFIX = "method_";
-//  private final MongoDbDriverTestAdapter adapter;
-
-  @Rule
-  public ExpectedException exceptionRule = ExpectedException.none();
 
   @Test
   public void shouldRunAllChangeLogsSuccessfully() {
@@ -134,12 +129,13 @@ public abstract class MongoDriverITestBase extends IntegrationTestBase {
 
   @Test
   public void shouldFail_WhenRunningChangeLog_IfChangeSetIdDuplicated() {
-    exceptionRule.expect(MongockException.class);
-    exceptionRule.expectMessage("Duplicated changeset id found: 'id_duplicated'");
-    MongockRunner runner = TestMongock.builder()
-        .setDriver(getDriverWithTransactionDisabled())
-        .addChangeLogsScanPackage(ChangeLogFailure.class.getPackage().getName())
-        .buildRunner();
+    MongockException ex = assertThrows(MongockException.class, () ->
+            TestMongock.builder()
+              .setDriver(getDriverWithTransactionDisabled())
+              .addChangeLogsScanPackage(ChangeLogFailure.class.getPackage().getName())
+              .buildRunner()
+    );
+    assertEquals("Duplicated changeset id found: 'id_duplicated'", ex.getMessage());
   }
 
   @Test
@@ -174,16 +170,15 @@ public abstract class MongoDriverITestBase extends IntegrationTestBase {
     ConnectionDriverBase driver = getDriverWithTransactionDisabled();
     driver.setIndexCreation(false);
 
-    //then
-    exceptionRule.expect(MongockException.class);
-    exceptionRule.expectMessage("Index creation not allowed, but not created or wrongly created");
-
     //when
-    TestMongock.builder()
-        .setDriver(driver)
-        .addChangeLogsScanPackage(ChangeLogSuccess.class.getPackage().getName())
-        .buildRunner()
-        .execute();
+    MongockException ex = assertThrows(MongockException.class, () ->
+            TestMongock.builder()
+              .setDriver(driver)
+              .addChangeLogsScanPackage(ChangeLogSuccess.class.getPackage().getName())
+              .buildRunner()
+              .execute()
+    );
+    assertEquals("Index creation not allowed, but not created or wrongly created", ex.getMessage());
   }
 
   @Test
@@ -213,16 +208,15 @@ public abstract class MongoDriverITestBase extends IntegrationTestBase {
     driver.setLockRepositoryName(LOCK_COLLECTION_NAME);
     getAdapter(LOCK_COLLECTION_NAME).createUniqueIndex("keywrong");
 
-    //then
-    exceptionRule.expect(MongockException.class);
-    exceptionRule.expectMessage("Index creation not allowed, but not created or wrongly created");
-
     //when
-    TestMongock.builder()
-        .setDriver(driver)
-        .addChangeLogsScanPackage(ChangeLogSuccess.class.getPackage().getName())
-        .buildRunner()
-        .execute();
+    MongockException ex = assertThrows(MongockException.class, () ->
+            TestMongock.builder()
+              .setDriver(driver)
+              .addChangeLogsScanPackage(ChangeLogSuccess.class.getPackage().getName())
+              .buildRunner()
+              .execute()
+    );
+    assertEquals("Index creation not allowed, but not created or wrongly created", ex.getMessage());
   }
 
   @Test
@@ -234,16 +228,15 @@ public abstract class MongoDriverITestBase extends IntegrationTestBase {
     driver.setLockRepositoryName(LOCK_COLLECTION_NAME);
     getAdapter(LOCK_COLLECTION_NAME).createUniqueIndex("key");
 
-    //then
-    exceptionRule.expect(MongockException.class);
-    exceptionRule.expectMessage("Index creation not allowed, but not created or wrongly created");
-
     //when
-    TestMongock.builder()
-        .setDriver(driver)
-        .addChangeLogsScanPackage(ChangeLogSuccess.class.getPackage().getName())
-        .buildRunner()
-        .execute();
+    MongockException ex = assertThrows(MongockException.class, () ->
+            TestMongock.builder()
+              .setDriver(driver)
+              .addChangeLogsScanPackage(ChangeLogSuccess.class.getPackage().getName())
+              .buildRunner()
+              .execute()
+    );
+    assertEquals("Index creation not allowed, but not created or wrongly created", ex.getMessage());
   }
 
 

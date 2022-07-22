@@ -2,10 +2,11 @@ package io.mongock.runner.standalone;
 
 import io.mongock.runner.core.event.EventPublisher;
 import io.mongock.runner.core.event.result.MigrationSuccessResult;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 
 public class StandaloneEventPublisherTest {
 
@@ -13,18 +14,18 @@ public class StandaloneEventPublisherTest {
   public void shouldCallStartedListener() {
     Listener listener = new Listener();
     new EventPublisher(listener::startedListener, listener::successListener, listener::failListener).publishMigrationStarted();
-    Assert.assertTrue(listener.isStartedCalled());
-    Assert.assertFalse(listener.isSuccessCalled());
-    Assert.assertFalse(listener.isFailCalled());
+    assertTrue(listener.isStartedCalled());
+    assertFalse(listener.isSuccessCalled());
+    assertFalse(listener.isFailCalled());
   }
 
   @Test
   public void shouldCallSuccessListener() {
     Listener listener = new Listener();
     new EventPublisher(listener::startedListener, listener::successListener, listener::failListener).publishMigrationSuccessEvent(new MigrationSuccessResult(true));
-    Assert.assertFalse(listener.isStartedCalled());
-    Assert.assertTrue(listener.isSuccessCalled());
-    Assert.assertFalse(listener.isFailCalled());
+    assertFalse(listener.isStartedCalled());
+    assertTrue(listener.isSuccessCalled());
+    assertFalse(listener.isFailCalled());
   }
 
 
@@ -33,9 +34,9 @@ public class StandaloneEventPublisherTest {
     Listener listener = new Listener();
     RuntimeException ex = new RuntimeException();
     new EventPublisher(listener::startedListener, listener::successListener, listener::failListener).publishMigrationFailedEvent(ex);
-    Assert.assertFalse(listener.isStartedCalled());
-    Assert.assertFalse(listener.isSuccessCalled());
-    Assert.assertTrue(listener.isFailCalled());
+    assertFalse(listener.isStartedCalled());
+    assertFalse(listener.isSuccessCalled());
+    assertTrue(listener.isFailCalled());
     assertEquals(ex, listener.getException());
   }
 

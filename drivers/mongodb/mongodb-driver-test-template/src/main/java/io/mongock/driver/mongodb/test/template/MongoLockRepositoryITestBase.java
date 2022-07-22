@@ -13,13 +13,14 @@ import com.mongodb.MongoWriteException;
 import com.mongodb.client.FindIterable;
 import com.mongodb.client.model.UpdateOptions;
 import org.bson.Document;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.util.Date;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 
 public abstract class MongoLockRepositoryITestBase extends IntegrationTestBase implements MongoLockRepositoryITestInterface {
@@ -118,7 +119,7 @@ public abstract class MongoLockRepositoryITestBase extends IntegrationTestBase i
     assertEquals(expiresAtExpected, result.first().get("expiresAt"));
   }
 
-  @Test(expected = LockPersistenceException.class)
+  @Test
   public void insertUpdateShouldThrowExceptionWhenLockIsInDBWIthDifferentOwnerAndNotExpired() throws LockPersistenceException, MongockException {
     initializeRepository();
     //given
@@ -128,9 +129,10 @@ public abstract class MongoLockRepositoryITestBase extends IntegrationTestBase i
             new LockEntry(LOCK_KEY, LockStatus.LOCK_HELD.name(), "process1", new Date(currentMillis + 60 * 60 * 1000)));
 
     //when
-    repository
+    assertThrows(LockPersistenceException.class, () -> repository
         .insertUpdate(
-            new LockEntry(LOCK_KEY, LockStatus.LOCK_HELD.name(), "process2", new Date(currentMillis + 90 * 60 * 1000)));
+            new LockEntry(LOCK_KEY, LockStatus.LOCK_HELD.name(), "process2", new Date(currentMillis + 90 * 60 * 1000)))
+    );
   }
 
   @Test
@@ -143,8 +145,8 @@ public abstract class MongoLockRepositoryITestBase extends IntegrationTestBase i
             repository.toEntity(new LockEntry(LOCK_KEY, LockStatus.LOCK_HELD.name(), "process1",
                 new Date(System.currentTimeMillis() - 600000)))),
         new UpdateOptions().upsert(true));
-    assertNotNull("Precondition: Lock should be in getDataBase()",
-        getDataBase().getCollection(LOCK_COLLECTION_NAME).find(new Document().append("key", LOCK_KEY)).first());
+    assertNotNull(getDataBase().getCollection(LOCK_COLLECTION_NAME).find(new Document().append("key", LOCK_KEY)).first(),
+            "Precondition: Lock should be in getDataBase()");
 
     //when
     repository.removeByKeyAndOwner(LOCK_KEY, "process1");
@@ -163,8 +165,8 @@ public abstract class MongoLockRepositoryITestBase extends IntegrationTestBase i
             repository.toEntity(new LockEntry(LOCK_KEY, LockStatus.LOCK_HELD.name(), "process1",
                 new Date(System.currentTimeMillis() - 600000)))),
         new UpdateOptions().upsert(true));
-    assertNotNull("Precondition: Lock should be in getDataBase()",
-        getDataBase().getCollection(LOCK_COLLECTION_NAME).find(new Document().append("key", LOCK_KEY)).first());
+    assertNotNull(getDataBase().getCollection(LOCK_COLLECTION_NAME).find(new Document().append("key", LOCK_KEY)).first(),
+            "Precondition: Lock should be in getDataBase()");
 
     //when
     repository.removeByKeyAndOwner(LOCK_KEY, "process2");
@@ -173,16 +175,17 @@ public abstract class MongoLockRepositoryITestBase extends IntegrationTestBase i
     assertNotNull(getDataBase().getCollection(LOCK_COLLECTION_NAME).find(new Document().append("key", LOCK_KEY)).first());
   }
 
-  @Test(expected = LockPersistenceException.class)
+  @Test
   public void updateIfSameOwnerShouldNotInsertWhenEmpty() throws LockPersistenceException, MongockException {
     initializeRepository();
     //when
-    repository.updateIfSameOwner(
+    assertThrows(LockPersistenceException.class, () -> repository.updateIfSameOwner(
         new LockEntry(LOCK_KEY, LockStatus.LOCK_HELD.name(), "process1",
-            new Date(System.currentTimeMillis() - 600000)));
+            new Date(System.currentTimeMillis() - 600000)))
+    );
   }
 
-  @Test(expected = LockPersistenceException.class)
+  @Test
   public void updateIfSameOwnerShouldNotUpdateWhenExpiresAtIsGraterThanSavedButOtherOwner() throws LockPersistenceException, MongockException {
     initializeRepository();
     //given
@@ -191,9 +194,9 @@ public abstract class MongoLockRepositoryITestBase extends IntegrationTestBase i
         .insertUpdate(new LockEntry(LOCK_KEY, LockStatus.LOCK_HELD.name(), "process1", new Date(currentMillis - 1000)));
 
     //when
-    repository
-        .updateIfSameOwner(new LockEntry(LOCK_KEY, LockStatus.LOCK_HELD.name(), "process2", new Date(currentMillis)));
-
+    assertThrows(LockPersistenceException.class, () -> repository
+        .updateIfSameOwner(new LockEntry(LOCK_KEY, LockStatus.LOCK_HELD.name(), "process2", new Date(currentMillis)))
+    );
   }
 
   @Test
@@ -214,7 +217,7 @@ public abstract class MongoLockRepositoryITestBase extends IntegrationTestBase i
     assertEquals(expiresAtExpected, result.first().get("expiresAt"));
   }
 
-  @Test(expected = LockPersistenceException.class)
+  @Test
   public void updateIfSameOwnerShouldNotUpdateWhenDifferentOwnerAndExpiresAtIsNotGrater() throws LockPersistenceException, MongockException {
     initializeRepository();
     // given
@@ -224,7 +227,9 @@ public abstract class MongoLockRepositoryITestBase extends IntegrationTestBase i
             new LockEntry(LOCK_KEY, LockStatus.LOCK_HELD.name(), "process1", new Date(currentMillis + 60 * 60 * 1000)));
 
     // when
-    repository.insertUpdate(new LockEntry(LOCK_KEY, LockStatus.LOCK_HELD.name(), "process2", new Date(currentMillis)));
+    assertThrows(LockPersistenceException.class, () -> 
+            repository.insertUpdate(new LockEntry(LOCK_KEY, LockStatus.LOCK_HELD.name(), "process2", new Date(currentMillis)))
+    );
   }
 
 }

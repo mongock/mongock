@@ -4,7 +4,7 @@ package io.mongock.driver.core.interceptor;
 import io.mongock.driver.api.lock.LockManager;
 import io.mongock.driver.api.lock.guard.invoker.LockGuardInvokerImpl;
 import io.mongock.driver.api.lock.guard.invoker.VoidSupplier;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.mockito.internal.verification.Times;
 

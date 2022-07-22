@@ -10,14 +10,6 @@
 
   <name>Mongock driver for spring-data-mongodb v3</name>
   <artifactId>mongodb-springdata-v3-driver</artifactId>
-  <properties>
-    <java.version>1.8</java.version>
-    <maven.compiler.target>1.8</maven.compiler.target>
-    <maven.compiler.source>1.8</maven.compiler.source>
-    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-    <maven.javadoc.failOnError>false</maven.javadoc.failOnError>
-  </properties>
 
   <dependencyManagement>
     <dependencies>
@@ -30,7 +22,6 @@
       </dependency>
     </dependencies>
   </dependencyManagement>
-
 
   <dependencies>
     <!-- CORE DEPENDENCIES -->
@@ -73,7 +64,6 @@
     </dependency>
 
     <!-- TEST -->
-
     <dependency>
       <groupId>io.mongock</groupId>
       <artifactId>mongodb-driver-test-template</artifactId>
@@ -103,6 +93,12 @@
       <groupId>org.springframework.cloud</groupId>
       <artifactId>spring-cloud-sleuth-brave</artifactId>
       <version>${spring-cloud-sleuth.version}</version>
+      <scope>test</scope>
+    </dependency>
+    
+    <dependency>
+      <groupId>org.junit.jupiter</groupId>
+      <artifactId>junit-jupiter-engine</artifactId>
       <scope>test</scope>
     </dependency>
   </dependencies>

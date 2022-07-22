@@ -4,7 +4,6 @@ package io.mongock.runner.springboot;
 import io.mongock.api.exception.MongockException;
 import io.mongock.driver.api.driver.ChangeSetDependency;
 import io.mongock.driver.api.driver.ConnectionDriver;
-import io.mongock.driver.api.entry.ChangeEntry;
 import io.mongock.driver.api.entry.ChangeEntryService;
 import io.mongock.driver.api.entry.ChangeEntryExecuted;
 import io.mongock.driver.api.lock.LockManager;
@@ -20,11 +19,8 @@ import io.mongock.runner.springboot.util.TemplateForTest;
 import io.mongock.runner.springboot.util.TemplateForTestImpl;
 import io.mongock.runner.springboot.util.TemplateForTestImplChild;
 
-import org.junit.jupiter.api.AfterAll;
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.mockito.internal.verification.Times;
 import org.springframework.context.ApplicationContext;
@@ -36,7 +32,6 @@ import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
 
-import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;

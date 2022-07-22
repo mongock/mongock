@@ -14,6 +14,7 @@
   <name>Mongock core</name>
   <description>Migration runner classes base for</description>
   <url>https://github.com/mongock/mongock</url>
+  
   <modules>
     <module>mongock-api</module>
     <module>mongock-driver</module>
@@ -23,36 +24,5 @@
     <module>mongock-test-util</module>
     <module>mongock-core-bom</module>
   </modules>
-
-
-  <properties>
-    <maven.compiler.target>1.8</maven.compiler.target>
-    <maven.compiler.source>1.8</maven.compiler.source>
-    <java.version>1.8</java.version>
-    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-    <maven.javadoc.failOnError>false</maven.javadoc.failOnError>
-    <spring.v5.version>5.2.12.RELEASE</spring.v5.version>
-    <springboot.v2.version>2.3.7.RELEASE</springboot.v2.version>
-    <project.scm.id>ossrh</project.scm.id>
-
-  </properties>
-
-  <dependencyManagement>
-    <dependencies>
-      <dependency>
-        <groupId>junit</groupId>
-        <artifactId>junit</artifactId>
-        <version>4.13.1</version>
-        <scope>test</scope>
-      </dependency>
-      <dependency>
-        <groupId>org.mockito</groupId>
-        <artifactId>mockito-all</artifactId>
-        <version>1.10.19</version>
-        <scope>test</scope>
-      </dependency>
-    </dependencies>
-  </dependencyManagement>
 
 </project>

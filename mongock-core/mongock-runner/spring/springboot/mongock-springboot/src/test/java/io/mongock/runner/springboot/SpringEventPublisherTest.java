@@ -6,14 +6,14 @@ import io.mongock.runner.core.event.result.MigrationSuccessResult;
 import io.mongock.runner.spring.base.events.SpringMigrationFailureEvent;
 import io.mongock.runner.spring.base.events.SpringMigrationStartedEvent;
 import io.mongock.runner.spring.base.events.SpringMigrationSuccessEvent;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mockito;
 import org.mockito.internal.verification.Times;
 import org.springframework.context.ApplicationEventPublisher;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.verify;
 
 public class SpringEventPublisherTest {
@@ -29,8 +29,7 @@ public class SpringEventPublisherTest {
 
     ArgumentCaptor<SpringMigrationSuccessEvent> eventCaptor = ArgumentCaptor.forClass(SpringMigrationSuccessEvent.class);
     verify(applicationEventPublisher, new Times(1)).publishEvent(eventCaptor.capture());
-    Assert.assertTrue(eventCaptor.getValue().getMigrationResult().isSuccess());
-
+    assertTrue(eventCaptor.getValue().getMigrationResult().isSuccess());
   }
 
   @Test

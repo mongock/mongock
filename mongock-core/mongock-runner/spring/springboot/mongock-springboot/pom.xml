@@ -10,16 +10,6 @@
 
   <artifactId>mongock-springboot</artifactId>
 
-
-  <properties>
-    <maven.compiler.target>1.8</maven.compiler.target>
-    <maven.compiler.source>1.8</maven.compiler.source>
-    <java.version>1.8</java.version>
-    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-    <maven.javadoc.failOnError>false</maven.javadoc.failOnError>
-  </properties>
-
   <dependencyManagement>
     <dependencies>
       <dependency>
@@ -38,15 +28,19 @@
       <artifactId>mongock-springboot-base</artifactId>
     </dependency>
 
-
     <!-- TEST -->
-    <!--    Test dependencies-->
     <dependency>
       <groupId>org.slf4j</groupId>
       <artifactId>slf4j-simple</artifactId>
-      <version>1.7.32</version>
       <scope>test</scope>
     </dependency>
+    
+    <dependency>
+      <groupId>io.mongock</groupId>
+      <artifactId>mongock-test-util</artifactId>
+      <scope>test</scope>
+    </dependency>
+    
     <dependency>
       <groupId>io.mongock</groupId>
       <artifactId>mongodb-springdata-v3-driver</artifactId>
@@ -60,24 +54,6 @@
       <scope>test</scope>
     </dependency>
     <dependency>
-      <groupId>io.mongock</groupId>
-      <artifactId>mongock-test-util</artifactId>
-      <version>${project.version}</version>
-      <scope>test</scope>
-    </dependency>
-<!--    <dependency>-->
-<!--      <groupId>org.springframework.boot</groupId>-->
-<!--      <artifactId>spring-boot-starter-test</artifactId>-->
-<!--      <version>${spring-boot.version}</version>-->
-<!--      <exclusions>-->
-<!--        <exclusion>-->
-<!--          <groupId>junit</groupId>-->
-<!--          <artifactId>junit</artifactId>-->
-<!--        </exclusion>-->
-<!--      </exclusions>-->
-<!--    </dependency>-->
-
-    <dependency>
       <groupId>org.mongodb</groupId>
       <artifactId>mongodb-driver-sync</artifactId>
       <version>${mongodb-sync-4.version}</version>
@@ -87,7 +63,24 @@
     <dependency>
       <groupId>org.awaitility</groupId>
       <artifactId>awaitility</artifactId>
-      <version>3.0.0</version>
+      <scope>test</scope>
+    </dependency>
+    
+    <dependency>
+      <groupId>org.junit.jupiter</groupId>
+      <artifactId>junit-jupiter-api</artifactId>
+      <scope>test</scope>
+    </dependency>
+    
+    <dependency>
+      <groupId>org.mockito</groupId>
+      <artifactId>mockito-core</artifactId>
+      <scope>test</scope>
+    </dependency>
+    
+    <dependency>
+      <groupId>com.github.silaev</groupId>
+      <artifactId>mongodb-replica-set</artifactId>
       <scope>test</scope>
     </dependency>
 

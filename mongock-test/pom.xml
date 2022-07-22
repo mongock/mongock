@@ -15,15 +15,10 @@
   <description>Mongock test</description>
   <url>https://github.com/mongock/mongock</url>
 
-  <properties>
-    <maven.compiler.source>8</maven.compiler.source>
-    <maven.compiler.target>8</maven.compiler.target>
-  </properties>
-
   <modules>
     <module>mongock-test-core</module>
     <module>mongock-springboot-test</module>
-      <module>mongock-springboot-junit5</module>
+    <module>mongock-springboot-junit5</module>
   </modules>
 
 </project>

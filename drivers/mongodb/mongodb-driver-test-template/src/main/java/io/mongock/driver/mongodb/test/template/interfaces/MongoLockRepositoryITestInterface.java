@@ -3,7 +3,7 @@ package io.mongock.driver.mongodb.test.template.interfaces;
 
 import io.mongock.api.exception.MongockException;
 import io.mongock.driver.core.lock.LockPersistenceException;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 
 public interface MongoLockRepositoryITestInterface {
@@ -25,7 +25,7 @@ public interface MongoLockRepositoryITestInterface {
   @Test
   void insertUpdateShouldUpdateWhenSameOwner() throws LockPersistenceException, MongockException;
 
-  @Test(expected = LockPersistenceException.class)
+  @Test
   void insertUpdateShouldThrowExceptionWhenLockIsInDBWIthDifferentOwnerAndNotExpired() throws LockPersistenceException, MongockException;
 
   @Test
@@ -34,16 +34,16 @@ public interface MongoLockRepositoryITestInterface {
   @Test
   void removeShouldNotRemoveWhenDifferentOwner() throws LockPersistenceException, MongockException;
 
-  @Test(expected = LockPersistenceException.class)
+  @Test
   void updateIfSameOwnerShouldNotInsertWhenEmpty() throws LockPersistenceException, MongockException;
 
-  @Test(expected = LockPersistenceException.class)
+  @Test
   void updateIfSameOwnerShouldNotUpdateWhenExpiresAtIsGraterThanSavedButOtherOwner() throws LockPersistenceException, MongockException;
 
   @Test
   void updateIfSameOwnerShouldUpdateWhenSameOwner() throws LockPersistenceException, MongockException;
 
-  @Test(expected = LockPersistenceException.class)
+  @Test
   void updateIfSameOwnerShouldNotUpdateWhenDifferentOwnerAndExpiresAtIsNotGrater() throws LockPersistenceException, MongockException;
 
 
