@@ -48,11 +48,6 @@ If you cannot find the answer you are looking for, feel free to raise a new ques
 
 To raise a new issue, please take a look to [this guide](https://docs.mongock.io/v5/contributing/index.html)
 
-## Contributing
-:tada: First off, thanks for taking the time to contribute! :tada:
-
-If you would like to contribute to the Mongock project, visit our [official documentation](https://docs.mongock.io/v5/contributing/index.html)
-
 ## Changelog
 To see our changelog, please take a look to  our [github releases][github_releases]
 
@@ -65,6 +60,16 @@ Please read the [code of conduct][codeOfConduct] for details on our code of cond
 
 ## LICENSE
 Mongock project is licensed under the [Apache License Version 2.0][apacheLicense]. See the [LICENSE][mongockLicense] file for details
+    
+## Contributing
+:tada: First off, thanks for taking the time to contribute! :tada:
+    
+If you would like to contribute to the Mongock project, visit our [official documentation](https://docs.mongock.io/v5/contributing/index.html)
+<a href="https://github.com/mongock/mongock/graphs/contributors">
+  <img src="https://contrib.rocks/image?repo=mongock/mongock" />
+</a>
+
+    
 
 [codeOfConduct]: ./CODE_OF_CONDUCT.md
 [mongockLicense]: ./LICENSE.md
