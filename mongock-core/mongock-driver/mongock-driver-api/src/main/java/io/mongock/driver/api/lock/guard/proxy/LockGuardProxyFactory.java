@@ -34,7 +34,6 @@ public class LockGuardProxyFactory {
     };
   }
 
-  private final static List<String> javaPackagePrefixes = Collections.emptyList();//Arrays.asList("java.", "com.sun.", "javax.", "jdk.", "sun.");
   private final LockManager lockManager;
   private final Collection<String> notProxiedPackagePrefixes;
   private final Set<String> nonGuardedMethods;
@@ -49,8 +48,7 @@ public class LockGuardProxyFactory {
 
   public LockGuardProxyFactory(LockManager lockManager, Collection<String> notProxiedPackagePrefixes, Set<String> nonGuardedMethods) {
     this.lockManager = lockManager;
-    this.notProxiedPackagePrefixes = new ArrayList<>(notProxiedPackagePrefixes);
-    this.notProxiedPackagePrefixes.addAll(javaPackagePrefixes);
+    this.notProxiedPackagePrefixes = notProxiedPackagePrefixes;
     this.nonGuardedMethods = nonGuardedMethods;
   }
 
