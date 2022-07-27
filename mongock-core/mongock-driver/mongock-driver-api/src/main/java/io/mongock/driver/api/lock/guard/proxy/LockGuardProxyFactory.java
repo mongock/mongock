@@ -3,7 +3,7 @@ package io.mongock.driver.api.lock.guard.proxy;
 import io.changock.migration.api.annotations.NonLockGuarded;
 import io.mongock.driver.api.lock.LockManager;
 import io.mongock.utils.Constants;
-import io.mongock.utils.Utils;
+import io.mongock.utils.JdkUtil;
 import javassist.util.proxy.ProxyFactory;
 import org.objenesis.ObjenesisStd;
 
@@ -34,7 +34,7 @@ public class LockGuardProxyFactory {
     };
   }
 
-  private final static List<String> javaPackagePrefixes = Collections.emptyList();//Arrays.asList("java.", "com.sun.", "javax.", "jdk.internal.", "sun.");
+  private final static List<String> javaPackagePrefixes = Collections.emptyList();//Arrays.asList("java.", "com.sun.", "javax.", "jdk.", "sun.");
   private final LockManager lockManager;
   private final Collection<String> notProxiedPackagePrefixes;
   private final Set<String> nonGuardedMethods;
@@ -71,8 +71,8 @@ public class LockGuardProxyFactory {
         && isPackageProxiable(interfaceType.getPackage().getName())
         && !interfaceType.isAnnotationPresent(NonLockGuarded.class)
         && !targetObject.getClass().isAnnotationPresent(NonLockGuarded.class)
-        && !Utils.isBasicTypeJDK(targetObject.getClass())
-        && !Utils.isBasicTypeJDK(interfaceType);
+        && !JdkUtil.isInternalJdkClass(targetObject.getClass())
+        && !JdkUtil.isInternalJdkClass(interfaceType);
   }
 
   private boolean isPackageProxiable(String packageName) {

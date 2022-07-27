@@ -1,22 +1,28 @@
 package io.mongock.utils;
 
 import java.net.ContentHandlerFactory;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Map;
 
-public final class Utils {
+public final class JdkUtil {
 
-  private Utils() {
+  private JdkUtil() {
   }
 
-  public static boolean isBasicTypeJDK(Class<?> clazz) {
+  private static final List<String> jdkInternalPackages = Arrays.asList("java.", "com.sun.", "javax.", "jdk.", "sun.");
+
+  public static boolean isInternalJdkClass(Class<?> clazz) {
     return clazz.isPrimitive()
-        || String.class.equals(clazz)
-        || Class.class.equals(clazz)
-        || isJDKWrapper(clazz)
-        || isJDKDataStructure(clazz)
+        || isJdkNativeType(clazz)
+        || isJdkDataStructure(clazz)
+        || isInternalJdkPackage(clazz)
         || isOtherWellKnownClassesNonProxiable(clazz);
+  }
 
-
+  private static boolean isInternalJdkPackage(Class<?> clazz) {
+    String packageName = clazz.getPackage().getName();
+    return jdkInternalPackages.stream().anyMatch(packageName::startsWith);
   }
 
   //should be added all the extra classes that shouldn't be proxiable
@@ -24,8 +30,10 @@ public final class Utils {
     return ContentHandlerFactory.class.isAssignableFrom(clazz);
   }
 
-  private static boolean isJDKWrapper(Class<?> clazz) {
+  private static boolean isJdkNativeType(Class<?> clazz) {
     return Boolean.class.equals(clazz)
+        || String.class.equals(clazz)
+        || Class.class.equals(clazz)
         || Character.class.equals(clazz)
         || Byte.class.equals(clazz)
         || Short.class.equals(clazz)
@@ -36,7 +44,7 @@ public final class Utils {
         || Void.class.equals(clazz);
   }
 
-  private static boolean isJDKDataStructure(Class<?> clazz) {
+  private static boolean isJdkDataStructure(Class<?> clazz) {
     return Iterable.class.isAssignableFrom(clazz)
         || Map.class.isAssignableFrom(clazz);
     //should be added all the JDK data structure that shouldn't be proxied
