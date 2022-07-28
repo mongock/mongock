@@ -10,7 +10,16 @@ public final class JdkUtil {
   private JdkUtil() {
   }
 
-  private static final List<String> jdkInternalPackages = Arrays.asList("java.", "com.sun.", "javax.", "jdk.", "sun.");
+  private static final List<String> jdkInternalPackages = Arrays.asList(
+      "java.",
+      "com.sun.",
+      "javax.",
+      "jdk.",
+      "sun.",
+      "netscape.javascript.",
+      "org.ietf.jgss.",
+      "org.w3c.",
+      "org.xml.");
 
   public static boolean isInternalJdkClass(Class<?> clazz) {
     return clazz.isPrimitive()
@@ -21,7 +30,8 @@ public final class JdkUtil {
   }
 
   private static boolean isInternalJdkPackage(Class<?> clazz) {
-    String packageName = clazz.getPackage().getName();
+    //Some JDK internal classes return null in method getPackage()
+    String packageName = clazz.getPackage() != null ? clazz.getPackage().getName() : clazz.getName();
     return jdkInternalPackages.stream().anyMatch(packageName::startsWith);
   }
 

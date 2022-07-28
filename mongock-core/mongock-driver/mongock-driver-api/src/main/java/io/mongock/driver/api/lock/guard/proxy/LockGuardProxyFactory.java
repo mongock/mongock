@@ -9,11 +9,9 @@ import org.objenesis.ObjenesisStd;
 
 import java.lang.reflect.Modifier;
 import java.lang.reflect.Proxy;
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 public class LockGuardProxyFactory {
