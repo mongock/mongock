@@ -15,6 +15,7 @@ import org.mockito.Mockito;
 
 import java.io.Serializable;
 import java.net.ContentHandlerFactory;
+import java.security.ProtectionDomain;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -40,8 +41,22 @@ public class LockGuardProxyFactoryTest {
   }
 
   @Test
-  public void shouldNotReturnProxy_IfInterfaceTypePackageIsJava() {
+  public void shouldNotReturnProxy_IfIsJDKStructure() {
     assertFalse(ReflectionUtils.isProxy(getRawProxy(new ArrayList<>(), List.class)));
+  }
+
+  @Test
+  public void shouldNotReturnProxy_IfIsJDKBasicType() {
+    assertFalse(ReflectionUtils.isProxy(getRawProxy("Value", String.class)));
+  }
+
+  @Test
+  public void shouldNotReturnProxy_IfIsJDKInternal() {
+    assertFalse(ReflectionUtils.isProxy(getRawProxy(new ProtectionDomain(null, null), ProtectionDomain.class)));
+  }
+
+  @Test
+  public void shouldNotReturnProxy_IfIsWellKnownClassesNonProxiable() {
     assertFalse(ReflectionUtils.isProxy(getRawProxy(new ContentHandlerFactoryImpl(), ContentHandlerFactory.class)));
   }
 

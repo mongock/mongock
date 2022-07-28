@@ -3,17 +3,15 @@ package io.mongock.driver.api.lock.guard.proxy;
 import io.changock.migration.api.annotations.NonLockGuarded;
 import io.mongock.driver.api.lock.LockManager;
 import io.mongock.utils.Constants;
-import io.mongock.utils.Utils;
+import io.mongock.utils.JdkUtil;
 import javassist.util.proxy.ProxyFactory;
 import org.objenesis.ObjenesisStd;
 
 import java.lang.reflect.Modifier;
 import java.lang.reflect.Proxy;
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 public class LockGuardProxyFactory {
@@ -34,7 +32,6 @@ public class LockGuardProxyFactory {
     };
   }
 
-  private final static List<String> javaPackagePrefixes = Collections.emptyList();//Arrays.asList("java.", "com.sun.", "javax.", "jdk.internal.", "sun.");
   private final LockManager lockManager;
   private final Collection<String> notProxiedPackagePrefixes;
   private final Set<String> nonGuardedMethods;
@@ -49,8 +46,7 @@ public class LockGuardProxyFactory {
 
   public LockGuardProxyFactory(LockManager lockManager, Collection<String> notProxiedPackagePrefixes, Set<String> nonGuardedMethods) {
     this.lockManager = lockManager;
-    this.notProxiedPackagePrefixes = new ArrayList<>(notProxiedPackagePrefixes);
-    this.notProxiedPackagePrefixes.addAll(javaPackagePrefixes);
+    this.notProxiedPackagePrefixes = notProxiedPackagePrefixes;
     this.nonGuardedMethods = nonGuardedMethods;
   }
 
@@ -71,8 +67,8 @@ public class LockGuardProxyFactory {
         && isPackageProxiable(interfaceType.getPackage().getName())
         && !interfaceType.isAnnotationPresent(NonLockGuarded.class)
         && !targetObject.getClass().isAnnotationPresent(NonLockGuarded.class)
-        && !Utils.isBasicTypeJDK(targetObject.getClass())
-        && !Utils.isBasicTypeJDK(interfaceType);
+        && !JdkUtil.isInternalJdkClass(targetObject.getClass())
+        && !JdkUtil.isInternalJdkClass(interfaceType);
   }
 
   private boolean isPackageProxiable(String packageName) {
