@@ -32,6 +32,7 @@
     <dependency>
       <groupId>org.slf4j</groupId>
       <artifactId>slf4j-simple</artifactId>
+        <version>${slf4j-api.version}</version>
       <scope>test</scope>
     </dependency>
     
@@ -63,24 +64,28 @@
     <dependency>
       <groupId>org.awaitility</groupId>
       <artifactId>awaitility</artifactId>
+        <version>${awaitility.version}</version>
       <scope>test</scope>
     </dependency>
     
     <dependency>
       <groupId>org.junit.jupiter</groupId>
       <artifactId>junit-jupiter-api</artifactId>
+        <version>${junit.jupiter.version}</version>
       <scope>test</scope>
     </dependency>
     
     <dependency>
       <groupId>org.mockito</groupId>
       <artifactId>mockito-core</artifactId>
+        <version>${mockito-core.version}</version>
       <scope>test</scope>
     </dependency>
     
     <dependency>
       <groupId>com.github.silaev</groupId>
       <artifactId>mongodb-replica-set</artifactId>
+        <version>${mongodb-replica-set.version}</version>
       <scope>test</scope>
     </dependency>
 

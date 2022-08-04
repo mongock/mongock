@@ -32,12 +32,14 @@
     <dependency>
       <groupId>org.slf4j</groupId>
       <artifactId>slf4j-api</artifactId>
+        <version>${slf4j-api.version}</version>
     </dependency>
 
     <!-- TESTS -->
     <dependency>
       <groupId>org.junit.jupiter</groupId>
       <artifactId>junit-jupiter-api</artifactId>
+        <version>${junit.jupiter.version}</version>
       <scope>test</scope>
     </dependency>
   </dependencies>
