@@ -45,7 +45,10 @@ public abstract class RunnerBuilderBase<
   protected EventPublisher eventPublisher = new EventPublisher();
   protected ConnectionDriver driver;
   protected Function<Class<?>, Object> changeLogInstantiatorFunctionForAnnotations;
-  protected Function<Parameter, String> parameterNameFunction = parameter -> parameter.isAnnotationPresent(Named.class) ? parameter.getAnnotation(Named.class).value() : null;
+  protected Function<Parameter, String> parameterNameFunction = parameter ->
+          parameter.isAnnotationPresent(Named.class) ? parameter.getAnnotation(Named.class).value() :
+                  parameter.isAnnotationPresent(jakarta.inject.Named.class)
+                          ? parameter.getAnnotation(jakarta.inject.Named.class).value() : null;
 
   //todo move to config
   private String executionId = String.format("%s-%d", LocalDateTime.now(), new Random().nextInt(999));

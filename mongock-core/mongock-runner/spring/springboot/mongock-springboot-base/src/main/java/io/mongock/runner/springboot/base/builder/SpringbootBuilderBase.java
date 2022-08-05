@@ -63,6 +63,9 @@ public abstract class SpringbootBuilderBase<
       if (name == null) {
         name = parameter.isAnnotationPresent(Qualifier.class) ? parameter.getAnnotation(Qualifier.class).value() : null;
       }
+      if (name == null) {
+        name = parameter.isAnnotationPresent(jakarta.inject.Named.class) ? parameter.getAnnotation(jakarta.inject.Named.class).value() : null;
+      }
       return name;
     };
   }
