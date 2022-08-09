@@ -5,7 +5,7 @@
   <parent>
     <groupId>io.mongock</groupId>
     <artifactId>mongock-core</artifactId>
-    <version>5.1.3-SNAPSHOT</version>
+    <version>5.1.4-SNAPSHOT</version>
   </parent>
   <artifactId>mongock-driver</artifactId>
   <packaging>pom</packaging>
