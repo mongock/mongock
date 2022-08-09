@@ -7,7 +7,6 @@ import io.mongock.api.config.TransactionStrategy;
 import io.mongock.api.exception.MongockException;
 import io.mongock.driver.api.driver.ChangeSetDependency;
 import io.mongock.driver.api.driver.ConnectionDriver;
-import io.mongock.driver.api.driver.DriverLegaciable;
 import io.mongock.runner.core.event.EventPublisher;
 import io.mongock.runner.core.executor.ChangeLogRuntimeImpl;
 import io.mongock.runner.core.executor.Executor;
@@ -26,8 +25,6 @@ import javax.inject.Named;
 import java.lang.reflect.AnnotatedElement;
 import java.lang.reflect.Parameter;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Random;
 import java.util.function.Function;
 
@@ -145,7 +142,8 @@ public abstract class RunnerBuilderBase<
     try {
       beforeBuildRunner(driver);
       return new MongockRunnerImpl(
-          buildExecutor(operation, driver),
+          buildSystemUpdateExecutor(driver),
+          buildOperationExecutor(operation, driver),
           config.isThrowExceptionIfCannotObtainLock(),
           config.isEnabled(),
           eventPublisher);
@@ -158,37 +156,13 @@ public abstract class RunnerBuilderBase<
 
   protected void beforeBuildRunner(ConnectionDriver driver) {
     if (config.getLegacyMigration() != null) {
-      DriverLegaciable legaciableDriver = this.getDriverLegaciable(driver);
-      if (legaciableDriver != null) {
-        config.getMigrationScanPackage().add(legaciableDriver.getLegacyMigrationChangeLogClass(config.getLegacyMigration().isRunAlways()).getPackage().getName());
-        dependencyManager.addStandardDependency(
-            new ChangeSetDependency(MongockConstants.LEGACY_MIGRATION_NAME, LegacyMigration.class, config.getLegacyMigration())
-        );
-      }
+      dependencyManager.addStandardDependency(
+          new ChangeSetDependency(MongockConstants.LEGACY_MIGRATION_NAME, LegacyMigration.class, config.getLegacyMigration())
+      );
     }
     driver.setLockRepositoryName(config.getLockRepositoryName());
     driver.setMigrationRepositoryName(config.getMigrationRepositoryName());
   }
-
-
-  private void prepareChangeLogService() {
-    List<Class<?>> changeLogsScanClasses = new ArrayList<>();
-    List<String> changeLogsScanPackage = new ArrayList<>();
-    for (String itemPath : config.getMigrationScanPackage()) {
-      try {
-        changeLogsScanClasses.add(ClassLoader.getSystemClassLoader().loadClass(itemPath));
-      } catch (ClassNotFoundException e) {
-        changeLogsScanPackage.add(itemPath);
-      }
-    }
-    changeLogService.setDefaultMigrationAuthor(config.getDefaultMigrationAuthor());
-    changeLogService.setChangeLogsBasePackageList(changeLogsScanPackage);
-    changeLogService.setChangeLogsBaseClassList(changeLogsScanClasses);
-    changeLogService.setStartSystemVersion(config.getStartSystemVersion());
-    changeLogService.setEndSystemVersion(config.getEndSystemVersion());
-    changeLogService.setProfileFilter(getAnnotationFilter());
-  }
-
 
   protected void validateConfigurationAndInjections(ConnectionDriver driver) throws MongockException {
     if (driver == null) {
@@ -227,30 +201,42 @@ public abstract class RunnerBuilderBase<
 
   }
 
-
   protected Function<AnnotatedElement, Boolean> getAnnotationFilter() {
     return annotatedElement -> true;
   }
-
-  protected DriverLegaciable getDriverLegaciable(ConnectionDriver driver) {
-    return driver != null && DriverLegaciable.class.isAssignableFrom(driver.getClass()) ? (DriverLegaciable) driver : null;
+  
+  protected Executor buildSystemUpdateExecutor(ConnectionDriver driver) {
+    ChangeLogRuntimeImpl changeLogRuntime = new ChangeLogRuntimeImpl(
+        changeLogInstantiatorFunctionForAnnotations,
+        dependencyManager,
+        parameterNameFunction,
+        driver.getNonProxyableTypes());
+      return executorBuilder
+            .reset()
+            .setExecutionId(executionId)
+            .setChangeLogService(changeLogService)
+            .setDriver(driver)
+            .setChangeLogRuntime(changeLogRuntime)
+            .setConfig(config)
+            .buildSystemExecutor();
   }
 
-  protected Executor buildExecutor(Operation operation, ConnectionDriver driver) {
-    prepareChangeLogService();
+  protected Executor buildOperationExecutor(Operation operation, ConnectionDriver driver) {
     ChangeLogRuntimeImpl changeLogRuntime = new ChangeLogRuntimeImpl(
         changeLogInstantiatorFunctionForAnnotations,
         dependencyManager,
         parameterNameFunction,
         driver.getNonProxyableTypes());
     return executorBuilder
+            .reset()
             .setOperation(operation)
             .setExecutionId(executionId)
             .setChangeLogService(changeLogService)
             .setDriver(driver)
             .setChangeLogRuntime(changeLogRuntime)
+            .setAnnotationFilter(getAnnotationFilter())
             .setConfig(config)
-            .buildExecutor();
+            .buildOperationExecutor();
   }
 
   public abstract SELF getInstance();

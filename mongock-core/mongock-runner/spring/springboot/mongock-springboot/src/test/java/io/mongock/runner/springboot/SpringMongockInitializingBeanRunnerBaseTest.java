@@ -62,7 +62,7 @@ public class SpringMongockInitializingBeanRunnerBaseTest {
 
     // when
 //        Spring5Runner.migrationBuilder()
-    MongockSpringboot.builder()
+    MongockSpringbootFixture.builder(false)
         .setDriver(driver)
         .addChangeLogsScanPackage(IntegrationProfiledChangerLog.class.getPackage().getName())
         .setSpringContext(springContext)
@@ -87,7 +87,7 @@ public class SpringMongockInitializingBeanRunnerBaseTest {
     when(changeEntryService.getExecuted()).thenReturn(Collections.emptyList());
 
     // when
-    MongockSpringboot.builder()
+    MongockSpringbootFixture.builder(false)
         .setDriver(driver)
         .addChangeLogsScanPackage(IntegrationProfiledChangerLog.class.getPackage().getName())
         .setSpringContext(springContext)
@@ -115,7 +115,7 @@ public class SpringMongockInitializingBeanRunnerBaseTest {
     when(springContext.getBean(TemplateForTestImpl.class)).thenReturn(new TemplateForTestImpl());
 
     // when
-    MongockSpringboot.builder()
+    MongockSpringbootFixture.builder(false)
         .setDriver(driver)
         .addChangeLogsScanPackage(EnsureDecoratorChangerLog.class.getPackage().getName())
         .setSpringContext(springContext)
@@ -130,7 +130,7 @@ public class SpringMongockInitializingBeanRunnerBaseTest {
   public void shouldFail_IfSpringContextNotInjected() throws Exception {
 
     MongockException ex = assertThrows(MongockException.class, () -> 
-            MongockSpringboot.builder()
+            MongockSpringbootFixture.builder(false)
         .setDriver(driver)
         .addChangeLogsScanPackage(IntegrationProfiledChangerLog.class.getPackage().getName())
         .buildInitializingBeanRunner()

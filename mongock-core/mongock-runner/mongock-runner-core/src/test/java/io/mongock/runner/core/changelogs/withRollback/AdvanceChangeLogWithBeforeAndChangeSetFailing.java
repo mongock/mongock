@@ -32,6 +32,7 @@ public class AdvanceChangeLogWithBeforeAndChangeSetFailing {
 
   @BeforeExecution
   public void before() {
+    // Nothing to do
   }
 
   @RollbackBeforeExecution

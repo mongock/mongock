@@ -25,6 +25,7 @@ import io.mongock.driver.api.entry.ChangeEntry.KEY_EXECUTION_ID
 import io.mongock.driver.api.entry.ChangeEntry.KEY_EXECUTION_MILLIS
 import io.mongock.driver.api.entry.ChangeEntry.KEY_METADATA
 import io.mongock.driver.api.entry.ChangeEntry.KEY_STATE
+import io.mongock.driver.api.entry.ChangeEntry.KEY_SYSTEM_CHANGE
 import io.mongock.driver.api.entry.ChangeEntry.KEY_TIMESTAMP
 import io.mongock.driver.api.entry.ChangeEntry.KEY_TYPE
 import io.mongock.driver.api.entry.ChangeEntryService
@@ -32,6 +33,7 @@ import io.mongock.driver.api.entry.ChangeState
 import io.mongock.driver.api.entry.ChangeType
 import mu.KotlinLogging
 import java.util.*
+import java.lang.reflect.Field;
 
 
 internal const val RANGE_KEY_ID = "${KEY_EXECUTION_ID}#${KEY_AUTHOR}"
@@ -79,6 +81,10 @@ class DynamoDBChangeEntryRepository(
         }
     }
 
+    override fun ensureField(field: Field) {
+      // Nothing to do in DynamoDB
+    }
+
     fun cleanTransactionRequest() {
         transactionItems = null
     }
@@ -112,11 +118,13 @@ internal class ChangeEntryDynamoDB private constructor(
     @DynamoDBAttribute(attributeName = KEY_METADATA)
     var metadata: String?,
     @DynamoDBAttribute(attributeName = KEY_ERROR_TRACE)
-    var errorTrace: String?
+    var errorTrace: String?,
+    @DynamoDBAttribute(attributeName = KEY_SYSTEM_CHANGE)
+    var systemChange: Boolean?
 ) {
     internal val item: Item
         get() {
-            return Item()
+            val item = Item()
                 .withPrimaryKey(KEY_CHANGE_ID, changeId, RANGE_KEY_ID, rangeKey)
                 .withString(KEY_CHANGE_ID, changeId)
                 .withString(RANGE_KEY_ID, rangeKey)
@@ -131,6 +139,11 @@ internal class ChangeEntryDynamoDB private constructor(
                 .withString(KEY_EXECUTION_HOST_NAME, executionHostname)
                 .withString(KEY_METADATA, metadata)
                 .withString(KEY_ERROR_TRACE, errorTrace)
+
+            if (systemChange != null) item.withBoolean(KEY_SYSTEM_CHANGE, systemChange!!)
+            else item.withNull(KEY_SYSTEM_CHANGE)
+
+            return item
         }
 
     internal val changeEntry: ChangeEntry
@@ -147,7 +160,8 @@ internal class ChangeEntryDynamoDB private constructor(
                 executionMillis ?: 0L,
                 executionHostname,
                 if (metadata != null) gson.fromJson(metadata, Map::class.java) else Unit,
-                errorTrace
+                errorTrace,
+                systemChange
             )
         }
 
@@ -175,6 +189,8 @@ internal class ChangeEntryDynamoDB private constructor(
             if (errorTrace != null && errorTrace != "") {
                 attributes[KEY_ERROR_TRACE] = AttributeValue(errorTrace)
             }
+            attributes[KEY_SYSTEM_CHANGE] = AttributeValue()
+            attributes[KEY_SYSTEM_CHANGE]!!.withBOOL(systemChange)
             return attributes
         }
 
@@ -192,10 +208,11 @@ internal class ChangeEntryDynamoDB private constructor(
         executionMillis = c.executionMillis,
         executionHostname = c.executionHostname ?: "",
         metadata = if (c.metadata != null) gson.toJson(c.metadata) else "",
-        errorTrace = c.errorTrace.orElse("")
+        errorTrace = c.errorTrace.orElse(""),
+        systemChange = c.isSystemChange
     )
 
-    constructor() : this(null, null, null, null, null, null, null, null, null, null, null, null, null)
+    constructor() : this(null, null, null, null, null, null, null, null, null, null, null, null, null, null)
     internal constructor(item: Map<String, AttributeValue>) : this(
         changeId = item[KEY_CHANGE_ID]!!.s,
         rangeKey = item[RANGE_KEY_ID]!!.s,
@@ -209,7 +226,8 @@ internal class ChangeEntryDynamoDB private constructor(
         executionMillis = item[KEY_EXECUTION_MILLIS]!!.n.toLong(),
         executionHostname = (item[KEY_EXECUTION_HOST_NAME]?.s) ?: "",
         metadata = (item[KEY_METADATA]?.s) ?: "",
-        errorTrace = (item[KEY_ERROR_TRACE]?.s) ?: ""
+        errorTrace = (item[KEY_ERROR_TRACE]?.s) ?: "",
+        systemChange = item[KEY_SYSTEM_CHANGE]?.bool
     )
 
 }

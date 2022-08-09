@@ -29,7 +29,7 @@ public class ChangeLogItem {
 
   private final List<ChangeSetItem> beforeChangeSetsItems;
 
-  private final boolean system;
+  private boolean system;
 
   public static ChangeLogItem getFromAnnotation(
       Class<?> changeLogClass,
@@ -56,7 +56,8 @@ public class ChangeLogItem {
         systemVersion,
         failFast,
         executionMethod,
-        rollbackExecutionMethod);
+        rollbackExecutionMethod,
+        system);
     List<ChangeSetItem> changeSetBeforeList = new ArrayList<>();
     if (beforeMethod != null) {
       changeSetBeforeList.add(new BeforeChangeSetItem(
@@ -67,8 +68,8 @@ public class ChangeLogItem {
           systemVersion,
           failFast,
           beforeMethod,
-          rollbackBeforeMethod
-          ));
+          rollbackBeforeMethod,
+          system));
 
     }
     return new ChangeLogItem(
@@ -152,6 +153,12 @@ public class ChangeLogItem {
 
   public boolean isSystem() {
     return system;
+  }
+  
+  public void setSystem(boolean system) {
+    this.system = system;
+    this.changeSetItems.stream().forEach(c -> c.setSystem(system));
+    this.beforeChangeSetsItems.stream().forEach(c -> c.setSystem(system));
   }
 
   @Override

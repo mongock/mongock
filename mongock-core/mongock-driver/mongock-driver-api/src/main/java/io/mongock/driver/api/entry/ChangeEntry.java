@@ -38,6 +38,7 @@ public class ChangeEntry implements ChangePrintable {
   public static final String KEY_EXECUTION_MILLIS = "executionMillis";
   public static final String KEY_EXECUTION_HOST_NAME = "executionHostname";
   public static final String KEY_ERROR_TRACE = "errorTrace";
+  public static final String KEY_SYSTEM_CHANGE = "systemChange";
 
 
   @Field(value = KEY_EXECUTION_ID, type = PRIMARY)
@@ -76,6 +77,9 @@ public class ChangeEntry implements ChangePrintable {
   @Field(KEY_ERROR_TRACE)
   protected String errorTrace;
   
+  @Field(KEY_SYSTEM_CHANGE)
+  protected Boolean systemChange;
+  
   protected Date originalTimestamp;
 
   public ChangeEntry() {}
@@ -90,8 +94,9 @@ public class ChangeEntry implements ChangePrintable {
                      String changeSetMethod,
                      long executionMillis,
                      String executionHostname,
-                     Object metadata) {
-    this(executionId, changeId, author, timestamp, state, type, changeLogClass, changeSetMethod, executionMillis, executionHostname, metadata, null);
+                     Object metadata,
+                     Boolean systemChange) {
+    this(executionId, changeId, author, timestamp, state, type, changeLogClass, changeSetMethod, executionMillis, executionHostname, metadata, null, systemChange);
   }
 
   public ChangeEntry(String executionId,
@@ -105,7 +110,8 @@ public class ChangeEntry implements ChangePrintable {
                      long executionMillis,
                      String executionHostname,
                      Object metadata,
-                     String errorTrace) {
+                     String errorTrace,
+                     Boolean systemChange) {
     this.executionId = executionId;
     this.changeId = changeId;
     this.author = author;
@@ -118,6 +124,7 @@ public class ChangeEntry implements ChangePrintable {
     this.executionHostname = executionHostname;
     this.metadata = metadata;
     this.errorTrace = errorTrace;
+    this.systemChange = systemChange;
     this.originalTimestamp = null;//TODO: To be assigned when we could save value en DB
   }
 
@@ -131,7 +138,8 @@ public class ChangeEntry implements ChangePrintable {
                                      String changeSetName,
                                      long executionMillis,
                                      String executionHostname,
-                                     Object metadata) {
+                                     Object metadata,
+                                     Boolean systemChange) {
     return new ChangeEntry(
         executionId,
         changeSetId,
@@ -143,7 +151,8 @@ public class ChangeEntry implements ChangePrintable {
         changeSetName,
         executionMillis,
         executionHostname,
-        metadata);
+        metadata,
+        systemChange);
   }
 
   public static ChangeEntry failedInstance(String executionId,
@@ -156,7 +165,8 @@ public class ChangeEntry implements ChangePrintable {
                                            long executionMillis,
                                            String executionHostname,
                                            Object metadata,
-                                           String error) {
+                                           String error,
+                                           Boolean systemChange) {
     if(!state.isFailed()) {
       throw new MongockException("Creating a failed instance of changeEntry with a non-failed stated: " + state.name());
     }
@@ -172,7 +182,8 @@ public class ChangeEntry implements ChangePrintable {
         executionMillis,
         executionHostname,
         metadata,
-        error);
+        error,
+        systemChange);
   }
 
 
@@ -240,6 +251,14 @@ public class ChangeEntry implements ChangePrintable {
     return Optional.ofNullable(errorTrace);
   }
   
+  public boolean isSystemChange() {
+    return systemChange != null && systemChange;
+  }
+  
+  public void setSystemChange(boolean systemChange) {
+    this.systemChange = systemChange;
+  }
+  
   public Date getOriginalTimestamp() {
     return this.originalTimestamp;
   }
@@ -261,6 +280,7 @@ public class ChangeEntry implements ChangePrintable {
         ", metadata=" + metadata +
         ", executionMillis=" + executionMillis +
         ", executionHostname='" + executionHostname + '\'' +
+        ", systemChange=" + systemChange +
         '}';
   }
 

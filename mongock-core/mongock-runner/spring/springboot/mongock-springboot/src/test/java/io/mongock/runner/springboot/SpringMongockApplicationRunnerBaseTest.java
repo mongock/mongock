@@ -194,8 +194,8 @@ public class SpringMongockApplicationRunnerBaseTest {
   }
 
   private void buildAndRun(String packageName) throws Exception {
-    MongockSpringboot
-        .builder()
+    MongockSpringbootFixture
+        .builder(false)
         .setDriver(driver)
         .addMigrationScanPackage(packageName)
         .setSpringContext(springContext)

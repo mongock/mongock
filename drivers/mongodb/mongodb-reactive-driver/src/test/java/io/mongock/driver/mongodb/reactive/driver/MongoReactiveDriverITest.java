@@ -140,7 +140,8 @@ public class MongoReactiveDriverITest extends IntegrationTestBase {
     MongockException ex = assertThrows(MongockException.class, () -> TestMongock.builder()
         .setDriver(getDriverWithTransactionDisabled())
         .addMigrationScanPackage(ChangeLogFailure.class.getPackage().getName())
-        .buildRunner());
+        .buildRunner()
+        .execute());
    assertEquals("Duplicated changeset id found: 'id_duplicated'", ex.getMessage());
   }
 

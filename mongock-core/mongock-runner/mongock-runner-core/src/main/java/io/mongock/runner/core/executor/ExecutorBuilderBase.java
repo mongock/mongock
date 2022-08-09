@@ -6,6 +6,8 @@ import io.mongock.driver.api.driver.ConnectionDriver;
 import io.mongock.runner.core.executor.changelog.ChangeLogRuntime;
 import io.mongock.runner.core.executor.changelog.ChangeLogServiceBase;
 import io.mongock.runner.core.executor.operation.Operation;
+import java.lang.reflect.AnnotatedElement;
+import java.util.function.Function;
 
 public abstract class ExecutorBuilderBase<CONFIG extends ExecutorConfiguration>
                                         implements ExecutorBuilder<CONFIG> {
@@ -19,6 +21,7 @@ public abstract class ExecutorBuilderBase<CONFIG extends ExecutorConfiguration>
   // Optional
   protected ChangeLogServiceBase changeLogService;
   protected ChangeLogRuntime changeLogRuntime;
+  protected Function<AnnotatedElement, Boolean> annotationFilter;
 
   ///////////////////////////////////////////////////////////////////////////////////
   //  SETTERS
@@ -60,11 +63,26 @@ public abstract class ExecutorBuilderBase<CONFIG extends ExecutorConfiguration>
     return this;
   }
   
+  @Override
+  public ExecutorBuilder<CONFIG> setAnnotationFilter(Function<AnnotatedElement, Boolean> annotationFilter) {
+    this.annotationFilter = annotationFilter;
+    return this;
+  }
+  
   ///////////////////////////////////////////////////////////////////////////////////
   //  Build methods
   ///////////////////////////////////////////////////////////////////////////////////
   @Override
-  public Executor buildExecutor() {
+  public Executor buildSystemExecutor() {
+    validateCommonInfo();
+    return getSystemExecutor();
+  }
+  
+  protected abstract Executor getSystemExecutor();
+  
+  @Override
+  public Executor buildOperationExecutor() {
+    validateOperation();
     validateCommonInfo();
     return getExecutorByOperation(operation);
   }
@@ -75,11 +93,19 @@ public abstract class ExecutorBuilderBase<CONFIG extends ExecutorConfiguration>
   //  Validation and aux methods
   ///////////////////////////////////////////////////////////////////////////////////
   
+  @Override
+  public ExecutorBuilder<CONFIG> reset() {
+    this.operation = null;
+    this.executionId = null;
+    this.driver = null;
+    this.config = null;
+    this.changeLogService = null;
+    this.changeLogRuntime = null;
+    this.annotationFilter = null;
+    return this;
+  }
+  
   private void validateCommonInfo() {
-    
-    if (operation == null) {
-      throw new MongockException("operation cannot be null");
-    }
     
     if (executionId == null || executionId.trim().isEmpty()) {
       throw new MongockException("executionId cannot be null or empty");
@@ -91,6 +117,12 @@ public abstract class ExecutorBuilderBase<CONFIG extends ExecutorConfiguration>
     
     if (config == null) {
       throw new MongockException("config cannot be null");
+    }
+  }
+  
+  protected void validateOperation() {
+    if (operation == null) {
+      throw new MongockException("operation cannot be null");
     }
   }
   

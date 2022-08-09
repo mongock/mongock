@@ -4,7 +4,6 @@ import com.mongodb.client.ClientSession;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.model.Filters;
 import com.mongodb.client.model.ReplaceOptions;
-import com.mongodb.client.model.UpdateOptions;
 import com.mongodb.client.result.UpdateResult;
 import io.mongock.api.exception.MongockException;
 import io.mongock.driver.api.entry.ChangeEntry;
@@ -36,6 +35,7 @@ public class Mongo3ChangeEntryRepository extends Mongo3RepositoryBase<ChangeEntr
   protected static String KEY_EXECUTION_MILLIS;
   protected static String KEY_EXECUTION_HOSTNAME;
   protected static String KEY_METADATA;
+  protected static String KEY_SYSTEM_CHANGE;
 
   private ClientSession clientSession;
 
@@ -84,6 +84,10 @@ public class Mongo3ChangeEntryRepository extends Mongo3RepositoryBase<ChangeEntr
       field = ChangeEntry.class.getDeclaredField("executionHostname");
       field.setAccessible(true);
       KEY_EXECUTION_HOSTNAME = field.getAnnotation(io.mongock.utils.field.Field.class).value();
+      
+      field = ChangeEntry.class.getDeclaredField("systemChange");
+      field.setAccessible(true);
+      KEY_SYSTEM_CHANGE = field.getAnnotation(io.mongock.utils.field.Field.class).value();
     } catch (NoSuchFieldException e) {
       throw new MongockException(e);
     }
@@ -113,7 +117,8 @@ public class Mongo3ChangeEntryRepository extends Mongo3RepositoryBase<ChangeEntr
             entry.getString(KEY_CHANGESET_METHOD),
             entry.containsKey(KEY_EXECUTION_MILLIS) ? entry.getLong(KEY_EXECUTION_MILLIS) : -1L,
             entry.getString(KEY_EXECUTION_HOSTNAME),
-            entry.get(KEY_METADATA)))
+            entry.get(KEY_METADATA),
+            entry.getBoolean(KEY_SYSTEM_CHANGE)))
         .collect(Collectors.toList());
   }
 
@@ -144,6 +149,11 @@ public class Mongo3ChangeEntryRepository extends Mongo3RepositoryBase<ChangeEntr
         .orElseGet(() -> collection.replaceOne(filter, entryDocument, new ReplaceOptions().upsert(true)));
     logger.debug("SaveOrUpdate[{}] with result" +
         "\n[upsertId:{}, matches: {}, modifies: {}, acknowledged: {}]", changeEntry, result.getUpsertedId(), result.getMatchedCount(), result.getModifiedCount(), result.wasAcknowledged());
+  }
+  
+  @Override
+  public void ensureField(Field field) {
+    // Nothing to do in MongoDB
   }
 
 }

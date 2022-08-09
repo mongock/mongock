@@ -7,12 +7,9 @@ import io.mongock.driver.mongodb.v3.repository.Mongo3ChangeEntryRepository;
 import io.mongock.driver.mongodb.v3.repository.ReadWriteConfiguration;
 import org.bson.Document;
 import org.springframework.data.mongodb.core.MongoOperations;
-import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.data.mongodb.core.query.Update;
-
-import java.util.List;
 
 public class SpringDataMongoV2ChangeEntryRepository extends Mongo3ChangeEntryRepository implements ChangeEntryRepositoryWithEntity<Document> {
 
