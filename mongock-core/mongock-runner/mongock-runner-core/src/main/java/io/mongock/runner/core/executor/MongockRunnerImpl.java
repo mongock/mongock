@@ -10,17 +10,20 @@ import org.slf4j.LoggerFactory;
 public class MongockRunnerImpl implements MongockRunner {
   private static final Logger logger = LoggerFactory.getLogger(MongockRunnerImpl.class);
 
-  private final Executor executor;
+  private final Executor systemUpdateExecutor;
+  private final Executor operationExecutor;
   private final boolean throwExceptionIfCannotObtainLock;
   private final EventPublisher eventPublisher;
 
   private boolean enabled;
 
-  public MongockRunnerImpl(Executor executor,
+  public MongockRunnerImpl(Executor systemUpdateExecutor,
+                           Executor operationExecutor,
                            boolean throwExceptionIfCannotObtainLock,
                            boolean enabled,
                            EventPublisher eventPublisher) {
-    this.executor = executor;
+    this.systemUpdateExecutor = systemUpdateExecutor;
+    this.operationExecutor = operationExecutor;
     this.enabled = enabled;
     this.throwExceptionIfCannotObtainLock = throwExceptionIfCannotObtainLock;
     this.eventPublisher = eventPublisher;
@@ -34,7 +37,7 @@ public class MongockRunnerImpl implements MongockRunner {
    * @return true if an execution is in progress, in any process.
    */
   public boolean isExecutionInProgress() {
-    return executor.isExecutionInProgress();
+    return systemUpdateExecutor.isExecutionInProgress() || operationExecutor.isExecutionInProgress();
   }
 
   /**
@@ -47,25 +50,26 @@ public class MongockRunnerImpl implements MongockRunner {
   public void execute() throws MongockException {
     if (!isEnabled()) {
       logger.info("Mongock is disabled. Exiting.");
-    } else {
+    } else {      
       try {
         eventPublisher.publishMigrationStarted();
-        Object result = executor.executeMigration();
+        systemUpdateExecutor.executeMigration();
+        Object result = operationExecutor.executeMigration();
         eventPublisher.publishMigrationSuccessEvent(new MigrationSuccessResult(result));
       } catch (LockCheckException lockEx) {
         MongockException mongockException = new MongockException(lockEx);
         eventPublisher.publishMigrationFailedEvent(mongockException);
         if (throwExceptionIfCannotObtainLock) {
-          logger.error("Mongock did not acquire process lock. EXITING WITHOUT RUNNING DATA MIGRATION", lockEx);
+          logger.error("Mongock did not acquire process lock. EXITING WITHOUT RUNNING OPERATION", lockEx);
           throw mongockException;
 
         } else {
-          logger.warn("Mongock did not acquire process lock. EXITING WITHOUT RUNNING DATA MIGRATION", lockEx);
+          logger.warn("Mongock did not acquire process lock. EXITING WITHOUT RUNNING OPERATION", lockEx);
         }
 
       } catch (Exception ex) {
         MongockException exWrapper = MongockException.class.isAssignableFrom(ex.getClass()) ? (MongockException) ex : new MongockException(ex);
-        logger.error("Error in mongock process. ABORTED MIGRATION", exWrapper);
+        logger.error("Error in mongock process. ABORTED OPERATION", exWrapper);
         eventPublisher.publishMigrationFailedEvent(exWrapper);
         throw exWrapper;
 

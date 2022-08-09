@@ -15,7 +15,7 @@ import javax.inject.Named;
 
 
 @SystemChange(updatesSystemTable = true)
-@ChangeUnit(id = "mongock-legacy-migration", author = "mongock", order = "00001")
+@ChangeUnit(id = "mongock-legacy-migration", author = "mongock", order = "99990")
 public class MongockV3LegacyMigrationChangeLog {
 
   @Execution

@@ -20,4 +20,8 @@ public interface ChangeExecutorConfiguration {
   String getDefaultMigrationAuthor();
   
   List<String> getMigrationScanPackage();
+  
+  String getStartSystemVersion();
+  
+  String getEndSystemVersion();
 }

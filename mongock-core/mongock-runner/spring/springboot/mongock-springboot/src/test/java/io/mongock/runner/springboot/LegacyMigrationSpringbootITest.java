@@ -95,7 +95,7 @@ public class LegacyMigrationSpringbootITest {
     legacyMigration.setRunAlways(runAlways);
 
     for (int i = 0; i < executions; i++) {
-      runnerTestUtil.getRunnerTransactional(EmptyChangeUnit.class.getName())
+      runnerTestUtil.getRunnerTransactional(true, EmptyChangeUnit.class.getName())
           .setLegacyMigration(legacyMigration)
           .buildRunner()
           .execute();

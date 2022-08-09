@@ -27,6 +27,8 @@ public class ChangeSetItem implements ChangePrintable {
   private final boolean failFast;
   
   private final Method rollbackMethod;
+  
+  private boolean system;
 
   public ChangeSetItem(String id,
                        String author,
@@ -35,7 +37,8 @@ public class ChangeSetItem implements ChangePrintable {
                        String systemVersion,
                        boolean failFast,
                        Method changeSetMethod,
-                       Method rollbackMethod) {
+                       Method rollbackMethod,
+                       boolean system) {
     if (id == null || id.trim().isEmpty()) {
       throw new MongockException("id cannot be null or empty.");
     } else if (author == null) {
@@ -49,6 +52,7 @@ public class ChangeSetItem implements ChangePrintable {
     this.method = changeSetMethod;
     this.failFast = failFast;
     this.rollbackMethod = rollbackMethod;
+    this.system = system;
   }
 
 
@@ -101,6 +105,14 @@ public class ChangeSetItem implements ChangePrintable {
     return Optional.ofNullable(rollbackMethod);
   }
   
+  public boolean isSystem() {
+    return system;
+  }
+  
+  public void setSystem(boolean system) {
+    this.system = system;
+  }
+  
   public boolean isBeforeChangeSets() {
     return false;
   }
@@ -130,6 +142,7 @@ public class ChangeSetItem implements ChangePrintable {
     sb.append(", method=").append(method);
     sb.append(", failFast=").append(failFast);
     sb.append(", rollbackMethod=").append(rollbackMethod);
+    sb.append(", system=").append(system);
     sb.append('}');
     return sb.toString();
   }

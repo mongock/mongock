@@ -13,8 +13,9 @@ public class BeforeChangeSetItem extends ChangeSetItem{
                              String systemVersion,
                              boolean failFast,
                              Method changeSetMethod,
-                             Method rollbackMethod) {
-    super(String.format("%s_%s", baseId, "before"), author, order, runAlways, systemVersion, failFast, changeSetMethod, rollbackMethod);
+                             Method rollbackMethod,
+                             boolean system) {
+    super(String.format("%s_%s", baseId, "before"), author, order, runAlways, systemVersion, failFast, changeSetMethod, rollbackMethod, system);
   }
   
   @Override

@@ -44,21 +44,19 @@ public abstract class ConnectionDriverBase implements ConnectionDriver {
 
   @Override
   public final void initialize() {
-    if (!initialized) {
-      initialized = true;
-      LockRepository lockRepository = this.getLockRepository();
-      lockRepository.initialize();
-      lockManager = LockManagerDefault.builder()
-          .setLockRepository(lockRepository)
-          .setLockAcquiredForMillis(lockAcquiredForMillis)
-          .setLockQuitTryingAfterMillis(lockQuitTryingAfterMillis)
-          .setLockTryFrequencyMillis(lockTryFrequencyMillis)
-          .build();
-      ChangeEntryService changeEntryService = getChangeEntryService();
-      changeEntryService.initialize();
-      dependencies = new HashSet<>();
-      specificInitialization();
-    }
+    initialized = true;
+    LockRepository lockRepository = this.getLockRepository();
+    lockRepository.initialize();
+    lockManager = LockManagerDefault.builder()
+        .setLockRepository(lockRepository)
+        .setLockAcquiredForMillis(lockAcquiredForMillis)
+        .setLockQuitTryingAfterMillis(lockQuitTryingAfterMillis)
+        .setLockTryFrequencyMillis(lockTryFrequencyMillis)
+        .build();
+    ChangeEntryService changeEntryService = getChangeEntryService();
+    changeEntryService.initialize();
+    dependencies = new HashSet<>();
+    specificInitialization();
   }
 
   @Override

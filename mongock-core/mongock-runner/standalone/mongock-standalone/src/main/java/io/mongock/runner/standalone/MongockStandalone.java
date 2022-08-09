@@ -7,19 +7,20 @@ import io.mongock.runner.core.executor.changelog.ChangeLogService;
 import io.mongock.runner.standalone.base.StandaloneBuilderBase;
 
 import static io.mongock.runner.core.builder.BuilderType.COMMUNITY;
+import io.mongock.runner.core.executor.changelog.ChangeLogServiceBase;
 
 public final class MongockStandalone {
 
   //TODO javadoc
   public static RunnerStandaloneBuilder builder() {
-    return new RunnerStandaloneBuilderImpl(new ExecutorBuilderDefault(), new MongockConfiguration());
+    return new RunnerStandaloneBuilderImpl(new ExecutorBuilderDefault(), new ChangeLogService(), new MongockConfiguration());
   }
 
   public static class RunnerStandaloneBuilderImpl extends StandaloneBuilderBase<RunnerStandaloneBuilderImpl, MongockConfiguration>
       implements RunnerStandaloneBuilder {
 
-    private RunnerStandaloneBuilderImpl(ExecutorBuilder<MongockConfiguration> executorFactory, MongockConfiguration config) {
-      super(COMMUNITY, executorFactory, new ChangeLogService(), config);
+    RunnerStandaloneBuilderImpl(ExecutorBuilder<MongockConfiguration> executorFactory, ChangeLogServiceBase changeLogService, MongockConfiguration config) {
+      super(COMMUNITY, executorFactory, changeLogService, config);
     }
 
     @Override

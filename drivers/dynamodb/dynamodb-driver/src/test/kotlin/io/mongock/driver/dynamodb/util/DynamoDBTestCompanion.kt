@@ -206,7 +206,8 @@ val change1 = ChangeEntry(
     "changeSetMethod",
     0L,
     "executionHostname",
-    mapOf("this" to "that")
+    mapOf("this" to "that"),
+    false
 )
 
 val change1_u = ChangeEntry(
@@ -220,7 +221,8 @@ val change1_u = ChangeEntry(
     "UPDATED",
     0L,
     "UPDATED",
-    mapOf("UPDATED" to "that")
+    mapOf("UPDATED" to "that"),
+    false
 )
 
 val change2 = ChangeEntry(
@@ -234,7 +236,8 @@ val change2 = ChangeEntry(
     "changeSetMethod",
     0L,
     "executionHostname",
-    mapOf("this" to "that")
+    mapOf("this" to "that"),
+    false
 )
 
 val change3 = ChangeEntry(
@@ -248,21 +251,23 @@ val change3 = ChangeEntry(
     "changeSetMethod",
     0L,
     "executionHostname",
-    mapOf("this" to "that")
+    mapOf("this" to "that"),
+    false
 )
 
 val changeFailed = ChangeEntry(
-"executionId",
-null,
-"author-c3",
-Date(),
-ChangeState.EXECUTED,
-ChangeType.EXECUTION,
-"changeLogClass",
-"changeSetMethod",
-0L,
-"executionHostname",
-mapOf("this" to "that")
+    "executionId",
+    null,
+    "author-c3",
+    Date(),
+    ChangeState.EXECUTED,
+    ChangeType.EXECUTION,
+    "changeLogClass",
+    "changeSetMethod",
+    0L,
+    "executionHostname",
+    mapOf("this" to "that"),
+    false
 )
 
 const val lockKey = "lock-key"
