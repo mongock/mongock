@@ -25,7 +25,7 @@ public abstract class MongoChangeEntryRepositoryITestBase extends IntegrationTes
     MongockException ex = assertThrows(MongockException.class, () ->
             initializeRepository(false)
     );
-    assertEquals("Index creation not allowed, but not created or wrongly created for collection", ex.getMessage());
+    assertEquals("Index creation not allowed, but not created or wrongly created for collection " + CHANGELOG_COLLECTION_NAME, ex.getMessage());
   }
 
 
