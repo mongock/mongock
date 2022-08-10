@@ -134,6 +134,7 @@ public abstract class MongoDriverITestBase extends IntegrationTestBase {
               .setDriver(getDriverWithTransactionDisabled())
               .addChangeLogsScanPackage(ChangeLogFailure.class.getPackage().getName())
               .buildRunner()
+              .execute()
     );
     assertEquals("Duplicated changeset id found: 'id_duplicated'", ex.getMessage());
   }
@@ -178,7 +179,7 @@ public abstract class MongoDriverITestBase extends IntegrationTestBase {
               .buildRunner()
               .execute()
     );
-    assertEquals("Index creation not allowed, but not created or wrongly created", ex.getMessage());
+    assertEquals("Index creation not allowed, but not created or wrongly created for collection " + LOCK_COLLECTION_NAME, ex.getMessage());
   }
 
   @Test
@@ -216,7 +217,7 @@ public abstract class MongoDriverITestBase extends IntegrationTestBase {
               .buildRunner()
               .execute()
     );
-    assertEquals("Index creation not allowed, but not created or wrongly created", ex.getMessage());
+    assertEquals("Index creation not allowed, but not created or wrongly created for collection " + LOCK_COLLECTION_NAME, ex.getMessage());
   }
 
   @Test
@@ -236,7 +237,7 @@ public abstract class MongoDriverITestBase extends IntegrationTestBase {
               .buildRunner()
               .execute()
     );
-    assertEquals("Index creation not allowed, but not created or wrongly created", ex.getMessage());
+    assertEquals("Index creation not allowed, but not created or wrongly created for collection " + CHANGELOG_COLLECTION_NAME, ex.getMessage());
   }
 
 

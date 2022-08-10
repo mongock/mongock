@@ -1,60 +1,24 @@
 package io.mongock.driver.mongodb.test.template.util;
 
-import com.mongodb.ConnectionString;
-import com.mongodb.MongoClientSettings;
-import com.mongodb.WriteConcern;
 import com.mongodb.client.MongoClient;
-import com.mongodb.client.MongoClients;
 import com.mongodb.client.MongoDatabase;
-import org.bson.Document;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.BeforeEach;
-import org.testcontainers.containers.GenericContainer;
+import io.mongock.driver.mongodb.test.template.extension.IntegrationTestSetupExtension;
+import io.mongock.driver.mongodb.test.template.shared.IntegrationTestShared;
+import org.junit.jupiter.api.extension.ExtendWith;
 
+@ExtendWith(IntegrationTestSetupExtension.class)
 public abstract class IntegrationTestBase {
 
-
-  private static final String MONGO_CONTAINER = "mongo:4.4.0";
-  private static final Integer MONGO_PORT = 27017;
   protected static final String DEFAULT_DATABASE_NAME = "test_container";
   protected static final String CHANGELOG_COLLECTION_NAME = "mongockChangeLog";
   protected static final String LOCK_COLLECTION_NAME = "mongockLock";
-  private MongoDatabase mongoDatabase;
-  private MongoClient mongoClient;
-
-  public static GenericContainer mongo;
-
-  @BeforeAll
-  public final void beforeAll() {
-    mongo = new GenericContainer(MONGO_CONTAINER).withExposedPorts(MONGO_PORT);
-  }
-
-  
-  @BeforeEach
-  public final void setUpParent() {
-    MongoClientSettings settings = MongoClientSettings.builder()
-        .writeConcern(getDefaultConnectionWriteConcern())
-        .applyConnectionString(new ConnectionString(String.format("mongodb://%s:%d", mongo.getContainerIpAddress(), mongo.getFirstMappedPort())))
-        .build();
-    mongoClient = MongoClients.create(settings);
-    mongoDatabase = mongoClient.getDatabase(DEFAULT_DATABASE_NAME);
-
-  }
-
-  @AfterEach
-  public void tearDown() {
-    getDataBase().getCollection(CHANGELOG_COLLECTION_NAME).deleteMany(new Document());
-    getDataBase().getCollection(LOCK_COLLECTION_NAME).deleteMany(new Document());
-    mongoDatabase.drop();
-  }
 
   protected MongoDatabase getDataBase() {
-    return mongoDatabase;
+    return IntegrationTestShared.getMongoDataBase();
   }
 
   protected MongoClient getMongoClient() {
-    return mongoClient;
+    return IntegrationTestShared.getMongoClient();
   }
 
   protected MongoDBDriverTestAdapter getDefaultAdapter() {
@@ -62,11 +26,4 @@ public abstract class IntegrationTestBase {
   }
 
   protected abstract MongoDBDriverTestAdapter getAdapter(String collectionName);
-
-  //Default write concern for the connection.
-  //If the Mongock doesn't set the acknowledgement at operation level(in collection),
-  // lockRepository will throw UnsupportedOperationException at starting time
-  protected WriteConcern getDefaultConnectionWriteConcern() {
-    return WriteConcern.UNACKNOWLEDGED;
-  }
 }
