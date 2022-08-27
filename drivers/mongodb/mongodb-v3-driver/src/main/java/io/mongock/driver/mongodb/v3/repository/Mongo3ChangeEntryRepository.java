@@ -111,7 +111,8 @@ public class Mongo3ChangeEntryRepository extends Mongo3RepositoryBase<ChangeEntr
             entry.containsKey(KEY_TYPE) ? ChangeType.valueOf(entry.getString(KEY_TYPE)) : null,
             entry.getString(KEY_CHANGELOG_CLASS),
             entry.getString(KEY_CHANGESET_METHOD),
-            entry.containsKey(KEY_EXECUTION_MILLIS) ? ((Number) entry.get(KEY_EXECUTION_MILLIS)).longValue() : -1L,
+            entry.containsKey(KEY_EXECUTION_MILLIS) && entry.get(KEY_EXECUTION_MILLIS) != null 
+                    ? ((Number) entry.get(KEY_EXECUTION_MILLIS)).longValue() : -1L,
             entry.getString(KEY_EXECUTION_HOSTNAME),
             entry.get(KEY_METADATA)))
         .collect(Collectors.toList());
