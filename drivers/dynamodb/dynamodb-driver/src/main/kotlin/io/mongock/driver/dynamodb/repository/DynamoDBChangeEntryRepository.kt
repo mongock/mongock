@@ -63,6 +63,9 @@ class DynamoDBChangeEntryRepository(
             .toList()
     }
 
+    // If transaction is not enabled(transactionItems == null), it persists the change entries directly
+    // if transaction is enabled(transactionItems NOT null), it doesn't persist the change entries yet, instead it adda
+    // them to the transactionItems(in DynamoDB put shape) so it's persisted in DynamoDBDriverBase.executeInTransaction()
     override fun saveOrUpdate(changeEntry: ChangeEntry) {
         val changeEntryDynamoDB = ChangeEntryDynamoDB(changeEntry)
         if (transactionItems == null) {
