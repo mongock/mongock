@@ -98,6 +98,7 @@ abstract class DynamoDBDriverBase protected constructor(
             operation.run()
             if (!transactionItems!!.containsUserTransactions()) {
                 logger.debug { "no transaction items for changeUnit" }
+                return
             }
             val result = client.transactWriteItems(
                 TransactWriteItemsRequest()
