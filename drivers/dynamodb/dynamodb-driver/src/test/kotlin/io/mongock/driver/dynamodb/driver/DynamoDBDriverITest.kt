@@ -70,6 +70,16 @@ class DynamoDBDriverITest : DescribeSpec({
                 listAdded.forEach { companion.isInserted(driver.getMigrationRepositoryNameForTest(), it) shouldBe true }
 
             }
+            When("sending no transactions") {
+                should("not fail") {
+                    val driver = companion.getDriver()
+                    driver.setMigrationRepositoryName("driver-transaction-no-transactions")
+                    driver.initialize()
+                    driver.prepareForExecutionBlock()
+                    driver.transactioner.get().executeInTransaction {
+                    }
+                }
+            }
         }
     } else {
         context(">>TRANSACTION TESTS DISABLED") {
