@@ -20,8 +20,14 @@ open class DynamoDBTransactionItems {
         changeEntryAdded = true
     }
 
+    /**
+     * Returns if there is any transaction item from the user(apart from the changeEntry)
+     */
     fun containsUserTransactions(): Boolean = if(changeEntryAdded) items.size > 1 else items.size > 0
 
+    /**
+     * Returns if there is any transaction of any kind
+     */
     fun containsAnyTransaction(): Boolean = items.size > 0
 
 }
