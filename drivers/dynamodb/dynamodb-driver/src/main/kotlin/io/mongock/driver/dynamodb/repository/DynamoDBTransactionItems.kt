@@ -8,7 +8,6 @@ open class DynamoDBTransactionItems {
     private var changeEntryAdded: Boolean = false
     internal val items = ArrayList<TransactWriteItem>()
 
-
     fun add(item:TransactWriteItem) {
         if(items.size >= max) {
             throw MongockException("exceeded maximum number of items: $max")
@@ -21,8 +20,14 @@ open class DynamoDBTransactionItems {
         changeEntryAdded = true
     }
 
-    internal fun containsUserTransactions(): Boolean {
-        return if(changeEntryAdded) items.size > 1 else items.size > 0
-    }
+    /**
+     * Returns if there is any transaction item from the user(apart from the changeEntry)
+     */
+    fun containsUserTransactions(): Boolean = if(changeEntryAdded) items.size > 1 else items.size > 0
+
+    /**
+     * Returns if there is any transaction of any kind
+     */
+    fun containsAnyTransaction(): Boolean = items.size > 0
 
 }
