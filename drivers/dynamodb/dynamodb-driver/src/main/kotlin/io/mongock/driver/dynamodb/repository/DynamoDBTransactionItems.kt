@@ -22,7 +22,6 @@ open class DynamoDBTransactionItems {
 
     fun containsUserTransactions(): Boolean = if(changeEntryAdded) items.size > 1 else items.size > 0
 
-
     fun containsAnyTransaction(): Boolean = items.size > 0
 
 }

@@ -17,7 +17,6 @@ import io.mongock.driver.dynamodb.repository.DynamoDBTransactionItems
 import mu.KotlinLogging
 import java.util.Optional
 
-
 private val logger = KotlinLogging.logger {}
 
 abstract class DynamoDBDriverBase protected constructor(
@@ -63,7 +62,6 @@ abstract class DynamoDBDriverBase protected constructor(
     override fun getTransactioner(): Optional<Transactional> {
         return Optional.ofNullable(if (transactionEnabled) this else null)
     }
-
 
     override fun getDependencies(): Set<ChangeSetDependency> {
         val currentTransactionItemsOpt = _dependencies.stream()
