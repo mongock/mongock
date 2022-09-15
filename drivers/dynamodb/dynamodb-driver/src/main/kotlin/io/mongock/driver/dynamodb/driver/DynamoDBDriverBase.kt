@@ -96,7 +96,7 @@ abstract class DynamoDBDriverBase protected constructor(
                 logger.debug { "no transaction items for changeUnit" }
             }
             // Is possible it doesn't contain any transaction, for example when the changeItem is ignored
-            if(transactionItems!!.containsAnyTransaction()) {
+            if (transactionItems!!.containsAnyTransaction()) {
                 val result = client.transactWriteItems(
                     TransactWriteItemsRequest()
                         .withTransactItems(transactionItems!!.items)
