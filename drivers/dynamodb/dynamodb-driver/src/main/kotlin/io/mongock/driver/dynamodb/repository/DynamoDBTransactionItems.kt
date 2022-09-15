@@ -5,9 +5,9 @@ import io.mongock.api.exception.MongockException
 
 open class DynamoDBTransactionItems {
     private val max = 24
-    private var changeEntryAdded: Boolean = false
-    internal val items = ArrayList<TransactWriteItem>()
+    var changeEntryAdded: Boolean = false
 
+    internal val items = ArrayList<TransactWriteItem>()
 
     fun add(item:TransactWriteItem) {
         if(items.size >= max) {
@@ -21,8 +21,9 @@ open class DynamoDBTransactionItems {
         changeEntryAdded = true
     }
 
-    internal fun containsUserTransactions(): Boolean {
-        return if(changeEntryAdded) items.size > 1 else items.size > 0
-    }
+    fun containsUserTransactions(): Boolean = if(changeEntryAdded) items.size > 1 else items.size > 0
+
+
+    fun containsAnyTransaction(): Boolean = items.size > 0
 
 }
