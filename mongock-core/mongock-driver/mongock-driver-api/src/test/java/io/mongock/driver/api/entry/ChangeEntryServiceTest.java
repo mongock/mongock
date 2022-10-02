@@ -234,28 +234,28 @@ public class ChangeEntryServiceTest {
 
     @Override
     public void setIndexCreation(boolean indexCreation) {
-
+      // Do nothing
     }
 
     @Override
     public void saveOrUpdate(ChangeEntry changeEntry) throws MongockException {
-
+      // Do nothing
     }
 
     @Override
     public void deleteAll() {
-
+      // Do nothing
     }
 
 
     @Override
     public void initialize() {
-
+      // Do nothing
     }
     
     @Override
     public void ensureField(Field field) {
-      
+      // Do nothing
     }
   }
 }

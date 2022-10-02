@@ -137,7 +137,7 @@ public class StandaloneRunnerITest {
     // checks the four rollbacks were called
     MongoDBAdvanceChangeLog.clear();
     MongoDBAdvanceChangeLogWithChangeSetFailing.clear();
-    MongockException ex = Assertions.assertThrows(MongockException.class,
+    Assertions.assertThrows(MongockException.class,
         () -> runnerTestUtil.getBuilder()
             .setConfig(config)
             .setTransactionEnabled(true)

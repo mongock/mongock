@@ -17,6 +17,7 @@ public class SystemChangeUnit {
 
   @RollbackExecution
   public void rollback() {
+    // Do nothing
   }
 
 }

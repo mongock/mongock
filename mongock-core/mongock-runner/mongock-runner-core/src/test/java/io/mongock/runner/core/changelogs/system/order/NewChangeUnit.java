@@ -16,6 +16,7 @@ public class NewChangeUnit {
 
   @RollbackExecution
   public void rollback() {
+    // Do nothing
   }
 
 }

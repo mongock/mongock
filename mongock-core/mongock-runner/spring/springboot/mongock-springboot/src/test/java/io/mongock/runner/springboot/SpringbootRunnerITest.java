@@ -9,7 +9,6 @@ import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
 import io.mongock.api.config.TransactionStrategy;
 import io.mongock.api.exception.MongockException;
-import io.mongock.driver.api.entry.ChangeEntry;
 import io.mongock.driver.api.entry.ChangeState;
 import io.mongock.driver.api.entry.ChangeType;
 import io.mongock.runner.core.executor.MongockRunner;
