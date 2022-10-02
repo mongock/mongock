@@ -213,7 +213,7 @@ public class LockManagerDefault extends Thread implements LockManager {
 
   @Override
   public void releaseLockDefault() {
-    logger.info("Mongock releasing the lock");
+    logger.info("Mongock waiting to release the lock");
     //releaseStarted doesn't really need to be volatile as here is the only place is written and synchronized block ensures
     //it's flushed to main memory.
     releaseStarted = true;

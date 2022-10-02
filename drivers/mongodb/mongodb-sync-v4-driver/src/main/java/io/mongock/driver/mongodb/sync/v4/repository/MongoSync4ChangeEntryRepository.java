@@ -4,8 +4,6 @@ import com.mongodb.client.ClientSession;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.model.Filters;
 import com.mongodb.client.model.ReplaceOptions;
-import com.mongodb.client.model.UpdateOptions;
-import com.mongodb.client.result.InsertOneResult;
 import com.mongodb.client.result.UpdateResult;
 import io.mongock.api.exception.MongockException;
 import io.mongock.driver.api.entry.ChangeEntry;
@@ -39,6 +37,7 @@ public class MongoSync4ChangeEntryRepository extends MongoSync4RepositoryBase<Ch
   protected static String KEY_EXECUTION_MILLIS;
   protected static String KEY_EXECUTION_HOSTNAME;
   protected static String KEY_METADATA;
+  protected static String KEY_SYSTEM_CHANGE;
 
   private ClientSession clientSession;
 
@@ -87,6 +86,10 @@ public class MongoSync4ChangeEntryRepository extends MongoSync4RepositoryBase<Ch
       field = ChangeEntry.class.getDeclaredField("executionHostname");
       field.setAccessible(true);
       KEY_EXECUTION_HOSTNAME = field.getAnnotation(io.mongock.utils.field.Field.class).value();
+      
+      field = ChangeEntry.class.getDeclaredField("systemChange");
+      field.setAccessible(true);
+      KEY_SYSTEM_CHANGE = field.getAnnotation(io.mongock.utils.field.Field.class).value();
     } catch (NoSuchFieldException e) {
       throw new MongockException(e);
     }
@@ -117,7 +120,8 @@ public class MongoSync4ChangeEntryRepository extends MongoSync4RepositoryBase<Ch
             entry.containsKey(KEY_EXECUTION_MILLIS) && entry.get(KEY_EXECUTION_MILLIS) != null 
                     ? ((Number) entry.get(KEY_EXECUTION_MILLIS)).longValue() : -1L,
             entry.getString(KEY_EXECUTION_HOSTNAME),
-            entry.get(KEY_METADATA)))
+            entry.get(KEY_METADATA),
+            entry.getBoolean(KEY_SYSTEM_CHANGE)))
         .collect(Collectors.toList());
   }
 
@@ -148,5 +152,10 @@ public class MongoSync4ChangeEntryRepository extends MongoSync4RepositoryBase<Ch
 
   private Optional<ClientSession> getClientSession() {
     return Optional.ofNullable(clientSession);
+  }
+  
+  @Override
+  public void ensureField(Field field) {
+    // Nothing to do in MongoDB
   }
 }

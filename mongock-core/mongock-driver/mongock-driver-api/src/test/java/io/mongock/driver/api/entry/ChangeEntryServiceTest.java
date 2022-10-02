@@ -15,6 +15,7 @@ import static io.mongock.driver.api.entry.ChangeState.FAILED;
 import static io.mongock.driver.api.entry.ChangeState.IGNORED;
 import static io.mongock.driver.api.entry.ChangeState.ROLLBACK_FAILED;
 import static io.mongock.driver.api.entry.ChangeState.ROLLED_BACK;
+import java.lang.reflect.Field;
 import static org.junit.jupiter.api.Assertions.*;
 
 public class ChangeEntryServiceTest {
@@ -214,7 +215,8 @@ public class ChangeEntryServiceTest {
         "changeSetMethod",
         1000L,
         "executionHostname",
-        new Object());
+        new Object(),
+        false);
   }
 
   private static class ChangeEntryServiceImpl implements ChangeEntryService {
@@ -232,23 +234,28 @@ public class ChangeEntryServiceTest {
 
     @Override
     public void setIndexCreation(boolean indexCreation) {
-
+      // Do nothing
     }
 
     @Override
     public void saveOrUpdate(ChangeEntry changeEntry) throws MongockException {
-
+      // Do nothing
     }
 
     @Override
     public void deleteAll() {
-
+      // Do nothing
     }
 
 
     @Override
     public void initialize() {
-
+      // Do nothing
+    }
+    
+    @Override
+    public void ensureField(Field field) {
+      // Do nothing
     }
   }
 }

@@ -37,6 +37,7 @@ public class MongoReactiveChangeEntryRepository extends MongoReactiveRepositoryB
   protected static String KEY_EXECUTION_MILLIS;
   protected static String KEY_EXECUTION_HOSTNAME;
   protected static String KEY_METADATA;
+  protected static String KEY_SYSTEM_CHANGE;
 
   private ClientSession clientSession;
 
@@ -85,6 +86,10 @@ public class MongoReactiveChangeEntryRepository extends MongoReactiveRepositoryB
       field = ChangeEntry.class.getDeclaredField("executionHostname");
       field.setAccessible(true);
       KEY_EXECUTION_HOSTNAME = field.getAnnotation(io.mongock.utils.field.Field.class).value();
+      
+      field = ChangeEntry.class.getDeclaredField("systemChange");
+      field.setAccessible(true);
+      KEY_SYSTEM_CHANGE = field.getAnnotation(io.mongock.utils.field.Field.class).value();
     } catch (NoSuchFieldException e) {
       throw new MongockException(e);
     }
@@ -114,7 +119,8 @@ public class MongoReactiveChangeEntryRepository extends MongoReactiveRepositoryB
             entry.containsKey(KEY_EXECUTION_MILLIS) && entry.get(KEY_EXECUTION_MILLIS) != null
                     ? ((Number) entry.get(KEY_EXECUTION_MILLIS)).longValue() : -1L,
             entry.getString(KEY_EXECUTION_HOSTNAME),
-            entry.get(KEY_METADATA)))
+            entry.get(KEY_METADATA),
+            entry.getBoolean(KEY_SYSTEM_CHANGE)))
         .collect(Collectors.toList());
   }
 
@@ -145,5 +151,10 @@ public class MongoReactiveChangeEntryRepository extends MongoReactiveRepositoryB
 
   private Optional<ClientSession> getClientSession() {
     return Optional.ofNullable(clientSession);
+  }
+  
+  @Override
+  public void ensureField(Field field) {
+    // Nothing to do in MongoDB
   }
 }

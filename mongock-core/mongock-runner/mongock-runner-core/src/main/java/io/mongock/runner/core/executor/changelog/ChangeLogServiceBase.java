@@ -43,15 +43,26 @@ public abstract class ChangeLogServiceBase implements Validable {
   private final AnnotationProcessor annotationProcessor;
   protected Function<AnnotatedElement, Boolean> profileFilter;
   private Function<Class<?>, Object> changeLogInstantiator;
-  private List<String> changeLogsBasePackageList = Collections.emptyList();
-  private List<Class<?>> changeLogsBaseClassList = Collections.emptyList();
-  private ArtifactVersion startSystemVersion = new DefaultArtifactVersion("0");
-  private ArtifactVersion endSystemVersion = new DefaultArtifactVersion(String.valueOf(Integer.MAX_VALUE));
-  private String defaultMigrationAuthor = null;
+  private List<String> changeLogsBasePackageList;
+  private List<Class<?>> changeLogsBaseClassList;
+  private ArtifactVersion startSystemVersion;
+  private ArtifactVersion endSystemVersion;
+  private String defaultMigrationAuthor;
 
   public ChangeLogServiceBase(AnnotationProcessor annotationProcessor, LegacyAnnotationProcessor legacyAnnotationProcessor) {
     this.legacyAnnotationProcessor = legacyAnnotationProcessor;
     this.annotationProcessor = annotationProcessor;
+    reset();
+  }
+  
+  public final void reset() {
+    this.profileFilter = null;
+    this.changeLogInstantiator = null;
+    this.changeLogsBasePackageList = Collections.emptyList();
+    this.changeLogsBaseClassList = Collections.emptyList();
+    this.startSystemVersion = new DefaultArtifactVersion("0");
+    this.endSystemVersion = new DefaultArtifactVersion(String.valueOf(Integer.MAX_VALUE));
+    this.defaultMigrationAuthor = null;
   }
 
   protected LegacyAnnotationProcessor getLegacyAnnotationProcessor() {

@@ -5,8 +5,12 @@ import io.mongock.driver.api.driver.ConnectionDriver;
 import io.mongock.runner.core.executor.changelog.ChangeLogRuntime;
 import io.mongock.runner.core.executor.changelog.ChangeLogServiceBase;
 import io.mongock.runner.core.executor.operation.Operation;
+import java.lang.reflect.AnnotatedElement;
+import java.util.function.Function;
 
 public interface ExecutorBuilder<CONFIG extends ExecutorConfiguration> {
+  
+  ExecutorBuilder<CONFIG> reset();
   
   ExecutorBuilder<CONFIG> setOperation(Operation op);
   
@@ -18,9 +22,13 @@ public interface ExecutorBuilder<CONFIG extends ExecutorConfiguration> {
   
   ExecutorBuilder<CONFIG> setChangeLogRuntime(ChangeLogRuntime changeLogRuntime);
   
+  ExecutorBuilder<CONFIG> setAnnotationFilter(Function<AnnotatedElement, Boolean> annotationFilter);
+  
   ExecutorBuilder<CONFIG> setConfig(CONFIG config);
-
-  Executor buildExecutor();
+  
+  Executor buildSystemExecutor();
+  
+  Executor buildOperationExecutor();
 }
 
 

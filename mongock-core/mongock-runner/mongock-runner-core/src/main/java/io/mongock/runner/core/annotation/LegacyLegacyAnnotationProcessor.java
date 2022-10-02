@@ -18,7 +18,7 @@ public class LegacyLegacyAnnotationProcessor implements LegacyAnnotationProcesso
   }
 
   private ChangeSetItem createChangeSetItemInstance(String id, String author, String order, boolean runAlways, String systemVersion, boolean failFast, Method method, Method rollbackMethod) {
-    return new ChangeSetItem(id, author, order, runAlways, systemVersion, failFast, method, rollbackMethod);
+    return new ChangeSetItem(id, author, order, runAlways, systemVersion, failFast, method, rollbackMethod, false);
   }
 
 }

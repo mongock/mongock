@@ -24,8 +24,8 @@ import io.mongock.runner.core.changelogs.legacymigration.LegacyMigrationChangeLo
 import io.mongock.runner.core.changelogs.skipmigration.alreadyexecuted.ChangeLogAlreadyExecuted;
 import io.mongock.runner.core.changelogs.skipmigration.runalways.ChangeLogAlreadyExecutedRunAlways;
 import io.mongock.runner.core.changelogs.skipmigration.withnochangeset.ChangeLogWithNoChangeSet;
-import io.mongock.runner.core.changelogs.system.NewChangeUnit;
-import io.mongock.runner.core.changelogs.system.SystemChangeUnit;
+import io.mongock.runner.core.changelogs.system.noupdatessystemtables.SystemChangeUnitNoUpdatesSystemTables;
+import io.mongock.runner.core.changelogs.system.updatessystemtables.SystemChangeUnitUpdatesSystemTables;
 import io.mongock.runner.core.changelogs.withConstructor.ChangeUnitWithDefaultConstructor;
 import io.mongock.runner.core.changelogs.withConstructor.ChangeUnitWithMoreThanOneChangeUnitConstructor;
 import io.mongock.runner.core.changelogs.withConstructor.ChangeUnitWithValidConstructor;
@@ -35,13 +35,15 @@ import io.mongock.runner.core.changelogs.withRollback.AdvanceChangeLogWithBefore
 import io.mongock.runner.core.changelogs.withRollback.AdvanceChangeLogWithBeforeAndChangeSetFailing;
 import io.mongock.runner.core.changelogs.withRollback.BasicChangeLogWithExceptionInChangeSetAndRollback;
 import io.mongock.runner.core.changelogs.withRollback.BasicChangeLogWithExceptionInRollback;
+import io.mongock.runner.core.changelogs.withsystemannotation.SystemChangeUnitTest1;
 import io.mongock.runner.core.executor.changelog.ChangeLogService;
 import io.mongock.runner.core.executor.dependency.DependencyManager;
 import io.mongock.runner.core.executor.operation.migrate.MigrateAllExecutor;
-import io.mongock.runner.core.internal.ChangeLogItem;
+import io.mongock.runner.core.executor.system.SystemUpdateExecutor;
 import io.mongock.runner.core.util.DummyDependencyClass;
 import io.mongock.runner.core.util.InterfaceDependencyImpl;
 import io.mongock.runner.core.util.InterfaceDependencyImplNoLockGarded;
+import java.lang.reflect.AnnotatedElement;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
@@ -56,7 +58,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
-import java.util.SortedSet;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -74,6 +75,7 @@ import static org.mockito.Mockito.when;
 
 public class ChangeUnitExecutorImplTest {
   private static final Function<Parameter, String> DEFAULT_PARAM_NAME_PROVIDER = parameter -> parameter.isAnnotationPresent(Named.class) ? parameter.getAnnotation(Named.class).value() : null;
+  private static final Function<AnnotatedElement, Boolean> DEFAULT_ANNOTATION_FILTER = a -> true;
 
   private ChangeEntryService changeEntryService;
   private LockManager lockManager;
@@ -106,26 +108,6 @@ public class ChangeUnitExecutorImplTest {
     runChangeLogsTest(true);
   }
 
-  @Test
-  public void shouldRefreshExecutedChangelogs_WhenSystemChangeLogIsExecuted_IfFlagUpdatesSystemTableIsTrue() {
-    when(changeEntryService.getExecuted())
-        .thenReturn(Collections.emptyList())
-        .thenReturn(Collections.emptyList())
-        .thenReturn(Arrays.asList(
-            generateChangeEntryExecuted("system-change-unit", "mongock_test"),
-            generateChangeEntryExecuted("new-change-unit", "mongock_test")));
-    new MigrateAllExecutor(
-        "",
-        createInitialChangeLogsByPackage(SystemChangeUnit.class),
-        driver,
-        getChangeLogRuntime(new DependencyManager()),
-        new MongockConfiguration()
-    ).executeMigration();
-
-    assertTrue(SystemChangeUnit.isExecuted);
-    assertFalse(NewChangeUnit.isExecuted);
-  }
-
   @SuppressWarnings("unchecked")
   private void runChangeLogsTest(boolean trackingIgnored) throws InterruptedException {
 
@@ -138,7 +120,8 @@ public class ChangeUnitExecutorImplTest {
     config.setServiceIdentifier("myService");
     config.setTrackIgnored(trackingIgnored);
     DependencyManager dm = new DependencyManager();
-    new MigrateAllExecutor("", createInitialChangeLogsByPackage(ExecutorChangeLog.class), driver, getChangeLogRuntime(dm), config)
+    new MigrateAllExecutor("", getChangeLogService(), driver, getChangeLogRuntime(dm), DEFAULT_ANNOTATION_FILTER, 
+            configWithInitialChangeLogsByClasses(config, ExecutorChangeLog.class))
         .executeMigration();
 
     assertTrue(ExecutorChangeLog.latch.await(1, TimeUnit.NANOSECONDS), "Changelog's methods have not been fully executed");
@@ -203,8 +186,8 @@ public class ChangeUnitExecutorImplTest {
       config.setServiceIdentifier("myService");
       config.setTrackIgnored(false);
       DependencyManager dm = new DependencyManager();
-      MigrateAllExecutor executor = new MigrateAllExecutor("", createInitialChangeLogsByPackage(ExecutorWithFailFastChangeLog.class), driver, getChangeLogRuntime(dm), config);
-      executor
+      new MigrateAllExecutor("", getChangeLogService(), driver, getChangeLogRuntime(dm), DEFAULT_ANNOTATION_FILTER, 
+              configWithInitialChangeLogsByClasses(config, ExecutorWithFailFastChangeLog.class))
           .executeMigration();
     } catch (Exception ex) {
       //ignored
@@ -253,8 +236,10 @@ public class ChangeUnitExecutorImplTest {
     config.setServiceIdentifier("myService");
     config.setTrackIgnored(false);
     DependencyManager dm = new DependencyManager();
+
     MongockException ex = assertThrows(MongockException.class, () -> 
-    new MigrateAllExecutor("", createInitialChangeLogsByPackage(ExecutorChangeLog.class), driver, getChangeLogRuntime(dm), config)
+    new MigrateAllExecutor("", getChangeLogService(), driver, getChangeLogRuntime(dm), DEFAULT_ANNOTATION_FILTER, 
+            configWithInitialChangeLogsByClasses(config, ExecutorChangeLog.class))
         .executeMigration()
     );
     assertEquals("Error in method[ExecutorChangeLog.newChangeSet] : Wrong parameter[DummyDependencyClass]. Dependency not found.", ex.getMessage());
@@ -271,9 +256,12 @@ public class ChangeUnitExecutorImplTest {
     MongockConfiguration config = new MongockConfiguration();
     config.setServiceIdentifier("myService");
     config.setTrackIgnored(false);
+    config.setMigrationScanPackage(Collections.singletonList(ExecutorChangeLog.class.getName()));
     DependencyManager dm = new DependencyManager();
+
     MongockException ex = assertThrows(MongockException.class, () -> 
-            new MigrateAllExecutor("", createInitialChangeLogsByPackage(ExecutorChangeLog.class), driver, getChangeLogRuntime(dm), config)
+            new MigrateAllExecutor("", getChangeLogService(), driver, getChangeLogRuntime(dm), DEFAULT_ANNOTATION_FILTER, 
+                    configWithInitialChangeLogsByClasses(config, ExecutorChangeLog.class))
               .executeMigration()
     );
     assertEquals("Error in method[ExecutorChangeLog.newChangeSet] : argument type mismatch", ex.getMessage());
@@ -292,7 +280,8 @@ public class ChangeUnitExecutorImplTest {
       config.setServiceIdentifier("myService");
       config.setTrackIgnored(false);
       DependencyManager dm = new DependencyManager();
-      new MigrateAllExecutor("", createInitialChangeLogsByPackage(ExecutorChangeLog.class), driver, getChangeLogRuntime(dm), config)
+      new MigrateAllExecutor("", getChangeLogService(), driver, getChangeLogRuntime(dm), DEFAULT_ANNOTATION_FILTER, 
+      configWithInitialChangeLogsByClasses(config, ExecutorChangeLog.class))
           .executeMigration();
     } catch (Exception ex) {
     }
@@ -315,8 +304,10 @@ public class ChangeUnitExecutorImplTest {
     config.setServiceIdentifier("myService");
     config.setTrackIgnored(false);
     DependencyManager dm = new DependencyManager();
+
     assertThrows(MongockException.class, () -> 
-            new MigrateAllExecutor("", createInitialChangeLogsByPackage(ExecutorChangeLog.class), driver, getChangeLogRuntime(dm), config)
+            new MigrateAllExecutor("", getChangeLogService(), driver, getChangeLogRuntime(dm), DEFAULT_ANNOTATION_FILTER, 
+            configWithInitialChangeLogsByClasses(config, ExecutorChangeLog.class))
         .executeMigration()
     );
   }
@@ -333,7 +324,8 @@ public class ChangeUnitExecutorImplTest {
     config.setServiceIdentifier("myService");
     config.setTrackIgnored(false);
     DependencyManager dm = new DependencyManager();
-    new MigrateAllExecutor("", createInitialChangeLogsByPackage(ExecutorWithNonFailFastChangeLog.class), driver, getChangeLogRuntime(dm), config)
+    new MigrateAllExecutor("", getChangeLogService(), driver, getChangeLogRuntime(dm), DEFAULT_ANNOTATION_FILTER, 
+                          configWithInitialChangeLogsByClasses(config, ExecutorWithNonFailFastChangeLog.class))
         .executeMigration();
 
     assertTrue(ExecutorWithNonFailFastChangeLog.latch.await(1, TimeUnit.NANOSECONDS), "Changelog's methods have not been fully executed");
@@ -384,7 +376,8 @@ public class ChangeUnitExecutorImplTest {
       config.setServiceIdentifier("myService");
       config.setTrackIgnored(false);
       DependencyManager dm = new DependencyManager();
-      new MigrateAllExecutor("", createInitialChangeLogsByPackage(ExecutorWithChangeLogNonFailFastChangeLog1.class), driver, getChangeLogRuntime(dm), config)
+      new MigrateAllExecutor("", getChangeLogService(), driver, getChangeLogRuntime(dm), DEFAULT_ANNOTATION_FILTER, 
+              configWithInitialChangeLogsByClasses(config, ExecutorWithChangeLogNonFailFastChangeLog1.class, ExecutorWithChangeLogNonFailFastChangeLog2.class))
           .executeMigration();
     } catch (Exception ex) {
     }
@@ -445,7 +438,8 @@ public class ChangeUnitExecutorImplTest {
       config.setServiceIdentifier("myService");
       config.setTrackIgnored(false);
       DependencyManager dm = new DependencyManager();
-      new MigrateAllExecutor("", createInitialChangeLogsByPackage(ExecutorWithChangeLogFailFastChangeLog1.class), driver, getChangeLogRuntime(dm), config)
+      new MigrateAllExecutor("", getChangeLogService(), driver, getChangeLogRuntime(dm), DEFAULT_ANNOTATION_FILTER,
+                            configWithInitialChangeLogsByClasses(config, ExecutorWithChangeLogFailFastChangeLog1.class))
           .executeMigration();
     } catch (Exception ex) {
     }
@@ -494,7 +488,8 @@ public class ChangeUnitExecutorImplTest {
     MongockConfiguration config = new MongockConfiguration();
     config.setServiceIdentifier("myService");
     config.setTrackIgnored(false);
-    new MigrateAllExecutor("", createInitialChangeLogsByPackage(ChangeLogWithInterfaceParameter.class), driver, getChangeLogRuntime(dm), config)
+    new MigrateAllExecutor("", getChangeLogService(), driver, getChangeLogRuntime(dm), DEFAULT_ANNOTATION_FILTER, 
+                      configWithInitialChangeLogsByClasses(config, ChangeLogWithInterfaceParameter.class))
         .executeMigration();
 
     // then
@@ -518,7 +513,8 @@ public class ChangeUnitExecutorImplTest {
     MongockConfiguration config = new MongockConfiguration();
     config.setServiceIdentifier("myService");
     config.setTrackIgnored(false);
-    new MigrateAllExecutor("", createInitialChangeLogsByPackage(ChangeLogWithInterfaceParameter.class), driver, getChangeLogRuntime(dm), config)
+    new MigrateAllExecutor("", getChangeLogService(), driver, getChangeLogRuntime(dm), DEFAULT_ANNOTATION_FILTER, 
+                            configWithInitialChangeLogsByClasses(config, ChangeLogWithInterfaceParameter.class))
         .executeMigration();
 
     // then
@@ -542,7 +538,8 @@ public class ChangeUnitExecutorImplTest {
     MongockConfiguration config = new MongockConfiguration();
     config.setServiceIdentifier("myService");
     config.setTrackIgnored(false);
-    new MigrateAllExecutor("", createInitialChangeLogsByPackage(ChangeLogWithInterfaceParameter.class), driver, getChangeLogRuntime(dm), config)
+    new MigrateAllExecutor("", getChangeLogService(), driver, getChangeLogRuntime(dm), DEFAULT_ANNOTATION_FILTER,
+                              configWithInitialChangeLogsByClasses(config, ChangeLogWithInterfaceParameter.class))
         .executeMigration();
 
     // then
@@ -566,7 +563,8 @@ public class ChangeUnitExecutorImplTest {
     MongockConfiguration config = new MongockConfiguration();
     config.setServiceIdentifier("myService");
     config.setTrackIgnored(false);
-    new MigrateAllExecutor("", createInitialChangeLogsByPackage(ChangeLogWithInterfaceParameter.class), driver, getChangeLogRuntime(dm), config)
+    new MigrateAllExecutor("", getChangeLogService(), driver, getChangeLogRuntime(dm), DEFAULT_ANNOTATION_FILTER, 
+                                configWithInitialChangeLogsByClasses(config, ChangeLogWithInterfaceParameter.class))
         .executeMigration();
 
     // then
@@ -600,7 +598,8 @@ public class ChangeUnitExecutorImplTest {
     MongockConfiguration config = new MongockConfiguration();
     config.setServiceIdentifier("myService");
     config.setTrackIgnored(false);
-    new MigrateAllExecutor("", createInitialChangeLogsByPackage(LegacyMigrationChangeLog.class), driver, getChangeLogRuntime(dm), config)
+    new MigrateAllExecutor("", getChangeLogService(), driver, getChangeLogRuntime(dm), DEFAULT_ANNOTATION_FILTER, 
+                          configWithInitialChangeLogsByClasses(config, LegacyMigrationChangeLog.class))
         .executeMigration();
 
     // then
@@ -617,7 +616,8 @@ public class ChangeUnitExecutorImplTest {
     config.setServiceIdentifier("myService");
     config.setTrackIgnored(false);
     DependencyManager dm = new DependencyManager();
-    new MigrateAllExecutor("", createInitialChangeLogsByPackage(ChangeLogWithNoChangeSet.class), driver, getChangeLogRuntime(dm), config)
+    new MigrateAllExecutor("", getChangeLogService(), driver, getChangeLogRuntime(dm), DEFAULT_ANNOTATION_FILTER, 
+                      configWithInitialChangeLogsByClasses(config, ChangeLogWithNoChangeSet.class))
         .executeMigration();
 
     //then
@@ -641,7 +641,8 @@ public class ChangeUnitExecutorImplTest {
     config.setServiceIdentifier("myService");
     config.setTrackIgnored(false);
     DependencyManager dm = new DependencyManager();
-    new MigrateAllExecutor("", createInitialChangeLogsByPackage(ChangeLogAlreadyExecuted.class), driver, getChangeLogRuntime(dm), config)
+    new MigrateAllExecutor("", getChangeLogService(), driver, getChangeLogRuntime(dm), DEFAULT_ANNOTATION_FILTER, 
+                        configWithInitialChangeLogsByClasses(config, ChangeLogAlreadyExecuted.class))
         .executeMigration();
 
     //then
@@ -666,7 +667,8 @@ public class ChangeUnitExecutorImplTest {
     config.setServiceIdentifier("myService");
     config.setTrackIgnored(false);
     DependencyManager dm = new DependencyManager();
-    new MigrateAllExecutor("", createInitialChangeLogsByPackage(ChangeLogAlreadyExecutedRunAlways.class), driver, getChangeLogRuntime(dm), config)
+    new MigrateAllExecutor("", getChangeLogService(), driver, getChangeLogRuntime(dm), DEFAULT_ANNOTATION_FILTER, 
+                        configWithInitialChangeLogsByClasses(config, ChangeLogAlreadyExecutedRunAlways.class))
         .executeMigration();
 
     //then
@@ -695,7 +697,8 @@ public class ChangeUnitExecutorImplTest {
     config.setServiceIdentifier("myService");
     config.setTrackIgnored(false);
     DependencyManager dm = new DependencyManager();
-    new MigrateAllExecutor("", createInitialChangeLogsByPackage(ChangeLogAlreadyExecutedRunAlways.class), driver, getChangeLogRuntime(dm), config)
+    new MigrateAllExecutor("", getChangeLogService(), driver, getChangeLogRuntime(dm), DEFAULT_ANNOTATION_FILTER, 
+                          configWithInitialChangeLogsByClasses(config, ChangeLogAlreadyExecutedRunAlways.class))
         .executeMigration();
 
     //then
@@ -707,7 +710,7 @@ public class ChangeUnitExecutorImplTest {
   }
 
   @Test
-  public void SHOULDRollback_WHENBasicChangeSetFails_IFNoTransactional() throws InterruptedException {
+  public void shouldRollback_whenBasicChangeSetFails_ifNoTransactional() throws InterruptedException {
     // given
     when(transactionableDriver.getLockManager()).thenReturn(lockManager);
 
@@ -716,13 +719,11 @@ public class ChangeUnitExecutorImplTest {
     config.setServiceIdentifier("myService");
     config.setTrackIgnored(false);
 
-    ChangeLogService changeLogService = new ChangeLogService();
-    changeLogService.setChangeLogsBaseClassList(Collections.singletonList(BasicChangeLogWithExceptionInChangeSetAndRollback.class));
-
     assertThrows(MongockException.class,
         () -> {
           DependencyManager dm = new DependencyManager();
-          new MigrateAllExecutor("", changeLogService.fetchChangeLogs(), driver, getChangeLogRuntime(dm), config)
+          new MigrateAllExecutor("", getChangeLogService(), driver, getChangeLogRuntime(dm), DEFAULT_ANNOTATION_FILTER, 
+                  configWithInitialChangeLogsByClasses(config, BasicChangeLogWithExceptionInChangeSetAndRollback.class))
               .executeMigration();
         });
 
@@ -734,8 +735,6 @@ public class ChangeUnitExecutorImplTest {
 
     List<ChangeEntry> allValues = changeEntryCaptor.getAllValues();
     assertEquals(ChangeState.FAILED, allValues.get(0).getState());
-//    String message = allValues.get(0).getErrorTrace().orElse("NO_ERROR");
-//    assertTrue(message.startsWith("[{\"declaringClass\":\"sun.reflect.NativeMethodAccessorImpl\""));
     assertEquals("changeset_with_exception_and_rollback_1", allValues.get(0).getChangeId());
     assertEquals(ChangeState.ROLLED_BACK, allValues.get(1).getState());
     assertEquals("changeset_with_exception_and_rollback_1", allValues.get(1).getChangeId());
@@ -751,13 +750,11 @@ public class ChangeUnitExecutorImplTest {
     config.setServiceIdentifier("myService");
     config.setTrackIgnored(false);
 
-    ChangeLogService changeLogService = new ChangeLogService();
-    changeLogService.setChangeLogsBaseClassList(Collections.singletonList(BasicChangeLogWithExceptionInRollback.class));
-
     assertThrows(MongockException.class,
         () -> {
           DependencyManager dm = new DependencyManager();
-          new MigrateAllExecutor("", changeLogService.fetchChangeLogs(), driver, getChangeLogRuntime(dm), config)
+          new MigrateAllExecutor("", getChangeLogService(), driver, getChangeLogRuntime(dm), DEFAULT_ANNOTATION_FILTER, 
+                        configWithInitialChangeLogsByClasses(config, BasicChangeLogWithExceptionInRollback.class))
               .executeMigration();
         });
 
@@ -784,14 +781,12 @@ public class ChangeUnitExecutorImplTest {
     config.setTrackIgnored(false);
     config.setTransactionStrategy(TransactionStrategy.EXECUTION);
 
-    ChangeLogService changeLogService = new ChangeLogService();
-    changeLogService.setChangeLogsBaseClassList(Arrays.asList(AdvanceChangeLogWithBefore.class, AdvanceChangeLogWithBeforeAndChangeSetFailing.class));
-
     when(driver.isTransactionable()).thenReturn(false);
     assertThrows(MongockException.class,
         () -> {
           DependencyManager dm = new DependencyManager();
-          new MigrateAllExecutor("", changeLogService.fetchChangeLogs(), driver, getChangeLogRuntime(dm), config)
+          new MigrateAllExecutor("", getChangeLogService(), driver, getChangeLogRuntime(dm), DEFAULT_ANNOTATION_FILTER, 
+                        configWithInitialChangeLogsByClasses(config, AdvanceChangeLogWithBefore.class, AdvanceChangeLogWithBeforeAndChangeSetFailing.class))
               .executeMigration();
         });
 
@@ -834,14 +829,12 @@ public class ChangeUnitExecutorImplTest {
     config.setServiceIdentifier("myService");
     config.setTrackIgnored(false);
 
-    ChangeLogService changeLogService = new ChangeLogService();
-    changeLogService.setChangeLogsBaseClassList(Arrays.asList(AdvanceChangeLogWithBefore.class, AdvanceChangeLogWithBeforeAndChangeSetFailing.class));
-
     when(driver.isTransactionable()).thenReturn(false);
     assertThrows(MongockException.class,
         () -> {
           DependencyManager dm = new DependencyManager();
-          new MigrateAllExecutor("", changeLogService.fetchChangeLogs(), driver, getChangeLogRuntime(dm), config)
+          new MigrateAllExecutor("", getChangeLogService(), driver, getChangeLogRuntime(dm), DEFAULT_ANNOTATION_FILTER, 
+                  configWithInitialChangeLogsByClasses(config, AdvanceChangeLogWithBefore.class, AdvanceChangeLogWithBeforeAndChangeSetFailing.class))
               .executeMigration();
         });
 
@@ -878,15 +871,14 @@ public class ChangeUnitExecutorImplTest {
     config.setServiceIdentifier("myService");
     config.setTrackIgnored(false);
     config.setTransactionStrategy(TransactionStrategy.EXECUTION);
-    ChangeLogService changeLogService = new ChangeLogService();
-    changeLogService.setChangeLogsBaseClassList(Arrays.asList(AdvanceChangeLogWithBefore.class, AdvanceChangeLogWithBeforeAndChangeSetFailing.class));
-
+    
     when(driver.isTransactionable()).thenReturn(true);
 
     assertThrows(MongockException.class,
         () -> {
           DependencyManager dm = new DependencyManager();
-          new MigrateAllExecutor("", changeLogService.fetchChangeLogs(), driver, getChangeLogRuntime(dm), config)
+          new MigrateAllExecutor("", getChangeLogService(), driver, getChangeLogRuntime(dm), DEFAULT_ANNOTATION_FILTER, 
+                    configWithInitialChangeLogsByClasses(config, AdvanceChangeLogWithBefore.class, AdvanceChangeLogWithBeforeAndChangeSetFailing.class))
               .executeMigration();
         });
 
@@ -925,14 +917,12 @@ public class ChangeUnitExecutorImplTest {
     config.setTrackIgnored(false);
     config.setTransactionStrategy(TransactionStrategy.CHANGE_UNIT);
 
-    ChangeLogService changeLogService = new ChangeLogService();
-    changeLogService.setChangeLogsBaseClassList(Arrays.asList(AdvanceChangeLogWithBefore.class, AdvanceChangeLogWithBeforeAndChangeSetFailing.class));
-
     when(driver.isTransactionable()).thenReturn(true);
     assertThrows(MongockException.class,
         () -> {
           DependencyManager dm = new DependencyManager();
-          new MigrateAllExecutor("", changeLogService.fetchChangeLogs(), driver, getChangeLogRuntime(dm), config)
+          new MigrateAllExecutor("", getChangeLogService(), driver, getChangeLogRuntime(dm), DEFAULT_ANNOTATION_FILTER, 
+                  configWithInitialChangeLogsByClasses(config, AdvanceChangeLogWithBefore.class, AdvanceChangeLogWithBeforeAndChangeSetFailing.class))
               .executeMigration();
         });
 
@@ -967,6 +957,82 @@ public class ChangeUnitExecutorImplTest {
     assertEquals(ChangeState.ROLLED_BACK, changeEntryList.get(4).getState());
 
   }
+  
+ @Test
+  public void shouldRefreshExecutedChangelogs_WhenSystemChangeLogIsExecuted_IfFlagUpdatesSystemTableIsTrue() {
+
+    when(changeEntryService.getExecuted()).thenReturn(Collections.emptyList());
+    
+    new SystemUpdateExecutor(
+        "",
+        driver,
+        getChangeLogService(),
+        getChangeLogRuntime(new DependencyManager()),
+        configWithInitialChangeLogsByClasses(new MongockConfiguration(), SystemChangeUnitUpdatesSystemTables.class),
+        Collections.singletonList("io.mongock.runner.core.changelogs.system.updatessystemtables")
+    ).executeMigration();
+    
+    assertTrue(SystemChangeUnitUpdatesSystemTables.isExecuted);
+    
+    verify(changeEntryService, new Times(3)).getExecuted();
+  }
+ 
+ @Test
+  public void shouldNotRefreshExecutedChangelogs_WhenSystemChangeLogIsExecuted_IfFlagUpdatesSystemTableIsFalse() {
+
+    when(changeEntryService.getExecuted()).thenReturn(Collections.emptyList());
+    
+    new SystemUpdateExecutor(
+        "",
+        driver,
+        getChangeLogService(),
+        getChangeLogRuntime(new DependencyManager()),
+        configWithInitialChangeLogsByClasses(new MongockConfiguration(), SystemChangeUnitUpdatesSystemTables.class),
+        Collections.singletonList("io.mongock.runner.core.changelogs.system.noupdatessystemtables")
+    ).executeMigration();
+    
+    assertTrue(SystemChangeUnitNoUpdatesSystemTables.isExecuted);
+    
+    verify(changeEntryService, new Times(2)).getExecuted();
+  }
+  
+  
+  @Test
+  @SuppressWarnings("unchecked")
+  public void shouldOmitSystemAnnotation_whenProcessChangeUnit_ifItHasSystemChangeAnnotation() throws InterruptedException {
+    // given
+    injectDummyDependency(DummyDependencyClass.class, new DummyDependencyClass());
+    when(changeEntryService.getExecuted()).thenReturn(Collections.emptyList());
+
+    // when
+    try {
+      MongockConfiguration config = new MongockConfiguration();
+      config.setServiceIdentifier("myService");
+      config.setTrackIgnored(false);
+      DependencyManager dm = new DependencyManager();
+      new MigrateAllExecutor("", getChangeLogService(), driver, getChangeLogRuntime(dm), DEFAULT_ANNOTATION_FILTER, 
+                                configWithInitialChangeLogsByClasses(config, SystemChangeUnitTest1.class))
+          .executeMigration();
+    } catch (Exception ex) {
+    }
+
+    // then
+    ArgumentCaptor<ChangeEntry> captor = ArgumentCaptor.forClass(ChangeEntry.class);
+    verify(changeEntryService, new Times(1)).saveOrUpdate(captor.capture());
+
+    List<ChangeEntry> entries = captor.getAllValues();
+    assertEquals(1, entries.size());
+
+    ChangeEntry entry = entries.get(0);
+    assertEquals("system-changeunit-test-1", entry.getChangeId());
+    assertEquals("mongock-test", entry.getAuthor());
+    assertEquals(SystemChangeUnitTest1.class.getName(), entry.getChangeLogClass());
+    assertEquals("execution", entry.getChangeSetMethod());
+    assertEquals(ChangeState.EXECUTED, entry.getState());
+    assertTrue(entry.getExecutionHostname().endsWith("-myService"));
+    assertFalse(entry.isSystemChange(), "isSystemChange");
+  }
+
 
   @Test
   public void shouldNotCreateInstanceWhenNoValidConstructorExist() {
@@ -1012,13 +1078,17 @@ public class ChangeUnitExecutorImplTest {
     assertEquals(ChangeUnitWithValidConstructorsHavingChangeUnitConstructor.DUMMY_VALUE, instance.getDummy());
   }
 
-  private SortedSet<ChangeLogItem> createInitialChangeLogsByPackage(Class<?>... executorChangeLogClass) {
+  private ChangeLogService getChangeLogService() {
+    return new ChangeLogService();
+  }
+  
+  
+  private MongockConfiguration configWithInitialChangeLogsByClasses(MongockConfiguration config, Class<?>... executorChangeLogClass) {
     List<String> packages = Stream.of(executorChangeLogClass)
-        .map(clazz -> clazz.getPackage().getName())
+        .map(clazz -> clazz.getName())
         .collect(Collectors.toList());
-    ChangeLogService changeLogService = new ChangeLogService();
-    changeLogService.setChangeLogsBasePackageList(packages);
-    return changeLogService.fetchChangeLogs();
+    config.setMigrationScanPackage(packages);
+    return config;
 
   }
 

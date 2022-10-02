@@ -12,7 +12,7 @@ import io.mongock.runner.core.changelogs.instantiator.good.ChangeLogCustomConstr
 import io.mongock.runner.core.changelogs.multipackage.ChangeLogNoPackage;
 import io.mongock.runner.core.changelogs.multipackage.package1.ChangeLogMultiPackage1;
 import io.mongock.runner.core.changelogs.multipackage.package2.ChangeLogMultiPackage2;
-import io.mongock.runner.core.changelogs.system.SystemChangeUnit;
+import io.mongock.runner.core.changelogs.system.order.SystemChangeUnit;
 import io.mongock.runner.core.changelogs.systemversion.ChangeLogSystemVersion;
 import io.mongock.runner.core.changelogs.systemversion.ChangeUnitSystemVersion1;
 import io.mongock.runner.core.changelogs.systemversion.ChangeUnitSystemVersion3;

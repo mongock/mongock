@@ -13,6 +13,8 @@ import java.util.stream.Collectors;
 import static io.mongock.driver.api.entry.ChangeState.IGNORED;
 import static io.mongock.driver.api.entry.ChangeState.FAILED;
 import static io.mongock.driver.api.entry.ChangeState.ROLLBACK_FAILED;
+import io.mongock.utils.field.FieldUtil;
+import java.lang.reflect.Field;
 import java.util.Date;
 
 
@@ -94,8 +96,22 @@ public interface ChangeEntryService extends RepositoryIndexable, Process {
   void saveOrUpdate(ChangeEntry changeEntry) throws MongockException;
 
   /**
+   * Ensures that all the entity fields exist, or create them if not.
+   */
+  default void ensureAllFields() {
+    FieldUtil.getAllFields(ChangeEntry.class)
+            .stream()
+            .forEach(this::ensureField);
+  }
+  
+  /**
+   * Ensures that the specified entity field exists, or create it if not.
+   * @param field Field to be ensured or created
+   */
+  void ensureField(Field field);
+  
+  /**
    * Only for testing
    */
   void deleteAll();
-
 }

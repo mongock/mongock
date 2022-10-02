@@ -97,7 +97,7 @@ public class LegacyMigrationStandaloneITest {
     legacyMigration.setRunAlways(runAlways);
 
     for (int i = 0; i < executions; i++) {
-      runnerTestUtil.getBuilder(EmptyChangeLog.class.getName())
+      runnerTestUtil.getBuilder(true, EmptyChangeLog.class.getName())
           .setTransactionEnabled(true)
           .setLegacyMigration(legacyMigration)
           .buildRunner()

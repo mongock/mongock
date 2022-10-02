@@ -84,7 +84,8 @@ public class LegacyService {
                 originalChange.getExecutionMillis(),
                 originalChange.getExecutionHostname(),
                 originalChange.getMetadata(),
-                originalChange.getErrorTrace().orElse(""));
+                originalChange.getErrorTrace().orElse(""),
+                false);
           } else {
             changeToInsert = originalChange;
           }
@@ -132,7 +133,8 @@ public class LegacyService {
           getDocumentStringValue(changeDocument, mappingFields.getChangeSetMethod()),
           -1L,
           "unknown",
-          buildMetadata(changeDocument, mappingFields.getMetadata())
+          buildMetadata(changeDocument, mappingFields.getMetadata()),
+          false
       );
       originalMigrations.add(change);
     }
