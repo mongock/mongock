@@ -6,6 +6,7 @@ import io.mongock.driver.api.entry.ChangeEntryService;
 import io.mongock.driver.remote.repository.external.ChangeEntryDto;
 import io.mongock.driver.remote.repository.external.ChangeEntryServiceClient;
 
+import java.lang.reflect.Field;
 import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
@@ -40,16 +41,18 @@ public class RemoteChangeEntryRepository implements ChangeEntryService {
 
   @Override
   public void deleteAll() {
-    //doing nothing
+    //doing nothing, it's for testing
+  }
+
+  @Override
+  public void ensureField(Field field) {
+    //do nothing because is already handled in the server
   }
 
   @Override
   public void setIndexCreation(boolean indexCreation) {
-    //doing nothing
+    //do nothing because is already handled in the server
   }
-
-//2022-09-30T07:05:11.233385
-//  private static final SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSSSS");
 
   private ChangeEntryDto buildDto(ChangeEntry changeEntry) {
     return new ChangeEntryDto(
