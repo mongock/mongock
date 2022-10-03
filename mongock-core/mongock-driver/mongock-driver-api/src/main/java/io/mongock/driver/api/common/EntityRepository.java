@@ -9,7 +9,7 @@ import java.util.stream.Collectors;
 
 //TODO move this to an association class
 
-public interface EntityRepository<DOMAIN_CLASS, ENTITY_CLASS> extends Process {
+public interface EntityRepository<DOMAIN_CLASS, ENTITY_CLASS> {
 
   /**
    * Transform a domain object to its persistence representation

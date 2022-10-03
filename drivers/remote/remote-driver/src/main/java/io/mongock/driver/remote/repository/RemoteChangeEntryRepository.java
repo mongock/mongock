@@ -5,6 +5,7 @@ import io.mongock.driver.api.entry.ChangeEntry;
 import io.mongock.driver.api.entry.ChangeEntryService;
 import io.mongock.driver.remote.repository.external.ChangeEntryDto;
 import io.mongock.driver.remote.repository.external.ChangeEntryServiceClient;
+import io.mongock.utils.Process;
 
 import java.lang.reflect.Field;
 import java.text.SimpleDateFormat;
@@ -12,7 +13,7 @@ import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.List;
 
-public class RemoteChangeEntryRepository implements ChangeEntryService {
+public class RemoteChangeEntryRepository implements ChangeEntryService, Process {
 
   private final ChangeEntryServiceClient client;
   private final String organization;

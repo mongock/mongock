@@ -8,6 +8,7 @@ import io.mongock.driver.api.common.RepositoryIndexable;
 import io.mongock.driver.mongodb.reactive.util.SubscriberSync;
 import io.mongock.driver.mongodb.reactive.util.MongoCollectionSync;
 import io.mongock.driver.mongodb.reactive.util.MongoSubscriberSync;
+import io.mongock.utils.Process;
 import io.mongock.utils.field.FieldInstance;
 import org.bson.Document;
 import org.slf4j.Logger;
@@ -17,7 +18,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-public class MongoReactiveRepositoryBase<DOMAIN_CLASS> implements EntityRepository<DOMAIN_CLASS, Document>, RepositoryIndexable {
+public class MongoReactiveRepositoryBase<DOMAIN_CLASS> implements EntityRepository<DOMAIN_CLASS, Document>, RepositoryIndexable, Process {
 
   private final static Logger logger = LoggerFactory.getLogger(MongoReactiveRepositoryBase.class);
   private final static int INDEX_ENSURE_MAX_TRIES = 3;

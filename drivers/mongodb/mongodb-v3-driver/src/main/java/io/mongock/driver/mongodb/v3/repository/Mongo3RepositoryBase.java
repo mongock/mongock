@@ -3,6 +3,7 @@ package io.mongock.driver.mongodb.v3.repository;
 import io.mongock.driver.api.common.EntityRepository;
 import io.mongock.driver.api.common.RepositoryIndexable;
 import io.mongock.api.exception.MongockException;
+import io.mongock.utils.Process;
 import io.mongock.utils.field.FieldInstance;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.model.IndexOptions;
@@ -16,7 +17,7 @@ import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
 
-public  abstract class Mongo3RepositoryBase<DOMAIN_CLASS> implements EntityRepository<DOMAIN_CLASS, Document>, RepositoryIndexable {
+public  abstract class Mongo3RepositoryBase<DOMAIN_CLASS> implements EntityRepository<DOMAIN_CLASS, Document>, RepositoryIndexable, Process {
 
   private final static Logger logger = LoggerFactory.getLogger(Mongo3RepositoryBase.class);
   private final static int INDEX_ENSURE_MAX_TRIES = 3;

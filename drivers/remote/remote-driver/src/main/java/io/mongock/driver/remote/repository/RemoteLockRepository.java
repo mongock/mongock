@@ -6,8 +6,9 @@ import io.mongock.driver.core.lock.LockPersistenceException;
 import io.mongock.driver.core.lock.LockStatus;
 import io.mongock.driver.remote.repository.external.LockReqDto;
 import io.mongock.driver.remote.repository.external.LockServiceClient;
+import io.mongock.utils.Process;
 
-public class RemoteLockRepository implements LockRepository {
+public class RemoteLockRepository implements LockRepository, Process {
   private final LockServiceClient client;
   private final String organization;
   private final String service;

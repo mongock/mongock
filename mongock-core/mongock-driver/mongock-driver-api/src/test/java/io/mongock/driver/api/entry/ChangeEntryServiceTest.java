@@ -1,6 +1,7 @@
 package io.mongock.driver.api.entry;
 
 import io.mongock.api.exception.MongockException;
+import io.mongock.utils.Process;
 import org.junit.jupiter.api.Test;
 
 import java.time.Instant;
@@ -219,7 +220,7 @@ public class ChangeEntryServiceTest {
         false);
   }
 
-  private static class ChangeEntryServiceImpl implements ChangeEntryService {
+  private static class ChangeEntryServiceImpl implements ChangeEntryService, Process {
 
     private final List<ChangeEntry> entries;
 
