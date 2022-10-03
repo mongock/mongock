@@ -101,7 +101,7 @@ public class LockGuardProxyFactory {
   }
 
   public static void checkProxy(Object obj) {
-    if(!isProxyClass(obj.getClass())) {
+    if (!isProxyClass(obj.getClass())) {
       throw new RuntimeException("Is not proxy");
     }
   }

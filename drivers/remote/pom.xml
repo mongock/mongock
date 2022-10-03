@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <parent>
+    <artifactId>drivers</artifactId>
+    <groupId>io.mongock</groupId>
+    <version>5.1.7-SNAPSHOT</version>
+  </parent>
+  <modelVersion>4.0.0</modelVersion>
+
+
+  <name>Mongock remote driver parent</name>
+  <description>Mongock tool for tracking, managing and applying migration remotely                                                                  </description>
+  <url>https://github.com/mongock/mongock-driver-remote.git</url>
+  <modules>
+    <module>remote-driver</module>
+      <module>mongock-driver-remote-bom</module>
+  </modules>
+
+  <artifactId>remote</artifactId>
+  <packaging>pom</packaging>
+
+
+</project>

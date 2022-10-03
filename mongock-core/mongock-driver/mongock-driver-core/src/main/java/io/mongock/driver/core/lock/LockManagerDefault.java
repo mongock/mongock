@@ -295,26 +295,26 @@ public class LockManagerDefault extends Thread implements LockManager {
 
 
   private void handleLockException(boolean acquiringLock, LockPersistenceException ex) {
-    LockEntry currentLock = repository.findByKey(getDefaultKey());
+    LockEntry currentLockEntry = repository.findByKey(getDefaultKey());
 
     if (isAcquisitionTimerOver()) {
       updateStatus(null);
       throw new LockCheckException(String.format(
           MAX_TRIES_ERROR_TEMPLATE,
           lockQuitTryingAfterMillis,
-          currentLock != null ? currentLock.toString() : "none",
+          currentLockEntry != null ? currentLockEntry.toString() : "none",
           ex.getNewLockEntity(),
           ex.getAcquireLockQuery(),
           ex.getDbErrorDetail()));
     }
 
-    if (isLockOwnedByOtherProcess(currentLock)) {
-      Date currentLockExpiresAt = currentLock.getExpiresAt();
+    if (isLockOwnedByOtherProcess(currentLockEntry)) {
+      Date currentLockExpiresAt = currentLockEntry.getExpiresAt();
       logger.warn("Lock is taken by other process until: {}", currentLockExpiresAt);
       if (!acquiringLock) {
         throw new LockCheckException(String.format(
             LOCK_HELD_BY_OTHER_PROCESS,
-            currentLock,
+            currentLockEntry,
             ex.getNewLockEntity(),
             ex.getAcquireLockQuery(),
             ex.getDbErrorDetail()));
@@ -324,8 +324,8 @@ public class LockManagerDefault extends Thread implements LockManager {
 
   }
 
-  private boolean isLockOwnedByOtherProcess(LockEntry currentLock) {
-    return currentLock != null && !currentLock.isOwner(owner);
+  private boolean isLockOwnedByOtherProcess(LockEntry currentLockEntry) {
+    return currentLockEntry != null && !currentLockEntry.isOwner(owner);
   }
 
   private void waitForLock(Date expiresAtMillis) {

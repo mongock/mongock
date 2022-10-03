@@ -74,6 +74,9 @@ public class LockEntry {
     return this.owner.equals(owner);
   }
 
+  public long getAcquiredForMillisFromNow() {
+    return getExpiresAt().getTime() - new Date().getTime();
+  }
   @Override
   public String toString() {
     return "LockEntry{" +

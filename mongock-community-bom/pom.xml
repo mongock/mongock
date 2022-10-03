@@ -46,6 +46,16 @@
       </dependency>
 
 
+      <!-- Remote community -->
+      <dependency>
+        <groupId>io.mongock</groupId>
+        <artifactId>mongock-driver-remote-bom</artifactId>
+        <version>${project.version}</version>
+        <type>pom</type>
+        <scope>import</scope>
+      </dependency>
+
+
       <!-- testing -->
       <dependency>
         <groupId>io.mongock</groupId>

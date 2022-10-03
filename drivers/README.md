@@ -1,1 +1,0 @@
-# Parent project for all the community drivers
