@@ -20,7 +20,6 @@
     <module>mongock-driver</module>
     <module>mongock-runner</module>
     <module>mongock-utils</module>
-    <module>mongock-decorator-util</module>
     <module>mongock-test-util</module>
     <module>mongock-core-bom</module>
   </modules>

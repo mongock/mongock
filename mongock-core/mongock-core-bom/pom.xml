@@ -90,11 +90,6 @@
         <artifactId>mongock-test-util</artifactId>
         <version>${project.version}</version>
       </dependency>
-      <dependency>
-        <groupId>io.mongock</groupId>
-        <artifactId>mongock-decorator-util</artifactId>
-        <version>${project.version}</version>
-      </dependency>
     </dependencies>
   </dependencyManagement>
 </project>
