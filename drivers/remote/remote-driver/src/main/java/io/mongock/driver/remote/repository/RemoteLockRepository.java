@@ -4,9 +4,13 @@ import io.mongock.driver.core.lock.LockRepository;
 import io.mongock.driver.core.lock.LockEntry;
 import io.mongock.driver.core.lock.LockPersistenceException;
 import io.mongock.driver.core.lock.LockStatus;
-import io.mongock.driver.remote.repository.external.LockReqDto;
+import io.mongock.driver.remote.repository.external.LockRequestDto;
+import io.mongock.driver.remote.repository.external.LockResponseDto;
 import io.mongock.driver.remote.repository.external.LockServiceClient;
 import io.mongock.utils.Process;
+
+import java.time.Instant;
+import java.util.Date;
 
 public class RemoteLockRepository implements LockRepository, Process {
   private final LockServiceClient client;
@@ -36,7 +40,12 @@ public class RemoteLockRepository implements LockRepository, Process {
 
   @Override
   public LockEntry findByKey(String lockKey) {
-    return client.getByOrganizationServiceAndKey(organization, service, lockKey);
+    LockResponseDto response = client.getByOrganizationServiceAndKey(organization, service, lockKey);
+    return new LockEntry(
+        response.getRelativeKey(),
+        response.getStatus().name(),
+        response.getOwner(),
+        Date.from(Instant.now().plusMillis(response.getAcquiredForMillis())));
   }
 
   @Override
@@ -55,7 +64,7 @@ public class RemoteLockRepository implements LockRepository, Process {
     //do nothing
   }
 
-  private LockReqDto buildLock(LockEntry newLock, boolean onlyIfSameOwner) {
-    return new LockReqDto(newLock.getKey(), LockStatus.valueOf(newLock.getStatus()), newLock.getAcquiredForMillisFromNow(), onlyIfSameOwner);
+  private LockRequestDto buildLock(LockEntry newLock, boolean onlyIfSameOwner) {
+    return new LockRequestDto(newLock.getKey(), LockStatus.valueOf(newLock.getStatus()), newLock.getAcquiredForMillisFromNow(), onlyIfSameOwner);
   }
 }

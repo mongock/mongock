@@ -11,26 +11,25 @@ import com.mongodb.client.MongoCollection;
 import com.mongodb.client.model.Filters;
 import com.mongodb.client.model.UpdateOptions;
 import com.mongodb.client.result.UpdateResult;
-import org.bson.BsonDocument;
 import org.bson.Document;
 import org.bson.conversions.Bson;
 
 import java.util.Date;
 
-import static io.mongock.driver.core.lock.LockEntry.KEY_FIELD;
-import static io.mongock.driver.core.lock.LockEntry.STATUS_FIELD;
-import static io.mongock.driver.core.lock.LockEntry.OWNER_FIELD;
-import static io.mongock.driver.core.lock.LockEntry.EXPIRES_AT_FIELD;
+import static io.mongock.driver.core.lock.LockEntry.LOCK_KEY_FIELD;
+import static io.mongock.driver.core.lock.LockEntry.LOCK_STATUS_FIELD;
+import static io.mongock.driver.core.lock.LockEntry.LOCK_OWNER_FIELD;
+import static io.mongock.driver.core.lock.LockEntry.LOCK_EXPIRES_AT_FIELD;
 public class MongoSync4LockRepository extends MongoSync4RepositoryBase<LockEntry> implements LockRepositoryWithEntity<Document> {
 
 
 
   public MongoSync4LockRepository(MongoCollection<Document> collection) {
-    super(collection, new String[]{KEY_FIELD}, ReadWriteConfiguration.getDefault());
+    super(collection, new String[]{LOCK_KEY_FIELD}, ReadWriteConfiguration.getDefault());
   }
 
   public MongoSync4LockRepository(MongoCollection<Document> collection, ReadWriteConfiguration readWriteConfiguration) {
-    super(collection, new String[]{KEY_FIELD}, readWriteConfiguration);
+    super(collection, new String[]{LOCK_KEY_FIELD}, readWriteConfiguration);
   }
   /**
    * If there is a lock in the database with the same key, updates it if either is expired or both share the same owner.
@@ -65,13 +64,13 @@ public class MongoSync4LockRepository extends MongoSync4RepositoryBase<LockEntry
    */
   @Override
   public LockEntry findByKey(String lockKey) {
-    Document result = collection.find(new Document().append(KEY_FIELD, lockKey)).first();
+    Document result = collection.find(new Document().append(LOCK_KEY_FIELD, lockKey)).first();
     if (result != null) {
       return new LockEntry(
-          result.getString(KEY_FIELD),
-          result.getString(STATUS_FIELD),
-          result.getString(OWNER_FIELD),
-          result.getDate(EXPIRES_AT_FIELD)
+          result.getString(LOCK_KEY_FIELD),
+          result.getString(LOCK_STATUS_FIELD),
+          result.getString(LOCK_OWNER_FIELD),
+          result.getDate(LOCK_EXPIRES_AT_FIELD)
       );
     }
     return null;
@@ -85,7 +84,7 @@ public class MongoSync4LockRepository extends MongoSync4RepositoryBase<LockEntry
    */
   @Override
   public void removeByKeyAndOwner(String lockKey, String owner) {
-    collection.deleteMany(Filters.and(Filters.eq(KEY_FIELD, lockKey), Filters.eq(OWNER_FIELD, owner)));
+    collection.deleteMany(Filters.and(Filters.eq(LOCK_KEY_FIELD, lockKey), Filters.eq(LOCK_OWNER_FIELD, owner)));
   }
 
   protected void insertUpdate(LockEntry newLock, boolean onlyIfSameOwner)  {
@@ -120,10 +119,10 @@ public class MongoSync4LockRepository extends MongoSync4RepositoryBase<LockEntry
   }
 
   protected Bson getAcquireLockQuery(String lockKey, String owner, boolean onlyIfSameOwner) {
-    Bson expirationCond = Filters.lt(EXPIRES_AT_FIELD, new Date());
-    Bson ownerCond = Filters.eq(OWNER_FIELD, owner);
-    Bson keyCond = Filters.eq(KEY_FIELD, lockKey);
-    Bson statusCond = Filters.eq(STATUS_FIELD, LockStatus.LOCK_HELD.toString());
+    Bson expirationCond = Filters.lt(LOCK_EXPIRES_AT_FIELD, new Date());
+    Bson ownerCond = Filters.eq(LOCK_OWNER_FIELD, owner);
+    Bson keyCond = Filters.eq(LOCK_KEY_FIELD, lockKey);
+    Bson statusCond = Filters.eq(LOCK_STATUS_FIELD, LockStatus.LOCK_HELD.toString());
     return onlyIfSameOwner
         ? Filters.and(keyCond, statusCond, ownerCond)
         : Filters.and(keyCond, Filters.or(expirationCond, ownerCond));

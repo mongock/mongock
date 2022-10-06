@@ -11,16 +11,10 @@ import com.mongodb.client.MongoCollection;
 import com.mongodb.client.model.Filters;
 import com.mongodb.client.model.UpdateOptions;
 import com.mongodb.client.result.UpdateResult;
-import org.bson.BsonDocument;
 import org.bson.Document;
 import org.bson.conversions.Bson;
 
 import java.util.Date;
-
-import static io.mongock.driver.core.lock.LockEntry.EXPIRES_AT_FIELD;
-import static io.mongock.driver.core.lock.LockEntry.KEY_FIELD;
-import static io.mongock.driver.core.lock.LockEntry.OWNER_FIELD;
-import static io.mongock.driver.core.lock.LockEntry.STATUS_FIELD;
 
 public class Mongo3LockRepository extends Mongo3RepositoryBase<LockEntry> implements LockRepositoryWithEntity<Document> {
 

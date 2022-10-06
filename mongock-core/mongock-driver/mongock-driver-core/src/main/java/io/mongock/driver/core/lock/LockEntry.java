@@ -12,21 +12,21 @@ import static io.mongock.utils.field.Field.KeyType.PRIMARY;
  * @since 27/07/2014
  */
 public class LockEntry {
-  public static final String KEY_FIELD = "key";
-  public static final String STATUS_FIELD = "status";
-  public static final String OWNER_FIELD = "owner";
-  public static final String EXPIRES_AT_FIELD = "expiresAt";
+  public static final String LOCK_KEY_FIELD = "key";
+  public static final String LOCK_STATUS_FIELD = "status";
+  public static final String LOCK_OWNER_FIELD = "owner";
+  public static final String LOCK_EXPIRES_AT_FIELD = "expiresAt";
 
-  @Field(value = KEY_FIELD, type = PRIMARY)
+  @Field(value = LOCK_KEY_FIELD, type = PRIMARY)
   private final String key;
 
-  @Field(STATUS_FIELD)
+  @Field(LOCK_STATUS_FIELD)
   private final String status;
 
-  @Field(OWNER_FIELD)
+  @Field(LOCK_OWNER_FIELD)
   private final String owner;
 
-  @Field(EXPIRES_AT_FIELD)
+  @Field(LOCK_EXPIRES_AT_FIELD)
   private final Date expiresAt;
 
   public LockEntry(String key, String status, String owner, Date expiresAt) {

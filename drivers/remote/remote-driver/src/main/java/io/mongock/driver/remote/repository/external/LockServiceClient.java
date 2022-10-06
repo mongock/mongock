@@ -15,11 +15,11 @@ public interface LockServiceClient {
 
   @Headers("Content-Type: application/json")
   @RequestLine("PUT {organization}/{service}/lock/")
-  void acquireLock(@Param("organization") String organization, @Param("service") String service, LockReqDto lock);
+  void acquireLock(@Param("organization") String organization, @Param("service") String service, LockRequestDto lock);
 
   @Headers("Content-Type: application/json")
   @RequestLine("GET {organization}/{service}/lock/{relativeKey}")
-  LockEntry getByOrganizationServiceAndKey(@Param("organization") String organization,
+  LockResponseDto getByOrganizationServiceAndKey(@Param("organization") String organization,
                                            @Param("service") String service,
                                            @Param("relativeKey") String relativeKey);
 

@@ -1,5 +1,6 @@
 package io.mongock.driver.remote.driver;
 
+import io.mongock.driver.api.driver.ChangeSetDependency;
 import io.mongock.driver.api.entry.ChangeEntryService;
 import io.mongock.driver.core.driver.NonTransactionalConnectionDriverBase;
 import io.mongock.driver.core.lock.LockRepository;
@@ -59,5 +60,10 @@ public class RemoteDriver extends NonTransactionalConnectionDriverBase {
   @Override
   protected LockRepository getLockRepository() {
     return lockRepository;
+  }
+
+  protected void specificInitialization() {
+    //TODO not mandatory
+    dependencies.add(new ChangeSetDependency(ChangeEntryService.class, getChangeEntryService(), false));
   }
 }

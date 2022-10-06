@@ -2,13 +2,13 @@ package io.mongock.driver.remote.repository.external;
 
 import io.mongock.driver.core.lock.LockStatus;
 
-public class LockReqDto {
+public class LockRequestDto {
   private final String relativeKey;
   private final LockStatus status;
   private final long acquiredForMillis;
   private final boolean onlyExtension;
 
-  public LockReqDto(String relativeKey, LockStatus status, long acquiredForMillis, boolean onlyExtension) {
+  public LockRequestDto(String relativeKey, LockStatus status, long acquiredForMillis, boolean onlyExtension) {
     this.relativeKey = relativeKey;
     this.status = status;
     this.acquiredForMillis = acquiredForMillis;
