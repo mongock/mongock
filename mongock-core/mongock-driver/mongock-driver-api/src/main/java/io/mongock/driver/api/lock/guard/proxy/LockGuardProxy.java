@@ -30,12 +30,12 @@ public class LockGuardProxy<T> implements InvocationHandler {
 
 
   private static boolean shouldTryProxyReturn(List<NonLockGuardedType> methodNoGuardedLockTypes, Type type) {
-    return !(type instanceof TypeVariable && ((TypeVariable) type).getGenericDeclaration() != null )
+    return !(type instanceof TypeVariable && ((TypeVariable) type).getGenericDeclaration() != null)
         && !methodNoGuardedLockTypes.contains(NonLockGuardedType.RETURN)
         && !methodNoGuardedLockTypes.contains(NonLockGuardedType.NONE);
   }
 
-  private  boolean shouldMethodBeLockGuarded(Method method, List<NonLockGuardedType> noGuardedLockTypes) {
+  private boolean shouldMethodBeLockGuarded(Method method, List<NonLockGuardedType> noGuardedLockTypes) {
     String temporalVariable = method.getName();
     return !nonGuardedMethods.contains(method.getName())
         && !noGuardedLockTypes.contains(NonLockGuardedType.METHOD)
@@ -49,7 +49,20 @@ public class LockGuardProxy<T> implements InvocationHandler {
     if (shouldMethodBeLockGuarded(method, noGuardedLockTypes)) {
       lockManager.ensureLockDefault();
     }
-
+    StringBuilder sb = new StringBuilder("\t\t\t")
+        .append(implementation.getClass().getName())
+        .append(".")
+        .append(method.getName())
+        .append("(");
+    boolean isFirstArg = true;
+    for (Object arg : args) {
+      if (!isFirstArg) {
+        sb.append(" , ");
+      }
+      sb.append(arg.hashCode());
+    }
+    sb.append(")");
+    System.out.println(sb);
     return shouldTryProxyReturn(noGuardedLockTypes, method.getGenericReturnType())
         ? proxyFactory.getRawProxy(method.invoke(implementation, args), method.getReturnType())
         : method.invoke(implementation, args);
