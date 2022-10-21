@@ -1,6 +1,6 @@
 package io.mongock.driver.mongodb.springdata.v3;
 
-import com.github.cloudyrock.mongock.driver.mongodb.springdata.v3.decorator.impl.MongockTemplate;
+//import com.github.cloudyrock.mongock.driver.mongodb.springdata.v3.decorator.impl.MongockTemplate;
 import com.mongodb.client.MongoDatabase;
 import io.mongock.api.exception.MongockException;
 import io.mongock.driver.api.driver.ChangeSetDependency;
@@ -55,29 +55,29 @@ public abstract class SpringDataMongoV3DriverBase<SELF extends SpringDataMongoV3
   @Override
   public void specificInitialization() {
     super.specificInitialization();
-    dependencies.add(new ChangeSetDependencyBuildable(
-        MongockTemplate.class,
-        MongoTemplate.class,
-        impl -> new MongockTemplate((MongoTemplate) impl),
-        true));
+//    dependencies.add(new ChangeSetDependencyBuildable(
+//        MongockTemplate.class,
+//        MongoTemplate.class,
+//        impl -> new MongockTemplate((MongoTemplate) impl),
+//        true));
     dependencies.add(new ChangeSetDependency(MongoTemplate.class, this.mongoTemplate));
 
-    txManager = new MongoTransactionManager(mongoTemplate.getMongoDbFactory(), txOptions);
+    txManager = new MongoTransactionManager(mongoTemplate.getMongoDatabaseFactory(), txOptions);
   }
 
-  public MongockTemplate getMongockTemplate() {
-    if (!isInitialized()) {
-      throw new MongockException("Mongock Driver hasn't been initialized yet");
-    }
-    return dependencies
-        .stream()
-        .filter(dependency -> MongockTemplate.class.isAssignableFrom(dependency.getType()))
-        .map(ChangeSetDependency::getInstance)
-        .map(instance -> (MongockTemplate) instance)
-        .findAny()
-        .orElseThrow(() -> new MongockException("Mongock Driver hasn't been initialized yet"));
-
-  }
+//  public MongockTemplate getMongockTemplate() {
+//    if (!isInitialized()) {
+//      throw new MongockException("Mongock Driver hasn't been initialized yet");
+//    }
+//    return dependencies
+//        .stream()
+//        .filter(dependency -> MongockTemplate.class.isAssignableFrom(dependency.getType()))
+//        .map(ChangeSetDependency::getInstance)
+//        .map(instance -> (MongockTemplate) instance)
+//        .findAny()
+//        .orElseThrow(() -> new MongockException("Mongock Driver hasn't been initialized yet"));
+//
+//  }
 
   @Override
   public ChangeEntryService getChangeEntryService() {

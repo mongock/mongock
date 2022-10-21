@@ -30,8 +30,8 @@
     <project.scm.id>ossrh</project.scm.id>
 
     <!-- versions of springframework/springboot -->
-    <springframework.version>[5.0.0, 6.0.0)</springframework.version>
-    <spring-boot.version>[2.0.0, 3.0.0)</spring-boot.version>
+    <springframework.version>6.0.0-M6</springframework.version>
+    <spring-boot.version>3.0.0-M5</spring-boot.version>
 
     <!-- versions of mongodb -->
     <mongodb-sync-4.version>4.2.3</mongodb-sync-4.version>
@@ -39,7 +39,7 @@
     <mongodb-reactivestreams.version>[4.0.0, 5.0.0)</mongodb-reactivestreams.version>
 
     <!-- versions of spring-data -->
-    <spring-data-3.version>3.2.0</spring-data-3.version>
+    <spring-data-3.version>4.0.0-M6</spring-data-3.version>
     <spring-data-2.version>2.2.13.RELEASE</spring-data-2.version>
     
     <!-- versions of Mongodb used in spring data -->
@@ -110,6 +110,19 @@
     </repository>
   </distributionManagement>
 
+ <repositories>
+        <repository>
+            <id>spring-repo</id>
+            <url>https://repo.spring.io/milestone</url>
+        </repository>
+  </repositories>
+  
+    <pluginRepositories>
+    <pluginRepository>
+      <id>spring-repo-plugins</id>
+      <url>https://repo.spring.io/milestone</url>
+    </pluginRepository>
+  </pluginRepositories>
 
   <build>
     <plugins>
