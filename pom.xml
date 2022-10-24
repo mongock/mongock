@@ -19,6 +19,16 @@
     <module>mongock-test</module>
   </modules>
 
+  <repositories>
+    <repository>
+      <id>spring-milestones</id>
+      <name>Spring Milestones</name>
+      <url>https://repo.spring.io/milestone</url>
+      <snapshots>
+        <enabled>false</enabled>
+      </snapshots>
+    </repository>
+  </repositories>
 
   <properties>
     <java.version>1.8</java.version>
@@ -30,8 +40,9 @@
     <project.scm.id>ossrh</project.scm.id>
 
     <!-- versions of springframework/springboot -->
-    <springframework.version>[5.0.0, 6.0.0)</springframework.version>
+    <springframework.version>[5.0.0, 6.0.0-RC2]</springframework.version>
     <spring-boot.version>[2.0.0, 3.0.0)</spring-boot.version>
+    <spring-boot-3.version>[3.0.0-RC1, 4.0.0)</spring-boot-3.version>
 
     <!-- versions of mongodb -->
     <mongodb-sync-4.version>4.2.3</mongodb-sync-4.version>
@@ -39,10 +50,12 @@
     <mongodb-reactivestreams.version>[4.0.0, 5.0.0)</mongodb-reactivestreams.version>
 
     <!-- versions of spring-data -->
+    <spring-data-4.version>4.0.0-RC1</spring-data-4.version>
     <spring-data-3.version>3.2.0</spring-data-3.version>
     <spring-data-2.version>2.2.13.RELEASE</spring-data-2.version>
     
     <!-- versions of Mongodb used in spring data -->
+    <spring-data-4.mongodb.version>4.8.0-beta0</spring-data-4.mongodb.version>
     <spring-data-3.mongodb.version>4.2.3</spring-data-3.mongodb.version>
     <spring-data-2.mongodb.version>3.11.3</spring-data-2.mongodb.version>
     
@@ -210,7 +223,7 @@
             <artifactId>maven-surefire-plugin</artifactId>
             <version>3.0.0-M4</version>
             <configuration>
-              <skipTests>false</skipTests>
+              <skipTests>true</skipTests>
               <excludes>
                 <exclude>**/*ITest.java</exclude>
               </excludes>
@@ -246,7 +259,7 @@
             <artifactId>maven-surefire-plugin</artifactId>
             <version>3.0.0-M4</version>
             <configuration>
-              <skipTests>false</skipTests>
+              <skipTests>true</skipTests>
               <excludes>
                 <exclude>**/*ITest.java</exclude>
               </excludes>
