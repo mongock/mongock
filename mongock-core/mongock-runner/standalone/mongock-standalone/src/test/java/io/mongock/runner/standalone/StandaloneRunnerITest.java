@@ -15,7 +15,7 @@ import io.mongock.driver.api.entry.ChangeState;
 import io.mongock.driver.api.entry.ChangeType;
 import io.mongock.driver.mongodb.sync.v4.driver.MongoSync4Driver;
 import io.mongock.runner.core.executor.MongockRunner;
-import io.mongock.runner.core.executor.system.changes.SystemChangeUnit10001;
+import io.mongock.runner.core.executor.system.changes.SystemChangeUnit00001;
 import io.mongock.runner.standalone.migration.LongIOChangeUnit;
 import io.mongock.runner.standalone.migration.MongoDBAdvanceChangeLog;
 import io.mongock.runner.standalone.migration.MongoDBAdvanceChangeLogWithBeforeFailing;
@@ -540,19 +540,19 @@ public class StandaloneRunnerITest {
     // ChangeEntry count
     assertEquals(2, changeEntries.size());
     
-    // SystemChangeUnit10001 -> BEFORE_EXECUTION
+    // SystemChangeUnit00001 -> BEFORE_EXECUTION
     Document changeEntryDoc = changeEntries.get(0);
-    assertEquals(SystemChangeUnit10001.class.getName(), changeEntryDoc.get("changeLogClass"));
-    assertEquals("system-change-10001_before", changeEntryDoc.get("changeId"));
+    assertEquals(SystemChangeUnit00001.class.getName(), changeEntryDoc.get("changeLogClass"));
+    assertEquals("system-change-00001_before", changeEntryDoc.get("changeId"));
     assertEquals("mongock", changeEntryDoc.get("author"));
     assertEquals(ChangeState.EXECUTED.toString(), changeEntryDoc.get("state"));
     assertEquals(ChangeType.BEFORE_EXECUTION.toString(), changeEntryDoc.get("type"));
     assertEquals(true, changeEntryDoc.get("systemChange"));
     
-    // SystemChangeUnit10001 -> EXECUTION
+    // SystemChangeUnit00001 -> EXECUTION
     changeEntryDoc = changeEntries.get(1);
-    assertEquals(SystemChangeUnit10001.class.getName(), changeEntryDoc.get("changeLogClass"));
-    assertEquals("system-change-10001", changeEntryDoc.get("changeId"));
+    assertEquals(SystemChangeUnit00001.class.getName(), changeEntryDoc.get("changeLogClass"));
+    assertEquals("system-change-00001", changeEntryDoc.get("changeId"));
     assertEquals("mongock", changeEntryDoc.get("author"));
     assertEquals(ChangeState.EXECUTED.toString(), changeEntryDoc.get("state"));
     assertEquals(ChangeType.EXECUTION.toString(), changeEntryDoc.get("type"));

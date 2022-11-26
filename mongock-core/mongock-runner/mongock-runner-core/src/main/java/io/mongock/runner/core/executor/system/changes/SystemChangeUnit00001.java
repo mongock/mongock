@@ -16,8 +16,8 @@ import io.mongock.driver.api.entry.ChangeEntryService;
 **/
 
 @SystemChange
-@ChangeUnit(id = "system-change-10001", author = "mongock", order = "10001")
-public class SystemChangeUnit10001 {
+@ChangeUnit(id = "system-change-00001", author = "mongock", order = "00001")
+public class SystemChangeUnit00001 {
   
   @BeforeExecution
   public void beforeExecution(ChangeEntryService changeEntryService) {
