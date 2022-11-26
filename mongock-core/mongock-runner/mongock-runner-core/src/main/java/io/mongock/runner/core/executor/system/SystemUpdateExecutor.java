@@ -56,20 +56,27 @@ public class SystemUpdateExecutor<CONFIG extends MongockConfiguration> extends C
     initializationAndValidation();
     // Fetch existing system changes
     Collection<ChangeLogItem> changeLogs = changeLogService.fetchChangeLogs();
-    try (LockManager lockManager = driver.getLockManager()) {
+    try {
+      if (changeLogs == null || changeLogs.isEmpty()) {
+        logger.info("Mongock skipping the system update execution. There is no system change set item.");
+        return false;
+      }
       // load executed changeEntries to check if any of the changeSets need to be executed
       loadExecutedChangeEntries();
       if (!this.isThereAnyChangeSetItemToBeExecuted(changeLogs)) {
-        logger.info("Mongock skipping the system update execution. System is up to date.", executionId);
+        logger.info("Mongock skipping the system update execution. All system change set items are already executed.");
+        logIgnoredChangeLogs(changeLogs);
         return false;
       }
-      lockManager.acquireLockDefault();
-      // when lock is acquired, it's needed to reload executed changeEntries to get last changes
-      loadExecutedChangeEntries();
-      String executionHostname = generateExecutionHostname(executionId);
-      logger.info("Mongock starting the system update execution id[{}]...", executionId);
-      processMigration(changeLogs, executionId, executionHostname);
-      return true;
+      try (LockManager lockManager = driver.getLockManager()) {
+        lockManager.acquireLockDefault();
+        // when lock is acquired, it's needed to reload executed changeEntries to get last changes
+        loadExecutedChangeEntries();
+        String executionHostname = generateExecutionHostname(executionId);
+        logger.info("Mongock starting the system update execution id[{}]...", executionId);
+        processMigration(changeLogs, executionId, executionHostname);
+        return true;
+      }
     }
     catch (Exception ex) {
       logger.error("Mongock has failed executing system updates");

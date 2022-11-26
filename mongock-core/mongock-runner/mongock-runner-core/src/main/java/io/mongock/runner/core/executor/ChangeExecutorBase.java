@@ -306,7 +306,7 @@ public abstract class ChangeExecutorBase<CONFIG extends ChangeExecutorConfigurat
         logger.info("{}APPLIED - {}", alreadyExecuted ? "RE-" : "", changeEntry.toPrettyString());
         break;
       case IGNORED:
-        logger.info("PASSED OVER - {}", changeSetItem.toPrettyString());
+        logIgnoredChangeSet(changeSetItem);
         break;
       case FAILED:
         logger.info("FAILED OVER - {}", changeSetItem.toPrettyString());
@@ -319,6 +319,18 @@ public abstract class ChangeExecutorBase<CONFIG extends ChangeExecutorConfigurat
         break;
     }
   }
+  
+  protected void logIgnoredChangeSet(ChangeSetItem changeSetItem) {
+    logger.info("PASSED OVER - {}", changeSetItem.toPrettyString());
+  }
+  
+  protected void logIgnoredChangeLogs(Collection<ChangeLogItem> changeLogs) {
+    changeLogs.stream()
+        .map(ChangeLogItem::getAllChangeItems)
+        .flatMap(List::stream)
+        .forEach(this::logIgnoredChangeSet);
+  }
+  
   protected ChangeEntry buildChangeEntry(String executionId,
                                          String executionHostname,
                                          ChangeSetItem changeSetItem,
