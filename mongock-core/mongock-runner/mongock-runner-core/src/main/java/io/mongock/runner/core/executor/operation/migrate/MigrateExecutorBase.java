@@ -45,20 +45,27 @@ public abstract class MigrateExecutorBase extends ChangeExecutorBase<ChangeExecu
     initializationAndValidation();
     // prepare changeLogs to filter which ones require to be rolled back
     Collection<ChangeLogItem> changeLogs = this.fetchAndPrepareChangeLogs();
-    try (LockManager lockManager = driver.getLockManager()) {
+    try {
+      if (changeLogs == null || changeLogs.isEmpty()) {
+        logger.info("Mongock skipping the data migration. There is no change set item.");
+        return false;
+      }
       // load executed changeEntries to check if any of the changeSets need to be executed
       loadExecutedChangeEntries();
       if (!this.isThereAnyChangeSetItemToBeExecuted(changeLogs)) {
-        logger.info("Mongock skipping the data migration. All change set items are already executed or there is no change set item.");
+        logger.info("Mongock skipping the data migration. All change set items are already executed.");
+        logIgnoredChangeLogs(changeLogs);
         return false;
       }
-      lockManager.acquireLockDefault();
-      // when lock is acquired, it's needed to reload executed changeEntries to get last changes
-      loadExecutedChangeEntries();
-      String executionHostname = generateExecutionHostname(executionId);
-      logger.info("Mongock starting the data migration sequence id[{}]...", executionId);
-      processMigration(changeLogs, executionId, executionHostname);
-      return true;
+      try (LockManager lockManager = driver.getLockManager()) {
+        lockManager.acquireLockDefault();
+        // when lock is acquired, it's needed to reload executed changeEntries to get last changes
+        loadExecutedChangeEntries();
+        String executionHostname = generateExecutionHostname(executionId);
+        logger.info("Mongock starting the data migration sequence id[{}]...", executionId);
+        processMigration(changeLogs, executionId, executionHostname);
+        return true;
+      }
     } finally {
       this.executionInProgress = false;
       logger.info("Mongock has finished");
