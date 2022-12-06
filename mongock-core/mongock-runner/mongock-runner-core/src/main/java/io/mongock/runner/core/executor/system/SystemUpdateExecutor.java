@@ -15,7 +15,6 @@ import io.mongock.runner.core.internal.ChangeLogItem;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-import java.util.Optional;
 import javax.annotation.concurrent.NotThreadSafe;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -45,7 +44,7 @@ public class SystemUpdateExecutor<CONFIG extends MongockConfiguration> extends C
           null,
           config.getServiceIdentifier(),
           false,
-          Optional.of(true),
+          config.getTransactionEnabled(),
           TransactionStrategy.CHANGE_UNIT,
           config);
     this.basePackages = basePackages;
