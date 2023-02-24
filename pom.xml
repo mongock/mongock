@@ -50,8 +50,8 @@
     <slf4j-api.version>1.7.25</slf4j-api.version>
 
     <!--Test-->
-    <junit.jupiter.version>5.6.2</junit.jupiter.version>
-    <junit.vintage.version>5.6.2</junit.vintage.version>
+    <junit.jupiter.version>5.6.3</junit.jupiter.version>
+    <junit.vintage.version>5.6.3</junit.vintage.version>
     <spring-cloud-sleuth.version>3.1.0</spring-cloud-sleuth.version>
     <test-containers.version>1.16.2</test-containers.version>
     <mockito-core.version>3.2.4</mockito-core.version>

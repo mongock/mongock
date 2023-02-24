@@ -18,6 +18,7 @@
   <modules>
     <module>mongodb</module>
     <module>dynamodb</module>
+    <module>couchbase</module>
   </modules>
 
 </project>
