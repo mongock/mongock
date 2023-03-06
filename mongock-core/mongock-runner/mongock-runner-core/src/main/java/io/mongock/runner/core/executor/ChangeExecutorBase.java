@@ -451,7 +451,9 @@ public abstract class ChangeExecutorBase<CONFIG extends ChangeExecutorConfigurat
 
   protected void prepareForStageExecutionIfApply(boolean applyPreparation) {
     if (applyPreparation) {
-      driver.prepareForExecutionBlock();
+      if (isDriverTransactional()) {
+        driver.prepareForExecutionBlock();
+      }
     }
   }
 
