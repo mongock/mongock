@@ -20,6 +20,7 @@ import static io.mongock.driver.core.lock.LockEntry.EXPIRES_AT_FIELD;
 import static io.mongock.driver.core.lock.LockEntry.KEY_FIELD;
 import static io.mongock.driver.core.lock.LockEntry.OWNER_FIELD;
 import static io.mongock.driver.core.lock.LockEntry.STATUS_FIELD;
+import io.mongock.utils.DateUtils;
 
 public class MongoReactiveLockRepository extends MongoReactiveRepositoryBase<LockEntry> implements LockRepositoryWithEntity<Document> {
 
@@ -71,7 +72,7 @@ public class MongoReactiveLockRepository extends MongoReactiveRepositoryBase<Loc
           result.getString(KEY_FIELD),
           result.getString(STATUS_FIELD),
           result.getString(OWNER_FIELD),
-          result.getDate(EXPIRES_AT_FIELD)
+          DateUtils.toDate(result.get(EXPIRES_AT_FIELD))
       );
     }
     return null;
