@@ -4,7 +4,7 @@ import io.mongock.driver.api.entry.ChangeEntry;
 
 public class ChangeEntryKeyGenerator {
 
-  public static final String KEY_PREFIX = "mongock-";
+  public static final String KEY_PREFIX = "mongockChangeEntry-";
   public String toKey(ChangeEntry changeEntry) {
     return new StringBuilder()
         .append(KEY_PREFIX)

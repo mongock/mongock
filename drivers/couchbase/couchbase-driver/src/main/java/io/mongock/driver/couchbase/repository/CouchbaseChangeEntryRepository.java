@@ -56,7 +56,7 @@ public class CouchbaseChangeEntryRepository extends CouchbaseRepositoryBase<Chan
   @Override
   public List<ChangeEntry> getEntriesLog() {
     QueryResult result = cluster.query(N1QLQueryProvider.selectAllChangesQuery(collection.bucketName(), collection.scopeName(), collection.name()),
-        QueryOptions.queryOptions().parameters(JsonObject.create().put("type", DOCUMENT_TYPE)).scanConsistency(QueryScanConsistency.REQUEST_PLUS));
+        QueryOptions.queryOptions().parameters(JsonObject.create().put("type", DOCUMENT_TYPE_CHANGE_ENTRY)).scanConsistency(QueryScanConsistency.REQUEST_PLUS));
     return result
         .rowsAsObject()
         .stream()

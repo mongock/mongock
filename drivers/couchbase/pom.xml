@@ -22,7 +22,7 @@
   </modules>
 
   <properties>
-    <couchbase-java-client.version>3.4.3</couchbase-java-client.version>
+    <couchbase-java-client.version>3.4.4</couchbase-java-client.version>
     <spring-data-couchbase.version>4.4.8</spring-data-couchbase.version>
   </properties>
 

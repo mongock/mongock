@@ -1,5 +1,6 @@
 package io.mongock.driver.couchbase;
 
+import com.couchbase.client.java.Bucket;
 import com.couchbase.client.java.Cluster;
 import com.couchbase.client.java.ClusterOptions;
 import com.couchbase.client.java.Collection;
@@ -19,7 +20,9 @@ public abstract class TestcontainersCouchbaseRunner {
   protected static final BucketDefinition BUCKET_DEFINITION = new BucketDefinition(BUCKET_NAME);
   private static Cluster CLUSTER_V7;
   private static Collection COLLECTION_V7;
+  private static Bucket BUCKET_V7;
   private static Cluster CLUSTER_V6;
+  private static Bucket BUCKET_V6;
   private static Collection COLLECTION_V6;
   
   private static final CouchbaseContainer COUCHBASE_CONTAINER_V7 = new CouchbaseContainer("couchbase/server:community-7.1.1")
@@ -56,8 +59,7 @@ public abstract class TestcontainersCouchbaseRunner {
 
   public static Collection getCollectionV7() {
     if(COLLECTION_V7 == null){
-      COLLECTION_V7 = getCluster7()
-          .bucket(BUCKET_NAME)
+      COLLECTION_V7 = getBucketV7()
           .scope(COUCHBASE_CUSTOM_SCOPE)
           .collection(COUCHBASE_CUSTOM_COLLECTION);
     }
@@ -77,11 +79,26 @@ public abstract class TestcontainersCouchbaseRunner {
 
   public static Collection getCollectionV6() {
     if(COLLECTION_V6 == null){
-      COLLECTION_V6 = getCluster6()
-          .bucket(BUCKET_NAME)
+      COLLECTION_V6 = getBucketV6()
           .defaultCollection();
     }
     return COLLECTION_V6;
+  }
+
+  public static Bucket getBucketV6() {
+    if(BUCKET_V6 == null){
+      BUCKET_V6 = getCluster6()
+          .bucket(BUCKET_NAME);
+    }
+    return BUCKET_V6;
+  }
+
+  public static Bucket getBucketV7() {
+    if(BUCKET_V7 == null){
+      BUCKET_V7 = getCluster7()
+          .bucket(BUCKET_NAME);
+    }
+    return BUCKET_V7;
   }
   
 }

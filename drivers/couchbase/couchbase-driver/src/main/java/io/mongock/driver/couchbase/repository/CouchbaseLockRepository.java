@@ -36,7 +36,7 @@ public class CouchbaseLockRepository extends CouchbaseRepositoryBase<LockEntry> 
       LockEntry existingLock = new CouchbaseLockEntry(result.contentAsObject());
       if(newLock.getOwner().equals(existingLock.getOwner()) ||
           new Date().after(existingLock.getExpiresAt())){
-        logger.debug("Lock with key {} already owned by us or is expired, so trying to preform a lock.", existingLock.getKey());
+        logger.debug("Lock with key {} already owned by us or is expired, so trying to perform a lock.", existingLock.getKey());
         collection.replace(newLock.getKey(), newLock, ReplaceOptions.replaceOptions().cas(result.cas()));
         logger.debug("Lock with key {} updated", newLock.getKey());
       } else if (new Date().before(existingLock.getExpiresAt())){
@@ -44,7 +44,7 @@ public class CouchbaseLockRepository extends CouchbaseRepositoryBase<LockEntry> 
         throw new LockPersistenceException("Get By" + newLock.getKey(), newLock.toString(), "Still locked by " + existingLock.getOwner() + " until " + existingLock.getExpiresAt());
       }
     } catch (DocumentNotFoundException documentNotFoundException){
-      logger.debug("Lock with key {} does not exist, so trying to preform a lock.", newLock.getKey());
+      logger.debug("Lock with key {} does not exist, so trying to perform a lock.", newLock.getKey());
       collection.insert(newLock.getKey(), newLock);
       logger.debug("Lock with key {} created", newLock.getKey());
     }
@@ -56,7 +56,7 @@ public class CouchbaseLockRepository extends CouchbaseRepositoryBase<LockEntry> 
       GetResult result = collection.get(newLock.getKey());
       LockEntry existingLock = new CouchbaseLockEntry(result.contentAsObject());
       if(newLock.getOwner().equals(existingLock.getOwner())){
-        logger.debug("Lock with key {} already owned by us, so trying to preform a lock.", existingLock.getKey());
+        logger.debug("Lock with key {} already owned by us, so trying to perform a lock.", existingLock.getKey());
         collection.replace(newLock.getKey(), newLock, ReplaceOptions.replaceOptions().cas(result.cas()));
         logger.debug("Lock with key {} updated", newLock.getKey());
       } else {
