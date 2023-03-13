@@ -11,11 +11,13 @@ import io.mongock.driver.core.lock.LockEntry;
 import io.mongock.driver.core.lock.LockPersistenceException;
 import io.mongock.driver.core.lock.LockRepositoryWithEntity;
 import io.mongock.driver.couchbase.lock.CouchbaseLockEntry;
+import io.mongock.utils.field.FieldInstance;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.Collections;
 import java.util.Date;
+import java.util.List;
 
 /**
  * Couchbase lock repository. 
@@ -25,6 +27,7 @@ import java.util.Date;
  */
 public class CouchbaseLockRepository extends CouchbaseRepositoryBase<LockEntry> implements LockRepositoryWithEntity<JsonObject> {
   private final static Logger logger = LoggerFactory.getLogger(CouchbaseLockRepository.class);
+  private final static String DOCUMENT_TYPE_LOCK_ENTRY = "mongockLockEntry";
   public CouchbaseLockRepository(Cluster cluster, Collection collection) {
     super(cluster, collection, Collections.emptySet());
   }
@@ -37,7 +40,7 @@ public class CouchbaseLockRepository extends CouchbaseRepositoryBase<LockEntry> 
       if(newLock.getOwner().equals(existingLock.getOwner()) ||
           new Date().after(existingLock.getExpiresAt())){
         logger.debug("Lock with key {} already owned by us or is expired, so trying to perform a lock.", existingLock.getKey());
-        collection.replace(newLock.getKey(), newLock, ReplaceOptions.replaceOptions().cas(result.cas()));
+        collection.replace(newLock.getKey(), toEntity(newLock), ReplaceOptions.replaceOptions().cas(result.cas()));
         logger.debug("Lock with key {} updated", newLock.getKey());
       } else if (new Date().before(existingLock.getExpiresAt())){
         logger.debug("Already locked by {}, will expire at", existingLock.getOwner(), existingLock.getExpiresAt());
@@ -45,7 +48,7 @@ public class CouchbaseLockRepository extends CouchbaseRepositoryBase<LockEntry> 
       }
     } catch (DocumentNotFoundException documentNotFoundException){
       logger.debug("Lock with key {} does not exist, so trying to perform a lock.", newLock.getKey());
-      collection.insert(newLock.getKey(), newLock);
+      collection.insert(newLock.getKey(), toEntity(newLock));
       logger.debug("Lock with key {} created", newLock.getKey());
     }
   }
@@ -57,7 +60,7 @@ public class CouchbaseLockRepository extends CouchbaseRepositoryBase<LockEntry> 
       LockEntry existingLock = new CouchbaseLockEntry(result.contentAsObject());
       if(newLock.getOwner().equals(existingLock.getOwner())){
         logger.debug("Lock with key {} already owned by us, so trying to perform a lock.", existingLock.getKey());
-        collection.replace(newLock.getKey(), newLock, ReplaceOptions.replaceOptions().cas(result.cas()));
+        collection.replace(newLock.getKey(), toEntity(newLock), ReplaceOptions.replaceOptions().cas(result.cas()));
         logger.debug("Lock with key {} updated", newLock.getKey());
       } else {
         logger.debug("Already locked by {}, will expire at", existingLock.getOwner(), existingLock.getExpiresAt());
@@ -94,4 +97,12 @@ public class CouchbaseLockRepository extends CouchbaseRepositoryBase<LockEntry> 
       logger.debug("Lock for key {} is not found, nothing to do", lockKey);
     }
   }
+
+  @Override
+  public JsonObject mapFieldInstances(List<FieldInstance> fieldInstanceList) {
+    JsonObject document = super.mapFieldInstances(fieldInstanceList);
+    document.put(DOCUMENT_TYPE_KEY, DOCUMENT_TYPE_LOCK_ENTRY);
+    return document;
+  }
+  
 }

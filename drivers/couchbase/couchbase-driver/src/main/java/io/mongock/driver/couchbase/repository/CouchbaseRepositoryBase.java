@@ -35,8 +35,7 @@ import java.util.stream.Collectors;
 public class CouchbaseRepositoryBase <DOMAIN_CLASS> implements EntityRepository<DOMAIN_CLASS, JsonObject>, RepositoryIndexable {
   private final static Logger logger = LoggerFactory.getLogger(CouchbaseRepositoryBase.class);
   private final static String INDEX_NAME = "idx_mongock_keys";
-  protected final static String DOCUMENT_TYPE_CHANGE_ENTRY = "mongockChangeEntry";
-  protected final static String DOCUMENT_TYPE_KEY = "_doctype";
+  public final static String DOCUMENT_TYPE_KEY = "_doctype";
   protected final Collection collection;
   protected final Cluster cluster;
   protected final Set<String> queryFields;
@@ -51,7 +50,6 @@ public class CouchbaseRepositoryBase <DOMAIN_CLASS> implements EntityRepository<
   @Override
   public JsonObject mapFieldInstances(List<FieldInstance> fieldInstanceList) {
     JsonObject document = JsonObject.create();
-    document.put(DOCUMENT_TYPE_KEY, DOCUMENT_TYPE_CHANGE_ENTRY);
     fieldInstanceList.forEach(def -> addField(document, def.getName(), def.getValue()));
     return document;
   }

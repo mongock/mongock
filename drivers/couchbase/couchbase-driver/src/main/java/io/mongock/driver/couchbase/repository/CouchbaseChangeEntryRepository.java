@@ -15,6 +15,7 @@ import io.mongock.driver.api.entry.ChangeEntry;
 import io.mongock.driver.api.entry.ChangeEntryService;
 import io.mongock.driver.couchbase.entry.CouchbaseChangeEntry;
 import io.mongock.driver.couchbase.util.N1QLQueryProvider;
+import io.mongock.utils.field.FieldInstance;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -30,6 +31,7 @@ import java.util.stream.Collectors;
  */
 public class CouchbaseChangeEntryRepository extends CouchbaseRepositoryBase<ChangeEntry> implements ChangeEntryService {
   private final static Logger logger = LoggerFactory.getLogger(CouchbaseChangeEntryRepository.class);
+  private final static String DOCUMENT_TYPE_CHANGE_ENTRY = "mongockChangeEntry";
   
   private static final Set<String> QUERY_FIELDS = new LinkedHashSet<>();
   
@@ -82,5 +84,10 @@ public class CouchbaseChangeEntryRepository extends CouchbaseRepositoryBase<Chan
     //  nothing to do for couchbase
   }
 
-
+  @Override
+  public JsonObject mapFieldInstances(List<FieldInstance> fieldInstanceList) {
+    JsonObject document = super.mapFieldInstances(fieldInstanceList);
+    document.put(DOCUMENT_TYPE_KEY, DOCUMENT_TYPE_CHANGE_ENTRY);
+    return document;
+  }
 }

@@ -49,11 +49,12 @@ class CouchbaseLockRepositoryTest {
     lockRepository.insertUpdate(lockOwner1NotExpired);
     
     // then    
-    LockEntry lockEntry = new CouchbaseLockEntry(collection.get(LockEntryProvider.LOCK_KEY).contentAsObject());
+    CouchbaseLockEntry lockEntry = new CouchbaseLockEntry(collection.get(LockEntryProvider.LOCK_KEY).contentAsObject());
     assertEquals(lockOwner1NotExpired.getExpiresAt(), lockEntry.getExpiresAt());
     assertEquals(lockOwner1NotExpired.getOwner(), lockEntry.getOwner());
     assertEquals(lockOwner1NotExpired.getStatus(), lockEntry.getStatus());
     assertEquals(lockOwner1NotExpired.getKey(), lockEntry.getKey());
+    assertNotNull(lockEntry.getDocType());
   }
 
   @ParameterizedTest
