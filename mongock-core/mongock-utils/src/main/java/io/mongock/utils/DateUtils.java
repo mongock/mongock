@@ -25,7 +25,7 @@ public final class DateUtils {
   }
   
   private static Date localDateTimeToDate(LocalDateTime dateToConvert) {
-      return java.util.Date
+      return Date
         .from(dateToConvert.atZone(ZoneId.systemDefault())
         .toInstant());
   }
