@@ -10,6 +10,7 @@ import io.mongock.driver.api.entry.ChangeEntry;
 import io.mongock.driver.api.entry.ChangeState;
 import io.mongock.driver.api.entry.ChangeType;
 import io.mongock.driver.core.entry.ChangeEntryRepositoryWithEntity;
+import io.mongock.utils.DateUtils;
 import org.bson.Document;
 import org.bson.conversions.Bson;
 import org.slf4j.Logger;
@@ -110,7 +111,7 @@ public class Mongo3ChangeEntryRepository extends Mongo3RepositoryBase<ChangeEntr
             entry.getString(KEY_EXECUTION_ID),
             entry.getString(KEY_CHANGE_ID),
             entry.getString(KEY_AUTHOR),
-            entry.getDate(KEY_TIMESTAMP),
+            DateUtils.toDate(entry.get(KEY_TIMESTAMP)),
             entry.containsKey(KEY_STATE) ? ChangeState.valueOf(entry.getString(KEY_STATE)) : null,
             entry.containsKey(KEY_TYPE) ? ChangeType.valueOf(entry.getString(KEY_TYPE)) : null,
             entry.getString(KEY_CHANGELOG_CLASS),
