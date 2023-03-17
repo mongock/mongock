@@ -51,6 +51,10 @@ abstract class DynamoDBDriverBase protected constructor(
 
     private var transactionItems: DynamoDBTransactionItems? = null
 
+    override fun specificInitialization() {
+        _dependencies.add(ChangeSetDependency(ChangeEntryService::class.java, getChangeEntryService(), false))
+    }
+
     override fun getLockRepository(): LockRepository {
         return _lockRepository
     }
