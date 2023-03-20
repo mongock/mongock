@@ -26,82 +26,88 @@ import java.util.List;
  * @author Tigran Babloyan
  */
 public class CouchbaseLockRepository extends CouchbaseRepositoryBase<LockEntry> implements LockRepositoryWithEntity<JsonObject> {
-  private final static Logger logger = LoggerFactory.getLogger(CouchbaseLockRepository.class);
-  private final static String DOCUMENT_TYPE_LOCK_ENTRY = "mongockLockEntry";
+  private static final Logger logger = LoggerFactory.getLogger(CouchbaseLockRepository.class);
+  
+  private LockEntryKeyGenerator keyGenerator = new LockEntryKeyGenerator();
+  
   public CouchbaseLockRepository(Cluster cluster, Collection collection) {
     super(cluster, collection, Collections.emptySet());
   }
 
   @Override
   public void insertUpdate(LockEntry newLock) throws LockPersistenceException {
+    String key = keyGenerator.toKey(newLock);
     try{
-      GetResult result = collection.get(newLock.getKey());
+      GetResult result = collection.get(key);
       LockEntry existingLock = new CouchbaseLockEntry(result.contentAsObject());
       if(newLock.getOwner().equals(existingLock.getOwner()) ||
           new Date().after(existingLock.getExpiresAt())){
         logger.debug("Lock with key {} already owned by us or is expired, so trying to perform a lock.", existingLock.getKey());
-        collection.replace(newLock.getKey(), toEntity(newLock), ReplaceOptions.replaceOptions().cas(result.cas()));
-        logger.debug("Lock with key {} updated", newLock.getKey());
+        collection.replace(key, toEntity(newLock), ReplaceOptions.replaceOptions().cas(result.cas()));
+        logger.debug("Lock with key {} updated", key);
       } else if (new Date().before(existingLock.getExpiresAt())){
-        logger.debug("Already locked by {}, will expire at", existingLock.getOwner(), existingLock.getExpiresAt());
-        throw new LockPersistenceException("Get By" + newLock.getKey(), newLock.toString(), "Still locked by " + existingLock.getOwner() + " until " + existingLock.getExpiresAt());
+        logger.debug("Already locked by {}, will expire at {}", existingLock.getOwner(), existingLock.getExpiresAt());
+        throw new LockPersistenceException("Get By" + key, newLock.toString(), "Still locked by " + existingLock.getOwner() + " until " + existingLock.getExpiresAt());
       }
     } catch (DocumentNotFoundException documentNotFoundException){
       logger.debug("Lock with key {} does not exist, so trying to perform a lock.", newLock.getKey());
-      collection.insert(newLock.getKey(), toEntity(newLock));
-      logger.debug("Lock with key {} created", newLock.getKey());
+      collection.insert(key, toEntity(newLock));
+      logger.debug("Lock with key {} created", key);
     }
   }
 
   @Override
   public void updateIfSameOwner(LockEntry newLock) throws LockPersistenceException {
+    String key = keyGenerator.toKey(newLock);
     try{
-      GetResult result = collection.get(newLock.getKey());
+      GetResult result = collection.get(key);
       LockEntry existingLock = new CouchbaseLockEntry(result.contentAsObject());
       if(newLock.getOwner().equals(existingLock.getOwner())){
         logger.debug("Lock with key {} already owned by us, so trying to perform a lock.", existingLock.getKey());
-        collection.replace(newLock.getKey(), toEntity(newLock), ReplaceOptions.replaceOptions().cas(result.cas()));
-        logger.debug("Lock with key {} updated", newLock.getKey());
+        collection.replace(key, toEntity(newLock), ReplaceOptions.replaceOptions().cas(result.cas()));
+        logger.debug("Lock with key {} updated", key);
       } else {
-        logger.debug("Already locked by {}, will expire at", existingLock.getOwner(), existingLock.getExpiresAt());
-        throw new LockPersistenceException("Get By" + newLock.getKey(), newLock.toString(), "Lock belongs to " + existingLock.getOwner());  
+        logger.debug("Already locked by {}, will expire at {}", existingLock.getOwner(), existingLock.getExpiresAt());
+        throw new LockPersistenceException("Get By " + key, newLock.toString(), "Lock belongs to " + existingLock.getOwner());  
       }
     } catch (DocumentNotFoundException documentNotFoundException){
-      throw new LockPersistenceException("Get By" + newLock.getKey(), newLock.toString(), documentNotFoundException.getMessage());
+      throw new LockPersistenceException("Get By " + key, newLock.toString(), documentNotFoundException.getMessage());
     }
   }
 
   @Override
   public LockEntry findByKey(String lockKey) {
+    String key = keyGenerator.toKey(lockKey);
     try{
-      GetResult result = collection.get(lockKey);
+      GetResult result = collection.get(key);
       return new CouchbaseLockEntry(result.contentAsObject());
     } catch (DocumentNotFoundException documentNotFoundException) {
-      logger.debug("Lock for key {} was not found.", lockKey);
+      logger.debug("Lock for key {} was not found.", key);
       return null;  
     }
   }
 
   @Override
   public void removeByKeyAndOwner(String lockKey, String owner) {
+    String key = keyGenerator.toKey(lockKey);
     try{
-      GetResult result = collection.get(lockKey);
+      GetResult result = collection.get(key);
       LockEntry existingLock = new CouchbaseLockEntry(result.contentAsObject());
       if(owner.equals(existingLock.getOwner())){
-        logger.debug("Lock for key {} belongs to us, so removing.", lockKey);
-        collection.remove(lockKey, RemoveOptions.removeOptions().cas(result.cas()));
+        logger.debug("Lock for key {} belongs to us, so removing.", key);
+        collection.remove(key, RemoveOptions.removeOptions().cas(result.cas()));
       } else {
-        logger.debug("Lock for key {} belongs to other owner, can not delete.", lockKey);
+        logger.debug("Lock for key {} belongs to other owner, can not delete.", key);
       }
     } catch (DocumentNotFoundException documentNotFoundException) {
-      logger.debug("Lock for key {} is not found, nothing to do", lockKey);
+      logger.debug("Lock for key {} is not found, nothing to do", key);
     }
   }
 
   @Override
   public JsonObject mapFieldInstances(List<FieldInstance> fieldInstanceList) {
     JsonObject document = super.mapFieldInstances(fieldInstanceList);
-    document.put(DOCUMENT_TYPE_KEY, DOCUMENT_TYPE_LOCK_ENTRY);
+    document.put(DOCUMENT_TYPE_KEY, LockEntryKeyGenerator.DOCUMENT_TYPE_LOCK_ENTRY);
     return document;
   }
   

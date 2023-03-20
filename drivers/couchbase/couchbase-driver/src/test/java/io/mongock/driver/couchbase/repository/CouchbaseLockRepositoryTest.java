@@ -20,15 +20,17 @@ import static org.junit.jupiter.api.Assertions.*;
 
 class CouchbaseLockRepositoryTest {
   
+  private final LockEntryKeyGenerator lockEntryKeyGenerator = new LockEntryKeyGenerator();
+  
   @AfterEach
   void cleanUp() {
     new CouchbaseLockRepository(TestcontainersCouchbaseRunner.getCluster6(), TestcontainersCouchbaseRunner.getCollectionV6()).deleteAll();
     new CouchbaseLockRepository(TestcontainersCouchbaseRunner.getCluster7(), TestcontainersCouchbaseRunner.getCollectionV7()).deleteAll();
-    if(TestcontainersCouchbaseRunner.getCollectionV6().exists(LockEntryProvider.LOCK_KEY).exists()){
-      TestcontainersCouchbaseRunner.getCollectionV6().remove(LockEntryProvider.LOCK_KEY, RemoveOptions.removeOptions().durability(PersistTo.ACTIVE, ReplicateTo.NONE));  
+    if(TestcontainersCouchbaseRunner.getCollectionV6().exists(lockEntryKeyGenerator.toKey(LockEntryProvider.LOCK_KEY)).exists()){
+      TestcontainersCouchbaseRunner.getCollectionV6().remove(lockEntryKeyGenerator.toKey(LockEntryProvider.LOCK_KEY), RemoveOptions.removeOptions().durability(PersistTo.ACTIVE, ReplicateTo.NONE));  
     }
-    if(TestcontainersCouchbaseRunner.getCollectionV7().exists(LockEntryProvider.LOCK_KEY).exists()){
-      TestcontainersCouchbaseRunner.getCollectionV7().remove(LockEntryProvider.LOCK_KEY, RemoveOptions.removeOptions().durability(PersistTo.ACTIVE, ReplicateTo.NONE));
+    if(TestcontainersCouchbaseRunner.getCollectionV7().exists(lockEntryKeyGenerator.toKey(LockEntryProvider.LOCK_KEY)).exists()){
+      TestcontainersCouchbaseRunner.getCollectionV7().remove(lockEntryKeyGenerator.toKey(LockEntryProvider.LOCK_KEY), RemoveOptions.removeOptions().durability(PersistTo.ACTIVE, ReplicateTo.NONE));
     }
   }
 
@@ -44,12 +46,13 @@ class CouchbaseLockRepositoryTest {
   void test_insert_update_with_no_existing_lock(Cluster cluster, Collection collection, LockEntry lockOwner1NotExpired) {
     // given
     CouchbaseLockRepository lockRepository = new CouchbaseLockRepository(cluster, collection);
+    String key = lockEntryKeyGenerator.toKey(lockOwner1NotExpired);
     
     // when
     lockRepository.insertUpdate(lockOwner1NotExpired);
     
     // then    
-    CouchbaseLockEntry lockEntry = new CouchbaseLockEntry(collection.get(LockEntryProvider.LOCK_KEY).contentAsObject());
+    CouchbaseLockEntry lockEntry = new CouchbaseLockEntry(collection.get(key).contentAsObject());
     assertEquals(lockOwner1NotExpired.getExpiresAt(), lockEntry.getExpiresAt());
     assertEquals(lockOwner1NotExpired.getOwner(), lockEntry.getOwner());
     assertEquals(lockOwner1NotExpired.getStatus(), lockEntry.getStatus());
@@ -64,12 +67,13 @@ class CouchbaseLockRepositoryTest {
     // given
     CouchbaseLockRepository lockRepository = new CouchbaseLockRepository(cluster, collection);
     lockRepository.insertUpdate(lockOwner1NotExpired);
+    String key = lockEntryKeyGenerator.toKey(lockOwner1NotExpired);
 
     // when
     lockRepository.insertUpdate(lockOwner1NotExpiredUpdated);
 
     // then    
-    LockEntry lockEntry = new CouchbaseLockEntry(collection.get(LockEntryProvider.LOCK_KEY).contentAsObject());
+    LockEntry lockEntry = new CouchbaseLockEntry(collection.get(key).contentAsObject());
     assertEquals(lockOwner1NotExpiredUpdated.getExpiresAt(), lockEntry.getExpiresAt());
     assertEquals(lockOwner1NotExpiredUpdated.getOwner(), lockEntry.getOwner());
     assertEquals(lockOwner1NotExpiredUpdated.getStatus(), lockEntry.getStatus());
@@ -83,12 +87,13 @@ class CouchbaseLockRepositoryTest {
     // given
     CouchbaseLockRepository lockRepository = new CouchbaseLockRepository(cluster, collection);
     lockRepository.insertUpdate(lockOwner1Expired);
+    String key = lockEntryKeyGenerator.toKey(lockOwner1Expired);
 
     // when
     lockRepository.insertUpdate(lockOwner2NotExpired);
 
     // then    
-    LockEntry lockEntry = new CouchbaseLockEntry(collection.get(LockEntryProvider.LOCK_KEY).contentAsObject());
+    LockEntry lockEntry = new CouchbaseLockEntry(collection.get(key).contentAsObject());
     assertEquals(lockOwner2NotExpired.getExpiresAt(), lockEntry.getExpiresAt());
     assertEquals(lockOwner2NotExpired.getOwner(), lockEntry.getOwner());
     assertEquals(lockOwner2NotExpired.getStatus(), lockEntry.getStatus());
@@ -137,12 +142,13 @@ class CouchbaseLockRepositoryTest {
     // given
     CouchbaseLockRepository lockRepository = new CouchbaseLockRepository(cluster, collection);
     lockRepository.insertUpdate(lockOwner1NotExpired);
+    String key = lockEntryKeyGenerator.toKey(lockOwner1NotExpired);
 
     // when
     lockRepository.updateIfSameOwner(lockOwner1NotExpiredUpdated);
 
     // then    
-    LockEntry lockEntry = new CouchbaseLockEntry(collection.get(LockEntryProvider.LOCK_KEY).contentAsObject());
+    LockEntry lockEntry = new CouchbaseLockEntry(collection.get(key).contentAsObject());
     assertEquals(lockOwner1NotExpiredUpdated.getExpiresAt(), lockEntry.getExpiresAt());
     assertEquals(lockOwner1NotExpiredUpdated.getOwner(), lockEntry.getOwner());
     assertEquals(lockOwner1NotExpiredUpdated.getStatus(), lockEntry.getStatus());
@@ -156,12 +162,13 @@ class CouchbaseLockRepositoryTest {
     // given
     CouchbaseLockRepository lockRepository = new CouchbaseLockRepository(cluster, collection);
     lockRepository.insertUpdate(lockOwner1Expired);
+    String key = lockEntryKeyGenerator.toKey(lockOwner1Expired);
 
     // when
     lockRepository.updateIfSameOwner(lockOwner1NotExpiredUpdated);
 
     // then    
-    LockEntry lockEntry = new CouchbaseLockEntry(collection.get(LockEntryProvider.LOCK_KEY).contentAsObject());
+    LockEntry lockEntry = new CouchbaseLockEntry(collection.get(key).contentAsObject());
     assertEquals(lockOwner1NotExpiredUpdated.getExpiresAt(), lockEntry.getExpiresAt());
     assertEquals(lockOwner1NotExpiredUpdated.getOwner(), lockEntry.getOwner());
     assertEquals(lockOwner1NotExpiredUpdated.getStatus(), lockEntry.getStatus());
@@ -208,12 +215,13 @@ class CouchbaseLockRepositoryTest {
     // given
     CouchbaseLockRepository lockRepository = new CouchbaseLockRepository(cluster, collection);
     lockRepository.insertUpdate(lockOwner1NotExpired);
+    String key = lockEntryKeyGenerator.toKey(lockOwner1NotExpired);
 
     // when
     lockRepository.removeByKeyAndOwner(LockEntryProvider.LOCK_KEY, lockOwner1NotExpired.getOwner());
 
     // then
-    assertFalse(collection.exists(LockEntryProvider.LOCK_KEY).exists());
+    assertFalse(collection.exists(key).exists());
   }
 
   @ParameterizedTest
@@ -223,12 +231,13 @@ class CouchbaseLockRepositoryTest {
     // given
     CouchbaseLockRepository lockRepository = new CouchbaseLockRepository(cluster, collection);
     lockRepository.insertUpdate(lockOwner2NotExpired);
+    String key = lockEntryKeyGenerator.toKey(lockOwner2NotExpired);
 
     // when
     lockRepository.removeByKeyAndOwner(LockEntryProvider.LOCK_KEY, lockOwner1NotExpired.getOwner());
 
     // then
-    assertTrue(collection.exists(LockEntryProvider.LOCK_KEY).exists());
+    assertTrue(collection.exists(key).exists());
   }
   
 }
