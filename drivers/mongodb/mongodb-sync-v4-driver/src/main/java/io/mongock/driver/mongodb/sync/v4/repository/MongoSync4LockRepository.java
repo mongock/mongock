@@ -11,7 +11,6 @@ import com.mongodb.client.MongoCollection;
 import com.mongodb.client.model.Filters;
 import com.mongodb.client.model.UpdateOptions;
 import com.mongodb.client.result.UpdateResult;
-import org.bson.BsonDocument;
 import org.bson.Document;
 import org.bson.conversions.Bson;
 
@@ -21,6 +20,7 @@ import static io.mongock.driver.core.lock.LockEntry.KEY_FIELD;
 import static io.mongock.driver.core.lock.LockEntry.STATUS_FIELD;
 import static io.mongock.driver.core.lock.LockEntry.OWNER_FIELD;
 import static io.mongock.driver.core.lock.LockEntry.EXPIRES_AT_FIELD;
+import io.mongock.utils.DateUtils;
 public class MongoSync4LockRepository extends MongoSync4RepositoryBase<LockEntry> implements LockRepositoryWithEntity<Document> {
 
 
@@ -71,7 +71,7 @@ public class MongoSync4LockRepository extends MongoSync4RepositoryBase<LockEntry
           result.getString(KEY_FIELD),
           result.getString(STATUS_FIELD),
           result.getString(OWNER_FIELD),
-          result.getDate(EXPIRES_AT_FIELD)
+          DateUtils.toDate(result.get(EXPIRES_AT_FIELD))
       );
     }
     return null;

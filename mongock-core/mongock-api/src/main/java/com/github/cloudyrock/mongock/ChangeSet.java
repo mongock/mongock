@@ -9,10 +9,11 @@ import java.lang.annotation.Target;
  * From Mongock version 5, this annotation is deprecated and shouldn't be used (remains in code for backwards compatibility).
  *
  * Please follow one of the recommended approaches depending on your use case:
- *  - For existing changeLogs/changeSets created prior version 5: leave them untouched (use with the deprecated annotation)
+ *  - For existing changeLogs/changeSets created prior version 5: leave them untouched (use with the deprecated annotation).
  *
- *  - For new changeLogs/changeSets created  from version 5: ChangeLogs/changeSets implement your changelogs by
- *  implementing the interfaces ChangeLog or BasicChangeLog
+ *  - For new changeLogs/changeSets created from version 5: use ChangeUnit annotated methods (@Execution / @RollbackExecution).
+ * 
+ * For more details please visit the <a href="https://docs.mongock.io/v5/migration/index.html">migration guide</a>.
  *
  * @see ChangeLog
  */

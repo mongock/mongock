@@ -12,6 +12,7 @@ import com.mongodb.client.FindIterable;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
 import io.mongock.driver.api.entry.ChangeType;
+import io.mongock.utils.DateUtils;
 import org.bson.Document;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -156,7 +157,7 @@ public class LegacyService {
   }
 
   private Date getDocumentDateValue(Document changeDocument, String field) {
-    return field != null ? changeDocument.getDate(field) : null;
+    return field != null ? DateUtils.toDate(changeDocument.get(field)) : null;
   }
 
   private String getExecutionId() {
