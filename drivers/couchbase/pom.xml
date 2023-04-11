@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <parent>
+    <groupId>io.mongock</groupId>
+    <artifactId>drivers</artifactId>
+    <version>5.2.5-SNAPSHOT</version>
+  </parent>
+
+  <modelVersion>4.0.0</modelVersion>
+
+  <name>Couchbase-drivers</name>
+  <description>Couchbase tool for tracking, managing and applying database schema changes</description>
+  <url>https://github.com/mongock/mongock</url>
+
+  <artifactId>couchbase</artifactId>
+  <packaging>pom</packaging>
+
+  <modules>
+    <module>mongock-driver-couchbase-bom</module>
+    <module>couchbase-driver</module>
+    <module>couchbase-springboot-driver</module>
+  </modules>
+
+  <properties>
+    <couchbase-java-client.version>3.4.4</couchbase-java-client.version>
+    <spring-data-couchbase.version>4.4.8</spring-data-couchbase.version>
+  </properties>
+
+</project>

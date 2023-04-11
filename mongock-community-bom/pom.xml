@@ -45,6 +45,15 @@
         <scope>import</scope>
       </dependency>
 
+      <!-- Couchbase community -->
+      <dependency>
+        <groupId>io.mongock</groupId>
+        <artifactId>mongock-driver-couchbase-bom</artifactId>
+        <version>${project.version}</version>
+        <type>pom</type>
+        <scope>import</scope>
+      </dependency>
+
 
       <!-- testing -->
       <dependency>
