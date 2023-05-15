@@ -34,7 +34,7 @@ public abstract class MongockIntegrationTestBase {
    */
   public void mongockAfterEach() {
     connectionDriverTestingWrapper.cleanMigrationRepository();
-    connectionDriverTestingWrapper.cleanMigrationRepository();
+    connectionDriverTestingWrapper.cleanLockRepository();
   }
 
   /**
