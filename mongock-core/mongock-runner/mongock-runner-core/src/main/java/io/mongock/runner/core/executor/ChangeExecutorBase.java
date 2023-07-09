@@ -248,7 +248,12 @@ public abstract class ChangeExecutorBase<CONFIG extends ChangeExecutorConfigurat
     } finally {
       if (changeEntry != null) {
         logChangeEntry(changeEntry, changeSetItem, alreadyExecuted);
-        trackChangeEntry(changeSetItem, changeEntry, alreadyExecuted);
+        try {
+          trackChangeEntry(changeSetItem, changeEntry, alreadyExecuted);
+        }
+        catch (Exception ex) {
+          logger.debug("failure when tracking changeEntry[{}]", changeEntry.getId());
+        }
       }
     }
   }
