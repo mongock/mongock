@@ -170,6 +170,7 @@ public class MongockConfiguration implements ExecutorConfiguration {
     transactionStrategy = from.getTransactionStrategy();
     maxTries = from.getMaxTries();
     maxWaitingForLockMillis = from.getMaxWaitingForLockMillis();
+    defaultMigrationAuthor = from.getDefaultMigrationAuthor();
   }
 
   public long getLockAcquiredForMillis() {

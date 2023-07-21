@@ -9,6 +9,32 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 public class MongockConfigurationTest {
 
   @Test
+  public void shouldCopyDefaultMigrationAuthorFromExisitingConfigurationDefault() {
+    MongockConfiguration conf = new MongockConfiguration();
+
+    MongockConfiguration newConf = new MongockConfiguration();
+    newConf.updateFrom(conf);
+    assertEquals(MongockConfiguration.DEFAULT_MIGRATION_AUTHOR, newConf.getDefaultMigrationAuthor());
+  }
+
+  @Test
+  public void shouldCopyDefaultMigrationAuthorFromExisitingConfigurationIfSet() {
+    MongockConfiguration conf = new MongockConfiguration();
+    conf.setDefaultMigrationAuthor("joey ramone");
+
+    MongockConfiguration newConf = new MongockConfiguration();
+    newConf.updateFrom(conf);
+    assertEquals("joey ramone", newConf.getDefaultMigrationAuthor());
+  }
+
+  @Test
+  public void shouldReturnNewDefaultMigrationAuthor_IfNewProperty() {
+    MongockConfiguration conf = new MongockConfiguration();
+    conf.setDefaultMigrationAuthor("joey ramone");
+    assertEquals("joey ramone", conf.getDefaultMigrationAuthor());
+  }
+
+  @Test
   public void shouldReturnNewQuitTryingAfterMillis_IfNewProperty() {
     MongockConfiguration conf = new MongockConfiguration();
     conf.setLockQuitTryingAfterMillis(1000L);
