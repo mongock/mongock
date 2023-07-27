@@ -9,7 +9,7 @@
 
   <groupId>io.mongock</groupId>
   <artifactId>mongock</artifactId>
-  <version>5.3.3-SNAPSHOT</version>
+  <version>5.3.4-SNAPSHOT</version>
   <packaging>pom</packaging>
 
   <modules>
@@ -72,7 +72,7 @@
     <connection>scm:git:git@github.com:mongock/mongock.git</connection>
     <developerConnection>scm:git:https://github.com/mongock/mongock.git</developerConnection>
     <url>https://github.com/mongock/mongock</url>
-    <tag>mongock-5.3.3-SNAPSHOT</tag>
+    <tag>mongock-5.3.4-SNAPSHOT</tag>
   </scm>
 
   <developers>
