@@ -69,7 +69,7 @@ public class ChangeLogService extends ChangeLogServiceBase {
     return ChangeLogItem.getFromAnnotation(
         changeUnitClass,
         changeUnit.id(),
-        StringUtils.hasText(changeUnit.author()) ? changeUnit.author() : getDefaultMigrationAuthor(),
+        StringUtils.hasText(changeUnit.author()) ? changeUnit.author() : getDefaultAuthor(),
         changeUnit.order(),
         changeUnit.failFast(),
         changeUnit.transactional(),

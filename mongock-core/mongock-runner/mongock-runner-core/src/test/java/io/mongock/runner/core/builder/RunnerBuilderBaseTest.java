@@ -173,7 +173,7 @@ public class RunnerBuilderBaseTest {
 
     builder.buildRunner().execute();
 
-    Mockito.verify(changeLogServiceSpy).setDefaultMigrationAuthor("default_author");
+    Mockito.verify(changeLogServiceSpy).setDefaultAuthor("default_author");
 
 
   }

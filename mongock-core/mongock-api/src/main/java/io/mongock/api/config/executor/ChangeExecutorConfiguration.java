@@ -17,7 +17,10 @@ public interface ChangeExecutorConfiguration {
   
   TransactionStrategy getTransactionStrategy();
 
+  @Deprecated
   String getDefaultMigrationAuthor();
+
+  String getDefaultAuthor();
   
   List<String> getMigrationScanPackage();
   
