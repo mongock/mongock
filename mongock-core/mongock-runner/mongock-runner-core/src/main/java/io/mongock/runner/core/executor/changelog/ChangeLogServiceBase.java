@@ -47,7 +47,7 @@ public abstract class ChangeLogServiceBase implements Validable {
   private List<Class<?>> changeLogsBaseClassList;
   private ArtifactVersion startSystemVersion;
   private ArtifactVersion endSystemVersion;
-  private String defaultMigrationAuthor;
+  private String defaultAuthor;
 
   public ChangeLogServiceBase(AnnotationProcessor annotationProcessor, LegacyAnnotationProcessor legacyAnnotationProcessor) {
     this.legacyAnnotationProcessor = legacyAnnotationProcessor;
@@ -62,7 +62,7 @@ public abstract class ChangeLogServiceBase implements Validable {
     this.changeLogsBaseClassList = Collections.emptyList();
     this.startSystemVersion = new DefaultArtifactVersion("0");
     this.endSystemVersion = new DefaultArtifactVersion(String.valueOf(Integer.MAX_VALUE));
-    this.defaultMigrationAuthor = null;
+    this.defaultAuthor = null;
   }
 
   protected LegacyAnnotationProcessor getLegacyAnnotationProcessor() {
@@ -117,12 +117,12 @@ public abstract class ChangeLogServiceBase implements Validable {
     return Optional.ofNullable(changeLogInstantiator);
   }
 
-  public String getDefaultMigrationAuthor() {
-    return defaultMigrationAuthor;
+  public String getDefaultAuthor() {
+    return defaultAuthor;
   }
 
-  public void setDefaultMigrationAuthor(String defaultMigrationAuthor) {
-    this.defaultMigrationAuthor = defaultMigrationAuthor;
+  public void setDefaultAuthor(String defaultAuthor) {
+    this.defaultAuthor = defaultAuthor;
   }
 
   @Override

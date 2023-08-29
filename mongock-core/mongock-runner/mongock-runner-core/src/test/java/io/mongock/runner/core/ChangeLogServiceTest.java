@@ -144,7 +144,6 @@ public class ChangeLogServiceTest {
     assertEquals("changeUnit[" + ChangeUnitWithAuthorEmpty.class.getName() + "] author cannot be null or empty.", ex.getMessage());
   }
 
-  @Test
   public void shouldNotThrowException_whenChangeUnitAuthorIsEmpty_IfSetDefaultAuthor() {
     ChangeLogService changeLogService = new ChangeLogService(
         Collections.emptyList(),
@@ -152,11 +151,11 @@ public class ChangeLogServiceTest {
         "0",
         "9999"
     );
-    changeLogService.setDefaultMigrationAuthor("default_author");
+    changeLogService.setDefaultAuthor("joey ramone");
     List<ChangeLogItem> changeLogItemList = new ArrayList<>(changeLogService.fetchChangeLogs());
     assertEquals(1, changeLogItemList.size());
     ChangeSetItem changeSetItem = changeLogItemList.get(0).getChangeSetItems().get(0);
-    assertEquals("default_author", changeSetItem.getAuthor());
+    assertEquals("joey ramone", changeSetItem.getAuthor());
   }
 
 

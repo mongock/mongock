@@ -106,7 +106,7 @@ public class SystemUpdateExecutor<CONFIG extends MongockConfiguration> extends C
     }
     changeLogService.reset();
     changeLogService.setChangeLogsBasePackageList(changeLogsScanPackage);
-    changeLogService.setDefaultMigrationAuthor(SYSTEM_CHANGES_DEFAULT_AUTHOR);
+    changeLogService.setDefaultAuthor(SYSTEM_CHANGES_DEFAULT_AUTHOR);
   }
     
   private DriverSystemUpdatable getDriverSystemUpdatable(ConnectionDriver driver) {

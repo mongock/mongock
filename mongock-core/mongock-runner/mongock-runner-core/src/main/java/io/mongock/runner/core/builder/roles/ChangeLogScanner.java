@@ -15,8 +15,8 @@ public interface ChangeLogScanner<SELF extends ChangeLogScanner<SELF, CONFIG>, C
    * @param defaultMigrationAuthor the default author
    * @return builder for fluent interface
    */
-  default SELF setDefaultMigrationAuthor(String defaultMigrationAuthor) {
-    getConfig().setDefaultMigrationAuthor(defaultMigrationAuthor);
+  default SELF setDefaultAuthor(String defaultMigrationAuthor) {
+    getConfig().setDefaultAuthor(defaultMigrationAuthor);
     return getInstance();
   }
 

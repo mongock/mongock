@@ -477,7 +477,7 @@ public abstract class ChangeExecutorBase<CONFIG extends ChangeExecutorConfigurat
       }
     }
     changeLogService.reset();
-    changeLogService.setDefaultMigrationAuthor(config.getDefaultMigrationAuthor());
+    changeLogService.setDefaultAuthor(config.getDefaultAuthor());
     changeLogService.setChangeLogsBasePackageList(changeLogsScanPackage);
     changeLogService.setChangeLogsBaseClassList(changeLogsScanClasses);
     changeLogService.setStartSystemVersion(config.getStartSystemVersion());

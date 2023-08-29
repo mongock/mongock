@@ -17,8 +17,12 @@ import static io.mongock.utils.Constants.DEFAULT_TRY_FREQUENCY_MILLIS;
 
 public class MongockConfiguration implements ExecutorConfiguration {
 
-
+  /**
+   * @deprecated not working as expected(https://github.com/mongock/mongock/issues/631)
+   */
+  @Deprecated
   public static final String DEFAULT_MIGRATION_AUTHOR = "default_author";
+  public static final String DEFAULT_AUTHOR = "default_author";
   private static final Logger logger = LoggerFactory.getLogger(MongockConfiguration.class);
   private final static String LEGACY_DEFAULT_MIGRATION_REPOSITORY_NAME = "mongockChangeLog";
   private final static String LEGACY_DEFAULT_LOCK_REPOSITORY_NAME = "mongockLock";
@@ -125,7 +129,16 @@ public class MongockConfiguration implements ExecutorConfiguration {
    *
    * Default value: default_author
    */
+  @Deprecated
   private String defaultMigrationAuthor = DEFAULT_MIGRATION_AUTHOR;
+
+  /**
+   * Set a default author that will be applied on all changelogs if no Author set
+   * Fix the buggy behaviour of defaultMigrationAuthor(always default_author)
+   *
+   * Default value: default_author
+   */
+  private String defaultAuthor = DEFAULT_AUTHOR;
 
   /**
    * With the introduction of ChangeUnit in version 5, Mongock provides two strategies to approach the transactions(automatic and manually):
@@ -170,6 +183,7 @@ public class MongockConfiguration implements ExecutorConfiguration {
     transactionStrategy = from.getTransactionStrategy();
     maxTries = from.getMaxTries();
     maxWaitingForLockMillis = from.getMaxWaitingForLockMillis();
+    defaultAuthor=from.getDefaultAuthor();
   }
 
   public long getLockAcquiredForMillis() {
@@ -313,10 +327,20 @@ public class MongockConfiguration implements ExecutorConfiguration {
       this.transactionStrategy = transactionStrategy;
   }
 
+  public String getDefaultAuthor() {
+    return defaultAuthor;
+  }
+
+  public void setDefaultAuthor(String defaultAuthor) {
+    this.defaultAuthor = defaultAuthor;
+  }
+
+  @Deprecated
   public String getDefaultMigrationAuthor() {
     return defaultMigrationAuthor;
   }
 
+  @Deprecated
   public void setDefaultMigrationAuthor(String defaultMigrationAuthor) {
     this.defaultMigrationAuthor = defaultMigrationAuthor;
   }
