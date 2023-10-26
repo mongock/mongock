@@ -9,6 +9,7 @@ import io.mongock.runner.core.annotation.LegacyAnnotationProcessor;
 import io.mongock.runner.core.internal.ChangeLogItem;
 import io.mongock.runner.core.internal.ChangeSetItem;
 import io.mongock.utils.CollectionUtils;
+import io.mongock.utils.FileUtil;
 import io.mongock.utils.StringUtils;
 import org.apache.maven.artifact.versioning.ArtifactVersion;
 import org.apache.maven.artifact.versioning.DefaultArtifactVersion;
@@ -16,6 +17,7 @@ import org.reflections.Reflections;
 
 import java.lang.reflect.AnnotatedElement;
 import java.lang.reflect.Method;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
@@ -38,6 +40,7 @@ import static java.util.Arrays.asList;
  */
 public abstract class ChangeLogServiceBase implements Validable {
 
+  private static final String CHANGE_UNITS_FILE = "mongock/change-units.txt";
 
   private final LegacyAnnotationProcessor legacyAnnotationProcessor;
   private final AnnotationProcessor annotationProcessor;
@@ -58,8 +61,8 @@ public abstract class ChangeLogServiceBase implements Validable {
   public final void reset() {
     this.profileFilter = null;
     this.changeLogInstantiator = null;
-    this.changeLogsBasePackageList = Collections.emptyList();
-    this.changeLogsBaseClassList = Collections.emptyList();
+    this.changeLogsBasePackageList = new ArrayList<>();
+    this.changeLogsBaseClassList = new ArrayList<>();
     this.startSystemVersion = new DefaultArtifactVersion("0");
     this.endSystemVersion = new DefaultArtifactVersion(String.valueOf(Integer.MAX_VALUE));
     this.defaultAuthor = null;
@@ -162,7 +165,24 @@ public abstract class ChangeLogServiceBase implements Validable {
         new Reflections(changeLogsBasePackageList).getTypesAnnotatedWith(ChangeLog.class).stream(),
         new Reflections(changeLogsBasePackageList).getTypesAnnotatedWith(ChangeUnit.class).stream())
         : Stream.empty();
+
+    changeLogsBaseClassList.addAll(getClassesFromFile());
     return Stream.concat(changeLogsBaseClassList.stream(), scannedPackageStream).collect(Collectors.toSet());
+  }
+
+  private static List<Class<?>> getClassesFromFile() {
+    Function<String, Class<?>> toClass = className -> {
+      try {
+        return Class.forName(className);
+      } catch (ClassNotFoundException e) {
+        throw new RuntimeException(e);
+      }
+    };
+    return FileUtil
+        .readLinesFromFile(CHANGE_UNITS_FILE)
+        .stream()
+        .map(toClass)
+        .collect(Collectors.toList());
   }
 
   protected List<ChangeSetItem> fetchChangeSetMethodsSorted(Class<?> type) throws MongockException {
