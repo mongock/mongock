@@ -1,7 +1,6 @@
 package io.mongock.api.config;
 
 import io.mongock.api.config.executor.ExecutorConfiguration;
-import io.mongock.utils.Constants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -126,7 +125,7 @@ public class MongockConfiguration implements ExecutorConfiguration {
   /**
    * From version 5, author is not a mandatory field, but still needed for backward compatibility. This is why Mongock
    * has provided this field, so you can set the author once and forget about it.
-   *
+   * <p>
    * Default value: default_author
    */
   @Deprecated
@@ -135,7 +134,7 @@ public class MongockConfiguration implements ExecutorConfiguration {
   /**
    * Set a default author that will be applied on all changelogs if no Author set
    * Fix the buggy behaviour of defaultMigrationAuthor(always default_author)
-   *
+   * <p>
    * Default value: default_author
    */
   private String defaultAuthor = DEFAULT_AUTHOR;
@@ -143,20 +142,24 @@ public class MongockConfiguration implements ExecutorConfiguration {
   /**
    * With the introduction of ChangeUnit in version 5, Mongock provides two strategies to approach the transactions(automatic and manually):
    * - CHANGE_UNIT: Each change unit is wrapped in an independent transaction. This is the default and recommended way for two main reasons:
-   *                1. Change Unit provides a method `beforeExecution` which is executed before the transaction when strategy is CHANGE_UNIT.
-   *                If the strategy is not CHANGE_UNIT, this method is likely to be executed inside the transaction.
-   *                2. It maximizes the `eventual completeness` options, as allows Mongock to divide the work in multiple chunks in case all of them together are
-   *                too big.
+   * 1. Change Unit provides a method `beforeExecution` which is executed before the transaction when strategy is CHANGE_UNIT.
+   * If the strategy is not CHANGE_UNIT, this method is likely to be executed inside the transaction.
+   * 2. It maximizes the `eventual completeness` options, as allows Mongock to divide the work in multiple chunks in case all of them together are
+   * too big.
    * - EXECUTION: The entire migration's execution is wrapped in a transaction.
    */
   private TransactionStrategy transactionStrategy = TransactionStrategy.CHANGE_UNIT;
+
+  /**
+   * If true, indicates that the ChangeUnit's injections should be proxied. False, otherwise.
+   */
+  private boolean lockGuardEnabled = true;
 
   @Deprecated
   private Integer maxTries;
 
   @Deprecated
   private Long maxWaitingForLockMillis;
-
 
 
   private static long minutesToMillis(int minutes) {
@@ -183,7 +186,8 @@ public class MongockConfiguration implements ExecutorConfiguration {
     transactionStrategy = from.getTransactionStrategy();
     maxTries = from.getMaxTries();
     maxWaitingForLockMillis = from.getMaxWaitingForLockMillis();
-    defaultAuthor=from.getDefaultAuthor();
+    defaultAuthor = from.getDefaultAuthor();
+    lockGuardEnabled = from.lockGuardEnabled;
   }
 
   public long getLockAcquiredForMillis() {
@@ -318,13 +322,13 @@ public class MongockConfiguration implements ExecutorConfiguration {
   public void setTransactionEnabled(boolean transactionEnabled) {
     this.transactionEnabled = transactionEnabled;
   }
-  
+
   public TransactionStrategy getTransactionStrategy() {
-      return transactionStrategy;
+    return transactionStrategy;
   }
 
   public void setTransactionStrategy(TransactionStrategy transactionStrategy) {
-      this.transactionStrategy = transactionStrategy;
+    this.transactionStrategy = transactionStrategy;
   }
 
   public String getDefaultAuthor() {
@@ -361,6 +365,14 @@ public class MongockConfiguration implements ExecutorConfiguration {
     return LEGACY_DEFAULT_LOCK_REPOSITORY_NAME;
   }
 
+  public boolean isLockGuardEnabled() {
+    return lockGuardEnabled;
+  }
+
+  public void setLockGuardEnabled(boolean lockGuardEnabled) {
+    this.lockGuardEnabled = lockGuardEnabled;
+  }
+
   @Override
   public boolean equals(Object o) {
     if (this == o) return true;
@@ -372,6 +384,7 @@ public class MongockConfiguration implements ExecutorConfiguration {
         throwExceptionIfCannotObtainLock == that.throwExceptionIfCannotObtainLock &&
         trackIgnored == that.trackIgnored &&
         enabled == that.enabled &&
+        lockGuardEnabled == that.lockGuardEnabled &&
         Objects.equals(migrationRepositoryName, that.migrationRepositoryName) &&
         Objects.equals(lockRepositoryName, that.lockRepositoryName) &&
         Objects.equals(lockQuitTryingAfterMillis, that.lockQuitTryingAfterMillis) &&
@@ -391,8 +404,6 @@ public class MongockConfiguration implements ExecutorConfiguration {
     return Objects.hash(migrationRepositoryName, indexCreation, lockRepositoryName, lockAcquiredForMillis, lockQuitTryingAfterMillis, lockTryFrequencyMillis, throwExceptionIfCannotObtainLock, trackIgnored, enabled, migrationScanPackage, startSystemVersion, endSystemVersion, serviceIdentifier, metadata, legacyMigration, transactionEnabled, maxTries, maxWaitingForLockMillis);
   }
 
-
-
   //DEPRECATIONS
 
   /**
@@ -402,6 +413,7 @@ public class MongockConfiguration implements ExecutorConfiguration {
   public String getChangeLogRepositoryName() {
     return migrationRepositoryName;
   }
+
   /**
    * Deprecated, use migrationRepositoryName instead
    */
@@ -410,6 +422,7 @@ public class MongockConfiguration implements ExecutorConfiguration {
     logger.warn(DEPRECATED_PROPERTY_TEMPLATE, "changeLogRepositoryName", "migrationRepositoryName");
     this.migrationRepositoryName = migrationRepositoryName;
   }
+
   /**
    * Deprecated, use migrationScanPackage instead
    */
@@ -417,6 +430,7 @@ public class MongockConfiguration implements ExecutorConfiguration {
   public List<String> getChangeLogsScanPackage() {
     return migrationScanPackage;
   }
+
   /**
    * Deprecated, use migrationScanPackage instead
    */
@@ -425,6 +439,7 @@ public class MongockConfiguration implements ExecutorConfiguration {
     logger.warn(DEPRECATED_PROPERTY_TEMPLATE, "changeLogsScanPackage", "migrationScanPackage");
     this.migrationScanPackage = migrationScanPackage;
   }
+
   /**
    * Deprecated, uses lockQuitTryingAfterMillis and lockTryFrequencyMillis instead
    */
@@ -433,6 +448,7 @@ public class MongockConfiguration implements ExecutorConfiguration {
     logger.warn(DEPRECATED_PROPERTY_TEMPLATE, "lockAcquiredForMinutes", "lockQuitTryingAfterMillis and lockTryFrequencyMillis");
     this.lockAcquiredForMillis = minutesToMillis(lockAcquiredForMinutes);
   }
+
   /**
    * Deprecated, uses lockQuitTryingAfterMillis and lockTryFrequencyMillis instead
    */
@@ -441,6 +457,7 @@ public class MongockConfiguration implements ExecutorConfiguration {
     logger.warn(DEPRECATED_PROPERTY_TEMPLATE, "maxWaitingForLockMinutes", "lockQuitTryingAfterMillis and lockTryFrequencyMillis");
     this.maxWaitingForLockMillis = minutesToMillis(maxWaitingForLockMinutes);
   }
+
   /**
    * Deprecated, uses lockQuitTryingAfterMillis and lockTryFrequencyMillis instead
    */
@@ -448,6 +465,7 @@ public class MongockConfiguration implements ExecutorConfiguration {
   protected Long getMaxWaitingForLockMillis() {
     return maxWaitingForLockMillis;
   }
+
   /**
    * Deprecated, uses lockQuitTryingAfterMillis and lockTryFrequencyMillis instead
    */
@@ -455,6 +473,7 @@ public class MongockConfiguration implements ExecutorConfiguration {
   protected Integer getMaxTries() {
     return maxTries;
   }
+
   /**
    * Deprecated, uses lockQuitTryingAfterMillis and lockTryFrequencyMillis instead
    */

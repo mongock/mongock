@@ -25,7 +25,7 @@ public class LockGuardProxyTest {
   @BeforeEach
   public void before() {
     lockManager = mock(LockManager.class);
-    proxy = new LockGuardProxyFactory(lockManager).getProxy(new InterfaceTypeImpl(), InterfaceType.class);
+    proxy = new LockGuardProxyFactory(lockManager, true).getProxy(new InterfaceTypeImpl(), InterfaceType.class);
   }
 
   //SHOULD RETURN PROXY
@@ -36,7 +36,8 @@ public class LockGuardProxyTest {
     proxy = new LockGuardProxyFactory(
         lockManager,
         Collections.emptyList(),
-        new HashSet<>(Collections.singletonList("fakeFinalize")))
+        new HashSet<>(Collections.singletonList("fakeFinalize")),
+        true)
         .getProxy(new InterfaceTypeImpl(), InterfaceType.class);
     proxy.fakeFinalize();
     verify(lockManager, new Times(0)).ensureLockDefault();

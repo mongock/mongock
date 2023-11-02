@@ -170,7 +170,7 @@ public class ChangeUnitExecutorImplTest {
   }
 
   private ChangeLogRuntimeImpl getChangeLogRuntime(DependencyManager dm) {
-    return new ChangeLogRuntimeImpl(dm, DEFAULT_PARAM_NAME_PROVIDER, Collections.emptyList());
+    return new ChangeLogRuntimeImpl(dm, DEFAULT_PARAM_NAME_PROVIDER, Collections.emptyList(), true);
   }
 
   @Test

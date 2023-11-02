@@ -36,7 +36,6 @@ public class LockGuardProxy<T> implements InvocationHandler {
   }
 
   private  boolean shouldMethodBeLockGuarded(Method method, List<NonLockGuardedType> noGuardedLockTypes) {
-    String temporalVariable = method.getName();
     return !nonGuardedMethods.contains(method.getName())
         && !noGuardedLockTypes.contains(NonLockGuardedType.METHOD)
         && !noGuardedLockTypes.contains(NonLockGuardedType.NONE);
