@@ -66,7 +66,7 @@ public class ChangeLogRuntimeImpl implements ChangeLogRuntime {
 
   @Override
   public void initialize(LockManager lockManager) {
-    dependencyManager.setLockGuardProxyFactory(new LockGuardProxyFactory(lockManager, true));
+    dependencyManager.setLockGuardProxyFactory(new LockGuardProxyFactory(lockManager, lockGuardEnabled));
   }
 
   @Override

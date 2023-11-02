@@ -150,6 +150,9 @@ public class MongockConfiguration implements ExecutorConfiguration {
    */
   private TransactionStrategy transactionStrategy = TransactionStrategy.CHANGE_UNIT;
 
+  /**
+   * If true, indicates that the ChangeUnit's injections should be proxied. False, otherwise.
+   */
   private boolean lockGuardEnabled = true;
 
   @Deprecated
