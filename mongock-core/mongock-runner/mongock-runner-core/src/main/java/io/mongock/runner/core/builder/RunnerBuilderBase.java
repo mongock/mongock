@@ -210,7 +210,8 @@ public abstract class RunnerBuilderBase<
         changeLogInstantiatorFunctionForAnnotations,
         dependencyManager,
         parameterNameFunction,
-        driver.getNonProxyableTypes());
+        driver.getNonProxyableTypes(),
+        config.isLockGuardEnabled());
       return executorBuilder
             .reset()
             .setExecutionId(executionId)
@@ -226,7 +227,8 @@ public abstract class RunnerBuilderBase<
         changeLogInstantiatorFunctionForAnnotations,
         dependencyManager,
         parameterNameFunction,
-        driver.getNonProxyableTypes());
+        driver.getNonProxyableTypes(),
+        config.isLockGuardEnabled());
     return executorBuilder
             .reset()
             .setOperation(operation)

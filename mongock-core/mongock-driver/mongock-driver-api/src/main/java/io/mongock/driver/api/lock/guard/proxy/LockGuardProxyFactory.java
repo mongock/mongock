@@ -35,19 +35,21 @@ public class LockGuardProxyFactory {
   private final LockManager lockManager;
   private final Collection<String> notProxiedPackagePrefixes;
   private final Set<String> nonGuardedMethods;
+  private final boolean lockGuardEnabled;
 
-  public LockGuardProxyFactory(LockManager lockManager) {
-    this(lockManager, Collections.emptyList(), DEFAULT_NON_GUARDED_METHODS);
+  public LockGuardProxyFactory(LockManager lockManager, boolean lockGuardEnabled) {
+    this(lockManager, Collections.emptyList(), DEFAULT_NON_GUARDED_METHODS, lockGuardEnabled);
   }
 
-  public LockGuardProxyFactory(LockManager lockManager, Collection<String> notProxiedPackagePrefixes) {
-    this(lockManager, notProxiedPackagePrefixes, DEFAULT_NON_GUARDED_METHODS);
+  public LockGuardProxyFactory(LockManager lockManager, Collection<String> notProxiedPackagePrefixes, boolean lockGuardEnabled) {
+    this(lockManager, notProxiedPackagePrefixes, DEFAULT_NON_GUARDED_METHODS, lockGuardEnabled);
   }
 
-  public LockGuardProxyFactory(LockManager lockManager, Collection<String> notProxiedPackagePrefixes, Set<String> nonGuardedMethods) {
+  public LockGuardProxyFactory(LockManager lockManager, Collection<String> notProxiedPackagePrefixes, Set<String> nonGuardedMethods, boolean lockGuardEnabled) {
     this.lockManager = lockManager;
     this.notProxiedPackagePrefixes = notProxiedPackagePrefixes;
     this.nonGuardedMethods = nonGuardedMethods;
+    this.lockGuardEnabled = lockGuardEnabled;
   }
 
   @SuppressWarnings("unchecked")
@@ -60,9 +62,11 @@ public class LockGuardProxyFactory {
     return shouldBeLockGuardProxied(targetObject, interfaceType) ? createProxy(targetObject, interfaceType) : targetObject;
   }
 
+  //TODO add here check
   private boolean shouldBeLockGuardProxied(Object targetObject, Class<?> interfaceType) {
 
     return targetObject != null
+        && lockGuardEnabled
         && !Modifier.isFinal(interfaceType.getModifiers())
         && isPackageProxiable(interfaceType.getPackage().getName())
         && !interfaceType.isAnnotationPresent(NonLockGuarded.class)
