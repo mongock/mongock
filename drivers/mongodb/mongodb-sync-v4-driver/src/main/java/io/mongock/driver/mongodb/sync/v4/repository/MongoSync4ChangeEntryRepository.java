@@ -22,6 +22,12 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import static io.mongock.driver.api.entry.ChangeEntry.KEY_ERROR_TRACE;
+import static io.mongock.driver.api.entry.ChangeEntry.KEY_EXECUTION_HOST_NAME;
+import static io.mongock.driver.core.lock.LockEntry.EXPIRES_AT_FIELD;
+import static io.mongock.driver.core.lock.LockEntry.OWNER_FIELD;
+import static io.mongock.driver.core.lock.LockEntry.STATUS_FIELD;
+
 public class MongoSync4ChangeEntryRepository extends MongoSync4RepositoryBase<ChangeEntry> implements ChangeEntryRepositoryWithEntity<Document> {
 
   private final static Logger logger = LoggerFactory.getLogger(MongoSync4ChangeEntryRepository.class);
@@ -87,7 +93,7 @@ public class MongoSync4ChangeEntryRepository extends MongoSync4RepositoryBase<Ch
       field = ChangeEntry.class.getDeclaredField("executionHostname");
       field.setAccessible(true);
       KEY_EXECUTION_HOSTNAME = field.getAnnotation(io.mongock.utils.field.Field.class).value();
-      
+
       field = ChangeEntry.class.getDeclaredField("systemChange");
       field.setAccessible(true);
       KEY_SYSTEM_CHANGE = field.getAnnotation(io.mongock.utils.field.Field.class).value();
@@ -118,8 +124,8 @@ public class MongoSync4ChangeEntryRepository extends MongoSync4RepositoryBase<Ch
             entry.containsKey(KEY_TYPE) ? ChangeType.valueOf(entry.getString(KEY_TYPE)) : null,
             entry.getString(KEY_CHANGELOG_CLASS),
             entry.getString(KEY_CHANGESET_METHOD),
-            entry.containsKey(KEY_EXECUTION_MILLIS) && entry.get(KEY_EXECUTION_MILLIS) != null 
-                    ? ((Number) entry.get(KEY_EXECUTION_MILLIS)).longValue() : -1L,
+            entry.containsKey(KEY_EXECUTION_MILLIS) && entry.get(KEY_EXECUTION_MILLIS) != null
+                ? ((Number) entry.get(KEY_EXECUTION_MILLIS)).longValue() : -1L,
             entry.getString(KEY_EXECUTION_HOSTNAME),
             entry.get(KEY_METADATA),
             entry.getBoolean(KEY_SYSTEM_CHANGE)))
@@ -154,9 +160,28 @@ public class MongoSync4ChangeEntryRepository extends MongoSync4RepositoryBase<Ch
   private Optional<ClientSession> getClientSession() {
     return Optional.ofNullable(clientSession);
   }
-  
+
   @Override
   public void ensureField(Field field) {
     // Nothing to do in MongoDB
+  }
+
+
+  @Override
+  public Document toEntity(ChangeEntry domain) {
+    return new Document()
+        .append(KEY_EXECUTION_ID, domain.getExecutionId())
+        .append(KEY_CHANGE_ID, domain.getChangeId())
+        .append(KEY_AUTHOR, domain.getAuthor())
+        .append(KEY_TIMESTAMP, domain.getTimestamp())
+        .append(KEY_STATE, domain.getState().toString())
+        .append(KEY_TYPE, domain.getType())
+        .append(KEY_CHANGELOG_CLASS, domain.getChangeLogClass())
+        .append(KEY_CHANGESET_METHOD, domain.getChangeSetMethod())
+        .append(KEY_METADATA, domain.getMetadata())
+        .append(KEY_EXECUTION_MILLIS, domain.getExecutionMillis())
+        .append(KEY_EXECUTION_HOST_NAME, domain.getExecutionHostname())
+        .append(KEY_ERROR_TRACE, domain.getErrorTrace())
+        .append(KEY_SYSTEM_CHANGE, domain.isSystemChange());
   }
 }

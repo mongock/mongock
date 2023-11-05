@@ -40,8 +40,6 @@ import static java.util.Arrays.asList;
  */
 public abstract class ChangeLogServiceBase implements Validable {
 
-  private static final String CHANGE_UNITS_FILE = "mongock/change-units.txt";
-
   private final LegacyAnnotationProcessor legacyAnnotationProcessor;
   private final AnnotationProcessor annotationProcessor;
   protected Function<AnnotatedElement, Boolean> profileFilter;
@@ -52,12 +50,14 @@ public abstract class ChangeLogServiceBase implements Validable {
   private ArtifactVersion endSystemVersion;
   private String defaultAuthor;
 
+  private String changeUnitsFile;
+
   public ChangeLogServiceBase(AnnotationProcessor annotationProcessor, LegacyAnnotationProcessor legacyAnnotationProcessor) {
     this.legacyAnnotationProcessor = legacyAnnotationProcessor;
     this.annotationProcessor = annotationProcessor;
     reset();
   }
-  
+
   public final void reset() {
     this.profileFilter = null;
     this.changeLogInstantiator = null;
@@ -66,6 +66,7 @@ public abstract class ChangeLogServiceBase implements Validable {
     this.startSystemVersion = new DefaultArtifactVersion("0");
     this.endSystemVersion = new DefaultArtifactVersion(String.valueOf(Integer.MAX_VALUE));
     this.defaultAuthor = null;
+    this.changeUnitsFile = null;
   }
 
   protected LegacyAnnotationProcessor getLegacyAnnotationProcessor() {
@@ -128,6 +129,14 @@ public abstract class ChangeLogServiceBase implements Validable {
     this.defaultAuthor = defaultAuthor;
   }
 
+  public String getChangeUnitsFile() {
+    return changeUnitsFile;
+  }
+
+  public void setChangeUnitsFile(String changeUnitsFile) {
+    this.changeUnitsFile = changeUnitsFile;
+  }
+
   @Override
   public void runValidation() throws MongockException {
     if (
@@ -166,23 +175,27 @@ public abstract class ChangeLogServiceBase implements Validable {
         new Reflections(changeLogsBasePackageList).getTypesAnnotatedWith(ChangeUnit.class).stream())
         : Stream.empty();
 
-    changeLogsBaseClassList.addAll(getClassesFromFile());
+    changeLogsBaseClassList.addAll(getClassesFromFile(changeUnitsFile));
     return Stream.concat(changeLogsBaseClassList.stream(), scannedPackageStream).collect(Collectors.toSet());
   }
 
-  private static List<Class<?>> getClassesFromFile() {
-    Function<String, Class<?>> toClass = className -> {
-      try {
-        return Class.forName(className);
-      } catch (ClassNotFoundException e) {
-        throw new RuntimeException(e);
-      }
-    };
-    return FileUtil
-        .readLinesFromFile(CHANGE_UNITS_FILE)
-        .stream()
-        .map(toClass)
-        .collect(Collectors.toList());
+  private static List<Class<?>> getClassesFromFile(String file) {
+    if (file != null) {
+      Function<String, Class<?>> toClass = className -> {
+        try {
+          return Class.forName(className);
+        } catch (ClassNotFoundException e) {
+          throw new RuntimeException(e);
+        }
+      };
+      return FileUtil
+          .readLinesFromFile(file)
+          .stream()
+          .map(toClass)
+          .collect(Collectors.toList());
+    } else {
+      return Collections.emptyList();
+    }
   }
 
   protected List<ChangeSetItem> fetchChangeSetMethodsSorted(Class<?> type) throws MongockException {
@@ -229,10 +242,6 @@ public abstract class ChangeLogServiceBase implements Validable {
   protected abstract ChangeLogItem buildChangeLogInstance(Class<?> changeLogClass) throws MongockException;
 
   protected abstract ChangeLogItem buildChangeLogInstanceFromLegacy(Class<?> changeLogClass) throws MongockException;
-
-
-
-
 
 
   protected List<ChangeSetItem> fetchListOfChangeSetsFromClass(Class<?> type) {

@@ -18,6 +18,11 @@ import java.util.Date;
 
 import io.mongock.utils.DateUtils;
 
+import static io.mongock.driver.core.lock.LockEntry.EXPIRES_AT_FIELD;
+import static io.mongock.driver.core.lock.LockEntry.KEY_FIELD;
+import static io.mongock.driver.core.lock.LockEntry.OWNER_FIELD;
+import static io.mongock.driver.core.lock.LockEntry.STATUS_FIELD;
+
 public class Mongo3LockRepository extends Mongo3RepositoryBase<LockEntry> implements LockRepositoryWithEntity<Document> {
 
   private static final String KEY_FIELD = "key";
@@ -126,5 +131,14 @@ public class Mongo3LockRepository extends Mongo3RepositoryBase<LockEntry> implem
     return onlyIfSameOwner
         ? Filters.and(keyCond, statusCond, ownerCond)
         : Filters.and(keyCond, Filters.or(expirationCond, ownerCond));
+  }
+
+  @Override
+  public Document toEntity(LockEntry domain) {
+    return new Document()
+        .append(KEY_FIELD, domain.getKey())
+        .append(STATUS_FIELD, domain.getStatus())
+        .append(OWNER_FIELD, domain.getOwner())
+        .append(EXPIRES_AT_FIELD, domain.getExpiresAt());
   }
 }
