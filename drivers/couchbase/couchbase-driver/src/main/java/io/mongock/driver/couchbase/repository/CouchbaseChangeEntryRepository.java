@@ -110,13 +110,13 @@ public class CouchbaseChangeEntryRepository extends CouchbaseRepositoryBase<Chan
     addField(jsonObject, KEY_AUTHOR, domain.getAuthor());
     addField(jsonObject, KEY_TIMESTAMP, domain.getTimestamp());
     addField(jsonObject, KEY_STATE, domain.getState().toString());
-    addField(jsonObject, KEY_TYPE, domain.getType());
+    addField(jsonObject, KEY_TYPE, domain.getType().toString());
     addField(jsonObject, KEY_CHANGELOG_CLASS, domain.getChangeLogClass());
     addField(jsonObject, KEY_CHANGESET_METHOD, domain.getChangeSetMethod());
     addField(jsonObject, KEY_METADATA, domain.getMetadata());
     addField(jsonObject, KEY_EXECUTION_MILLIS, domain.getExecutionMillis());
     addField(jsonObject, KEY_EXECUTION_HOST_NAME, domain.getExecutionHostname());
-    addField(jsonObject, KEY_ERROR_TRACE, domain.getErrorTrace());
+    addField(jsonObject, KEY_ERROR_TRACE, domain.getErrorTrace().orElse(null));
     addField(jsonObject, KEY_SYSTEM_CHANGE, domain.isSystemChange());
     return jsonObject;
 
