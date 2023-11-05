@@ -1,12 +1,5 @@
 package io.mongock.driver.dynamodb.util
 
-import io.mongock.driver.api.entry.ChangeEntry
-import io.mongock.driver.api.entry.ChangeState
-import io.mongock.driver.api.entry.ChangeType
-import io.mongock.driver.core.lock.LockEntry
-import io.mongock.driver.core.lock.LockStatus
-import java.util.*
-
 
 class DynamoDBTestCompanion {//}: TestCompanion<ProvisionedThroughput> {
 

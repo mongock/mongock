@@ -1,23 +1,6 @@
 package io.mongock.driver.dynamodb.repository
 
-import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.core.spec.style.DescribeSpec
-import io.kotest.matchers.collections.shouldBeIn
-import io.kotest.matchers.shouldBe
-import io.kotest.matchers.string.shouldStartWith
-import io.mongock.api.exception.MongockException
-import io.mongock.driver.api.entry.ChangeEntry
-import io.kotest.matchers.shouldBe
-import io.mongock.driver.dynamodb.util.DynamoDBTestCompanion
-import io.mongock.driver.dynamodb.util.When
-import io.mongock.driver.dynamodb.util.and
-import io.mongock.driver.dynamodb.util.should
-import io.mongock.driver.dynamodb.util.change1
-import io.mongock.driver.dynamodb.util.change1_u
-import io.mongock.driver.dynamodb.util.change2
-import io.mongock.driver.dynamodb.util.change3
-import io.mongock.driver.dynamodb.util.repoExtraConfig
-
 
 
 class DynamoDBChangeEntryRepositoryITest : DescribeSpec({

@@ -1,21 +1,6 @@
 package io.mongock.driver.dynamodb.repository
 
-import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.core.spec.style.DescribeSpec
-import io.kotest.matchers.shouldBe
-import io.kotest.matchers.shouldNotBe
-import io.kotest.matchers.string.shouldStartWith
-import io.mongock.api.exception.MongockException
-import io.mongock.driver.core.lock.LockPersistenceException
-import io.mongock.driver.dynamodb.util.DynamoDBTestCompanion
-import io.mongock.driver.dynamodb.util.When
-import io.mongock.driver.dynamodb.util.and
-import io.mongock.driver.dynamodb.util.lockOwner1Expired
-import io.mongock.driver.dynamodb.util.lockOwner1NotExpired
-import io.mongock.driver.dynamodb.util.lockOwner1NotExpiredUpdated
-import io.mongock.driver.dynamodb.util.lockOwner2NotExpired
-import io.mongock.driver.dynamodb.util.repoExtraConfig
-import io.mongock.driver.dynamodb.util.should
 
 
 class DynamoDBLockRepositoryITest : DescribeSpec({

@@ -1,18 +1,9 @@
 package io.mongock.driver.dynamodb.driver
 
-import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.core.spec.style.DescribeSpec
-import io.kotest.matchers.shouldBe
-import io.mongock.api.exception.MongockException
 import io.mongock.driver.api.entry.ChangeEntry
 import io.mongock.driver.api.entry.ChangeState
 import io.mongock.driver.api.entry.ChangeType
-import io.mongock.driver.dynamodb.util.When
-import io.mongock.driver.dynamodb.util.should
-import io.mongock.driver.dynamodb.util.DynamoDBTestCompanion
-import io.mongock.driver.dynamodb.util.change1
-import io.mongock.driver.dynamodb.util.change2
-import io.mongock.driver.dynamodb.util.changeFailed
 import java.util.*
 
 class DynamoDBDriverITest : DescribeSpec({
@@ -79,8 +70,8 @@ class DynamoDBDriverITest : DescribeSpec({
 
 })
 
-private fun changeEntry(changeId:String) :ChangeEntry {
-    return  ChangeEntry(
+private fun changeEntry(changeId: String): ChangeEntry {
+    return ChangeEntry(
         "executionId",
         changeId,
         "author-c1",
