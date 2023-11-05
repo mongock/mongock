@@ -36,158 +36,159 @@ import java.util.*
 
 
 
-class DynamoDBTestCompanion: TestCompanion<ProvisionedThroughput> {
+class DynamoDBTestCompanion {//}: TestCompanion<ProvisionedThroughput> {
 
-    val transactionServerEnabled = false//todo take this from ENV
-    private var container: DynaliteContainer? = null
-    private var client: AmazonDynamoDBClient? = null
-    private var dynamoDB: DynamoDB? = null
-    override fun start() {
-        if (transactionServerEnabled) {
-            client = AmazonDynamoDBClientBuilder.standard()
-                .withEndpointConfiguration(
-                    AwsClientBuilder.EndpointConfiguration(
-                        "dynamodb.eu-west-1.amazonaws.com",
-                        "eu-west-1"
-                    )
-                )
-                .withCredentials(
-                    AWSStaticCredentialsProvider(
-                        BasicAWSCredentials(
-                            "ACCESS_KEY",//todo take this from ENV
-                            "SECRET_KEY"
-                        )
-                    )
-                )
-                .build() as AmazonDynamoDBClient
-
-        } else {
-            container = DynaliteContainer(DockerImageName.parse("quay.io/testcontainers/dynalite").withTag("v1.2.1-1"))
-            container!!.start()
-            client = container!!.client as AmazonDynamoDBClient
-        }
-
-
-        dynamoDB = DynamoDB(client)
-
-    }
-
-    override fun stopContainer() {
-        if (container != null && container!!.isRunning) {
-            container!!.stop()
-        }
-    }
-
-    override fun getChangeService(tableName: String, indexCreation: Boolean, t:ProvisionedThroughput): ChangeEntryService {
-        return DynamoDBChangeEntryRepository(client!!, tableName, indexCreation, t)
-    }
-
-    override fun checkTableIsCreated(tableName: String) {
-        dynamoDB!!.getTable(tableName).describe()
-    }
-
-    override fun createChangeEntryTable(tableName: String) {
-        val mapperConfig = DynamoDBMapperConfig
-            .builder()
-            .withConsistentReads(DynamoDBMapperConfig.ConsistentReads.CONSISTENT)
-            .withPaginationLoadingStrategy(DynamoDBMapperConfig.PaginationLoadingStrategy.EAGER_LOADING)
-            .withTableNameOverride(DynamoDBMapperConfig.TableNameOverride.withTableNameReplacement(tableName))
-            .build()
-        TableUtils.createTableIfNotExists(
-            client,
-            DynamoDBMapper(client, mapperConfig).generateCreateTableRequest(ChangeEntryDynamoDB::class.java)
-                .withProvisionedThroughput(ProvisionedThroughput(1L, 1L))
-        )
-        TableUtils.waitUntilActive(client, tableName)
-    }
-
-
-    override fun insertChangeEntries(tableName: String, vararg entries: ChangeEntry) {
-        entries.forEach {
-            client!!.putItem(PutItemRequest().withTableName(tableName).withItem(ChangeEntryDynamoDB(it).attributes))
-        }
-    }
-
-    override fun createInsert(tableName: String, vararg entries: ChangeEntry) {
-        createChangeEntryTable(tableName)
-        insertChangeEntries(tableName, *entries)
-    }
-
-    override fun isInserted(tableName: String, changeEntry: ChangeEntry): Boolean {
-        return getChangeEntry(tableName, changeEntry) != null
-    }
-
-    override fun getChangeEntry(tableName: String, changeEntry: ChangeEntry): ChangeEntry? {
-        val dynamoEntry = ChangeEntryDynamoDB(changeEntry)
-        val request = GetItemRequest()
-            .withTableName(tableName)
-            .withConsistentRead(true)
-            .withKey(
-                mapOf(
-                    KEY_CHANGE_ID to AttributeValue().withS(dynamoEntry.changeId),
-                    RANGE_KEY_ID to AttributeValue().withS(dynamoEntry.rangeKey)
-                )
-            )
-
-        val item = client!!.getItem(request).item
-        return if (item != null) ChangeEntryDynamoDB(item).changeEntry else null
-    }
-
-    /**
-     * LOCK
-     */
-    override fun getLockRepository(tableName: String, indexCreation: Boolean, t: ProvisionedThroughput): LockRepository {
-        return DynamoDBLockRepository(client!!, tableName, indexCreation, t)
-    }
-
-    override fun createLockTable(tableName: String) {
-        val mapperConfig = DynamoDBMapperConfig
-            .builder()
-            .withConsistentReads(DynamoDBMapperConfig.ConsistentReads.CONSISTENT)
-            .withPaginationLoadingStrategy(DynamoDBMapperConfig.PaginationLoadingStrategy.EAGER_LOADING)
-            .withTableNameOverride(DynamoDBMapperConfig.TableNameOverride.withTableNameReplacement(tableName))
-            .build()
-        TableUtils.createTableIfNotExists(
-            client,
-            DynamoDBMapper(client, mapperConfig).generateCreateTableRequest(LockEntryDynamoDB::class.java)
-                .withProvisionedThroughput(ProvisionedThroughput(1L, 1L))
-        )
-        TableUtils.waitUntilActive(client, tableName)
-    }
-
-    override fun isInserted(tableName: String, lockEntry: LockEntry): Boolean {
-        return getLockEntry(tableName, lockEntry) != null
-    }
-
-    override fun getLockEntry(tableName: String, lockEntry: LockEntry): LockEntry? {
-        val dynamoEntry = LockEntryDynamoDB(lockEntry)
-        val request = GetItemRequest()
-            .withTableName(tableName)
-            .withConsistentRead(true)
-            .withKey(
-                mapOf(
-                    KEY_FIELD_DYNAMODB to AttributeValue().withS(dynamoEntry.key),
-                )
-            )
-
-        val item = client!!.getItem(request).item
-        return if (item != null) LockEntryDynamoDB(item).lockEntry else null
-    }
-
-    override fun insertLockEntries(tableName: String, vararg entries: LockEntry) {
-        entries.forEach {
-            client!!.putItem(PutItemRequest().withTableName(tableName).withItem(LockEntryDynamoDB(it).attributes))
-        }
-    }
-
-    override fun createInsert(tableName: String, vararg entries: LockEntry) {
-        createLockTable(tableName)
-        insertLockEntries(tableName, *entries)
-    }
-
-    override fun getDriver(): TestDynamoDBDriver {
-        return TestDynamoDBDriver.withDefaultLock(client!!)
-    }
+//    val transactionServerEnabled = false//todo take this from ENV
+//    private var container: DynaliteContainer? = null
+//    private var client: AmazonDynamoDBClient? = null
+//    private var dynamoDB: DynamoDB? = null
+//    override fun start() {
+//        if (transactionServerEnabled) {
+//            client = AmazonDynamoDBClientBuilder.standard()
+//                .withEndpointConfiguration(
+//                    AwsClientBuilder.EndpointConfiguration(
+//                        "dynamodb.eu-west-1.amazonaws.com",
+//                        "eu-west-1"
+//                    )
+//                )
+//                .withCredentials(
+//                    AWSStaticCredentialsProvider(
+//                        BasicAWSCredentials(
+//                            "ACCESS_KEY",//todo take this from ENV
+//                            "SECRET_KEY"
+//                        )
+//                    )
+//                )
+//                .build() as AmazonDynamoDBClient
+//
+//
+//        } else {
+//            container = DynaliteContainer(DockerImageName.parse("quay.io/testcontainers/dynalite").withTag("v1.2.1-1"))
+//            container!!.start()
+//            client = container!!.client as AmazonDynamoDBClient
+//        }
+//
+//
+//        dynamoDB = DynamoDB(client)
+//
+//    }
+//
+//    override fun stopContainer() {
+//        if (container != null && container!!.isRunning) {
+//            container!!.stop()
+//        }
+//    }
+//
+//    override fun getChangeService(tableName: String, indexCreation: Boolean, t:ProvisionedThroughput): ChangeEntryService {
+//        return DynamoDBChangeEntryRepository(client!!, tableName, indexCreation, t)
+//    }
+//
+//    override fun checkTableIsCreated(tableName: String) {
+//        dynamoDB!!.getTable(tableName).describe()
+//    }
+//
+//    override fun createChangeEntryTable(tableName: String) {
+//        val mapperConfig = DynamoDBMapperConfig
+//            .builder()
+//            .withConsistentReads(DynamoDBMapperConfig.ConsistentReads.CONSISTENT)
+//            .withPaginationLoadingStrategy(DynamoDBMapperConfig.PaginationLoadingStrategy.EAGER_LOADING)
+//            .withTableNameOverride(DynamoDBMapperConfig.TableNameOverride.withTableNameReplacement(tableName))
+//            .build()
+//        TableUtils.createTableIfNotExists(
+//            client,
+//            DynamoDBMapper(client, mapperConfig).generateCreateTableRequest(ChangeEntryDynamoDB::class.java)
+//                .withProvisionedThroughput(ProvisionedThroughput(1L, 1L))
+//        )
+//        TableUtils.waitUntilActive(client, tableName)
+//    }
+//
+//
+//    override fun insertChangeEntries(tableName: String, vararg entries: ChangeEntry) {
+//        entries.forEach {
+//            client!!.putItem(PutItemRequest().withTableName(tableName).withItem(ChangeEntryDynamoDB(it).attributes))
+//        }
+//    }
+//
+//    override fun createInsert(tableName: String, vararg entries: ChangeEntry) {
+//        createChangeEntryTable(tableName)
+//        insertChangeEntries(tableName, *entries)
+//    }
+//
+//    override fun isInserted(tableName: String, changeEntry: ChangeEntry): Boolean {
+//        return getChangeEntry(tableName, changeEntry) != null
+//    }
+//
+//    override fun getChangeEntry(tableName: String, changeEntry: ChangeEntry): ChangeEntry? {
+//        val dynamoEntry = ChangeEntryDynamoDB(changeEntry)
+//        val request = GetItemRequest()
+//            .withTableName(tableName)
+//            .withConsistentRead(true)
+//            .withKey(
+//                mapOf(
+//                    KEY_CHANGE_ID to AttributeValue().withS(dynamoEntry.changeId),
+//                    RANGE_KEY_ID to AttributeValue().withS(dynamoEntry.rangeKey)
+//                )
+//            )
+//
+//        val item = client!!.getItem(request).item
+//        return if (item != null) ChangeEntryDynamoDB(item).changeEntry else null
+//    }
+//
+//    /**
+//     * LOCK
+//     */
+//    override fun getLockRepository(tableName: String, indexCreation: Boolean, t: ProvisionedThroughput): LockRepository {
+//        return DynamoDBLockRepository(client!!, tableName, indexCreation, t)
+//    }
+//
+//    override fun createLockTable(tableName: String) {
+//        val mapperConfig = DynamoDBMapperConfig
+//            .builder()
+//            .withConsistentReads(DynamoDBMapperConfig.ConsistentReads.CONSISTENT)
+//            .withPaginationLoadingStrategy(DynamoDBMapperConfig.PaginationLoadingStrategy.EAGER_LOADING)
+//            .withTableNameOverride(DynamoDBMapperConfig.TableNameOverride.withTableNameReplacement(tableName))
+//            .build()
+//        TableUtils.createTableIfNotExists(
+//            client,
+//            DynamoDBMapper(client, mapperConfig).generateCreateTableRequest(LockEntryDynamoDB::class.java)
+//                .withProvisionedThroughput(ProvisionedThroughput(1L, 1L))
+//        )
+//        TableUtils.waitUntilActive(client, tableName)
+//    }
+//
+//    override fun isInserted(tableName: String, lockEntry: LockEntry): Boolean {
+//        return getLockEntry(tableName, lockEntry) != null
+//    }
+//
+//    override fun getLockEntry(tableName: String, lockEntry: LockEntry): LockEntry? {
+//        val dynamoEntry = LockEntryDynamoDB(lockEntry)
+//        val request = GetItemRequest()
+//            .withTableName(tableName)
+//            .withConsistentRead(true)
+//            .withKey(
+//                mapOf(
+//                    KEY_FIELD_DYNAMODB to AttributeValue().withS(dynamoEntry.key),
+//                )
+//            )
+//
+//        val item = client!!.getItem(request).item
+//        return if (item != null) LockEntryDynamoDB(item).lockEntry else null
+//    }
+//
+//    override fun insertLockEntries(tableName: String, vararg entries: LockEntry) {
+//        entries.forEach {
+//            client!!.putItem(PutItemRequest().withTableName(tableName).withItem(LockEntryDynamoDB(it).attributes))
+//        }
+//    }
+//
+//    override fun createInsert(tableName: String, vararg entries: LockEntry) {
+//        createLockTable(tableName)
+//        insertLockEntries(tableName, *entries)
+//    }
+//
+//    override fun getDriver(): TestDynamoDBDriver {
+//        return TestDynamoDBDriver.withDefaultLock(client!!)
+//    }
 }
 
 
