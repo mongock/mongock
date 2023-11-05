@@ -61,6 +61,7 @@ class DynamoDBTestCompanion: TestCompanion<ProvisionedThroughput> {
                 )
                 .build() as AmazonDynamoDBClient
 
+
         } else {
             container = DynaliteContainer(DockerImageName.parse("quay.io/testcontainers/dynalite").withTag("v1.2.1-1"))
             container!!.start()
