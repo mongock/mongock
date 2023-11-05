@@ -33,7 +33,7 @@ public class LockGuardProxyFactoryTest {
   @BeforeEach
   public void before() {
     lockManager = Mockito.mock(LockManager.class);
-    lockGuardProxyFactory = new LockGuardProxyFactory(lockManager);
+    lockGuardProxyFactory = new LockGuardProxyFactory(lockManager, true);
   }
 
   private Object getRawProxy(Object o, Class<?> interfaceType) {
@@ -62,7 +62,7 @@ public class LockGuardProxyFactoryTest {
 
   @Test
   public void shouldNotReturnProxy_IfInterfaceTypeisJavaNet() {
-    lockGuardProxyFactory = new LockGuardProxyFactory(lockManager, Collections.singletonList(InterfaceType.class.getPackage().getName().substring(0, 12)));
+    lockGuardProxyFactory = new LockGuardProxyFactory(lockManager, Collections.singletonList(InterfaceType.class.getPackage().getName().substring(0, 12)), true);
     assertFalse(ReflectionUtils.isProxy(getRawProxy(new InterfaceTypeImpl(), InterfaceType.class)));
   }
 

@@ -22,7 +22,7 @@ public class DependencyManagerTest {
   public void shouldRetrieveConnectorDependency_WhenAddSimpleDependency() {
     assertEquals("dependency",
         new DependencyManager()
-            .setLockGuardProxyFactory(new LockGuardProxyFactory(Mockito.mock(LockManager.class)))
+            .setLockGuardProxyFactory(new LockGuardProxyFactory(Mockito.mock(LockManager.class), true))
             .addDriverDependency(new ChangeSetDependency("dependency"))
             .getDependency(String.class, true)
             .orElseThrow(RuntimeException::new));
@@ -32,7 +32,7 @@ public class DependencyManagerTest {
   public void shouldRetrieveLastConnectorDependency_WhenOverride() {
     assertEquals("dependency",
         new DependencyManager()
-            .setLockGuardProxyFactory(new LockGuardProxyFactory(Mockito.mock(LockManager.class)))
+            .setLockGuardProxyFactory(new LockGuardProxyFactory(Mockito.mock(LockManager.class), true))
             .addDriverDependency(new ChangeSetDependency("dependencyNotReturned"))
             .addDriverDependency(new ChangeSetDependency("dependency"))
             .getDependency(String.class, true)
@@ -46,7 +46,7 @@ public class DependencyManagerTest {
     dependencies.add(new ChangeSetDependency("dependency"));
     assertEquals("dependency",
         new DependencyManager()
-            .setLockGuardProxyFactory(new LockGuardProxyFactory(Mockito.mock(LockManager.class)))
+            .setLockGuardProxyFactory(new LockGuardProxyFactory(Mockito.mock(LockManager.class), true))
             .addDriverDependencies(dependencies)
             .getDependency(String.class, true)
             .orElseThrow(RuntimeException::new));
@@ -59,7 +59,7 @@ public class DependencyManagerTest {
     dependencies.add(new ChangeSetDependency("dependencyNotReturned"));
     assertEquals("dependency",
         new DependencyManager()
-            .setLockGuardProxyFactory(new LockGuardProxyFactory(Mockito.mock(LockManager.class)))
+            .setLockGuardProxyFactory(new LockGuardProxyFactory(Mockito.mock(LockManager.class), true))
             .addDriverDependencies(dependencies)
             .addDriverDependency(new ChangeSetDependency("dependency"))
             .getDependency(String.class, true)
@@ -74,7 +74,7 @@ public class DependencyManagerTest {
 
     assertEquals(dependency,
         new DependencyManager()
-            .setLockGuardProxyFactory(new LockGuardProxyFactory(Mockito.mock(LockManager.class)))
+            .setLockGuardProxyFactory(new LockGuardProxyFactory(Mockito.mock(LockManager.class), true))
             .addDriverDependency(new ChangeSetDependency(InterfaceDependencyImpl.class, dependency, false))
             .getDependency(InterfaceDependency.class, true)
             .orElseThrow(RuntimeException::new));
@@ -85,7 +85,7 @@ public class DependencyManagerTest {
     Child1 dependency = new Child1();
     assertEquals(dependency,
         new DependencyManager()
-            .setLockGuardProxyFactory(new LockGuardProxyFactory(Mockito.mock(LockManager.class)))
+            .setLockGuardProxyFactory(new LockGuardProxyFactory(Mockito.mock(LockManager.class), true))
             .addDriverDependency(new ChangeSetDependency(Child1.class, dependency, false))
             .addDriverDependency(new ChangeSetDependency(Child2.class, new Child2(), false))
             .getDependency(Parent.class, true)
@@ -96,7 +96,7 @@ public class DependencyManagerTest {
   @Test
   public void shouldRetrieveStandardDependency_WhenAddSimpleDependency() {
     InterfaceDependency o = (InterfaceDependency) new DependencyManager()
-        .setLockGuardProxyFactory(new LockGuardProxyFactory(Mockito.mock(LockManager.class)))
+        .setLockGuardProxyFactory(new LockGuardProxyFactory(Mockito.mock(LockManager.class), true))
         .addStandardDependency(new ChangeSetDependency(new InterfaceDependencyImpl()))
         .getDependency(InterfaceDependency.class, true)
         .orElseThrow(RuntimeException::new);
@@ -106,7 +106,7 @@ public class DependencyManagerTest {
   public void shouldRetrieveLastStandardDependency_WhenOverride() {
     assertEquals("value2",
         ((InterfaceDependency) new DependencyManager()
-            .setLockGuardProxyFactory(new LockGuardProxyFactory(Mockito.mock(LockManager.class)))
+            .setLockGuardProxyFactory(new LockGuardProxyFactory(Mockito.mock(LockManager.class), true))
             .addStandardDependency(new ChangeSetDependency(new Child2("value1")))
             .addStandardDependency(new ChangeSetDependency(new Child2("value2")))
             .getDependency(InterfaceDependency.class, true)
@@ -121,7 +121,7 @@ public class DependencyManagerTest {
     dependencies.add(new ChangeSetDependency(new Child2("value2")));
     assertEquals("value2",
         ((InterfaceDependency) new DependencyManager()
-            .setLockGuardProxyFactory(new LockGuardProxyFactory(Mockito.mock(LockManager.class)))
+            .setLockGuardProxyFactory(new LockGuardProxyFactory(Mockito.mock(LockManager.class), true))
             .addStandardDependencies(dependencies)
             .getDependency(InterfaceDependency.class, true)
             .orElseThrow(RuntimeException::new)
@@ -135,7 +135,7 @@ public class DependencyManagerTest {
     dependencies.add(new ChangeSetDependency(new Child2("value2")));
     assertEquals("value3",
         ((InterfaceDependency) new DependencyManager()
-            .setLockGuardProxyFactory(new LockGuardProxyFactory(Mockito.mock(LockManager.class)))
+            .setLockGuardProxyFactory(new LockGuardProxyFactory(Mockito.mock(LockManager.class), true))
             .addStandardDependencies(dependencies)
             .addStandardDependency(new ChangeSetDependency(new Child2("value3")))
             .getDependency(InterfaceDependency.class, true)
@@ -149,7 +149,7 @@ public class DependencyManagerTest {
 
     assertEquals("dependency1",
         ((InterfaceDependency) new DependencyManager()
-            .setLockGuardProxyFactory(new LockGuardProxyFactory(Mockito.mock(LockManager.class)))
+            .setLockGuardProxyFactory(new LockGuardProxyFactory(Mockito.mock(LockManager.class), true))
             .addStandardDependency(new ChangeSetDependency(Child1.class, new Child1("dependency1")))
             .addStandardDependency(new ChangeSetDependency(Child2.class, new Child2("dependency12")))
             .getDependency(InterfaceDependency.class, true)
@@ -162,7 +162,7 @@ public class DependencyManagerTest {
   public void shouldPrioritizeConnectorDependency() {
     assertEquals("connectorDependency",
         new DependencyManager()
-            .setLockGuardProxyFactory(new LockGuardProxyFactory(Mockito.mock(LockManager.class)))
+            .setLockGuardProxyFactory(new LockGuardProxyFactory(Mockito.mock(LockManager.class), true))
             .addStandardDependency(new ChangeSetDependency("standardDependency"))
             .addDriverDependency(new ChangeSetDependency("connectorDependency"))
             .addStandardDependency(new ChangeSetDependency("standardDependency"))
@@ -176,7 +176,7 @@ public class DependencyManagerTest {
     InterfaceDependencyImpl dependency = new InterfaceDependencyImpl();
 
     Object retrievedDependency = new DependencyManager()
-            .setLockGuardProxyFactory(new LockGuardProxyFactory(Mockito.mock(LockManager.class)))
+            .setLockGuardProxyFactory(new LockGuardProxyFactory(Mockito.mock(LockManager.class), true))
             .addDriverDependency(new ChangeSetDependency(InterfaceDependencyImpl.class, dependency, true))
             .getDependency(InterfaceDependency.class, true)
             .orElseThrow(RuntimeException::new);
@@ -190,7 +190,7 @@ public class DependencyManagerTest {
     InterfaceDependencyImpl dependency = new InterfaceDependencyImpl();
 
     Object retrievedDependency = new DependencyManager()
-            .setLockGuardProxyFactory(new LockGuardProxyFactory(Mockito.mock(LockManager.class)))
+            .setLockGuardProxyFactory(new LockGuardProxyFactory(Mockito.mock(LockManager.class), true))
             .addDriverDependency(new ChangeSetDependency(InterfaceDependencyImpl.class, dependency))
             .getDependency(InterfaceDependency.class, true)
             .orElseThrow(RuntimeException::new);
@@ -204,7 +204,7 @@ public class DependencyManagerTest {
     InterfaceDependencyImpl dependency = new InterfaceDependencyImpl();
 
     Object retrievedDependency = new DependencyManager()
-            .setLockGuardProxyFactory(new LockGuardProxyFactory(Mockito.mock(LockManager.class)))
+            .setLockGuardProxyFactory(new LockGuardProxyFactory(Mockito.mock(LockManager.class), true))
             .addDriverDependency(new ChangeSetDependency(InterfaceDependencyImpl.class, dependency, false))
             .getDependency(InterfaceDependency.class, true)
             .orElseThrow(RuntimeException::new);
@@ -218,7 +218,7 @@ public class DependencyManagerTest {
     InterfaceDependencyImpl dependency = new InterfaceDependencyImpl();
 
     Object retrievedDependency = new DependencyManager()
-            .setLockGuardProxyFactory(new LockGuardProxyFactory(Mockito.mock(LockManager.class)))
+            .setLockGuardProxyFactory(new LockGuardProxyFactory(Mockito.mock(LockManager.class), true))
             .addStandardDependency(new ChangeSetDependency(InterfaceDependencyImpl.class, dependency, true))
             .getDependency(InterfaceDependency.class, true)
             .orElseThrow(RuntimeException::new);
@@ -232,7 +232,7 @@ public class DependencyManagerTest {
     InterfaceDependencyImpl dependency = new InterfaceDependencyImpl();
 
     Object retrievedDependency = new DependencyManager()
-            .setLockGuardProxyFactory(new LockGuardProxyFactory(Mockito.mock(LockManager.class)))
+            .setLockGuardProxyFactory(new LockGuardProxyFactory(Mockito.mock(LockManager.class), true))
             .addStandardDependency(new ChangeSetDependency(InterfaceDependencyImpl.class, dependency))
             .getDependency(InterfaceDependency.class, true)
             .orElseThrow(RuntimeException::new);
@@ -246,7 +246,7 @@ public class DependencyManagerTest {
     InterfaceDependencyImpl dependency = new InterfaceDependencyImpl();
 
     Object retrievedDependency = new DependencyManager()
-            .setLockGuardProxyFactory(new LockGuardProxyFactory(Mockito.mock(LockManager.class)))
+            .setLockGuardProxyFactory(new LockGuardProxyFactory(Mockito.mock(LockManager.class), true))
             .addStandardDependency(new ChangeSetDependency(InterfaceDependencyImpl.class, dependency, false))
             .getDependency(InterfaceDependency.class, true)
             .orElseThrow(RuntimeException::new);

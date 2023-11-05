@@ -45,25 +45,28 @@ public class ChangeLogRuntimeImpl implements ChangeLogRuntime {
   private final DependencyManager dependencyManager;
   private final Function<Parameter, String> parameterNameProvider;
   private final Set<Class<?>> nonProxyableTypes;
+  private final boolean lockGuardEnabled;
 
-  public ChangeLogRuntimeImpl(DependencyManager dependencyManager, Function<Parameter, String> parameterNameProvider, List<Class<?>> nonProxyableTypes) {
-    this(DEFAULT_FUNC_FOR_ANNOTATIONS, dependencyManager, parameterNameProvider, nonProxyableTypes);
+  public ChangeLogRuntimeImpl(DependencyManager dependencyManager, Function<Parameter, String> parameterNameProvider, List<Class<?>> nonProxyableTypes, boolean lockGuardEnabled) {
+    this(DEFAULT_FUNC_FOR_ANNOTATIONS, dependencyManager, parameterNameProvider, nonProxyableTypes, lockGuardEnabled);
   }
 
   @Deprecated
   public ChangeLogRuntimeImpl(Function<Class<?>, Object> instantiatorForAnnotations,
                               DependencyManager dependencyManager,
                               Function<Parameter, String> parameterNameProvider,
-                              List<Class<?>> nonProxyableTypes) {
+                              List<Class<?>> nonProxyableTypes,
+                              boolean lockGuardEnabled) {
     this.instantiatorForAnnotations = instantiatorForAnnotations != null ? instantiatorForAnnotations : DEFAULT_FUNC_FOR_ANNOTATIONS;
     this.dependencyManager = dependencyManager;
     this.parameterNameProvider = parameterNameProvider;
     this.nonProxyableTypes = new HashSet<>(nonProxyableTypes);
+    this.lockGuardEnabled = lockGuardEnabled;
   }
 
   @Override
   public void initialize(LockManager lockManager) {
-    dependencyManager.setLockGuardProxyFactory(new LockGuardProxyFactory(lockManager));
+    dependencyManager.setLockGuardProxyFactory(new LockGuardProxyFactory(lockManager, lockGuardEnabled));
   }
 
   @Override

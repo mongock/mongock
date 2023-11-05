@@ -11,10 +11,13 @@ import com.mongodb.client.MongoCollection;
 import com.mongodb.client.model.Filters;
 import com.mongodb.client.model.UpdateOptions;
 import com.mongodb.client.result.UpdateResult;
+import io.mongock.utils.field.FieldInstance;
+import io.mongock.utils.field.FieldUtil;
 import org.bson.Document;
 import org.bson.conversions.Bson;
 
 import java.util.Date;
+import java.util.stream.Collectors;
 
 import static io.mongock.driver.core.lock.LockEntry.KEY_FIELD;
 import static io.mongock.driver.core.lock.LockEntry.STATUS_FIELD;
@@ -92,7 +95,8 @@ public class MongoSync4LockRepository extends MongoSync4RepositoryBase<LockEntry
     boolean lockHeld;
     String debErrorDetail = "not db error";
     Bson acquireLockQuery = getAcquireLockQuery(newLock.getKey(), newLock.getOwner(), onlyIfSameOwner);
-    Document newLockDocumentSet = new Document().append("$set", toEntity(newLock));
+    Document entity = toEntity(newLock);
+    Document newLockDocumentSet = new Document().append("$set", entity);
     try {
       UpdateResult result = collection.updateMany(acquireLockQuery, newLockDocumentSet, new UpdateOptions().upsert(!onlyIfSameOwner));
       lockHeld = result.getModifiedCount() <= 0 && result.getUpsertedId() == null;
@@ -127,5 +131,14 @@ public class MongoSync4LockRepository extends MongoSync4RepositoryBase<LockEntry
     return onlyIfSameOwner
         ? Filters.and(keyCond, statusCond, ownerCond)
         : Filters.and(keyCond, Filters.or(expirationCond, ownerCond));
+  }
+
+  @Override
+  public Document toEntity(LockEntry domain) {
+    return new Document()
+        .append(KEY_FIELD, domain.getKey())
+        .append(STATUS_FIELD, domain.getStatus())
+        .append(OWNER_FIELD, domain.getOwner())
+        .append(EXPIRES_AT_FIELD, domain.getExpiresAt());
   }
 }

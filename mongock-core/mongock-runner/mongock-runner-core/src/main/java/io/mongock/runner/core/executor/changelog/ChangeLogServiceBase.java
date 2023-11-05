@@ -9,6 +9,7 @@ import io.mongock.runner.core.annotation.LegacyAnnotationProcessor;
 import io.mongock.runner.core.internal.ChangeLogItem;
 import io.mongock.runner.core.internal.ChangeSetItem;
 import io.mongock.utils.CollectionUtils;
+import io.mongock.utils.FileUtil;
 import io.mongock.utils.StringUtils;
 import org.apache.maven.artifact.versioning.ArtifactVersion;
 import org.apache.maven.artifact.versioning.DefaultArtifactVersion;
@@ -16,6 +17,7 @@ import org.reflections.Reflections;
 
 import java.lang.reflect.AnnotatedElement;
 import java.lang.reflect.Method;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
@@ -38,7 +40,6 @@ import static java.util.Arrays.asList;
  */
 public abstract class ChangeLogServiceBase implements Validable {
 
-
   private final LegacyAnnotationProcessor legacyAnnotationProcessor;
   private final AnnotationProcessor annotationProcessor;
   protected Function<AnnotatedElement, Boolean> profileFilter;
@@ -54,12 +55,12 @@ public abstract class ChangeLogServiceBase implements Validable {
     this.annotationProcessor = annotationProcessor;
     reset();
   }
-  
+
   public final void reset() {
     this.profileFilter = null;
     this.changeLogInstantiator = null;
-    this.changeLogsBasePackageList = Collections.emptyList();
-    this.changeLogsBaseClassList = Collections.emptyList();
+    this.changeLogsBasePackageList = new ArrayList<>();
+    this.changeLogsBaseClassList = new ArrayList<>();
     this.startSystemVersion = new DefaultArtifactVersion("0");
     this.endSystemVersion = new DefaultArtifactVersion(String.valueOf(Integer.MAX_VALUE));
     this.defaultAuthor = null;
@@ -125,6 +126,7 @@ public abstract class ChangeLogServiceBase implements Validable {
     this.defaultAuthor = defaultAuthor;
   }
 
+
   @Override
   public void runValidation() throws MongockException {
     if (
@@ -162,8 +164,10 @@ public abstract class ChangeLogServiceBase implements Validable {
         new Reflections(changeLogsBasePackageList).getTypesAnnotatedWith(ChangeLog.class).stream(),
         new Reflections(changeLogsBasePackageList).getTypesAnnotatedWith(ChangeUnit.class).stream())
         : Stream.empty();
+
     return Stream.concat(changeLogsBaseClassList.stream(), scannedPackageStream).collect(Collectors.toSet());
   }
+
 
   protected List<ChangeSetItem> fetchChangeSetMethodsSorted(Class<?> type) throws MongockException {
     List<ChangeSetItem> changeSets = getChangeSetWithCompanionMethods(asList(type.getDeclaredMethods()));
@@ -209,10 +213,6 @@ public abstract class ChangeLogServiceBase implements Validable {
   protected abstract ChangeLogItem buildChangeLogInstance(Class<?> changeLogClass) throws MongockException;
 
   protected abstract ChangeLogItem buildChangeLogInstanceFromLegacy(Class<?> changeLogClass) throws MongockException;
-
-
-
-
 
 
   protected List<ChangeSetItem> fetchListOfChangeSetsFromClass(Class<?> type) {
