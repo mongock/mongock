@@ -47,8 +47,8 @@ class DynamoDBTestCompanion: TestCompanion<ProvisionedThroughput> {
             client = AmazonDynamoDBClientBuilder.standard()
                 .withEndpointConfiguration(
                     AwsClientBuilder.EndpointConfiguration(
-                        "dynamodb.eu-west-1.amazonaws.com",
-                        "eu-west-1"
+                        "dynamodb.us-east-2.amazonaws.com",
+                        "us-east-2"
                     )
                 )
                 .withCredentials(
