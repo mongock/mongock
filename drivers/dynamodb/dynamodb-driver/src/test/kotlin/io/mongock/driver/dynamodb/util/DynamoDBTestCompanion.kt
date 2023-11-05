@@ -1,39 +1,11 @@
 package io.mongock.driver.dynamodb.util
 
-import com.amazonaws.auth.AWSStaticCredentialsProvider
-import com.amazonaws.auth.BasicAWSCredentials
-import com.amazonaws.client.builder.AwsClientBuilder
-import com.amazonaws.services.dynamodbv2.AmazonDynamoDBClient
-import com.amazonaws.services.dynamodbv2.AmazonDynamoDBClientBuilder
-import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBMapper
-import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBMapperConfig
-import com.amazonaws.services.dynamodbv2.document.DynamoDB
-import com.amazonaws.services.dynamodbv2.model.AttributeValue
-import com.amazonaws.services.dynamodbv2.model.GetItemRequest
-import com.amazonaws.services.dynamodbv2.model.ProvisionedThroughput
-import com.amazonaws.services.dynamodbv2.model.PutItemRequest
-import com.amazonaws.services.dynamodbv2.util.TableUtils
-import io.mongock.driver.api.driver.ConnectionDriver
 import io.mongock.driver.api.entry.ChangeEntry
-import io.mongock.driver.api.entry.ChangeEntry.KEY_CHANGE_ID
-import io.mongock.driver.api.entry.ChangeEntryService
 import io.mongock.driver.api.entry.ChangeState
 import io.mongock.driver.api.entry.ChangeType
-import io.mongock.driver.core.driver.ConnectionDriverBase
 import io.mongock.driver.core.lock.LockEntry
-import io.mongock.driver.core.lock.LockRepository
 import io.mongock.driver.core.lock.LockStatus
-import io.mongock.driver.dynamodb.driver.DynamoDBDriver
-import io.mongock.driver.dynamodb.repository.ChangeEntryDynamoDB
-import io.mongock.driver.dynamodb.repository.DynamoDBChangeEntryRepository
-import io.mongock.driver.dynamodb.repository.DynamoDBLockRepository
-import io.mongock.driver.dynamodb.repository.KEY_FIELD_DYNAMODB
-import io.mongock.driver.dynamodb.repository.LockEntryDynamoDB
-import io.mongock.driver.dynamodb.repository.RANGE_KEY_ID
-import org.testcontainers.dynamodb.DynaliteContainer
-import org.testcontainers.utility.DockerImageName
 import java.util.*
-
 
 
 class DynamoDBTestCompanion {//}: TestCompanion<ProvisionedThroughput> {
@@ -192,93 +164,91 @@ class DynamoDBTestCompanion {//}: TestCompanion<ProvisionedThroughput> {
 }
 
 
+//val repoExtraConfig: ProvisionedThroughput = ProvisionedThroughput(50L, 50L)
 
-
-val repoExtraConfig: ProvisionedThroughput = ProvisionedThroughput(50L, 50L)
-
-val change1 = ChangeEntry(
-    "executionId",
-    "c1",
-    "author-c1",
-    Date(),
-    ChangeState.EXECUTED,
-    ChangeType.EXECUTION,
-    "changeLogClass",
-    "changeSetMethod",
-    0L,
-    "executionHostname",
-    mapOf("this" to "that"),
-    false
-)
-
-val change1_u = ChangeEntry(
-    "executionId",
-    "c1",
-    "author-c1",
-    Date(),
-    ChangeState.EXECUTED,
-    ChangeType.EXECUTION,
-    "UPDATED",
-    "UPDATED",
-    0L,
-    "UPDATED",
-    mapOf("UPDATED" to "that"),
-    false
-)
-
-val change2 = ChangeEntry(
-    "executionId",
-    "c2",
-    "author-c2",
-    Date(),
-    ChangeState.EXECUTED,
-    ChangeType.EXECUTION,
-    "changeLogClass",
-    "changeSetMethod",
-    0L,
-    "executionHostname",
-    mapOf("this" to "that"),
-    false
-)
-
-val change3 = ChangeEntry(
-    "executionId",
-    "c3",
-    "author-c3",
-    Date(),
-    ChangeState.EXECUTED,
-    ChangeType.EXECUTION,
-    "changeLogClass",
-    "changeSetMethod",
-    0L,
-    "executionHostname",
-    mapOf("this" to "that"),
-    false
-)
-
-val changeFailed = ChangeEntry(
-    "executionId",
-    null,
-    "author-c3",
-    Date(),
-    ChangeState.EXECUTED,
-    ChangeType.EXECUTION,
-    "changeLogClass",
-    "changeSetMethod",
-    0L,
-    "executionHostname",
-    mapOf("this" to "that"),
-    false
-)
-
-const val lockKey = "lock-key"
-
-//String key, String status, String owner, Date expiresAt
-val lockOwner1NotExpired =
-    LockEntry(lockKey, LockStatus.LOCK_HELD.name, "owner-1", Date(System.currentTimeMillis() + 180000))
-val lockOwner1NotExpiredUpdated =
-    LockEntry(lockKey, LockStatus.LOCK_HELD.name, "owner-1", Date(System.currentTimeMillis() + 360000))
-val lockOwner1Expired =
-    LockEntry(lockKey, LockStatus.LOCK_HELD.name, "owner-1", Date(System.currentTimeMillis() - 10000))
-val lockOwner2NotExpired =
-    LockEntry(lockKey, LockStatus.LOCK_HELD.name, "owner-2", Date(System.currentTimeMillis() + 180000))
+//val change1 = ChangeEntry(
+//    "executionId",
+//    "c1",
+//    "author-c1",
+//    Date(),
+//    ChangeState.EXECUTED,
+//    ChangeType.EXECUTION,
+//    "changeLogClass",
+//    "changeSetMethod",
+//    0L,
+//    "executionHostname",
+//    mapOf("this" to "that"),
+//    false
+//)
+//
+//val change1_u = ChangeEntry(
+//    "executionId",
+//    "c1",
+//    "author-c1",
+//    Date(),
+//    ChangeState.EXECUTED,
+//    ChangeType.EXECUTION,
+//    "UPDATED",
+//    "UPDATED",
+//    0L,
+//    "UPDATED",
+//    mapOf("UPDATED" to "that"),
+//    false
+//)
+//
+//val change2 = ChangeEntry(
+//    "executionId",
+//    "c2",
+//    "author-c2",
+//    Date(),
+//    ChangeState.EXECUTED,
+//    ChangeType.EXECUTION,
+//    "changeLogClass",
+//    "changeSetMethod",
+//    0L,
+//    "executionHostname",
+//    mapOf("this" to "that"),
+//    false
+//)
+//
+//val change3 = ChangeEntry(
+//    "executionId",
+//    "c3",
+//    "author-c3",
+//    Date(),
+//    ChangeState.EXECUTED,
+//    ChangeType.EXECUTION,
+//    "changeLogClass",
+//    "changeSetMethod",
+//    0L,
+//    "executionHostname",
+//    mapOf("this" to "that"),
+//    false
+//)
+//
+//val changeFailed = ChangeEntry(
+//    "executionId",
+//    null,
+//    "author-c3",
+//    Date(),
+//    ChangeState.EXECUTED,
+//    ChangeType.EXECUTION,
+//    "changeLogClass",
+//    "changeSetMethod",
+//    0L,
+//    "executionHostname",
+//    mapOf("this" to "that"),
+//    false
+//)
+//
+//const val lockKey = "lock-key"
+//
+////String key, String status, String owner, Date expiresAt
+//val lockOwner1NotExpired =
+//    LockEntry(lockKey, LockStatus.LOCK_HELD.name, "owner-1", Date(System.currentTimeMillis() + 180000))
+//val lockOwner1NotExpiredUpdated =
+//    LockEntry(lockKey, LockStatus.LOCK_HELD.name, "owner-1", Date(System.currentTimeMillis() + 360000))
+//val lockOwner1Expired =
+//    LockEntry(lockKey, LockStatus.LOCK_HELD.name, "owner-1", Date(System.currentTimeMillis() - 10000))
+//val lockOwner2NotExpired =
+//    LockEntry(lockKey, LockStatus.LOCK_HELD.name, "owner-2", Date(System.currentTimeMillis() + 180000))
