@@ -170,13 +170,13 @@ public class MongoReactiveChangeEntryRepository extends MongoReactiveRepositoryB
         .append(KEY_AUTHOR, domain.getAuthor())
         .append(KEY_TIMESTAMP, domain.getTimestamp())
         .append(KEY_STATE, domain.getState().toString())
-        .append(KEY_TYPE, domain.getType())
+        .append(KEY_TYPE, domain.getType().toString())
         .append(KEY_CHANGELOG_CLASS, domain.getChangeLogClass())
         .append(KEY_CHANGESET_METHOD, domain.getChangeSetMethod())
         .append(KEY_METADATA, domain.getMetadata())
         .append(KEY_EXECUTION_MILLIS, domain.getExecutionMillis())
         .append(KEY_EXECUTION_HOST_NAME, domain.getExecutionHostname())
-        .append(KEY_ERROR_TRACE, domain.getErrorTrace())
+        .append(KEY_ERROR_TRACE, domain.getErrorTrace().orElse(null))
         .append(KEY_SYSTEM_CHANGE, domain.isSystemChange());
   }
 }
