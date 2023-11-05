@@ -28,5 +28,4 @@ public interface ChangeExecutorConfiguration {
   
   String getEndSystemVersion();
 
-  String getChangeUnitsFile();
 }

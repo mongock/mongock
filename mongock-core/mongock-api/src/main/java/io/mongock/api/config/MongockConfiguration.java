@@ -155,8 +155,6 @@ public class MongockConfiguration implements ExecutorConfiguration {
    */
   private boolean lockGuardEnabled = true;
 
-  private String changeUnitsFile = null;
-
   @Deprecated
   private Integer maxTries;
 
@@ -190,7 +188,6 @@ public class MongockConfiguration implements ExecutorConfiguration {
     maxWaitingForLockMillis = from.getMaxWaitingForLockMillis();
     defaultAuthor = from.getDefaultAuthor();
     lockGuardEnabled = from.lockGuardEnabled;
-    changeUnitsFile = from.changeUnitsFile;
   }
 
   public long getLockAcquiredForMillis() {
@@ -252,7 +249,6 @@ public class MongockConfiguration implements ExecutorConfiguration {
 
   public void setMigrationScanPackage(List<String> migrationScanPackage) {
     this.migrationScanPackage = migrationScanPackage;
-    changeUnitsFile = null;
   }
 
   public boolean isIndexCreation() {
@@ -377,14 +373,6 @@ public class MongockConfiguration implements ExecutorConfiguration {
     this.lockGuardEnabled = lockGuardEnabled;
   }
 
-  public String getChangeUnitsFile() {
-    return changeUnitsFile;
-  }
-
-  public void setChangeUnitsFile(String changeUnitsFromFile) {
-    this.changeUnitsFile = changeUnitsFromFile;
-  }
-
   @Override
   public boolean equals(Object o) {
     if (this == o) return true;
@@ -397,7 +385,6 @@ public class MongockConfiguration implements ExecutorConfiguration {
         trackIgnored == that.trackIgnored &&
         enabled == that.enabled &&
         lockGuardEnabled == that.lockGuardEnabled &&
-        changeUnitsFile == that.changeUnitsFile &&
         Objects.equals(migrationRepositoryName, that.migrationRepositoryName) &&
         Objects.equals(lockRepositoryName, that.lockRepositoryName) &&
         Objects.equals(lockQuitTryingAfterMillis, that.lockQuitTryingAfterMillis) &&
@@ -414,7 +401,7 @@ public class MongockConfiguration implements ExecutorConfiguration {
 
   @Override
   public int hashCode() {
-    return Objects.hash(migrationRepositoryName, indexCreation, lockRepositoryName, lockAcquiredForMillis, lockQuitTryingAfterMillis, lockTryFrequencyMillis, throwExceptionIfCannotObtainLock, trackIgnored, enabled, migrationScanPackage, startSystemVersion, endSystemVersion, serviceIdentifier, metadata, legacyMigration, transactionEnabled, maxTries, maxWaitingForLockMillis, lockGuardEnabled,  changeUnitsFile);
+    return Objects.hash(migrationRepositoryName, indexCreation, lockRepositoryName, lockAcquiredForMillis, lockQuitTryingAfterMillis, lockTryFrequencyMillis, throwExceptionIfCannotObtainLock, trackIgnored, enabled, migrationScanPackage, startSystemVersion, endSystemVersion, serviceIdentifier, metadata, legacyMigration, transactionEnabled, maxTries, maxWaitingForLockMillis, lockGuardEnabled);
   }
 
   //DEPRECATIONS
@@ -451,7 +438,6 @@ public class MongockConfiguration implements ExecutorConfiguration {
   public void setChangeLogsScanPackage(List<String> migrationScanPackage) {
     logger.warn(DEPRECATED_PROPERTY_TEMPLATE, "changeLogsScanPackage", "migrationScanPackage");
     this.migrationScanPackage = migrationScanPackage;
-    changeUnitsFile = null;
   }
 
   /**

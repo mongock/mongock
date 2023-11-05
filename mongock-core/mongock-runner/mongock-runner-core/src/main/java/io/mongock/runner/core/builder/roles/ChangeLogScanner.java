@@ -9,11 +9,6 @@ import java.util.function.Function;
 public interface ChangeLogScanner<SELF extends ChangeLogScanner<SELF, CONFIG>, CONFIG extends MongockConfiguration>
     extends Configurable<SELF, CONFIG>, SelfInstanstiator<SELF> {
 
-  default SELF setChangeUnitsFile(String changeUnitsFile) {
-    getConfig().setChangeUnitsFile(changeUnitsFile);
-    return getInstance();
-  }
-
   default SELF setLockGuardEnabled(boolean lockGuardEnabled) {
     getConfig().setLockGuardEnabled(lockGuardEnabled);
     return getInstance();

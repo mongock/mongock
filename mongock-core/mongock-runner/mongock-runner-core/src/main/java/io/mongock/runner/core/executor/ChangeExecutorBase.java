@@ -483,6 +483,5 @@ public abstract class ChangeExecutorBase<CONFIG extends ChangeExecutorConfigurat
     changeLogService.setStartSystemVersion(config.getStartSystemVersion());
     changeLogService.setEndSystemVersion(config.getEndSystemVersion());
     changeLogService.setProfileFilter(this.annotationFilter);
-    changeLogService.setChangeUnitsFile(config.getChangeUnitsFile());
   }
 }

@@ -50,8 +50,6 @@ public abstract class ChangeLogServiceBase implements Validable {
   private ArtifactVersion endSystemVersion;
   private String defaultAuthor;
 
-  private String changeUnitsFile;
-
   public ChangeLogServiceBase(AnnotationProcessor annotationProcessor, LegacyAnnotationProcessor legacyAnnotationProcessor) {
     this.legacyAnnotationProcessor = legacyAnnotationProcessor;
     this.annotationProcessor = annotationProcessor;
@@ -66,7 +64,6 @@ public abstract class ChangeLogServiceBase implements Validable {
     this.startSystemVersion = new DefaultArtifactVersion("0");
     this.endSystemVersion = new DefaultArtifactVersion(String.valueOf(Integer.MAX_VALUE));
     this.defaultAuthor = null;
-    this.changeUnitsFile = null;
   }
 
   protected LegacyAnnotationProcessor getLegacyAnnotationProcessor() {
@@ -129,13 +126,6 @@ public abstract class ChangeLogServiceBase implements Validable {
     this.defaultAuthor = defaultAuthor;
   }
 
-  public String getChangeUnitsFile() {
-    return changeUnitsFile;
-  }
-
-  public void setChangeUnitsFile(String changeUnitsFile) {
-    this.changeUnitsFile = changeUnitsFile;
-  }
 
   @Override
   public void runValidation() throws MongockException {
@@ -175,28 +165,9 @@ public abstract class ChangeLogServiceBase implements Validable {
         new Reflections(changeLogsBasePackageList).getTypesAnnotatedWith(ChangeUnit.class).stream())
         : Stream.empty();
 
-    changeLogsBaseClassList.addAll(getClassesFromFile(changeUnitsFile));
     return Stream.concat(changeLogsBaseClassList.stream(), scannedPackageStream).collect(Collectors.toSet());
   }
 
-  private static List<Class<?>> getClassesFromFile(String file) {
-    if (file != null) {
-      Function<String, Class<?>> toClass = className -> {
-        try {
-          return Class.forName(className);
-        } catch (ClassNotFoundException e) {
-          throw new RuntimeException(e);
-        }
-      };
-      return FileUtil
-          .readLinesFromFile(file)
-          .stream()
-          .map(toClass)
-          .collect(Collectors.toList());
-    } else {
-      return Collections.emptyList();
-    }
-  }
 
   protected List<ChangeSetItem> fetchChangeSetMethodsSorted(Class<?> type) throws MongockException {
     List<ChangeSetItem> changeSets = getChangeSetWithCompanionMethods(asList(type.getDeclaredMethods()));
