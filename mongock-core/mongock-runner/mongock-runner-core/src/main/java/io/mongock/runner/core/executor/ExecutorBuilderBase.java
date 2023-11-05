@@ -128,7 +128,7 @@ public abstract class ExecutorBuilderBase<CONFIG extends ExecutorConfiguration>
   
   protected void validateScanPackage() {
     if (config.getMigrationScanPackage() == null || config.getMigrationScanPackage().isEmpty()) {
-      throw new MongockException("Please, provide a Scan package for changeLogs or a file to reade the ChangeUnit's classes from");
+      throw new MongockException("Scan package for changeLogs is not set: use appropriate setter");
     }
   }
   
