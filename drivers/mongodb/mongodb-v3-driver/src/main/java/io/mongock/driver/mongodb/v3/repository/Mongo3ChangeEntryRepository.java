@@ -22,6 +22,9 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import static io.mongock.driver.api.entry.ChangeEntry.KEY_ERROR_TRACE;
+import static io.mongock.driver.api.entry.ChangeEntry.KEY_EXECUTION_HOST_NAME;
+
 public class Mongo3ChangeEntryRepository extends Mongo3RepositoryBase<ChangeEntry> implements ChangeEntryRepositoryWithEntity<Document> {
   private final static Logger logger = LoggerFactory.getLogger(Mongo3ChangeEntryRepository.class);
 
@@ -158,4 +161,21 @@ public class Mongo3ChangeEntryRepository extends Mongo3RepositoryBase<ChangeEntr
     // Nothing to do in MongoDB
   }
 
+  @Override
+  public Document toEntity(ChangeEntry domain) {
+    return new Document()
+        .append(KEY_EXECUTION_ID, domain.getExecutionId())
+        .append(KEY_CHANGE_ID, domain.getChangeId())
+        .append(KEY_AUTHOR, domain.getAuthor())
+        .append(KEY_TIMESTAMP, domain.getTimestamp())
+        .append(KEY_STATE, domain.getState().toString())
+        .append(KEY_TYPE, domain.getType().toString())
+        .append(KEY_CHANGELOG_CLASS, domain.getChangeLogClass())
+        .append(KEY_CHANGESET_METHOD, domain.getChangeSetMethod())
+        .append(KEY_METADATA, domain.getMetadata())
+        .append(KEY_EXECUTION_MILLIS, domain.getExecutionMillis())
+        .append(KEY_EXECUTION_HOST_NAME, domain.getExecutionHostname())
+        .append(KEY_ERROR_TRACE, domain.getErrorTrace().orElse(null))
+        .append(KEY_SYSTEM_CHANGE, domain.isSystemChange());
+  }
 }

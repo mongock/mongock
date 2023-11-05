@@ -17,7 +17,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-public class MongoReactiveRepositoryBase<DOMAIN_CLASS> implements EntityRepository<DOMAIN_CLASS, Document>, RepositoryIndexable {
+public abstract class MongoReactiveRepositoryBase<DOMAIN_CLASS> implements EntityRepository<DOMAIN_CLASS, Document>, RepositoryIndexable {
 
   private final static Logger logger = LoggerFactory.getLogger(MongoReactiveRepositoryBase.class);
   private final static int INDEX_ENSURE_MAX_TRIES = 3;

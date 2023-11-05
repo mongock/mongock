@@ -128,4 +128,13 @@ public class MongoReactiveLockRepository extends MongoReactiveRepositoryBase<Loc
         ? Filters.and(keyCond, statusCond, ownerCond)
         : Filters.and(keyCond, Filters.or(expirationCond, ownerCond));
   }
+
+  @Override
+  public Document toEntity(LockEntry domain) {
+    return new Document()
+        .append(KEY_FIELD, domain.getKey())
+        .append(STATUS_FIELD, domain.getStatus())
+        .append(OWNER_FIELD, domain.getOwner())
+        .append(EXPIRES_AT_FIELD, domain.getExpiresAt());
+  }
 }

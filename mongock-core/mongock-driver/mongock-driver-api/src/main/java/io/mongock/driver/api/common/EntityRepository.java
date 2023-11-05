@@ -17,14 +17,7 @@ public interface EntityRepository<DOMAIN_CLASS, ENTITY_CLASS> extends Process {
    * @param domain domain object that requires to be persisted
    * @return persistence representation of the domain object
    */
-  default ENTITY_CLASS toEntity(DOMAIN_CLASS domain) {
-    return mapFieldInstances(
-        FieldUtil.getAllFields(domain.getClass())
-            .stream()
-            .map(field -> new FieldInstance(field, domain))
-            .collect(Collectors.toList())
-    );
-  }
+  ENTITY_CLASS toEntity(DOMAIN_CLASS domain);
 
   ENTITY_CLASS mapFieldInstances(List<FieldInstance> fieldInstanceList);
 

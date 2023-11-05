@@ -32,7 +32,7 @@ import java.util.stream.Collectors;
  * 
  * @author Tigran Babloyan
  */
-public class CouchbaseRepositoryBase <DOMAIN_CLASS> implements EntityRepository<DOMAIN_CLASS, JsonObject>, RepositoryIndexable {
+public abstract class CouchbaseRepositoryBase <DOMAIN_CLASS> implements EntityRepository<DOMAIN_CLASS, JsonObject>, RepositoryIndexable {
   private final static Logger logger = LoggerFactory.getLogger(CouchbaseRepositoryBase.class);
   private final static String INDEX_NAME = "idx_mongock_keys";
   public final static String DOCUMENT_TYPE_KEY = "_doctype";
@@ -169,7 +169,7 @@ public class CouchbaseRepositoryBase <DOMAIN_CLASS> implements EntityRepository<
    * @param key The key of the object in document.
    * @param value The value of the object in document.
    */
-  private void addField(JsonObject document, String key, Object value) {
+  protected void addField(JsonObject document, String key, Object value) {
     if (value instanceof Date){
       document.put(key, ((Date) value).getTime());
     } else if (value instanceof Optional){

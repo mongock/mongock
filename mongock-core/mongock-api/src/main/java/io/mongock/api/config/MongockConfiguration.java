@@ -401,7 +401,7 @@ public class MongockConfiguration implements ExecutorConfiguration {
 
   @Override
   public int hashCode() {
-    return Objects.hash(migrationRepositoryName, indexCreation, lockRepositoryName, lockAcquiredForMillis, lockQuitTryingAfterMillis, lockTryFrequencyMillis, throwExceptionIfCannotObtainLock, trackIgnored, enabled, migrationScanPackage, startSystemVersion, endSystemVersion, serviceIdentifier, metadata, legacyMigration, transactionEnabled, maxTries, maxWaitingForLockMillis);
+    return Objects.hash(migrationRepositoryName, indexCreation, lockRepositoryName, lockAcquiredForMillis, lockQuitTryingAfterMillis, lockTryFrequencyMillis, throwExceptionIfCannotObtainLock, trackIgnored, enabled, migrationScanPackage, startSystemVersion, endSystemVersion, serviceIdentifier, metadata, legacyMigration, transactionEnabled, maxTries, maxWaitingForLockMillis, lockGuardEnabled);
   }
 
   //DEPRECATIONS
