@@ -118,14 +118,7 @@ public class CouchbaseChangeEntryRepository extends CouchbaseRepositoryBase<Chan
     addField(jsonObject, KEY_EXECUTION_HOST_NAME, domain.getExecutionHostname());
     addField(jsonObject, KEY_ERROR_TRACE, domain.getErrorTrace().orElse(null));
     addField(jsonObject, KEY_SYSTEM_CHANGE, domain.isSystemChange());
+    addField(jsonObject, DOCUMENT_TYPE_KEY, DOCUMENT_TYPE_CHANGE_ENTRY);
     return jsonObject;
-
-  }
-
-  @Override
-  public JsonObject mapFieldInstances(List<FieldInstance> fieldInstanceList) {
-    JsonObject document = super.mapFieldInstances(fieldInstanceList);
-    document.put(DOCUMENT_TYPE_KEY, DOCUMENT_TYPE_CHANGE_ENTRY);
-    return document;
   }
 }

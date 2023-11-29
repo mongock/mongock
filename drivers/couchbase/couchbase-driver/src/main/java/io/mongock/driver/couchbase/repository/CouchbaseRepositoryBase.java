@@ -48,13 +48,6 @@ public abstract class CouchbaseRepositoryBase <DOMAIN_CLASS> implements EntityRe
   }
   
   @Override
-  public JsonObject mapFieldInstances(List<FieldInstance> fieldInstanceList) {
-    JsonObject document = JsonObject.create();
-    fieldInstanceList.forEach(def -> addField(document, def.getName(), def.getValue()));
-    return document;
-  }
-
-  @Override
   public void setIndexCreation(boolean indexCreation) {
     this.indexCreation = indexCreation;
   }

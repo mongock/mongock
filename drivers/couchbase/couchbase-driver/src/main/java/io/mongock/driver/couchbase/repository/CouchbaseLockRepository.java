@@ -116,14 +116,7 @@ public class CouchbaseLockRepository extends CouchbaseRepositoryBase<LockEntry> 
     addField(jsonObject, STATUS_FIELD, domain.getStatus());
     addField(jsonObject, OWNER_FIELD, domain.getOwner());
     addField(jsonObject, EXPIRES_AT_FIELD, domain.getExpiresAt());
+    addField(jsonObject, DOCUMENT_TYPE_KEY, LockEntryKeyGenerator.DOCUMENT_TYPE_LOCK_ENTRY);
     return jsonObject;
   }
-
-  @Override
-  public JsonObject mapFieldInstances(List<FieldInstance> fieldInstanceList) {
-    JsonObject document = super.mapFieldInstances(fieldInstanceList);
-    document.put(DOCUMENT_TYPE_KEY, LockEntryKeyGenerator.DOCUMENT_TYPE_LOCK_ENTRY);
-    return document;
-  }
-
 }

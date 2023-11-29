@@ -8,7 +8,6 @@ import io.mongock.driver.api.common.RepositoryIndexable;
 import io.mongock.driver.mongodb.reactive.util.SubscriberSync;
 import io.mongock.driver.mongodb.reactive.util.MongoCollectionSync;
 import io.mongock.driver.mongodb.reactive.util.MongoSubscriberSync;
-import io.mongock.utils.field.FieldInstance;
 import org.bson.Document;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -121,13 +120,6 @@ public abstract class MongoReactiveRepositoryBase<DOMAIN_CLASS> implements Entit
 
   protected void dropIndex(Document index) {
     collection.dropIndex(index.get("name").toString());
-  }
-
-  @Override
-  public Document mapFieldInstances(List<FieldInstance> fieldInstanceList) {
-    Document document = new Document();
-    fieldInstanceList.forEach(def -> document.append(def.getName(), def.getValue()));
-    return document;
   }
 
   @Override
