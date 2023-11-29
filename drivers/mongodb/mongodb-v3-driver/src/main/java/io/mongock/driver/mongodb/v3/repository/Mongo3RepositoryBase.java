@@ -3,7 +3,6 @@ package io.mongock.driver.mongodb.v3.repository;
 import io.mongock.driver.api.common.EntityRepository;
 import io.mongock.driver.api.common.RepositoryIndexable;
 import io.mongock.api.exception.MongockException;
-import io.mongock.utils.field.FieldInstance;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.model.IndexOptions;
 import org.bson.Document;
@@ -117,13 +116,6 @@ public  abstract class Mongo3RepositoryBase<DOMAIN_CLASS> implements EntityRepos
 
   protected void dropIndex(Document index) {
     collection.dropIndex(index.get("name").toString());
-  }
-
-  @Override
-  public Document mapFieldInstances(List<FieldInstance> fieldInstanceList) {
-    Document document = new Document();
-    fieldInstanceList.forEach(def -> document.append(def.getName(), def.getValue()));
-    return document;
   }
 
   @Override

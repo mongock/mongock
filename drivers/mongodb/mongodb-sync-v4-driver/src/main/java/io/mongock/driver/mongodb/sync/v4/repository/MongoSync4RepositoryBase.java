@@ -3,14 +3,12 @@ package io.mongock.driver.mongodb.sync.v4.repository;
 import io.mongock.driver.api.common.EntityRepository;
 import io.mongock.driver.api.common.RepositoryIndexable;
 import io.mongock.api.exception.MongockException;
-import io.mongock.utils.field.FieldInstance;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.model.IndexOptions;
 import org.bson.Document;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -118,13 +116,6 @@ public abstract class MongoSync4RepositoryBase<DOMAIN_CLASS> implements EntityRe
 
   protected void dropIndex(Document index) {
     collection.dropIndex(index.get("name").toString());
-  }
-
-  @Override
-  public Document mapFieldInstances(List<FieldInstance> fieldInstanceList) {
-    Document document = new Document();
-    fieldInstanceList.forEach(def -> document.append(def.getName(), def.getValue()));
-    return document;
   }
 
   @Override
