@@ -11,9 +11,9 @@ import io.mongock.driver.couchbase.repository.CouchbaseRepositoryBase;
 public final class N1QLQueryProvider {
 
   private final static String SELECT_ALL_CHANGES_DEFAULT = "SELECT `%s`.* FROM `%s` WHERE %s = $type";
-  private final static String SELECT_ALL_CHANGES_CUSTOM = "SELECT %s.* FROM `%s`.%s.%s WHERE %s = $type";
+  private final static String SELECT_ALL_CHANGES_CUSTOM = "SELECT `%s`.* FROM `%s`.`%s`.`%s` WHERE %s = $type";
   private final static String DELETE_ALL_CHANGES_DEFAULT = "DELETE FROM `%s`";
-  private final static String DELETE_ALL_CHANGES_CUSTOM = "DELETE FROM `%s`.%s.%s";
+  private final static String DELETE_ALL_CHANGES_CUSTOM = "DELETE FROM `%s`.`%s`.`%s`";
   private  N1QLQueryProvider(){
     // nothing to do
   }

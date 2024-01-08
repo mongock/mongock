@@ -26,11 +26,15 @@ class CouchbaseLockRepositoryTest {
     void cleanUp() {
         new CouchbaseLockRepository(TestcontainersCouchbaseRunner.getCluster6(), TestcontainersCouchbaseRunner.getCollectionV6()).deleteAll();
         new CouchbaseLockRepository(TestcontainersCouchbaseRunner.getCluster7(), TestcontainersCouchbaseRunner.getCollectionV7()).deleteAll();
+        new CouchbaseLockRepository(TestcontainersCouchbaseRunner.getCluster7(), TestcontainersCouchbaseRunner.getCollectionSpecialV7()).deleteAll();
         if (TestcontainersCouchbaseRunner.getCollectionV6().exists(lockEntryKeyGenerator.toKey(LockEntryProvider.LOCK_KEY)).exists()) {
             TestcontainersCouchbaseRunner.getCollectionV6().remove(lockEntryKeyGenerator.toKey(LockEntryProvider.LOCK_KEY), RemoveOptions.removeOptions().durability(PersistTo.ACTIVE, ReplicateTo.NONE));
         }
         if (TestcontainersCouchbaseRunner.getCollectionV7().exists(lockEntryKeyGenerator.toKey(LockEntryProvider.LOCK_KEY)).exists()) {
             TestcontainersCouchbaseRunner.getCollectionV7().remove(lockEntryKeyGenerator.toKey(LockEntryProvider.LOCK_KEY), RemoveOptions.removeOptions().durability(PersistTo.ACTIVE, ReplicateTo.NONE));
+        }
+        if (TestcontainersCouchbaseRunner.getCollectionSpecialV7().exists(lockEntryKeyGenerator.toKey(LockEntryProvider.LOCK_KEY)).exists()) {
+          TestcontainersCouchbaseRunner.getCollectionSpecialV7().remove(lockEntryKeyGenerator.toKey(LockEntryProvider.LOCK_KEY), RemoveOptions.removeOptions().durability(PersistTo.ACTIVE, ReplicateTo.NONE));
         }
     }
 
@@ -38,6 +42,7 @@ class CouchbaseLockRepositoryTest {
     static void initialize() {
         new CouchbaseLockRepository(TestcontainersCouchbaseRunner.getCluster6(), TestcontainersCouchbaseRunner.getCollectionV6()).initialize();
         new CouchbaseLockRepository(TestcontainersCouchbaseRunner.getCluster7(), TestcontainersCouchbaseRunner.getCollectionV7()).initialize();
+        new CouchbaseLockRepository(TestcontainersCouchbaseRunner.getCluster7(), TestcontainersCouchbaseRunner.getCollectionSpecialV7()).initialize();
     }
 
     @ParameterizedTest

@@ -18,42 +18,48 @@ public class LockEntryProvider {
     public static Stream<Arguments> lockOwner1NotExpired() {
         return Stream.of(
                 Arguments.of(TestcontainersCouchbaseRunner.getCluster6(), TestcontainersCouchbaseRunner.getCollectionV6(), LOCK_OWNER_1_NOT_EXPIRED),
-                Arguments.of(TestcontainersCouchbaseRunner.getCluster7(), TestcontainersCouchbaseRunner.getCollectionV7(), LOCK_OWNER_1_NOT_EXPIRED)
+                Arguments.of(TestcontainersCouchbaseRunner.getCluster7(), TestcontainersCouchbaseRunner.getCollectionV7(), LOCK_OWNER_1_NOT_EXPIRED),
+                Arguments.of(TestcontainersCouchbaseRunner.getCluster7(), TestcontainersCouchbaseRunner.getCollectionSpecialV7(), LOCK_OWNER_1_NOT_EXPIRED)
         );
     }
 
     public static Stream<Arguments> lockOwner1NotExpiredAndLockOwner1NotExpiredUpdated() {
         return Stream.of(
                 Arguments.of(TestcontainersCouchbaseRunner.getCluster6(), TestcontainersCouchbaseRunner.getCollectionV6(), LOCK_OWNER_1_NOT_EXPIRED, LOCK_OWNER_1_NOT_EXPIRED_UPDATED),
-                Arguments.of(TestcontainersCouchbaseRunner.getCluster7(), TestcontainersCouchbaseRunner.getCollectionV7(), LOCK_OWNER_1_NOT_EXPIRED, LOCK_OWNER_1_NOT_EXPIRED_UPDATED)
+                Arguments.of(TestcontainersCouchbaseRunner.getCluster7(), TestcontainersCouchbaseRunner.getCollectionV7(), LOCK_OWNER_1_NOT_EXPIRED, LOCK_OWNER_1_NOT_EXPIRED_UPDATED),
+                Arguments.of(TestcontainersCouchbaseRunner.getCluster7(), TestcontainersCouchbaseRunner.getCollectionSpecialV7(), LOCK_OWNER_1_NOT_EXPIRED, LOCK_OWNER_1_NOT_EXPIRED_UPDATED)
         );
     }
 
     public static Stream<Arguments> lockOwner1ExpiredAndLockOwner2NotExpired() {
         return Stream.of(
                 Arguments.of(TestcontainersCouchbaseRunner.getCluster6(), TestcontainersCouchbaseRunner.getCollectionV6(), LOCK_OWNER_1_EXPIRED, LOCK_OWNER_2_NOT_EXPIRED),
-                Arguments.of(TestcontainersCouchbaseRunner.getCluster7(), TestcontainersCouchbaseRunner.getCollectionV7(), LOCK_OWNER_1_EXPIRED, LOCK_OWNER_2_NOT_EXPIRED)
+                Arguments.of(TestcontainersCouchbaseRunner.getCluster7(), TestcontainersCouchbaseRunner.getCollectionV7(), LOCK_OWNER_1_EXPIRED, LOCK_OWNER_2_NOT_EXPIRED),
+                Arguments.of(TestcontainersCouchbaseRunner.getCluster7(), TestcontainersCouchbaseRunner.getCollectionSpecialV7(), LOCK_OWNER_1_EXPIRED, LOCK_OWNER_2_NOT_EXPIRED)
         );
     }
 
     public static Stream<Arguments> lockOwner1NotExpiredAndLockOwner2NotExpired() {
         return Stream.of(
                 Arguments.of(TestcontainersCouchbaseRunner.getCluster6(), TestcontainersCouchbaseRunner.getCollectionV6(), LOCK_OWNER_1_NOT_EXPIRED, LOCK_OWNER_2_NOT_EXPIRED),
-                Arguments.of(TestcontainersCouchbaseRunner.getCluster7(), TestcontainersCouchbaseRunner.getCollectionV7(), LOCK_OWNER_1_NOT_EXPIRED, LOCK_OWNER_2_NOT_EXPIRED)
+                Arguments.of(TestcontainersCouchbaseRunner.getCluster7(), TestcontainersCouchbaseRunner.getCollectionV7(), LOCK_OWNER_1_NOT_EXPIRED, LOCK_OWNER_2_NOT_EXPIRED),
+                Arguments.of(TestcontainersCouchbaseRunner.getCluster7(), TestcontainersCouchbaseRunner.getCollectionSpecialV7(), LOCK_OWNER_1_NOT_EXPIRED, LOCK_OWNER_2_NOT_EXPIRED)
         );
     }
 
     public static Stream<Arguments> lockOwner1ExpiredAndLockOwner1NotExpiredUpdated() {
         return Stream.of(
                 Arguments.of(TestcontainersCouchbaseRunner.getCluster6(), TestcontainersCouchbaseRunner.getCollectionV6(), LOCK_OWNER_1_EXPIRED, LOCK_OWNER_1_NOT_EXPIRED_UPDATED),
-                Arguments.of(TestcontainersCouchbaseRunner.getCluster7(), TestcontainersCouchbaseRunner.getCollectionV7(), LOCK_OWNER_1_EXPIRED, LOCK_OWNER_1_NOT_EXPIRED_UPDATED)
+                Arguments.of(TestcontainersCouchbaseRunner.getCluster7(), TestcontainersCouchbaseRunner.getCollectionV7(), LOCK_OWNER_1_EXPIRED, LOCK_OWNER_1_NOT_EXPIRED_UPDATED),
+                Arguments.of(TestcontainersCouchbaseRunner.getCluster7(), TestcontainersCouchbaseRunner.getCollectionSpecialV7(), LOCK_OWNER_1_EXPIRED, LOCK_OWNER_1_NOT_EXPIRED_UPDATED)
         );
     }
 
     public static Stream<Arguments> clusterAndCollection() {
         return Stream.of(
                 Arguments.of(TestcontainersCouchbaseRunner.getCluster6(), TestcontainersCouchbaseRunner.getCollectionV6()),
-                Arguments.of(TestcontainersCouchbaseRunner.getCluster7(), TestcontainersCouchbaseRunner.getCollectionV7())
+                Arguments.of(TestcontainersCouchbaseRunner.getCluster7(), TestcontainersCouchbaseRunner.getCollectionV7()),
+                Arguments.of(TestcontainersCouchbaseRunner.getCluster7(), TestcontainersCouchbaseRunner.getCollectionSpecialV7())
         );
     }
 }
