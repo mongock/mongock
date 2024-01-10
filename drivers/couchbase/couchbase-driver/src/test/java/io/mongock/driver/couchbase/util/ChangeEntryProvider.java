@@ -97,21 +97,27 @@ public class ChangeEntryProvider {
                 Arguments.of(TestcontainersCouchbaseRunner.getCluster7(), TestcontainersCouchbaseRunner.getCollectionV7(), CHANGE_1),
                 Arguments.of(TestcontainersCouchbaseRunner.getCluster7(), TestcontainersCouchbaseRunner.getCollectionV7(), CHANGE_2),
                 Arguments.of(TestcontainersCouchbaseRunner.getCluster7(), TestcontainersCouchbaseRunner.getCollectionV7(), CHANGE_3),
-                Arguments.of(TestcontainersCouchbaseRunner.getCluster7(), TestcontainersCouchbaseRunner.getCollectionV7(), CHANGE_FAILED)
+                Arguments.of(TestcontainersCouchbaseRunner.getCluster7(), TestcontainersCouchbaseRunner.getCollectionV7(), CHANGE_FAILED),
+                Arguments.of(TestcontainersCouchbaseRunner.getCluster7(), TestcontainersCouchbaseRunner.getCollectionSpecialV7(), CHANGE_1),
+                Arguments.of(TestcontainersCouchbaseRunner.getCluster7(), TestcontainersCouchbaseRunner.getCollectionSpecialV7(), CHANGE_2),
+                Arguments.of(TestcontainersCouchbaseRunner.getCluster7(), TestcontainersCouchbaseRunner.getCollectionSpecialV7(), CHANGE_3),
+                Arguments.of(TestcontainersCouchbaseRunner.getCluster7(), TestcontainersCouchbaseRunner.getCollectionSpecialV7(), CHANGE_FAILED)
         );
     }
 
     static Stream<Arguments> changesAsList() {
         return Stream.of(
                 Arguments.of(TestcontainersCouchbaseRunner.getCluster6(), TestcontainersCouchbaseRunner.getCollectionV6(), Arrays.asList(CHANGE_1, CHANGE_2, CHANGE_3, CHANGE_FAILED)),
-                Arguments.of(TestcontainersCouchbaseRunner.getCluster7(), TestcontainersCouchbaseRunner.getCollectionV7(), Arrays.asList(CHANGE_1, CHANGE_2, CHANGE_3, CHANGE_FAILED))
+                Arguments.of(TestcontainersCouchbaseRunner.getCluster7(), TestcontainersCouchbaseRunner.getCollectionV7(), Arrays.asList(CHANGE_1, CHANGE_2, CHANGE_3, CHANGE_FAILED)),
+                Arguments.of(TestcontainersCouchbaseRunner.getCluster7(), TestcontainersCouchbaseRunner.getCollectionSpecialV7(), Arrays.asList(CHANGE_1, CHANGE_2, CHANGE_3, CHANGE_FAILED))
         );
     }
 
     static Stream<Arguments> change1AndChange1U() {
         return Stream.of(
                 Arguments.of(TestcontainersCouchbaseRunner.getCluster6(), TestcontainersCouchbaseRunner.getCollectionV6(), CHANGE_1, CHANGE_1_U),
-                Arguments.of(TestcontainersCouchbaseRunner.getCluster7(), TestcontainersCouchbaseRunner.getCollectionV7(), CHANGE_1, CHANGE_1_U)
+                Arguments.of(TestcontainersCouchbaseRunner.getCluster7(), TestcontainersCouchbaseRunner.getCollectionV7(), CHANGE_1, CHANGE_1_U),
+                Arguments.of(TestcontainersCouchbaseRunner.getCluster7(), TestcontainersCouchbaseRunner.getCollectionSpecialV7(), CHANGE_1, CHANGE_1_U)
         );
     }
 }

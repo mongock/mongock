@@ -9,14 +9,16 @@ public class CouchbaseVersionProvider {
     static Stream<Arguments> versions() {
         return Stream.of(
                 Arguments.of(TestcontainersCouchbaseRunner.getBucketV6(), "6.6.0"),
-                Arguments.of(TestcontainersCouchbaseRunner.getBucketV7(), "7.1.1")
+                Arguments.of(TestcontainersCouchbaseRunner.getBucketV7(), "7.1.1"),
+                Arguments.of(TestcontainersCouchbaseRunner.getBucketV7Special(), "7.1.1")
         );
     }
 
     static Stream<Arguments> versions2() {
         return Stream.of(
                 Arguments.of(TestcontainersCouchbaseRunner.getBucketV6(), false),
-                Arguments.of(TestcontainersCouchbaseRunner.getBucketV7(), true)
+                Arguments.of(TestcontainersCouchbaseRunner.getBucketV7(), true),
+                Arguments.of(TestcontainersCouchbaseRunner.getBucketV7Special(), true)
         );
     }
 }

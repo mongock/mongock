@@ -22,12 +22,14 @@ class CouchbaseChangeEntryRepositoryTest {
     void cleanUp() {
         new CouchbaseChangeEntryRepository(TestcontainersCouchbaseRunner.getCluster6(), TestcontainersCouchbaseRunner.getCollectionV6()).deleteAll();
         new CouchbaseChangeEntryRepository(TestcontainersCouchbaseRunner.getCluster7(), TestcontainersCouchbaseRunner.getCollectionV7()).deleteAll();
+        new CouchbaseChangeEntryRepository(TestcontainersCouchbaseRunner.getCluster7(), TestcontainersCouchbaseRunner.getCollectionSpecialV7()).deleteAll();
     }
 
     @BeforeAll
     static void initialize() {
         new CouchbaseLockRepository(TestcontainersCouchbaseRunner.getCluster6(), TestcontainersCouchbaseRunner.getCollectionV6()).initialize();
         new CouchbaseLockRepository(TestcontainersCouchbaseRunner.getCluster7(), TestcontainersCouchbaseRunner.getCollectionV7()).initialize();
+        new CouchbaseLockRepository(TestcontainersCouchbaseRunner.getCluster7(), TestcontainersCouchbaseRunner.getCollectionSpecialV7()).initialize();
     }
 
     @ParameterizedTest
