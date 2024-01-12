@@ -19,8 +19,8 @@ jobs:
           java-version: ${{ matrix.java }}
       - name: Set up testcontainer ryuk:0.3.0
         run: docker image pull testcontainers/ryuk:0.3.0
-      - name: Set up testcontainer dunalite:v1.2.1-1
-        run: docker image pull quay.io/testcontainers/dynalite:v1.2.1-1
+#      - name: Set up testcontainer dunalite:v1.2.1-1
+#        run: docker image pull quay.io/testcontainers/dynalite:v1.2.1-1
 
       - name: Unit and Integration tests
         run: mvn -B -Pit verify
