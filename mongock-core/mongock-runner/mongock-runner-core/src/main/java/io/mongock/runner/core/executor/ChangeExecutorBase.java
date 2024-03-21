@@ -471,7 +471,7 @@ public abstract class ChangeExecutorBase<CONFIG extends ChangeExecutorConfigurat
     List<String> changeLogsScanPackage = new ArrayList<>();
     for (String itemPath : config.getMigrationScanPackage()) {
       try {
-        changeLogsScanClasses.add(ClassLoader.getSystemClassLoader().loadClass(itemPath));
+        changeLogsScanClasses.add(Class.forName(itemPath, false, Thread.currentThread().getContextClassLoader()));
       } catch (ClassNotFoundException e) {
         changeLogsScanPackage.add(itemPath);
       }
