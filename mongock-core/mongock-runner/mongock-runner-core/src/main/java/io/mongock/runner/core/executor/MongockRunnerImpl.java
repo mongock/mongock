@@ -1,6 +1,7 @@
 package io.mongock.runner.core.executor;
 
 import io.mongock.api.exception.MongockException;
+import io.mongock.api.exception.MongockRollbackException;
 import io.mongock.driver.api.lock.LockCheckException;
 import io.mongock.runner.core.event.EventPublisher;
 import io.mongock.runner.core.event.result.MigrationSuccessResult;
@@ -68,11 +69,20 @@ public class MongockRunnerImpl implements MongockRunner {
         }
 
       } catch (Exception ex) {
-        MongockException exWrapper = MongockException.class.isAssignableFrom(ex.getClass()) ? (MongockException) ex : new MongockException(ex);
-        logger.error("Error in mongock process. ABORTED OPERATION", exWrapper);
-        eventPublisher.publishMigrationFailedEvent(exWrapper);
-        throw exWrapper;
-
+        if (MongockRollbackException.class.isAssignableFrom(ex.getClass())) {
+          MongockRollbackException mongockRollbackException = (MongockRollbackException)ex;
+          logger.error("Error in mongock process. ABORTED OPERATION");
+          logger.error("EXECUTION error detail:", mongockRollbackException.getExecutionException());
+          logger.error("ROLLBACK error detail:", mongockRollbackException.getRollbackException());
+          eventPublisher.publishMigrationFailedEvent(mongockRollbackException.getRollbackException());
+          throw mongockRollbackException.getRollbackException();
+        }
+        else {
+          MongockException exWrapper = MongockException.class.isAssignableFrom(ex.getClass()) ? (MongockException) ex : new MongockException(ex);
+          logger.error("Error in mongock process. ABORTED OPERATION", exWrapper);
+          eventPublisher.publishMigrationFailedEvent(exWrapper);
+          throw exWrapper;
+        }
       }
     }
   }
