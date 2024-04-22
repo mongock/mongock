@@ -4,6 +4,7 @@ import com.google.gson.Gson;
 import io.mongock.api.config.TransactionStrategy;
 import io.mongock.api.config.executor.ChangeExecutorConfiguration;
 import io.mongock.api.exception.MongockException;
+import io.mongock.api.exception.MongockRollbackException;
 import io.mongock.driver.api.common.SystemChange;
 import io.mongock.driver.api.driver.ConnectionDriver;
 import io.mongock.driver.api.entry.ChangeEntry;
@@ -125,10 +126,17 @@ public abstract class ChangeExecutorBase<CONFIG extends ChangeExecutorConfigurat
          changeLog.getType().getAnnotation(SystemChange.class).updatesSystemTable()) {
         loadExecutedChangeEntries();
       }
-    } catch (Exception e) {
+    } catch (Exception executionEx) {
       if (changeLog.isFailFast()) {
-        rollbackProcessedChangeSetsIfApply(executionId, executionHostname, changeSetsToRollBack);
-        throw e;
+          try {
+            rollbackProcessedChangeSetsIfApply(executionId, executionHostname, changeSetsToRollBack);
+          }
+          catch (Exception rollbackEx) {
+              MongockException mongockExecutionEx = MongockException.class.isAssignableFrom(executionEx.getClass()) ? (MongockException) executionEx : new MongockException(executionEx);
+              MongockException mongockRollbackEx = MongockException.class.isAssignableFrom(rollbackEx.getClass()) ? (MongockException) rollbackEx : new MongockException(rollbackEx);
+              throw new MongockRollbackException(mongockExecutionEx, mongockRollbackEx);
+          }
+          throw executionEx;
       }
     } finally {
       clearChangeSetsToRollbackIfApply(isStrategyPerChangeUnit());
