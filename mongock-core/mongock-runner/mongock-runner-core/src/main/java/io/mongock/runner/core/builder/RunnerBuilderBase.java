@@ -183,7 +183,7 @@ public abstract class RunnerBuilderBase<
     if (config.getTransactionEnabled().isPresent()) {
       boolean transactionEnabled = config.getTransactionEnabled().get();
       if (transactionEnabled && !driver.isTransactionable()) {
-        throw new MongockException("Property transaction-enabled=true, but transactionManager not provided");
+        throw new MongockException("Property transaction-enabled=true, but driver is not transactionable");
       }
 
       if (!transactionEnabled && driver.isTransactionable()) {
