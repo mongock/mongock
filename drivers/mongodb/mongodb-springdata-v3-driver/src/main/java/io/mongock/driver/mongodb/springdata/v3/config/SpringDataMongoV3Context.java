@@ -20,7 +20,8 @@ public class SpringDataMongoV3Context extends SpringDataMongoV3ContextBase<Mongo
   @Override
   protected SpringDataMongoV3Driver buildDriver(MongoTemplate mongoTemplate,
                                                 MongockConfiguration config,
-                                                MongoDBConfiguration mongoDbConfig) {
+                                                MongoDBConfiguration mongoDbConfig,
+                                                Optional<PlatformTransactionManager> txManagerOpt) {
     return SpringDataMongoV3Driver.withLockStrategy(
         mongoTemplate,
         config.getLockAcquiredForMillis(),

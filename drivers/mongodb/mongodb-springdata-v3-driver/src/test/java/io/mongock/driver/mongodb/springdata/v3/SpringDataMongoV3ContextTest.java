@@ -16,13 +16,17 @@ import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.transaction.PlatformTransactionManager;
+
+import java.util.Optional;
 
 public class SpringDataMongoV3ContextTest {
 
 
   /**
    * public ConnectionDriver connectionDriver(MongoTemplate mongoTemplate,
-   *                                            SpringMongoDBConfiguration config)
+   *                                            SpringMongoDBConfiguration config,
+   *                                            Optional<PlatformTransactionManager> txManagerOpt)
    */
 
 
@@ -32,6 +36,7 @@ public class SpringDataMongoV3ContextTest {
   public void shouldCreateDefaultReadWriteConcerns_whenCreating_ifNoParams() {
     MongoTemplate mongoTemplate = Mockito.mock(MongoTemplate.class);
     Mockito.when(mongoTemplate.getDb()).thenReturn(Mockito.mock(MongoDatabase.class));
+    Optional<PlatformTransactionManager> opt = Optional.empty();
 
     MongockConfiguration config = Mockito.spy(new MongockConfiguration());
     MongoDBConfiguration mongoDbConfig = Mockito.spy(new MongoDBConfiguration());
@@ -39,7 +44,7 @@ public class SpringDataMongoV3ContextTest {
 //    SpringMongoDBConfiguration.MongoDBConfiguration mongoDBConfig = new SpringMongoDBConfiguration.MongoDBConfiguration();
 
     SpringDataMongoV3Driver driver = (SpringDataMongoV3Driver)new SpringDataMongoV3Context().connectionDriver(
-        mongoTemplate, config, mongoDbConfig
+        mongoTemplate, config, mongoDbConfig, opt
     );
     WriteConcern expectedWriteConcern = WriteConcern.MAJORITY;
     ReadConcern expectedReadConcern = ReadConcern.MAJORITY;
