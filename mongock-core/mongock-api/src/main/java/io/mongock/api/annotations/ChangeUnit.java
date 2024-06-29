@@ -41,6 +41,8 @@ public @interface ChangeUnit {
 
   /**
    * Change unit's id. It will be used to identify both change entries, the one linked to @Execution and @BeforeExecution(this one with the suffix `_before`)
+   * Obligatory.
+   * <p>
    * Equivalent to field `id` in ChangeSet annotation
    *
    * @return Change unit's id
@@ -49,42 +51,56 @@ public @interface ChangeUnit {
   String id();
 
   /**
+   * Sequence that provide correct order for change unit execution. Sorted alphabetically, ascending.
+   * Obligatory.
+   * <p>
    * Equivalent to field `order` in ChangeSet annotation and ChangeLog,
    * as now there is only one "changeSet", annotated with @Execution
    *
-   * @return ChangeSet's author
+   * @return Change unit's execution order
    * @see ChangeSet
    */
   String order();
 
   /**
+   * Author of the changeset.
+   * <p>
    * Equivalent to field `author` in ChangeSet annotation
    *
-   * @return ChangeSet's author
+   * @return Change unit's author
    * @see ChangeSet
    */
   String author() default "";
 
   /**
+   * If true, will make the entire migration to break if the change unit produce an exception or the validation doesn't
+   * success. Migration will continue otherwise.
+   * <p>
    * Equivalent to field `failFast` in ChangeSet annotation
    *
-   * @return ChangeSet if the ChangeLog is fail fast
+   * @return failFast
    * @see ChangeSet
    */
   boolean failFast() default true;
 
   /**
+   * Executes the change set on every Mongock's execution, even if it has been run before.
+   * Optional (default is false)
+   * <p>
    * Equivalent to field `runAlways` in ChangeSet annotation
    *
-   * @return ChangeSet if the ChangeLog is runAlways
+   * @return should run always?
    * @see ChangeSet
    */
   boolean runAlways() default false;
 
   /**
+   * Specifies the software systemVersion on which the change unit is to be applied.
+   * Optional (default is 0 and means all)
+   * <p>
    * Equivalent to field `systemVersion` in ChangeSet annotation
    *
-   * @return ChangeSet if the ChangeLog is runAlways
+   * @return systemVersion
    * @see ChangeSet
    */
   String systemVersion() default "0";
@@ -92,7 +108,7 @@ public @interface ChangeUnit {
   /**
    * If true, Mongock will try to run the changeUnit in a native transaction, if possible.
    *
-   * @return If he changeUnit should be run in a native transaction.
+   * @return If the changeUnit should be run in a native transaction.
    */
   boolean transactional() default true;
 
