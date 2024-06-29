@@ -2,6 +2,8 @@ name: Build
 on: [pull_request]
 jobs:
   build:
+    env:
+      DOCKER_ENABLE_DEPRECATED_PULL_SCHEMA_1_IMAGE: "YES"
     runs-on: ubuntu-latest
     strategy:
       matrix:
