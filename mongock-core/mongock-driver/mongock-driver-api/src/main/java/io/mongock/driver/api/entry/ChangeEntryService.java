@@ -56,7 +56,7 @@ public interface ChangeEntryService extends RepositoryIndexable, Process {
    * @throws MongockException
    */
   default List<ChangeEntry> getAllEntriesWithCurrentState() throws MongockException {
-    return getEntriesMap()//Maps of List<ChangeEntry>, indexed by changeId
+    return getEntriesMap()//Maps of List<ChangeEntry>, indexed by changeId + author
         .values()//collection of List<ChangeEntry>
         .stream()
         .map(duplicatedEntries -> duplicatedEntries.stream().filter(ChangeEntry::hasRelevantState).collect(Collectors.toList()))//only takes into account relevant states
@@ -66,10 +66,10 @@ public interface ChangeEntryService extends RepositoryIndexable, Process {
         .collect(Collectors.toList());
   }
 
-  default Map<String, List<ChangeEntry>> getEntriesMap() {
-    Map<String, List<ChangeEntry>> log = getEntriesLog()
+  default Map<ChangeKey, List<ChangeEntry>> getEntriesMap() {
+    Map<ChangeKey, List<ChangeEntry>> log = getEntriesLog()
         .stream()
-        .collect(Collectors.groupingBy(ChangeEntry::getChangeId));
+        .collect(Collectors.groupingBy(ChangeKey::new));
     log.values().forEach(entries -> {
       entries.sort((c1, c2) -> c2.getTimestamp().compareTo(c1.getTimestamp()));//sorts each list in the map by date in reverse
       Date originalTimestamp = entries.get(entries.size()-1).getTimestamp();//gets original timestamp (oldest entry of group)
