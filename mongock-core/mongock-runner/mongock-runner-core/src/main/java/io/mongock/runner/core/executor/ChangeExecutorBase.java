@@ -15,18 +15,21 @@ import io.mongock.runner.core.executor.changelog.ChangeLogRuntime;
 import io.mongock.runner.core.executor.changelog.ChangeLogServiceBase;
 import io.mongock.runner.core.internal.ChangeLogItem;
 import io.mongock.runner.core.internal.ChangeSetItem;
+import io.mongock.utils.StringUtils;
 import io.mongock.utils.Triple;
-import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.annotation.concurrent.NotThreadSafe;
+import java.lang.reflect.AnnotatedElement;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.net.InetAddress;
 import java.util.ArrayDeque;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Deque;
+import java.util.function.Function;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -40,9 +43,6 @@ import static io.mongock.driver.api.entry.ChangeState.ROLLBACK_FAILED;
 import static io.mongock.driver.api.entry.ChangeState.ROLLED_BACK;
 import static io.mongock.driver.api.entry.ChangeType.BEFORE_EXECUTION;
 import static io.mongock.driver.api.entry.ChangeType.EXECUTION;
-import java.lang.reflect.AnnotatedElement;
-import java.util.ArrayList;
-import java.util.function.Function;
 
 @NotThreadSafe
 public abstract class ChangeExecutorBase<CONFIG extends ChangeExecutorConfiguration> implements Executor {
@@ -209,7 +209,7 @@ public abstract class ChangeExecutorBase<CONFIG extends ChangeExecutorConfigurat
       hostname = "unknown-host." + executionId;
     }
 
-    if (StringUtils.isNotEmpty(serviceIdentifier)) {
+    if (StringUtils.hasText(serviceIdentifier)) {
       hostname += "-";
       hostname += serviceIdentifier;
     }
