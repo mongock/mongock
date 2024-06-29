@@ -17,7 +17,7 @@ public abstract class SpringDataMongoV2ContextBase<CONFIG extends MongockConfigu
                                            CONFIG config,
                                            MongoDBConfiguration mongoDbConfig,
                                            Optional<PlatformTransactionManager> txManagerOpt) {
-    DRIVER driver = buildDriver(mongoTemplate, config, mongoDbConfig, txManagerOpt);
+    DRIVER driver = buildDriver(mongoTemplate, config, mongoDbConfig);
     setGenericDriverConfig(config, txManagerOpt, driver);
     setMongoDBConfig(mongoDbConfig, driver);
     driver.initialize();
@@ -26,8 +26,7 @@ public abstract class SpringDataMongoV2ContextBase<CONFIG extends MongockConfigu
 
   protected abstract DRIVER buildDriver(MongoTemplate mongoTemplate,
                                         CONFIG config,
-                                        MongoDBConfiguration mongoDbConfig,
-                                        Optional<PlatformTransactionManager> txManagerOpt);
+                                        MongoDBConfiguration mongoDbConfig);
 
   private void setGenericDriverConfig(CONFIG config,
                                       Optional<PlatformTransactionManager> txManagerOpt,
