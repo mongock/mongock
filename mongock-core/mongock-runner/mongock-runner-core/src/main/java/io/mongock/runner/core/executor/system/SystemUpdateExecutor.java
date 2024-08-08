@@ -44,6 +44,7 @@ public class SystemUpdateExecutor<CONFIG extends MongockConfiguration> extends C
           null,
           config.getServiceIdentifier(),
           false,
+          config.getTransactional(),
           config.getTransactionEnabled(),
           TransactionStrategy.CHANGE_UNIT,
           config);

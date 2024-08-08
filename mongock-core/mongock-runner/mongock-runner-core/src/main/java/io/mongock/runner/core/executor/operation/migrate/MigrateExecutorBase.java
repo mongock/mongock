@@ -35,6 +35,7 @@ public abstract class MigrateExecutorBase extends ChangeExecutorBase<ChangeExecu
           config.getMetadata(),
           config.getServiceIdentifier(),
           config.isTrackIgnored(),
+          config.getTransactional(),
           config.getTransactionEnabled(),
           config.getTransactionStrategy(),
           config);

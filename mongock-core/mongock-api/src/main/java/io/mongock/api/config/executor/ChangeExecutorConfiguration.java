@@ -13,6 +13,9 @@ public interface ChangeExecutorConfiguration {
 
   boolean isTrackIgnored();
 
+  Optional<Boolean> getTransactional();
+  
+  @Deprecated
   Optional<Boolean> getTransactionEnabled();
   
   TransactionStrategy getTransactionStrategy();

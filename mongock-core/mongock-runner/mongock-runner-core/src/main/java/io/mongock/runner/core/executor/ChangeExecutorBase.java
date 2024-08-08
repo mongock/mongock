@@ -73,6 +73,7 @@ public abstract class ChangeExecutorBase<CONFIG extends ChangeExecutorConfigurat
                                Map<String, Object> metadata,
                                String serviceIdentifier,
                                boolean trackIgnored,
+                               Optional<Boolean> transactional,
                                Optional<Boolean> transactionEnabled,
                                TransactionStrategy transactionStrategy,
                                CONFIG config) {
@@ -84,7 +85,7 @@ public abstract class ChangeExecutorBase<CONFIG extends ChangeExecutorConfigurat
     this.metadata = metadata;
     this.serviceIdentifier = serviceIdentifier;
     this.trackIgnored = trackIgnored;
-    this.globalTransactionEnabled = transactionEnabled.orElse(null);
+    this.globalTransactionEnabled = transactional.isPresent() ? transactional.get() : transactionEnabled.orElse(null);
     this.transactionStrategy = transactionStrategy;
     this.config = config;
   }
