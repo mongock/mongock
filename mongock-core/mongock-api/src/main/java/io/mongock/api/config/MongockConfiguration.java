@@ -117,10 +117,18 @@ public class MongockConfiguration implements ExecutorConfiguration {
   private LegacyMigration legacyMigration = null;
 
   /**
+   * @deprecated  As of release 5.5, replaced by {@link #transactional}
    * To enable/disable transactions. It works together with the driver, so enabling transactions with a non-transactional
    * driver or a transactional driver with transaction mode off, will throw a MongockException
    */
+  @Deprecated
   private Boolean transactionEnabled;
+  
+  /**
+   * To enable/disable transactions. It works together with the driver, so enabling transactions with a non-transactional
+   * driver or a transactional driver with transaction mode off, will throw a MongockException
+   */
+  private Boolean transactional;
 
   /**
    * From version 5, author is not a mandatory field, but still needed for backward compatibility. This is why Mongock
@@ -183,6 +191,7 @@ public class MongockConfiguration implements ExecutorConfiguration {
     metadata = from.getMetadata();
     legacyMigration = from.getLegacyMigration();
     transactionEnabled = from.getTransactionEnabled().orElse(null);
+    transactional = from.getTransactional().orElse(null);
     transactionStrategy = from.getTransactionStrategy();
     maxTries = from.getMaxTries();
     maxWaitingForLockMillis = from.getMaxWaitingForLockMillis();
@@ -314,13 +323,13 @@ public class MongockConfiguration implements ExecutorConfiguration {
   public void setMetadata(Map<String, Object> metadata) {
     this.metadata = metadata;
   }
-
-  public Optional<Boolean> getTransactionEnabled() {
-    return Optional.ofNullable(transactionEnabled);
+  
+  public Optional<Boolean> getTransactional() {
+    return Optional.ofNullable(transactional);
   }
 
-  public void setTransactionEnabled(boolean transactionEnabled) {
-    this.transactionEnabled = transactionEnabled;
+  public void setTransactional(boolean transactional) {
+    this.transactional = transactional;
   }
 
   public TransactionStrategy getTransactionStrategy() {
@@ -395,13 +404,14 @@ public class MongockConfiguration implements ExecutorConfiguration {
         Objects.equals(metadata, that.metadata) &&
         Objects.equals(legacyMigration, that.legacyMigration) &&
         Objects.equals(transactionEnabled, that.transactionEnabled) &&
+        Objects.equals(transactional, that.transactional) &&
         Objects.equals(maxTries, that.maxTries) &&
         Objects.equals(maxWaitingForLockMillis, that.maxWaitingForLockMillis);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(migrationRepositoryName, indexCreation, lockRepositoryName, lockAcquiredForMillis, lockQuitTryingAfterMillis, lockTryFrequencyMillis, throwExceptionIfCannotObtainLock, trackIgnored, enabled, migrationScanPackage, startSystemVersion, endSystemVersion, serviceIdentifier, metadata, legacyMigration, transactionEnabled, maxTries, maxWaitingForLockMillis, lockGuardEnabled);
+    return Objects.hash(migrationRepositoryName, indexCreation, lockRepositoryName, lockAcquiredForMillis, lockQuitTryingAfterMillis, lockTryFrequencyMillis, throwExceptionIfCannotObtainLock, trackIgnored, enabled, migrationScanPackage, startSystemVersion, endSystemVersion, serviceIdentifier, metadata, legacyMigration, transactionEnabled, transactional, maxTries, maxWaitingForLockMillis, lockGuardEnabled);
   }
 
   //DEPRECATIONS
@@ -481,5 +491,22 @@ public class MongockConfiguration implements ExecutorConfiguration {
   public void setMaxTries(int maxTries) {
     logger.warn(DEPRECATED_PROPERTY_TEMPLATE, "maxTries", "lockQuitTryingAfterMillis and lockTryFrequencyMillis");
     this.maxTries = maxTries;
+  }
+  
+  /**
+   * Deprecated, uses transactional instead
+   */
+  @Deprecated
+  public Optional<Boolean> getTransactionEnabled() {
+    return Optional.ofNullable(transactionEnabled);
+  }
+
+  /**
+   * Deprecated, uses transactional instead
+   */
+  @Deprecated
+  public void setTransactionEnabled(boolean transactionEnabled) {
+    logger.warn(DEPRECATED_PROPERTY_TEMPLATE, "transactionEnabled", "transactional");
+    this.transactionEnabled = transactionEnabled;
   }
 }
