@@ -71,7 +71,6 @@ public abstract class MongoReactiveRepositoryBase<DOMAIN_CLASS> implements Entit
   }
 
   private List<Document> getResidualKeys() {
-    SubscriberSync<Document> subscriber = new MongoSubscriberSync<>();
     return collection.listIndexes()
         .stream()
         .filter(this::doesNeedToBeRemoved)
