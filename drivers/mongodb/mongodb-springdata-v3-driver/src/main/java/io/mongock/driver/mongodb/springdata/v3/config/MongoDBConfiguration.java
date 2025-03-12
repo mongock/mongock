@@ -44,7 +44,13 @@ public class MongoDBConfiguration {
   }
 
   protected WriteConcern getBuiltMongoDBWriteConcern() {
-    WriteConcern wc = new WriteConcern(writeConcern.w).withJournal(writeConcern.journal);
+    WriteConcern wc;
+    try {
+      int wInt = Integer.parseInt(writeConcern.w);
+      wc = new WriteConcern(wInt).withJournal(writeConcern.journal);
+    } catch (NumberFormatException e) {
+      wc = new WriteConcern(writeConcern.w).withJournal(writeConcern.journal);
+    }
     return writeConcern.getwTimeoutMs() == null
         ? wc
         : wc.withWTimeout(writeConcern.getwTimeoutMs().longValue(), TimeUnit.MILLISECONDS);
